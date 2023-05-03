@@ -2,7 +2,7 @@ import Head from 'next/head'
 import Image from 'next/image'
 import { Inter } from 'next/font/google'
 import styles from '@/styles/Home.module.css'
-import { Navbar, Footer } from './../components'
+import { Navbar, Footer, TutorCard } from './../components'
 const inter = Inter({ subsets: ['latin'] })
 
 export default function Home() {
@@ -16,43 +16,58 @@ export default function Home() {
       </Head>
       <main >
         <Navbar />
-        <h1>Body</h1>
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
+        <div className="container py-4">
+          <div className="d-flex justify-content-center gap-2 flex-wrap">
+            <select className="p-2 rounded ">
+              <option value="">Select Course</option>
+              <option value="">Option 2</option>
+              <option value="">Option 3</option>
+            </select>
+            <select className="p-2 rounded ">
+              <option value="">Skills Level</option>
+              <option value="">Option 2</option>
+              <option value="">Option 3</option>
+            </select>
+
+            <select className="p-2 rounded ">
+              <option value="">Age Group</option>
+              <option value="">Option 2</option>
+              <option value="">Option 3</option>
+            </select>
+            <select className="p-2 rounded ">
+              <option value="">Delivery Mode</option>
+              <option value="">Option 2</option>
+              <option value="">Option 3</option>
+            </select>
+            <select className="p-2 rounded ">
+              <option value="">Spoken Language</option>
+              <option value="">Option 2</option>
+              <option value="">Option 3</option>
+            </select>
+            <select className="p-2 rounded ">
+              <option value="">Rate</option>
+              <option value="">Option 2</option>
+              <option value="">Option 3</option>
+            </select>
+            <select className="p-2 rounded ">
+              <option value="">Stars</option>
+              <option value="">Option 2</option>
+              <option value="">Option 3</option>
+            </select>
+            <input type="text" placeholder="Enter City and state or Zip/Post Code" className="p-2 rounded w-25" />
+            <button className={`btn_primary py-2 px-5 fw-bold text-white rounded`} type="submit">
+              Search
+            </button>
+          </div>
+        </div>
+        <hr />
+        <div className="container py-4">
+       
+        <TutorCard />
+        <TutorCard />
+        <TutorCard />          
+          
+        </div>
         <Footer />
       </main>
     </>

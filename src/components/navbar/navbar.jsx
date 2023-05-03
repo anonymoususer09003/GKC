@@ -55,7 +55,7 @@ const Navbar = () => {
                                     </a>
                                 </li>
                             </ul>
-                            <button className={`${styles.btn_primary} py-2 px-4 fw-bold text-white rounded`} type="submit">
+                            <button className={`btn_primary py-2 px-4 fw-bold text-white rounded`} type="submit">
                                 Sign In
                             </button>
                         </div>

@@ -60,7 +60,18 @@ a {
 */
 
 * {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+select,
+input {
+    outline: 0;
+    min-width: 200px;
+}
+
+.btn_primary {
+    background-color: #f48343;
+    border: 0
 }
