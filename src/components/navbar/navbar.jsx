@@ -31,7 +31,7 @@ const Navbar = () => {
             <nav class="navbar navbar-expand-lg p-3">
                 <div class="container-fluid ">
                     <Image
-                        src="/assets/logo.png"
+                        src="/logo.png"
                         alt="Vercel Logo"
                         // className={styles.vercelLogo}
                         width={100}

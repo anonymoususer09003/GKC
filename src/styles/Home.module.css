@@ -108,6 +108,10 @@
     position: relative;
 }
 
+.full_height {
+    min-height: 81vh;
+}
+
 
 /* Enable hover only on non-touch devices */
 
