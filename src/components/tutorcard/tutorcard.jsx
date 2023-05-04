@@ -44,7 +44,7 @@ const Tutorcard = () => {
             <button
               className="m-0 p-0 bg_secondary border-0 text-white p-2 rounded d-flex align-items-center gap-2"
               data-bs-toggle="modal"
-              data-bs-target="#exampleModal"
+              data-bs-target="#exampleModal1"
             >
               <BiMessageAlt style={{ fontSize: "22px" }} />
               Reviews
