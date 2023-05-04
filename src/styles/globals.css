@@ -75,3 +75,11 @@ input {
     background-color: #f48343;
     border: 0
 }
+
+.bg_primary {
+    background-color: #f48343;
+}
+
+.bg_secondary {
+    background-color: #50a7c3;
+}
