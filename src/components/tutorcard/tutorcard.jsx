@@ -105,8 +105,14 @@ const Tutorcard = () => {
               </li>
             </ul>
           </div>
+          <div className="d-flex gap-2 m-0 py-2 align-items-center">
+            <b className="m-0 p-0">Mode:</b>
+            <ul className="d-flex list-unstyled m-0 p-0">
+              <li className="m-0 p-0">Online In-Persion</li>
+            </ul>
+          </div>
           <div className="d-flex gap-2">
-            <b>Fluent in:</b>
+            <b>Speaks:</b>
             <ul className="d-flex list-unstyled gap-2">
               <li>English</li>
               <li>Spanish</li>
@@ -149,7 +155,7 @@ const Tutorcard = () => {
                   </div>
                   <div className="flex-1 w-100">
                     <div className="d-flex justify-content-between align-items-center ">
-                      <b className="m-0 p-0">John S.</b>
+                      <h5 className="m-0 p-0">John S.</h5>
                       <div className="d-flex align-items-center gap-2">
                         <div className="mb-2">
                           <StarRatings
@@ -165,7 +171,7 @@ const Tutorcard = () => {
                         <BiMessageAlt style={{ fontSize: "22px" }} />
                         Reviews
                       </button>
-                      <p className="m-0 p-0 fw-bold">$30/hr</p>
+                      <h5 className="m-0 p-0 fw-bold">$30/hr</h5>
                     </div>
                     <div className="d-flex justify-content-between pt-2">
                       <h5 className="m-0 pt-2">Call to action title</h5>
@@ -228,8 +234,14 @@ const Tutorcard = () => {
                     </li>
                   </ul>
                 </div>
+                <div className="d-flex gap-2  px-3 pt-2 align-items-center">
+            <b className="m-0 p-0">Mode:</b>
+            <ul className="d-flex list-unstyled m-0 p-0">
+              <li className="m-0 p-0">Online In-Persion</li>
+            </ul>
+          </div>
                 <div className="d-flex gap-2  px-3 pt-2">
-                  <b>Fluent in:</b>
+                  <b>Speaks:</b>
                   <ul className="d-flex list-unstyled gap-2">
                     <li>English</li>
                     <li>Spanish</li>
