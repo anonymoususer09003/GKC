@@ -1,12 +1,11 @@
 import React from "react";
 import Head from "next/head";
-import { Inter } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
-import {  Footer } from "../../components";
+import { Footer } from "../../components";
 import { RiArrowGoBackLine } from "react-icons/ri";
 
-export default function Selection() {
+export default function Home() {
   return (
     <>
       <Head>
@@ -26,7 +25,6 @@ export default function Selection() {
         <div className="row">
           <div className="col-12 col-lg-6 d-flex justify-content-center align-items-center ">
             <div style={{ maxWidth: "380px", width: "100%" }}>
-              {/* <h1 className="text-center mb-5">GSK</h1> */}
               <div className="d-flex justify-content-center mb-5">
                 <Image
                   src="/assets/logo.png"
@@ -39,49 +37,27 @@ export default function Selection() {
               </div>
               <div>
                 <div className="d-flex justify-content-center mb-3">
-                  <h5 className="text-secondary fw-bold">
-                    Which of these best describes you?
-                  </h5>
+                  <h4 className="text-secondary fw-bold">
+                    Register Your Email
+                  </h4>
                 </div>
-                <div className="d-flex align-items-center justify-content-center gap-3 my-3">
-                  <div class="form-check">
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      value=""
-                      id="flexCheckDefault"
-                      checked
-                    />
-                    <label class="form-check-label" for="flexCheckDefault">
-                     Student
-                    </label>
-                  </div>
-                  <div class="form-check">
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      value=""
-                      id="flexCheckChecked"
-                    />
-                    <label class="form-check-label" for="flexCheckChecked">
-                      Parent
-                    </label>
-                  </div>
-                  <div class="form-check">
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      value=""
-                      id="flexCheckChecked"
-                    />
-                    <label class="form-check-label" for="flexCheckChecked">
-                      Instructor
-                    </label>
-                  </div>
-                </div>
+                <div>
+                  <input
+                    type="text"
+                    className="w-100 p-2 rounded outline-0 border border_gray text_gray  mb-3"
+                    placeholder="Your Email"
+                  />
+
                   <button className="w-100 btn_primary text-light p-2 rounded fw-bold mt-3">
                     Continue
                   </button>
+                </div>
+                <div className="d-flex flex-column justify-content-center align-items-center mt-3">
+                  <hr className="w-25" />
+                  <button className="w-50 btn_secondary text-light p-2 rounded fw-bold ">
+                    Login
+                  </button>
+                </div>
               </div>
             </div>
           </div>

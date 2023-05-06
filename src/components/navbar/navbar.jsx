@@ -2,8 +2,9 @@ import React from 'react';
 import Image from 'next/image';
 import styles from '@/styles/Navbar.module.css';
 import Link from 'next/link';
-
-const Navbar = () => {
+import {IoMdSettings} from "react-icons/io"
+const Navbar = ({isLogin}) => {
+  console.log(isLogin)
   return (
     <>
       <nav className="navbar navbar-expand-lg navbar-light bg-light p-3">
@@ -45,10 +46,19 @@ const Navbar = () => {
               )}
             </ul>
 
-            <form className="d-flex">
+            <form className="d-flex align-items-center gap-2">
+{
+  isLogin ? 
+ <>
+ <Link href="/signin" className="btn_primary py-2 px-4 fw-bold text-white rounded text-decoration-none ">              
+Sign Out</Link>
 
-              <Link href="/signin" className="btn_primary py-2 px-4 fw-bold text-white rounded text-decoration-none ">              
+<IoMdSettings className="h1 ms-2"/>
+ </>
+ 
+ :             <Link href="/signin" className="btn_primary py-2 px-4 fw-bold text-white rounded text-decoration-none ">              
 Sign In</Link>
+}
             </form>
           </div>
         </div>

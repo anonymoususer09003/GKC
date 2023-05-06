@@ -1,15 +1,13 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Head from 'next/head';
-import { Inter } from 'next/font/google';
 import Image from 'next/image';
 import Link from 'next/link';
-import styles from '@/styles/Home.module.css';
-import { Navbar, Footer, TutorCard } from '../../components';
+import { Footer } from '../../components';
 import {RiArrowGoBackLine} from "react-icons/ri"
-const inter = Inter({ subsets: ['latin'] });
 
-export default function Home() {
-  const [showCards, setShowCards] = useState(false);
+
+export default function SignIn() {
+
   return (
     <>
       <Head>
@@ -62,7 +60,7 @@ export default function Home() {
           <div
             className="col-12 col-lg-6 position-relative"
             style={{
-              backgroundImage: 'url("/assets/auth_1.png")',
+              backgroundImage: 'url("/assets/auth_2.png")',
               height: '100vh',
               backgroundRepeat: 'no-repeat',
               backgroundSize: '100% 100%',
