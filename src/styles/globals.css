@@ -105,15 +105,33 @@ select {
 }
 
 .border_primary {
-    border-color: #f48343;
+    border-color: #f48343!important;
 }
 
 .border_secondary {
-    border-color: #67bdf0;
+    border-color: #67bdf0!important;
 }
 
 .border_gray {
     border-color: #c9c9c9;
+}
+
+.rounded-10 {
+    border-radius: 20px
+}
+
+.primary-list {
+    list-style: none;
+}
+
+.primary-list li::before {
+    content: "\2022";
+    color: #f48343;
+    font-weight: bold;
+    display: inline-block;
+    width: 0.8em;
+    margin-left: -1em;
+    font-size: 20px;
 }
 
 input::placeholder {
@@ -135,5 +153,33 @@ input[type=radio] {
     border: 2px solid #f48343 !important;
 }
 
+input[type=text]:focus {
+    outline: 0 !important;
+}
 
-/* Firefox */
+
+/* React Calandar Custom CSS */
+
+.react-calendar {
+    width: 100%!important;
+    max-width: 1000px!important;
+    padding: 15px 0!important;
+}
+
+.react-calendar__tile {
+    font-size: 22px!important;
+    padding: 35px 0!important;
+}
+
+.react-calendar__month-view__weekdays__weekday {
+    font-size: 22px!important;
+    padding: 30px 0!important;
+}
+
+abbr {
+    text-decoration: none!important;
+}
+
+.react-calendar__navigation {
+    font-size: 30px!important;
+}

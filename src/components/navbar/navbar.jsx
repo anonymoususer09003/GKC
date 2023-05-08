@@ -3,6 +3,7 @@ import Image from 'next/image';
 import styles from '@/styles/Navbar.module.css';
 import Link from 'next/link';
 import {IoMdSettings} from "react-icons/io"
+import {FcCalendar} from "react-icons/fc"
 const Navbar = ({isLogin}) => {
   console.log(isLogin)
   return (
@@ -32,20 +33,37 @@ const Navbar = ({isLogin}) => {
           </button>
           <div className="collapse navbar-collapse" id="navbarSupportedContent">
             <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+              {isLogin && (
+                <>
+
+                <li className="nav-item">
+                  <a className="nav-link" href="#">
+                   <FcCalendar style={{fontSize:"30px"}}/>
+                  </a>
+                </li>
+
+                </>
+              )}
               <li className="nav-item">
-                <a className="nav-link active" aria-current="page" href="#">
+                <a className="nav-link active" aria-current="page" href="/">
                   Home
                 </a>
               </li>
-              {false && (
-                <li className="nav-item">
-                  <a className="nav-link" href="#">
-                    Message
-                  </a>
-                </li>
-              )}
             </ul>
+            <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+              {isLogin && (
+                <>
 
+                <li className="nav-item">
+                <a className="nav-link active" aria-current="page" href="/">
+                  Message
+                </a>
+              </li>
+
+                </>
+              )}
+             
+            </ul>
             <form className="d-flex align-items-center gap-2">
 {
   isLogin ? 
