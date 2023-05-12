@@ -1,9 +1,8 @@
 import React from "react";
 import Head from "next/head";
-import { Inter } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
-import {  Footer } from "../../components";
+import {  Footer } from "./../../components";
 import { RiArrowGoBackLine } from "react-icons/ri";
 
 export default function Selection() {

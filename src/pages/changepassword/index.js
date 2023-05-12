@@ -1,10 +1,9 @@
-import Layout from "@/common/Layout";
 import styles from "@/styles/Navbar.module.css";
-import height from "@/styles/Home.module.css";
 import { useState } from "react";
 import { useRouter } from "next/router";
-import { Navbar, Footer } from "../../components";
+import { Navbar, Footer } from "./../../components";
 import Head from "next/head";
+
 export default function ChangePassword() {
   const [showActivation, setShowActivation] = useState(false);
   const navigation = useRouter();

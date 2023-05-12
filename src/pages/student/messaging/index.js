@@ -1,14 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
 import Head from "next/head";
-import { Inter } from "next/font/google";
-import { Navbar, Footer } from "../../components";
-import Calendar from "react-calendar";
-import { BsFillChatFill, BsFillSendFill } from "react-icons/bs";
-import { GoDeviceCameraVideo } from "react-icons/go";
-import { RiDeleteBin6Line } from "react-icons/ri";
-export default function StudentRegistrationCCPay() {
-  const [value, onChange] = useState(new Date());
+import { Navbar, Footer } from "../../../components";
+import { BsFillSendFill } from "react-icons/bs";
 
+export default function StudentRegistrationCCPay() {
   return (
     <>
       <Head>

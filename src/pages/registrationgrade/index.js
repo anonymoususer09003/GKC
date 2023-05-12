@@ -1,6 +1,6 @@
 import React from "react";
 import Head from "next/head";
-import { Navbar, Footer } from "../../components";
+import { Navbar, Footer } from "./../../components";
 
 export default function RegistrationGrade() {
   return (

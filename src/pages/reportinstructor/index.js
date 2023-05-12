@@ -1,8 +1,6 @@
 import { useState } from "react";
-import Layout from "../../common/Layout";
-import height from "@/styles/Home.module.css";
 import styles from "@/styles/Navbar.module.css";
-import { Navbar, Footer } from "../../components";
+import { Navbar, Footer } from "./../../components";
 import Head from "next/head";
 
 export default function ReportInstructor() {

@@ -1,7 +1,8 @@
 import React from "react";
 import Image from "next/image";
-import { BsCheck2Circle } from "react-icons/bs";
+import { BsCheck2Circle, BsFillCameraVideoFill } from "react-icons/bs";
 import { BiMessageAlt } from "react-icons/bi";
+import { FaFileVideo } from "react-icons/fa";
 import StarRatings from "react-star-ratings";
 const Tutorcard = () => {
   return (
@@ -16,6 +17,15 @@ const Tutorcard = () => {
             priority
             className="rounded-circle bg-light"
           />
+        </div>
+
+        <div
+          className="d-flex justify-conntent-between align-items-end"
+          style={{ minHeight: "210px" }}
+        >
+          <div>
+            <FaFileVideo  style={{ fontSize: "40px", color: "#006600" }} />
+          </div>
         </div>
         <div>
           <div className="d-flex align-items-center justify-content-between flex-1">
@@ -173,24 +183,13 @@ const Tutorcard = () => {
                       </button>
                       <h5 className="m-0 p-0 fw-bold">$30/hr</h5>
                     </div>
-                    <div className="d-flex justify-content-between pt-2">
-                      <h5 className="m-0 pt-2">Call to action title</h5>
-                      <div className="d-flex gap-2">
-                        <button
-                          className={`btn_primary py-2 px-3 fw-bold text-white rounded`}
-                          type="submit"
-                          data-bs-toggle="modal"
-                          data-bs-target="#exampleModal"
-                        >
-                          Request Interview
-                        </button>
-                        <button
-                          className={`btn_primary py-2 px-4 fw-bold text-white rounded`}
-                          type="submit"
-                        >
-                          Select
-                        </button>
+                    <div className="d-flex gap-4  pt-2">
+                      <div>
+                        <FaFileVideo
+                          style={{ fontSize: "40px", color: "#006600" }}
+                        />
                       </div>
+                      <h5 className="m-0 pt-2">Call to action title</h5>
                     </div>
                   </div>
                 </div>
@@ -235,17 +234,33 @@ const Tutorcard = () => {
                   </ul>
                 </div>
                 <div className="d-flex gap-2  px-3 pt-2 align-items-center">
-            <b className="m-0 p-0">Mode:</b>
-            <ul className="d-flex list-unstyled m-0 p-0">
-              <li className="m-0 p-0">Online In-Persion</li>
-            </ul>
-          </div>
+                  <b className="m-0 p-0">Mode:</b>
+                  <ul className="d-flex list-unstyled m-0 p-0">
+                    <li className="m-0 p-0">Online In-Persion</li>
+                  </ul>
+                </div>
                 <div className="d-flex gap-2  px-3 pt-2">
                   <b>Speaks:</b>
                   <ul className="d-flex list-unstyled gap-2">
                     <li>English</li>
                     <li>Spanish</li>
                   </ul>
+                </div>
+                <div className="d-flex justify-content-center gap-4 p-0 px-3">
+                  <button
+                    className={`w-25 btn_primary py-2 px-3 fw-bold text-white rounded`}
+                    type="submit"
+                    data-bs-toggle="modal"
+                    data-bs-target="#exampleModal"
+                  >
+                    Request Interview
+                  </button>
+                  <button
+                    className={`w-25 btn_primary py-2 px-4 fw-bold text-white rounded`}
+                    type="submit"
+                  >
+                    Select
+                  </button>
                 </div>
               </div>
             </div>

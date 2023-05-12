@@ -1,7 +1,7 @@
 import React from "react";
 import Head from "next/head";
 import Link from "next/link";
-import { Navbar, Footer } from "./../../components";
+import { Navbar, Footer } from "../../../components";
 import { BsCheck2Circle } from "react-icons/bs";
 
 export default function RegisterStudent() {
@@ -29,44 +29,63 @@ export default function RegisterStudent() {
             <div className="w-75 p-5">
               <div>
                 <div className="d-flex justify-content-between align-items-center mb-3">
-                  <h4 className="text-secondary fw-bold">Student</h4>
+                  <h4 className="text-secondary fw-bold">Email:</h4>
                   <p className="bg_secondary text-white p-2 rounded d-flex align-items-center gap-2 fw-bold">
                     <BsCheck2Circle style={{ fontSize: "22px" }} />
-                    student@123.com
+                    parent@123.com
                   </p>
                 </div>
                 <div>
                   <input
                     type="text"
                     className="w-100 p-2 rounded outline-0 border border_gray text_gray  mb-3"
-                    placeholder="Enter Parent/Guardian 1 Email"
+                    placeholder="First Name"
                   />
                   <input
                     type="text"
-                    className="w-100 p-2 rounded outline-0 border border_gray text_gray "
-                    placeholder="Enter Parent/Guardian 2 Email"
+                    className="w-100 p-2 rounded outline-0 border border_gray text_gray mb-3"
+                    placeholder="Last Name"
                   />
-                  <div className="py-2">
-                    <label className="text_gray m-0">
-                      This is to link your account to your parent/guardian
-                    </label>
-                    <br />
-                    <label className="text_gray m-0">
-                      We do not have any record of parent 2
-                    </label>
-                  </div>{" "}
-                  <div className="d-flex gap-2">
+
+                  <input
+                    type="text"
+                    className="w-100 p-2 rounded outline-0 border border_gray text_gray  mb-3"
+                    placeholder="Address 1"
+                  />
+                  <input
+                    type="text"
+                    name="addres2"
+                    className="w-100 p-2 rounded outline-0 border border_gray text_gray mb-2"
+                    placeholder="Address 2"
+                  />
+
+                  <div className="d-flex gap-2 my-2">
+                    <select className="w-100 p-2 rounded outline-0 border border_gray text_gray mb-3 ">
+                      <option>Country</option>
+                      <option>Student</option>
+                      <option>Student</option>
+                    </select>
+
+                    <select className="w-100 p-2 rounded outline-0 border border_gray text_gray mb-3 ">
+                      <option>State/Province/Region</option>
+                      <option>Student</option>
+                      <option>Student</option>
+                    </select>
+                  </div>
+                  <div className="d-flex gap-2 my-2">
+                    <select className="w-100 p-2 rounded outline-0 border border_gray text_gray mb-3 ">
+                      <option>City</option>
+                      <option>Student</option>
+                      <option>Student</option>
+                    </select>
+
                     <input
                       type="text"
                       className="w-100 p-2 rounded outline-0 border border_gray text_gray  mb-3"
-                      placeholder="First Name"
-                    />
-                    <input
-                      type="text"
-                      className="w-100 p-2 rounded outline-0 border border_gray text_gray  mb-3"
-                      placeholder="Last Name"
+                      placeholder="Zip/Post Code"
                     />
                   </div>
+
                   <div className="d-flex gap-2">
                     <input
                       type="password"
@@ -79,6 +98,7 @@ export default function RegisterStudent() {
                       placeholder="Confirm Password"
                     />
                   </div>
+
                   <div class="form-check">
                     <input
                       class="form-check-input"
