@@ -1,6 +1,8 @@
+
+
 import React, { useState } from "react";
 import Head from "next/head";
-import { Navbar, Footer } from "../../../components";
+import { ParentNavbar, Footer } from "../../../components";
 import Calendar from "react-calendar";
 
 export default function StudentRegistrationCCPay() {
@@ -14,23 +16,23 @@ export default function StudentRegistrationCCPay() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Navbar isLogin={true} />
+      <ParentNavbar isLogin={true} />
       <main className="container-fluid">
-        <div
-          className="d-flex justify-content-between gap-5  p-5 "
-          style={{ height: "90vh" }}
+      <div
+          className="row"
+          style={{ minHeight: "90vh" }}
         >
-          <div className="w-50">
-            <p className="fw-bold text-center">
+          <div className="col-12 col-lg-6 pt-5">
+          <p className="fw-bold text-center">
               Schedule Interview with John Doe
             </p>
             <Calendar onChange={onChange} value={value} />
           </div>
-          <div className="w-50">
-            <p className="fw-bold text-center text-white">I</p>
+          <div className="col-12 col-lg-6 pt-5">
+          <p className="fw-bold text-center text-white">I</p>
             <div className="shadow rounded py-5">
               <div
-                className="d-flex justify-content-between gap-4 px-5"
+                className="d-flex justify-content-between gap-4 px-3"
                 style={{ minHeight: "400px" }}
               >
                 <div className="w-100 ">
@@ -53,8 +55,10 @@ export default function StudentRegistrationCCPay() {
                   </div>
                 </div>
                 <div className=" w-100">
-                  <p className="p-0 m-0 fw-bold text-center py-2">
-                    Your information
+            
+
+<p className="p-0 m-0 fw-bold text-center py-2">
+                    Your dependent's information
                   </p>
 
                   <div className="d-flex align-items-center gap-3 py-3">
@@ -100,6 +104,7 @@ export default function StudentRegistrationCCPay() {
                   <h6 className="text-dark fw-bold">Grade:</h6>
 
                   <p className="text-dark fw-bold py-2">Middle School</p>
+               
                 </div>
               </div>
               <div className="d-flex gap-2 justify-content-center pt-5">
@@ -109,9 +114,13 @@ export default function StudentRegistrationCCPay() {
               </div>
             </div>
           </div>
-        </div>
+          </div>
+
+
+     
       </main>
       <Footer />
     </>
   );
 }
+

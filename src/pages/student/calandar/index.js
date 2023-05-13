@@ -17,15 +17,15 @@ export default function StudentRegistrationCCPay() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Navbar isLogin={true} />
-      <main className="container-fluid">
+      <main className="container">
         <div
-          className="d-flex justify-content-between gap-5  p-5 "
+          className="row"
           style={{ height: "90vh" }}
         >
-          <div className="w-50 pt-5">
+          <div className="col-12 col-lg-6 pt-5">
             <Calendar onChange={onChange} value={value} />
           </div>
-          <div className="w-50">
+          <div className="col-12 col-lg-6">
             <h3 className="text-center">Schedule</h3>
             <div
               className=" shadow p-5 bg-white rounded "
@@ -36,12 +36,13 @@ export default function StudentRegistrationCCPay() {
                   John Doe
                 </h5>
                 <h5 className="p-0 m-0 flex-fill fw-bold flex-fill">11:00AM</h5>
-                <BsFillChatFill className="p-0 m-0 flex-fill h2 flex-fill" />
+                <BsFillChatFill className="p-0 m-0 flex-fill h2 flex-fill"
+                      data-bs-toggle="modal"
+                  data-bs-target="#exampleModal2" />
 
                 <GoDeviceCameraVideo
                   className="p-0 m-0 flex-fill h2 flex-fill"
-                  data-bs-toggle="modal"
-                  data-bs-target="#exampleModal2"
+            
                 />
 
                 <RiDeleteBin6Line className="p-0 m-0 h2 flex-fill" />
@@ -95,7 +96,6 @@ export default function StudentRegistrationCCPay() {
           </div>
         </div>
 
-        <Footer />
         {/* Chat View Modal */}
         <div className="d-flex justify-content-center align-items-center">
           <div
@@ -147,6 +147,8 @@ export default function StudentRegistrationCCPay() {
           </div>
         </div>
       </main>
+        <Footer />
+
     </>
   );
 }

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Head from "next/head";
-import { Navbar, Footer } from "./../../../components";
+import { Navbar,TutorNavbar, Footer } from "./../../../components";
 import Calendar from "react-calendar";
 import { BsFillChatFill, BsFillSendFill } from "react-icons/bs";
 import { GoDeviceCameraVideo } from "react-icons/go";
@@ -17,90 +17,118 @@ export default function StudentRegistrationCCPay() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Navbar isLogin={true} />
+      <TutorNavbar isLogin={true} />
       <main className="container-fluid">
+      <div
+       style={{ height: "90vh" }}
+      >
         <div
           className="d-flex justify-content-between gap-5  p-5 "
-          style={{ height: "90vh" }}
+         
         >
-        
           <div className="w-50">
-            <h3 className="text-center">Schedule</h3>
-            <div
-              className=" shadow p-5 bg-white rounded "
-              style={{ minHeight: "400px" }}
-            >
-              <div className="d-flex align-items-center py-3">
-                <h5 className="p-0 m-0 flex-fill fw-bold flex-fill">
-                  John Doe
-                </h5>
-                <h5 className="p-0 m-0 flex-fill fw-bold flex-fill">11:00AM</h5>
-                <BsFillChatFill className="p-0 m-0 flex-fill h2 flex-fill" />
+            <p className="text-center">
+              Let us know the days of the week you are available and your
+              schedule
+            </p>
+            <table width="100%" role="grid" style={{ tableLayout: "fixed" }}>
+              <tr>
+                <th roll="gridcell">Mon</th>
+                <th roll="gridcell">Tue</th>
+                <th roll="gridcell">Wed</th>
+                <th roll="gridcell">Thur</th>
+                <th roll="gridcell">Fri</th>
+                <th roll="gridcell">Sat</th>
+                <th roll="gridcell">Sun</th>
+              </tr>
+              {/* <tr>
+<td>
+  <input class="form-check-input" type="checkbox" id="check1" name="option1" value="something" />
+</td>
+<td>
+<input class="form-check-input" type="checkbox" id="check1" name="option1" value="something" />
+</td>
+<td>
+<input class="form-check-input" type="checkbox" id="check1" name="option1" value="something" />
+</td>
+<td>
+<input class="form-check-input" type="checkbox" id="check1" name="option1" value="something" />
 
-                <GoDeviceCameraVideo
-                  className="p-0 m-0 flex-fill h2 flex-fill"
-                  data-bs-toggle="modal"
-                  data-bs-target="#exampleModal2"
-                />
+</td>
 
-                <RiDeleteBin6Line className="p-0 m-0 h2 flex-fill" />
+<td>
+<input class="form-check-input" type="checkbox" id="check1" name="option1" value="something" />
+
+</td>
+<td>
+<input class="form-check-input" type="checkbox" id="check1" name="option1" value="something" />
+
+</td>
+<td>
+<input class="form-check-input" type="checkbox" id="check1" name="option1" value="something" />
+
+</td>
+</tr> */}
+            </table>
+
+            <div className="row w-75 py-3 ">
+              <div className="col-4">
+                <p className="fw-bold">Available:</p>
               </div>
-              <div className="d-flex align-items-center py-3">
-                <h5 className="p-0 m-0 flex-fill fw-bold flex-fill">
-                  John Doe
-                </h5>
-                <h5 className="p-0 m-0 flex-fill fw-bold flex-fill">11:00AM</h5>
-                <BsFillChatFill className="p-0 m-0 flex-fill h2 flex-fill" />
-
-                <GoDeviceCameraVideo
-                  className="p-0 m-0 flex-fill h2 flex-fill"
-                  data-bs-toggle="modal"
-                  data-bs-target="#exampleModal2"
+              <div className="col-8">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  id="check1"
+                  name="option1"
+                  value="something"
+                  checked
                 />
-
-                <RiDeleteBin6Line className="p-0 m-0 h2 flex-fill" />
               </div>
-              <div className="d-flex align-items-center py-3">
-                <h5 className="p-0 m-0 flex-fill fw-bold flex-fill">
-                  John Doe
-                </h5>
-                <h5 className="p-0 m-0 flex-fill fw-bold flex-fill">11:00AM</h5>
-                <BsFillChatFill className="p-0 m-0 flex-fill h2 flex-fill" />
+            </div>
 
-                <GoDeviceCameraVideo
-                  className="p-0 m-0 flex-fill h2 flex-fill"
-                  data-bs-toggle="modal"
-                  data-bs-target="#exampleModal2"
-                />
-
-                <RiDeleteBin6Line className="p-0 m-0 h2 flex-fill" />
+            <div className="row w-75 py-2 ">
+              <div className="col-4">
+                <p className="fw-bold">Available:</p>
               </div>
-              <div className="d-flex align-items-center py-3">
-                <h5 className="p-0 m-0 flex-fill fw-bold flex-fill">
-                  John Doe
-                </h5>
-                <h5 className="p-0 m-0 flex-fill fw-bold flex-fill">11:00AM</h5>
-                <BsFillChatFill className="p-0 m-0 flex-fill h2 flex-fill" />
+              <div className="col-8">
+                <div className="row pb-2">
+                  <p className="col fw-bold">From</p>
+                  <select className="w-100 p-2 rounded outline-0 border border_gray text_gray  col">
+                    <option>06:00am</option>
+                    <option>Student</option>
+                    <option>Student</option>
+                  </select>
+                </div>
 
-                <GoDeviceCameraVideo
-                  className="p-0 m-0 flex-fill h2 flex-fill"
-                  data-bs-toggle="modal"
-                  data-bs-target="#exampleModal2"
-                />
-
-                <RiDeleteBin6Line className="p-0 m-0 h2 flex-fill" />
+                <div className="row pb-2">
+                  <p className="col fw-bold">To</p>
+                  <select className="w-100 p-2 rounded outline-0 border border_gray text_gray col">
+                    <option>06:00pm</option>
+                    <option>Student</option>
+                    <option>Student</option>
+                  </select>
+                </div>
               </div>
             </div>
           </div>
           <div className="w-50">
-            <p>Select days you don't intend to tutor e.g. Than</p>
+            <p className="text-center">
+              Select days you don't intend to tutor e.g. Thanksgaving, etc.
+              <br />
+              (Selected days will be blocked on your calandar)
+            </p>
             <Calendar onChange={onChange} value={value} />
           </div>
         </div>
-
-        <Footer />
-        
+        <div className=" mt-3 d-flex justify-content-center flex-column align-items-center gap-2">
+                    <button className="w-25 btn_primary text-light p-2 rounded fw-bold ">
+                      Save
+                    </button>
+        </div>
+        </div>
       </main>
+      <Footer />
     </>
   );
 }

@@ -20,7 +20,7 @@ export default function StudentRegistrationCCPay() {
           style={{ minHeight: "90vh", maxWidth: "1700px", margin: "auto" }}
         >
           <div class="row">
-            <div class="col-4">
+            <div class="col-12 col-lg-4">
               <div className="shadow rounded-10 bg-white py-4">
                 <div className="px-4">
                   <h5 className="fw-bold py-3">John Lark</h5>
@@ -53,7 +53,7 @@ export default function StudentRegistrationCCPay() {
                 </div>
               </div>
             </div>
-            <div class="col-8">
+            <div class="col-12 col-lg-8 py-2">
               <div className="shadow rounded-10 p-5 bg-white">
                 <div className="row">
                   <div className="col">

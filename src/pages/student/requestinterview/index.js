@@ -16,21 +16,21 @@ export default function StudentRegistrationCCPay() {
       </Head>
       <Navbar isLogin={true} />
       <main className="container-fluid">
-        <div
-          className="d-flex justify-content-between gap-5  p-5 "
-          style={{ height: "90vh" }}
+      <div
+          className="row"
+          style={{ minHeight: "90vh" }}
         >
-          <div className="w-50">
-            <p className="fw-bold text-center">
+          <div className="col-12 col-lg-6 pt-5">
+          <p className="fw-bold text-center">
               Schedule Interview with John Doe
             </p>
             <Calendar onChange={onChange} value={value} />
           </div>
-          <div className="w-50">
-            <p className="fw-bold text-center text-white">I</p>
+          <div className="col-12 col-lg-6 pt-5">
+          <p className="fw-bold text-center text-white">I</p>
             <div className="shadow rounded py-5">
               <div
-                className="d-flex justify-content-between gap-4 px-5"
+                className="d-flex justify-content-between gap-4 px-3"
                 style={{ minHeight: "400px" }}
               >
                 <div className="w-100 ">
@@ -92,7 +92,10 @@ export default function StudentRegistrationCCPay() {
               </div>
             </div>
           </div>
-        </div>
+          </div>
+
+
+     
       </main>
       <Footer />
     </>

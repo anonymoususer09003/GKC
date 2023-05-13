@@ -15,21 +15,22 @@ export default function StudentRegistrationCCPay() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="container-fluid">
         <Navbar isLogin={true} />
-        <div
-          className="d-flex justify-content-between gap-5  p-5 "
-          style={{ height: "90vh" }}
+      <main className="container-fluid">
+      <div
+          className="row"
+          style={{ minHeight: "90vh" }}
         >
-          <div className="w-50">
-            <p className="fw-bold text-center">Schedule class with John Doe</p>
+          <div className="col-12 col-lg-6 pt-5">
+          <p className="fw-bold text-center">Schedule class with John Doe</p>
             <Calendar onChange={onChange} value={value} />
           </div>
-          <div className="w-50">
-            <p className="fw-bold text-center text-white">I</p>
+          <div className="col-12 col-lg-6 pt-5">
+
+          <p className="fw-bold text-center text-white">I</p>
             <div className="shadow rounded py-5">
               <div
-                className="d-flex justify-content-between gap-4 px-5"
+                className="d-flex flex-sm-nowrap flex-wrap justify-content-between gap-4 px-5"
                 style={{ minHeight: "400px" }}
               >
                 <div className="w-100 ">
@@ -156,60 +157,12 @@ export default function StudentRegistrationCCPay() {
               </div>
             </div>
           </div>
-        </div>
-
-        <Footer />
-        {/* Chat View Modal */}
-        <div className="d-flex justify-content-center align-items-center">
-          <div
-            className="modal fade"
-            id="exampleModal2"
-            tabIndex="-1"
-            aria-labelledby="exampleModal2Label"
-            aria-hidden="true"
-          >
-            <div className="modal-dialog modal-dialog-centered modal-lg">
-              <div className="modal-content p-2">
-                <div className="d-flex justify-content-between">
-                  <h5 className="modal-title" id="exampleModal2Label"></h5>
-                  <button
-                    type="button"
-                    className="btn-close"
-                    data-bs-dismiss="modal"
-                    aria-label="Close"
-                  ></button>
-                </div>
-                <div className="modal-body">
-                  <div className=" p-3" style={{ minHeight: "400px" }}>
-                    <div className="py-1 text-end">
-                      <p className="p-0 m-0 fw-bold">
-                        lorem ipsum dolor sit amet, consectetur adipis.
-                      </p>
-                      <small className="p-0 m-0">John Doe 4/11/23 8:15am</small>
-                    </div>
-
-                    <div className="py-1">
-                      <p className="p-0 m-0 fw-bold">
-                        lorem ipsum dolor sit amet, consectetur adipis.
-                      </p>
-                      <small className="p-0 m-0">John Doe 4/11/23 8:15am</small>
-                    </div>
-                  </div>
-
-                  <div className=" d-flex align-items-center px-2 gap-2">
-                    <input
-                      type="text"
-                      placeholde=""
-                      className="border  p-2 rounded flex-fill"
-                    />{" "}
-                    <BsFillSendFill className="h3 p-0 m-0" />
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
-        </div>
+        
+
+       
       </main>
+<Footer />
     </>
   );
 }

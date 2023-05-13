@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Head from "next/head";
-import { Navbar, Footer } from "./../../../components";
+import { ParentNavbar, Footer } from "./../../../components";
 import { BsCheck2Circle } from "react-icons/bs";
 import { MdEmail, MdDelete } from "react-icons/md";
 export default function StudentRegistrationCCPay() {
@@ -12,7 +12,7 @@ export default function StudentRegistrationCCPay() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Navbar isLogin={true} />
+      <ParentNavbar isLogin={true} />
       <main className="container-fluid">
         <div
           className="p-5 "

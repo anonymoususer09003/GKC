@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Head from "next/head";
-import { Navbar, Footer } from "../../../components";
+import { ParentNavbar, Footer } from "../../../components";
 
 export default function StudentRegistrationCCPay() {
   return (
@@ -12,7 +12,7 @@ export default function StudentRegistrationCCPay() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="container-fluid">
-        <Navbar isLogin={true} />
+        <ParentNavbar isLogin={true} />
         <div className="row">
           <div
             className="col-12 col-lg-5 position-relative"

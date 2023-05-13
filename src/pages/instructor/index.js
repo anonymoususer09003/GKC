@@ -1,12 +1,16 @@
 import React, { useState } from "react";
 import Head from "next/head";
-import { Navbar, Footer } from "../../components";
+import { Navbar,TutorNavbar, Footer } from "../../components";
 import Calendar from "react-calendar";
 import { BsFillChatFill, BsFillSendFill } from "react-icons/bs";
 import { GoDeviceCameraVideo } from "react-icons/go";
 import { FiEdit } from "react-icons/fi";
 import { RiDeleteBin6Line } from "react-icons/ri";
+import {useRouter} from "next/router"
+
 export default function StudentRegistrationCCPay() {
+  const navigation = useRouter();
+
   const [value, onChange] = useState(new Date());
 
   return (
@@ -17,14 +21,14 @@ export default function StudentRegistrationCCPay() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Navbar isLogin={true} />
+      <TutorNavbar isLogin={true} />
       <main className="container-fluid">
         <div
           className="d-flex justify-content-between gap-5  p-5 "
           style={{ height: "90vh" }}
         >
           <div className="w-50">
-            <div className="d-flex justify-content-end p-2">
+            <div className="d-flex justify-content-end p-2" onClick={()=> navigation.push('/instructor/editcalandar')}>
               <FiEdit style={{ fontSize: "24px" }} />
             </div>
             <Calendar onChange={onChange} value={value} />
@@ -40,12 +44,12 @@ export default function StudentRegistrationCCPay() {
                   John Doe
                 </h5>
                 <h5 className="p-0 m-0 flex-fill fw-bold flex-fill">11:00AM</h5>
-                <BsFillChatFill className="p-0 m-0 flex-fill h2 flex-fill" />
+                <BsFillChatFill className="p-0 m-0 flex-fill h2 flex-fill"   data-bs-toggle="modal"
+                  data-bs-target="#exampleModal2"/>
 
                 <GoDeviceCameraVideo
                   className="p-0 m-0 flex-fill h2 flex-fill"
-                  data-bs-toggle="modal"
-                  data-bs-target="#exampleModal2"
+                
                 />
 
                 <RiDeleteBin6Line className="p-0 m-0 h2 flex-fill" />
@@ -55,12 +59,12 @@ export default function StudentRegistrationCCPay() {
                   John Doe
                 </h5>
                 <h5 className="p-0 m-0 flex-fill fw-bold flex-fill">11:00AM</h5>
-                <BsFillChatFill className="p-0 m-0 flex-fill h2 flex-fill" />
+                <BsFillChatFill className="p-0 m-0 flex-fill h2 flex-fill"  data-bs-toggle="modal"
+                  data-bs-target="#exampleModal2"/>
 
                 <GoDeviceCameraVideo
                   className="p-0 m-0 flex-fill h2 flex-fill"
-                  data-bs-toggle="modal"
-                  data-bs-target="#exampleModal2"
+                 
                 />
 
                 <RiDeleteBin6Line className="p-0 m-0 h2 flex-fill" />
@@ -70,12 +74,12 @@ export default function StudentRegistrationCCPay() {
                   John Doe
                 </h5>
                 <h5 className="p-0 m-0 flex-fill fw-bold flex-fill">11:00AM</h5>
-                <BsFillChatFill className="p-0 m-0 flex-fill h2 flex-fill" />
+                <BsFillChatFill className="p-0 m-0 flex-fill h2 flex-fill" data-bs-toggle="modal"
+                  data-bs-target="#exampleModal2"/>
 
                 <GoDeviceCameraVideo
                   className="p-0 m-0 flex-fill h2 flex-fill"
-                  data-bs-toggle="modal"
-                  data-bs-target="#exampleModal2"
+                
                 />
 
                 <RiDeleteBin6Line className="p-0 m-0 h2 flex-fill" />
@@ -85,12 +89,12 @@ export default function StudentRegistrationCCPay() {
                   John Doe
                 </h5>
                 <h5 className="p-0 m-0 flex-fill fw-bold flex-fill">11:00AM</h5>
-                <BsFillChatFill className="p-0 m-0 flex-fill h2 flex-fill" />
+                <BsFillChatFill className="p-0 m-0 flex-fill h2 flex-fill" data-bs-toggle="modal"
+                  data-bs-target="#exampleModal2" />
 
                 <GoDeviceCameraVideo
                   className="p-0 m-0 flex-fill h2 flex-fill"
-                  data-bs-toggle="modal"
-                  data-bs-target="#exampleModal2"
+          
                 />
 
                 <RiDeleteBin6Line className="p-0 m-0 h2 flex-fill" />

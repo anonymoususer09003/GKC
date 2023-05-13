@@ -12,17 +12,15 @@ export default function StudentRegistrationCCPay() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="container-fluid">
         <Navbar isLogin={true} />
+      <main className="container">
         <br />
         <br />
         <br />
-        <div
-          className="d-flex justify-content-between gap-5 pt-5 container"
-          style={{ height: "90vh" }}
-        >
-          <div className="w-25 ">
-            <ul className="p-0 m-0" style={{ listStyle: "none" }}>
+
+        <div className="row" style={{minHeight:"90vh"}} >
+        <div className="col-12 col-lg-3">
+        <ul className="p-0 m-0" style={{ listStyle: "none" }}>
               <li className="p-0 m-0 fw-bold bg-light p-3 my-3 rounded ">
                 John Doe
               </li>
@@ -32,9 +30,11 @@ export default function StudentRegistrationCCPay() {
                 Scott Lopez
               </li>
             </ul>
-          </div>
-          <div
-            className="w-75 border d-flex flex-column justify-content-between p-3 rounded"
+       </div>
+
+       <div className="col-12 col-lg-9">
+       <div
+            className=" border d-flex flex-column justify-content-between p-3 rounded"
             style={{ height: "600px" }}
           >
             <div className=" p-3" style={{ minHeight: "400px" }}>
@@ -60,11 +60,15 @@ export default function StudentRegistrationCCPay() {
               />{" "}
               <BsFillSendFill className="h3 p-0 m-0" />
             </div>
-          </div>
+            </div>
+
         </div>
 
-        <Footer />
+        </div>
+ 
+
       </main>
+        <Footer />
     </>
   );
 }

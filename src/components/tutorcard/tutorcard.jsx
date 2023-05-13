@@ -7,7 +7,7 @@ import StarRatings from "react-star-ratings";
 const Tutorcard = () => {
   return (
     <>
-      <div className="d-flex align-items-center gap-4 border my-2 p-3 shadow p-3 mb-5 bg-white rounded">
+      <div className="d-flex flex-column flex-md-row align-items-center gap-4 border my-2 p-3 shadow p-3 mb-5 bg-white rounded">
         <div data-bs-toggle="modal" data-bs-target="#exampleModal">
           <Image
             src="/assets/student-preview.png"
@@ -21,14 +21,13 @@ const Tutorcard = () => {
 
         <div
           className="d-flex justify-conntent-between align-items-end"
-          style={{ minHeight: "210px" }}
         >
           <div>
             <FaFileVideo  style={{ fontSize: "40px", color: "#006600" }} />
           </div>
         </div>
         <div>
-          <div className="d-flex align-items-center justify-content-between flex-1">
+          <div className="d-flex gap-2 flex-wrap align-items-center justify-content-between flex-1">
             <b
               className="m-0 p-0"
               data-bs-toggle="modal"
@@ -96,7 +95,7 @@ const Tutorcard = () => {
           </p>
           <div className="d-flex gap-2 m-0 p-0 align-items-center">
             <b className="m-0 p-0">Courses:</b>
-            <ul className="d-flex list-unstyled m-0 p-0 gap-3 align-items-center">
+            <ul className="d-flex flex-wrap list-unstyled m-0 p-0 gap-3 align-items-center">
               <li className="bg_secondary text-white p-2 rounded d-flex align-items-center gap-2">
                 <BsCheck2Circle style={{ fontSize: "22px" }} />
                 Course 1
@@ -152,7 +151,7 @@ const Tutorcard = () => {
                 ></button>
               </div>
               <div className="modal-body">
-                <div className="d-flex align-items-center gap-3">
+                <div className="d-flex flex-column flex-md-row align-items-center gap-3">
                   <div>
                     <Image
                       src="/assets/student-preview.png"
@@ -164,7 +163,7 @@ const Tutorcard = () => {
                     />
                   </div>
                   <div className="flex-1 w-100">
-                    <div className="d-flex justify-content-between align-items-center ">
+                    <div className="d-flex flex-wrap justify-content-between align-items-center ">
                       <h5 className="m-0 p-0">John S.</h5>
                       <div className="d-flex align-items-center gap-2">
                         <div className="mb-2">
@@ -193,7 +192,7 @@ const Tutorcard = () => {
                     </div>
                   </div>
                 </div>
-                <p className="my-2 p-3">
+                <p className="my-2 p-0 p-md-3 small">
                   Lorem ipsum dolor sit amet consectetur, adipisicing elit.
                   Praesentium repellendus blanditiis nulla obcaecati est, animi,
                   vitae rerum dolores delectus, soluta iusto perspiciatis
@@ -214,7 +213,7 @@ const Tutorcard = () => {
 
                 <div className="d-flex gap-2 m-0 px-3 align-items-center">
                   <b className="m-0 p-0">Courses:</b>
-                  <ul className="d-flex list-unstyled m-0 p-0 gap-3 align-items-center">
+                  <ul className="d-flex flex-wrap list-unstyled m-0 p-0 gap-1 align-items-center">
                     <li className="bg_secondary text-white p-2 rounded d-flex align-items-center gap-2">
                       <BsCheck2Circle style={{ fontSize: "22px" }} />
                       Course 1
@@ -246,9 +245,9 @@ const Tutorcard = () => {
                     <li>Spanish</li>
                   </ul>
                 </div>
-                <div className="d-flex justify-content-center gap-4 p-0 px-3">
+                <div className="d-flex flex-wrap flex-column flex-md-row justify-content-center gap-4 p-0 px-3">
                   <button
-                    className={`w-25 btn_primary py-2 px-3 fw-bold text-white rounded`}
+                    className={` btn_primary py-2 px-3 fw-bold text-white rounded`}
                     type="submit"
                     data-bs-toggle="modal"
                     data-bs-target="#exampleModal"
@@ -256,7 +255,7 @@ const Tutorcard = () => {
                     Request Interview
                   </button>
                   <button
-                    className={`w-25 btn_primary py-2 px-4 fw-bold text-white rounded`}
+                    className={`btn_primary py-2 px-4 fw-bold text-white rounded`}
                     type="submit"
                   >
                     Select
@@ -318,7 +317,7 @@ const Tutorcard = () => {
                   </div>
                 </div>
 
-                <div className="d-flex align-items-center gap-4 border my-2 shadow p-3 bg-white rounded">
+                <div className="d-flex flex-column flex-md-row align-items-center gap-4 border my-2 shadow p-3 bg-white rounded">
                   <div>
                     <Image
                       src="/assets/student-preview.png"
@@ -344,7 +343,7 @@ const Tutorcard = () => {
                         <p className="m-0 p-0">Stars 4.2/5</p>
                       </div>
                     </div>
-                    <p className="m-0 py-2">
+                    <p className="m-0 py-2 small">
                       Lorem ipsum dolor sit amet consectetur, adipisicing elit.
                       Praesentium repellendus blanditiis nulla obcaecati est,
                       animi, vitae rerum dolores delectus, voluptas sapiente
@@ -353,7 +352,7 @@ const Tutorcard = () => {
                   </div>
                 </div>
 
-                <div className="d-flex align-items-center gap-4 border my-2 shadow p-3 bg-white rounded">
+                <div className="d-flex flex-column flex-md-row  align-items-center gap-4 border my-2 shadow p-3 bg-white rounded">
                   <div>
                     <Image
                       src="/assets/student-preview.png"
@@ -379,7 +378,7 @@ const Tutorcard = () => {
                         <p className="m-0 p-0">Stars 4.2/5</p>
                       </div>
                     </div>
-                    <p className="m-0 py-2">
+                    <p className="m-0 py-2 small">
                       Lorem ipsum dolor sit amet consectetur, adipisicing elit.
                       Praesentium repellendus blanditiis nulla obcaecati est,
                       animi, vitae rerum dolores delectus, voluptas sapiente
@@ -388,7 +387,7 @@ const Tutorcard = () => {
                   </div>
                 </div>
 
-                <div className="d-flex justify-content-between align-items-center p-3">
+                <div className="d-flex flex-column flex-md-row gap-2 gap-md-0 justify-content-between align-items-center p-3">
                   <button
                     className={`btn_primary py-2 px-5 fw-bold text-white rounded`}
                     type="submit"

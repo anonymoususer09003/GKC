@@ -34,7 +34,7 @@ export default function StudentRegistrationCCPay() {
           style={{ minHeight: "90vh", maxWidth: "1700px", margin: "auto" }}
         >
           <div class="row">
-            <div class="col-4">
+            <div class="col-12 col-lg-4">
               <div className="shadow rounded-10 bg-white py-4">
                 <div className="px-4">
                   <h5 className="fw-bold py-3">John Lark</h5>
@@ -69,10 +69,10 @@ export default function StudentRegistrationCCPay() {
                 </div>
               </div>
             </div>
-            <div class="col-8">
+            <div class="col-12 col-lg-8 py-2">
               <div className="shadow rounded-10 p-5 bg-white">
                 <div className="row">
-                  <div className="col">
+                  <div className="col-12 col-md-4">
                     <h4 className="fw-bold">Grade:</h4>
 
                     <div class="form-check">
@@ -124,7 +124,7 @@ export default function StudentRegistrationCCPay() {
                       </label>
                     </div>
                   </div>
-                  <div className="col border-start px-4 border_primary">
+                  <div className="col-12 col-md-4 border-start px-4 border_primary">
                     <h4 className="fw-bold">Delivery Mode:</h4>
                     <div class="form-check">
                       <input
@@ -149,7 +149,7 @@ export default function StudentRegistrationCCPay() {
                       </label>
                     </div>
                   </div>
-                  <div className="col border-start px-4 border_primary">
+                  <div className="col-12 col-md-4 border-start px-4 border_primary">
                     <h4 className="fw-bold">Language Preference:</h4>
                     <select className="w-100 p-2 rounded outline-0 border border_gray text_gray ">
                       <option>Select</option>
