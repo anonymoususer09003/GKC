@@ -5,5 +5,7 @@ files:
     destination: /var/www/html/gkcabc-webapp-4ddbbc061b2a
 file_exists_behavior: OVERWRITE
 hooks:
+  BeforInstall:
+    - location: ./pre_deploy.sh
   AfterInstall:
     - location: ./script.sh
