@@ -1,10 +1,16 @@
 import React, { useState } from "react";
 import Head from "next/head";
 import { Inter } from "next/font/google";
-import { ParentNavbar, Footer } from "../../../components";
+import { Navbar, Footer } from "../../../components";
 import { FiRefreshCw } from "react-icons/fi";
 import { TbSpeakerphone } from "react-icons/tb";
+import {useRouter} from "next/router"
+
 export default function ParentFinancialReport() {
+  const navigation = useRouter();
+  const onRequestRefund = () => {
+      navigation.push("/parent/requestrefund")
+  };
   return (
     <>
       <Head>
@@ -13,7 +19,7 @@ export default function ParentFinancialReport() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>{" "}
-      <ParentNavbar isLogin={true} />{" "}
+      <Navbar isLogin={true} />{" "}
       <main className="container-fluid">
         <div className="container">
           <div className=" " style={{ minHeight: "100vh" }}>
@@ -70,7 +76,7 @@ export default function ParentFinancialReport() {
                     <td className="fw-bold"> $3 </td>{" "}
                     <td className="fw-bold d-flex justify-content-between align-items-center">
                       {" "}
-                      $63 .00 <TbSpeakerphone />{" "}
+                      $63 .00 <TbSpeakerphone onClick={()=> onRequestRefund()}/>{" "}
                     </td>{" "}
                   </tr>{" "}
                   <tr>

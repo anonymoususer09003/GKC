@@ -4,16 +4,21 @@ import Link from "next/link";
 import { Navbar, Footer } from "../../../components";
 import { BsCheck2Circle } from "react-icons/bs";
 import {useRouter} from "next/router"
-
+import { RiArrowGoBackLine } from "react-icons/ri";
 export default function RegisterStudent() {
   const [email, setEmail] = useState("");
   const navigation = useRouter();
+
   const onContinue = () => {
+    window.localStorage.setItem("userType", JSON.stringify(email))
+    window.localStorage.setItem("gkcAuth", JSON.stringify(true))
    if(email === "parent"){
     navigation.push("/auth/parentccinfo")
-
   }
-  else {
+  if(email === "instructor"){
+    navigation.push("/auth/registrationmore")
+  }
+  if(email === "instructor"){
 
     navigation.push("/auth/registrationgrade")
   }
@@ -32,7 +37,13 @@ export default function RegisterStudent() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="container-fluid d-flex flex-column justify-content-between  min-vh-100">
-        <Navbar isLogin={true} />
+      <Link
+          href="#"
+          className="text-decoration-none p-4 d-flex gap-2 align-items-center text-dark"
+        >
+          <RiArrowGoBackLine />
+          <p className="fw-bold m-0 p-0 ">Back</p>
+        </Link>
         <div className="row">
           <div
             className="col-12 col-lg-6 position-relative  d-none d-md-block "

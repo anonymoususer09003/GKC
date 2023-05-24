@@ -10,6 +10,8 @@ const TutorNavbar = ({ isLogin }) => {
 
   useEffect(()=>{
       const stored = localStorage.getItem("gkcAuth");
+  console.log(stored);
+
       setValue(stored ? JSON.parse(stored) : false);
   },[])
 const onSignOut = () => {
@@ -72,9 +74,11 @@ const onSignOut = () => {
               {value ? (
                 <>
                   <Link
-                    href="/signin"
+                    href="/auth/signin"
                     className="btn_primary py-2 px-4 fw-bold text-white rounded text-decoration-none "
-                  >
+                    onClick={onSignOut}
+                
+                >
                     Sign Out
                   </Link>
               
@@ -100,7 +104,7 @@ const onSignOut = () => {
                             <a href="/auth/changepassword" className="nav-link fw-bold">Change Password</a>
                           </li>
                           <li className="p-3">
-                            <a href="/parent/ccinfo" className="nav-link fw-bold">Payment Information</a>
+                            <a href="/parent/paymentinfo" className="nav-link fw-bold">Payment Information</a>
                           </li>
                           <li className="p-3">
                             <a href="/parent/reviewinstructor" className="nav-link fw-bold">Review Instructor</a>

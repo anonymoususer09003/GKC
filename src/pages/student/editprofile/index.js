@@ -4,6 +4,8 @@ import { Navbar, Footer } from "./../../../components";
 import { BsCheck2Circle } from "react-icons/bs";
 import { MdEmail, MdArrowForwardIos } from "react-icons/md";
 import { MultiSelect } from "react-multi-select-component";
+import { useRouter } from "next/router";
+
 export default function StudentRegistrationCCPay() {
   const options = [
     { label: "Grapes ", value: "grapes" },
@@ -18,7 +20,10 @@ export default function StudentRegistrationCCPay() {
   ];
 
   const [selected, setSelected] = useState([]);
-
+  const navigation = useRouter();
+  const onSaveProfile = () => {
+    navigation.push("/student/settingprofile")
+  }
   return (
     <>
       <Head>
@@ -62,7 +67,7 @@ export default function StudentRegistrationCCPay() {
                   <div></div>
 
                   <div className="d-flex gap-2 justify-content-center py-3">
-                    <button className="px-4 btn btn-success text-light p-2 rounded fw-bold d-flex align-items-center justify-content-center gap-2">
+                    <button className="px-4 btn btn-success text-light p-2 rounded fw-bold d-flex align-items-center justify-content-center gap-2" onClick={()=>onSaveProfile()}>
                       <BsCheck2Circle className="h3 m-0 p-0" /> Save Profile
                     </button>
                   </div>

@@ -12,10 +12,7 @@ export default function ActivateCode() {
   const onContinue = () => {
     navigation.push("/auth/register");
   };
-  
-
-
-  return (
+    return (
     <>
       <Head>
         <title>Auth | Activate Code</title>

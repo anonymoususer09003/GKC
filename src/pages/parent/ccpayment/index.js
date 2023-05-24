@@ -1,8 +1,11 @@
 import React, { useState } from "react";
 import Head from "next/head";
 import { ParentNavbar, Footer } from "../../../components";
+import {useRouter} from "next/router"
 
 export default function StudentRegistrationCCPay() {
+  const navigation = useRouter();
+
   return (
     <>
       <Head>
@@ -99,7 +102,7 @@ export default function StudentRegistrationCCPay() {
                   </label>
                 </div>
                 <div className="d-flex gap-2 justify-content-center mt-3">
-                  <button className="w-25 btn_primary text-light p-2 rounded fw-bold ">
+                  <button className="w-25 btn_primary text-light p-2 rounded fw-bold " onClick={()=> navigation.push("/parent/messaging")}>
                     Pay
                   </button>
                 </div>

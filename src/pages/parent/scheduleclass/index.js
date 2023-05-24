@@ -3,10 +3,15 @@ import Head from "next/head";
 import { ParentNavbar, Footer } from "../../../components";
 import Calendar from "react-calendar";
 import { BsFillSendFill } from "react-icons/bs";
-
+import {useRouter} from "next/router"
+  
 export default function StudentRegistrationCCPay() {
+  const navigation = useRouter();
   const [value, onChange] = useState(new Date());
-
+ 
+  const onContinue = () => {
+    navigation.push("/parent/paychildscheduleclass")
+  }
   return (
     <>
       <Head>
@@ -169,7 +174,7 @@ Your dependent's information
                 </div>
               </div>
               <div className="d-flex gap-2 justify-content-center pt-5">
-                <button className="w-25 btn_primary text-light p-2 rounded fw-bold ">
+                <button className="w-25 btn_primary text-light p-2 rounded fw-bold " onClick={()=>onContinue()}>
                   Schedule
                 </button>
               </div>

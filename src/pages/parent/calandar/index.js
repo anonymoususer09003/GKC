@@ -1,13 +1,19 @@
 import React, { useState } from "react";
 import Head from "next/head";
-import { ParentNavbar, Footer } from "../../../components";
+import {  ParentNavbar, Footer } from "../../../components";
 import Calendar from "react-calendar";
 import { BsFillChatFill, BsFillSendFill } from "react-icons/bs";
 import { GoDeviceCameraVideo } from "react-icons/go";
 import { RiDeleteBin6Line } from "react-icons/ri";
-export default function ParentCalandar() {
-  const [value, onChange] = useState(new Date());
+import {useRouter} from "next/router"
 
+export default function ParentCalandar() {
+  const navigation = useRouter();
+
+  const [value, onChange] = useState(new Date());
+  const onContinue = () => {
+    navigation.push("/instructor/video")
+  }
   return (
     <>
       <Head>
@@ -45,6 +51,7 @@ export default function ParentCalandar() {
 
                 <GoDeviceCameraVideo
                   className="p-0 m-0 flex-fill h4 flex-fill"
+                  onClick={()=>onContinue()}
                
                 />
 
@@ -63,6 +70,7 @@ export default function ParentCalandar() {
 
                 <GoDeviceCameraVideo
                   className="p-0 m-0 flex-fill h4 flex-fill"
+                  onClick={()=>onContinue()}
                
                 />
 
@@ -81,6 +89,7 @@ export default function ParentCalandar() {
 
                 <GoDeviceCameraVideo
                   className="p-0 m-0 flex-fill h4 flex-fill"
+                  onClick={()=>onContinue()}
                
                 />
 
@@ -99,6 +108,7 @@ export default function ParentCalandar() {
 
                 <GoDeviceCameraVideo
                   className="p-0 m-0 flex-fill h4 flex-fill"
+                  onClick={()=>onContinue()}
                
                 />
 

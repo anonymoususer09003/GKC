@@ -4,7 +4,13 @@ import { Inter } from "next/font/google";
 import { Navbar, Footer } from "../../../components";
 import { FiRefreshCw } from "react-icons/fi";
 import { TbSpeakerphone } from "react-icons/tb";
+import {useRouter} from "next/router"
+
 export default function StudentFinancialReport() {
+  const navigation = useRouter();
+  const onRequestRefundSubmit = () => {
+      navigation.push("/")
+  };
   return (
     <>
       <Head>
@@ -82,7 +88,7 @@ export default function StudentFinancialReport() {
             </div>
 
             <div className="d-flex gap-2 justify-content-end mt-3">
-              <button className="w-25 btn_primary text-light p-2 rounded fw-bold ">
+              <button className="w-25 btn_primary text-light p-2 rounded fw-bold " onClick={()=> onRequestRefundSubmit()}>
                 Exit
               </button>
             </div>

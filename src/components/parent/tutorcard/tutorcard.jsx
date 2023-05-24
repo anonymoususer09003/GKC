@@ -9,7 +9,7 @@ import {useRouter} from "next/router"
 const Tutorcard = () => {
   const navigation = useRouter()
   const onRequestInterview = () => {
-    navigation.push("/student/requestinterview")
+    navigation.push("/parent/requestinterview")
   }
   return (
     <>

@@ -4,7 +4,14 @@ import { Inter } from "next/font/google";
 import { ParentNavbar, Footer } from "../../../components";
 import { FiRefreshCw } from "react-icons/fi";
 import { TbSpeakerphone } from "react-icons/tb";
+import {useRouter} from "next/router"
+
+
 export default function ParentRequestRefundSubmited() {
+  const navigation = useRouter();
+  const onRequestRefund = () => {
+      navigation.push("/parent")
+  };
   return (
     <>
       <Head>
@@ -82,7 +89,7 @@ export default function ParentRequestRefundSubmited() {
             </div>
 
             <div className="d-flex gap-2 justify-content-end mt-3">
-              <button className="w-25 btn_primary text-light p-2 rounded fw-bold ">
+              <button className="w-25 btn_primary text-light p-2 rounded fw-bold " onClick={()=> onRequestRefund()}>
                 Exit
               </button>
             </div>

@@ -3,7 +3,11 @@ import Head from "next/head";
 import { Navbar,TutorNavbar, Footer } from "../../../components";
 import Link from "next/link";
 import { RiArrowGoBackLine } from "react-icons/ri";
+import {useRouter} from "next/router"
+
 export default function RegistrationGrade() {
+  const navigation = useRouter();
+
   return (
     <>
       <Head>
@@ -12,10 +16,10 @@ export default function RegistrationGrade() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-        <TutorNavbar />
+        {/* <TutorNavbar /> */}
       <main className="container-fluid">
         <Link
-          href="/"
+          href="#"
           className="text-decoration-none p-4 d-flex gap-2 align-items-center text-dark"
         >
           <RiArrowGoBackLine />
@@ -133,7 +137,7 @@ export default function RegistrationGrade() {
             </div>
           </div>
           <div className="d-flex gap-2 justify-content-center mt-3">
-            <button className="btn_primary text-light p-2 px-5 rounded fw-bold ">
+            <button className="btn_primary text-light p-2 px-5 rounded fw-bold " onClick={()=>navigation.push("/auth/proficiencytoteach")}>
               Continue
             </button>
           </div>

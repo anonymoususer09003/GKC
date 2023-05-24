@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
@@ -8,10 +8,20 @@ import {useRouter} from "next/router"
 
 export default function SignIn() {
   const navigation = useRouter();
+  const [userType, setUserType] = useState('student')
   const onContinue = () => {
     // console.log(userType)
+    window.localStorage.setItem("userType", JSON.stringify(userType))
     window.localStorage.setItem("gkcAuth", JSON.stringify(true))
-    navigation.push("/"); 
+    if(userType === "student"){
+      navigation.push("/")
+    }
+    if(userType === "parent"){
+      navigation.push("/parent")
+    }
+    if(userType === "instructor"){
+      navigation.push("/instructor")
+    }
   };
   return (
     <>
@@ -54,10 +64,10 @@ export default function SignIn() {
                   </Link>
                 </div>
                 <div>
-                  <select className="w-100 p-2 rounded outline-0 border border_gray text_gray mb-3 ">
-                    <option>Student</option>
-                    <option>Student</option>
-                    <option>Student</option>
+                  <select onChange={(e)=> setUserType(e.target.value) } className="w-100 p-2 rounded outline-0 border border_gray text_gray mb-3 ">
+                    <option value="student">Student</option>
+                    <option value="parent">Parent</option>
+                    <option value="instructor">Instructor</option>
                   </select>
                   <input
                     type="text"

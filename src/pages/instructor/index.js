@@ -12,7 +12,9 @@ export default function StudentRegistrationCCPay() {
   const navigation = useRouter();
 
   const [value, onChange] = useState(new Date());
-
+  const onContinue = () => {
+    navigation.push("/instructor/video")
+  }
   return (
     <>
       <Head>
@@ -49,7 +51,7 @@ export default function StudentRegistrationCCPay() {
 
                 <GoDeviceCameraVideo
                   className="p-0 m-0 flex-fill h2 flex-fill"
-                
+                  onClick={()=>onContinue()}
                 />
 
                 <RiDeleteBin6Line className="p-0 m-0 h2 flex-fill" />
@@ -64,6 +66,7 @@ export default function StudentRegistrationCCPay() {
 
                 <GoDeviceCameraVideo
                   className="p-0 m-0 flex-fill h2 flex-fill"
+                  onClick={()=>onContinue()}
                  
                 />
 
@@ -79,6 +82,7 @@ export default function StudentRegistrationCCPay() {
 
                 <GoDeviceCameraVideo
                   className="p-0 m-0 flex-fill h2 flex-fill"
+                  onClick={()=>onContinue()}
                 
                 />
 
@@ -94,6 +98,7 @@ export default function StudentRegistrationCCPay() {
 
                 <GoDeviceCameraVideo
                   className="p-0 m-0 flex-fill h2 flex-fill"
+                  onClick={()=>onContinue()}
           
                 />
 

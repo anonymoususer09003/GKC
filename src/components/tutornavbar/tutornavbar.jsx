@@ -1,11 +1,22 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
 import Image from "next/image";
 import styles from "@/styles/Navbar.module.css";
 import Link from "next/link";
 import { IoMdSettings } from "react-icons/io";
 import { FcCalendar } from "react-icons/fc";
 const TutorNavbar = ({ isLogin }) => {
-  console.log(isLogin);
+  const [value, setValue] = useState(false)
+  console.log(value);
+
+  useEffect(()=>{
+      const stored = localStorage.getItem("gkcAuth");
+  console.log(stored);
+
+      setValue(stored ? JSON.parse(stored) : false);
+  },[])
+const onSignOut = () => {
+  window.localStorage.removeItem("gkcAuth")
+}
   return (
     <>
       <nav className="navbar navbar-expand-lg navbar-light bg-light p-3">
@@ -33,15 +44,15 @@ const TutorNavbar = ({ isLogin }) => {
           </button>
           <div className="collapse navbar-collapse" id="navbarSupportedContent">
             <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-              {isLogin && (
+              {/* {value && (
                 <>
                   <li className="nav-item">
-                    <a className="nav-link" href="#">
+                    <a className="nav-link" href="/instructor">
                       <FcCalendar style={{ fontSize: "30px" }} />
                     </a>
                   </li>
                 </>
-              )}
+              )} */}
               <li className="nav-item">
                 <a className="nav-link active" aria-current="page" href="/instructor">
                   Home
@@ -49,7 +60,7 @@ const TutorNavbar = ({ isLogin }) => {
               </li>
             </ul>
             <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-              {isLogin && (
+              {value && (
                 <>
                   <li className="nav-item">
                     <a className="nav-link active" aria-current="page" href="/instructor/messaging">
@@ -60,10 +71,10 @@ const TutorNavbar = ({ isLogin }) => {
               )}
             </ul>
             <form className="d-flex align-items-center gap-2">
-              {isLogin ? (
+              {value ? (
                 <>
                   <Link
-                    href="/signin"
+                    href="/auth/signin"
                     className="btn_primary py-2 px-4 fw-bold text-white rounded text-decoration-none "
                   >
                     Sign Out

@@ -12,7 +12,7 @@ export default function Selection() {
   const onContinue = () => {
     // console.log(userType)
     window.localStorage.setItem("userType", JSON.stringify(userType))
-    navigation.push("/auth/activatecode"); 
+    navigation.push("/auth/registeremail"); 
   };
 
   return (

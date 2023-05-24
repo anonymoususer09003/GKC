@@ -3,8 +3,12 @@ import Head from "next/head";
 import { Navbar, Footer } from "../../../components";
 import { MdEmail, MdArrowForwardIos } from "react-icons/md";
 import { FiEdit } from "react-icons/fi";
-export default function StudentRegistrationCCPay() {
-
+import { useRouter } from "next/router";
+export default function SettingProfle() {
+const navigation = useRouter();
+const onEditProfile = () => {
+  navigation.push("/student/editprofile")
+}
   return (
     <>
       <Head>
@@ -46,7 +50,7 @@ export default function StudentRegistrationCCPay() {
                   <div></div>
 
                   <div className="d-flex gap-2 justify-content-center py-3">
-                    <button className="w-50 btn_primary text-light p-2 rounded fw-bold d-flex align-items-center justify-content-center gap-2">
+                    <button className="w-50 btn_primary text-light p-2 rounded fw-bold d-flex align-items-center justify-content-center gap-2" onClick={() => onEditProfile()}>
                       <FiEdit /> Edit Profile
                     </button>
                   </div>

@@ -5,6 +5,8 @@ import { MdEmail, MdLocationOn, MdArrowForwardIos } from "react-icons/md";
 import { BsCheck2Circle } from "react-icons/bs";
 import Image from "next/image";
 import { MultiSelect } from "react-multi-select-component";
+import {useRouter} from "next/router"
+
 export default function EditProfile() {
   const options = [
     { label: "Grapes ", value: "grapes" },
@@ -19,6 +21,11 @@ export default function EditProfile() {
   ];
 
   const [selected, setSelected] = useState([]);
+  const navigation = useRouter();
+
+  const onContinue = () => {
+    navigation.push("/instructor/settingprofile")
+  }
   return (
     <>
       <Head>
@@ -79,7 +86,7 @@ export default function EditProfile() {
                   </div>
 
                   <div className="d-flex gap-2 justify-content-center py-3 pt-5">
-                    <button className="w-50 btn btn-success text-light p-2 rounded fw-bold d-flex align-items-center justify-content-center gap-2">
+                    <button className="w-50 btn btn-success text-light p-2 rounded fw-bold d-flex align-items-center justify-content-center gap-2" onClick={()=> onContinue()}>
                       <BsCheck2Circle /> Save Profile
                     </button>
                   </div>

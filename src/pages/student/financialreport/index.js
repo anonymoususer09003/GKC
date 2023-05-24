@@ -4,7 +4,13 @@ import { Inter } from "next/font/google";
 import { Navbar, Footer } from "../../../components";
 import { FiRefreshCw } from "react-icons/fi";
 import { TbSpeakerphone } from "react-icons/tb";
+import {useRouter} from "next/router"
+
 export default function StudentFinancialReport() {
+  const navigation = useRouter();
+  const onRequestRefund = () => {
+      navigation.push("/student/requestrefund")
+  };
   return (
     <>
       <Head>
@@ -70,7 +76,7 @@ export default function StudentFinancialReport() {
                     <td className="fw-bold"> $3 </td>{" "}
                     <td className="fw-bold d-flex justify-content-between align-items-center">
                       {" "}
-                      $63 .00 <TbSpeakerphone />{" "}
+                      $63 .00 <TbSpeakerphone onClick={()=> onRequestRefund()}/>{" "}
                     </td>{" "}
                   </tr>{" "}
                   <tr>

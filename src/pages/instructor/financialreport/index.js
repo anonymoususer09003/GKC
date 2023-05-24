@@ -4,7 +4,12 @@ import { Inter } from "next/font/google";
 import { TutorNavbar, Footer } from "../../../components";
 import { FiRefreshCw } from "react-icons/fi";
 import { TbSpeakerphone } from "react-icons/tb";
+import {useRouter} from "next/router"
 export default function InstructorFinancialReport() {
+  const navigation = useRouter()
+  const onContinue = () => {
+    navigation.push('/instructor/requestrefund')
+  }
   return (
     <>
       <Head>
@@ -70,7 +75,7 @@ export default function InstructorFinancialReport() {
                     <td className="fw-bold"> $3 </td>{" "}
                     <td className="fw-bold d-flex justify-content-between align-items-center">
                       {" "}
-                      $63 .00 <TbSpeakerphone />{" "}
+                      $63 .00 <TbSpeakerphone onClick={()=> onContinue()}/>{" "}
                     </td>{" "}
                   </tr>{" "}
                   <tr>

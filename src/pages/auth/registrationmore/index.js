@@ -3,8 +3,12 @@ import Head from "next/head";
 import Link from "next/link";
 import { Navbar, Footer, TutorNavbar } from "../../../components";
 import { BsCheck2Circle } from "react-icons/bs";
+import {useRouter} from "next/router"
+import { RiArrowGoBackLine } from "react-icons/ri";
 
 export default function InstructorRegistrationMore() {
+  const navigation = useRouter();
+
   return (
     <>
       <Head>
@@ -14,7 +18,14 @@ export default function InstructorRegistrationMore() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="container-fluid d-flex flex-column justify-content-between  min-vh-100">
-        <TutorNavbar isLogin={true} />
+        {/* <TutorNavbar isLogin={true} /> */}
+        <Link
+          href="#"
+          className="text-decoration-none p-4 d-flex gap-2 align-items-center text-dark"
+        >
+          <RiArrowGoBackLine />
+          <p className="fw-bold m-0 p-0 ">Back</p>
+        </Link>
         <div className="row">
           <div
             className="col-12 col-lg-5 position-relative d-none d-lg-block"
@@ -105,7 +116,7 @@ export default function InstructorRegistrationMore() {
                  
 
                   <div className=" mt-3 d-flex justify-content-center flex-column align-items-center gap-2">
-                    <button className="w-25 btn_primary text-light p-2 rounded fw-bold ">
+                    <button className="w-25 btn_primary text-light p-2 rounded fw-bold " onClick={()=> navigation.push("/auth/gradestoteach")}>
                       Continue
                     </button>
                     <Link

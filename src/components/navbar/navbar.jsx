@@ -10,6 +10,8 @@ const Navbar = ({ isLogin }) => {
 
   useEffect(()=>{
       const stored = localStorage.getItem("gkcAuth");
+  console.log(stored);
+
       setValue(stored ? JSON.parse(stored) : false);
   },[])
 const onSignOut = () => {
@@ -58,7 +60,7 @@ const onSignOut = () => {
               </li>
             </ul>
             <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-              {value || isLogin && (
+              {value && (
                 <>
                   <li className="nav-item">
                     <a className="nav-link active" aria-current="page" href="/student/messaging">
@@ -103,13 +105,13 @@ const onSignOut = () => {
                             <a href="/auth/changepassword" className="nav-link fw-bold">Change Password</a>
                           </li>
                           <li className="p-3">
-                            <a href="#" className="nav-link fw-bold">Payment Information</a>
+                            <a href="/student/paymentinfo" className="nav-link fw-bold">Payment Information</a>
                           </li>
                           <li className="p-3">
-                            <a href="/student/instructorreview" className="nav-link fw-bold">Review Instructor</a>
+                            <a href="/student/reviewinstructor" className="nav-link fw-bold">Review Instructor</a>
                           </li>
                           <li className="p-3">
-                            <a href="/student/instructorreprot" className="nav-link fw-bold">Report Instructor</a>
+                            <a href="/student/reportinstructor" className="nav-link fw-bold">Report Instructor</a>
                           </li>
                           <li className="p-3">
                             <a href="/student/financialreport" className="nav-link fw-bold">Financial Report</a>

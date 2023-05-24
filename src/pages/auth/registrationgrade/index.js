@@ -2,12 +2,13 @@ import React from "react";
 import Head from "next/head";
 import { Navbar, Footer } from "../../../components";
 import {useRouter} from "next/router"
-
+import { RiArrowGoBackLine } from "react-icons/ri";
+import Link from "next/link"
 export default function RegistrationGrade() {
   const navigation = useRouter();
   const onContinue = () => {
    
-       navigation.push("/auth/registrationgrade")
+       navigation.push("/auth/registrationcourse")
   
   }
   return (
@@ -19,7 +20,13 @@ export default function RegistrationGrade() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="container-fluid">
-        <Navbar />
+      <Link
+          href="#"
+          className="text-decoration-none p-4 d-flex gap-2 align-items-center text-dark"
+        >
+          <RiArrowGoBackLine />
+          <p className="fw-bold m-0 p-0 ">Back</p>
+        </Link>
         <div className="py-5 ">
           <h5 className="text-secondary fw-bold text-center py-4">
             Tell us about yourself?
