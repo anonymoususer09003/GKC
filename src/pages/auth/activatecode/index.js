@@ -6,12 +6,55 @@ import Link from "next/link";
 import { Navbar, Footer } from "./../../../components";
 import { RiArrowGoBackLine } from "react-icons/ri";
 import { useRouter } from "next/router";
+import axios from "axios";
 
 export default function ActivateCode() {
   const navigation = useRouter();
-  const onContinue = () => {
-    navigation.push("/auth/register");
+  const [isVerified, setIsVerified] = useState(false)
+  const [userType, setUserType] = useState("");
+  const [digit1, setDigit1] = useState('')
+  const [digit2, setDigit2] = useState('')
+  const [digit3, setDigit3] = useState('')
+  const [digit4, setDigit4] = useState('')
+  const [digit5, setDigit5] = useState('')
+  const [digit6, setDigit6] = useState('')
+
+  const isValid = digit1 && digit2 && digit3 && digit4 && digit5 && digit6
+
+  const onContinue =async () => {
+    try {
+        const code = (digit1 + digit2 + digit3 + digit4 + digit5 + digit6);
+        var stored = JSON.parse(window.localStorage.getItem("registrationForm"));
+        console.log(code,stored)
+        
+        const response = await axios.post(`http://34.227.65.157/auth/code`, {
+          email: stored.email,
+          code: code
+        });
+
+        setIsVerified(true)
+        console.log(response);
+            if (userType === "parent") {
+      navigation.push("/auth/registerparent");
+    }
+    if (userType === "instructor") {
+      navigation.push("/auth/registerinstructor");
+    }
+    if (userType === "student") {
+      navigation.push("/auth/registerstudent");
+    }
+     
+      } catch (error) {
+        console.error(error);
+      }
+
   };
+
+  useEffect(() => {
+    const value = JSON.parse(window.localStorage.getItem("userType"));
+    setUserType(value);
+  }, []);
+
     return (
     <>
       <Head>
@@ -48,6 +91,7 @@ export default function ActivateCode() {
                     Check your email for activation code and enter it below
                   </h5>
                 </div>
+                
                 <div className="d-flex gap-2">
                   <input
                     type="text"
@@ -55,6 +99,8 @@ export default function ActivateCode() {
                     className="w-full p-2 h3 rounded outline-0 border border_gray text_gray mb-3 text-center"
                     style={{ width: "100%" }}
                     placeholder=""
+                    value={digit1}
+                    onChange={(e)=> setDigit1(e.target.value)}
                   />
                   <input
                     type="text"
@@ -62,6 +108,8 @@ export default function ActivateCode() {
                     className="w-full p-2 h3 rounded outline-0 border border_gray text_gray mb-3 text-center"
                     style={{ width: "100%" }}
                     placeholder=""
+                    value={digit2}
+                    onChange={(e)=> setDigit2(e.target.value)}
                   />
                   <input
                     type="text"
@@ -69,6 +117,8 @@ export default function ActivateCode() {
                     className="w-full p-2 h3 rounded outline-0 border border_gray text_gray mb-3 text-center"
                     style={{ width: "100%" }}
                     placeholder=""
+                    value={digit3}
+                    onChange={(e)=> setDigit3(e.target.value)}
                   />
                   <input
                     type="text"
@@ -76,6 +126,8 @@ export default function ActivateCode() {
                     className="w-full p-2 h3 rounded outline-0 border border_gray text_gray mb-3 text-center"
                     style={{ width: "100%" }}
                     placeholder=""
+                    value={digit4}
+                    onChange={(e)=> setDigit4(e.target.value)}
                   />
                   <input
                     type="text"
@@ -83,6 +135,8 @@ export default function ActivateCode() {
                     className="w-full p-2 h3 rounded outline-0 border border_gray text_gray mb-3 text-center"
                     style={{ width: "100%" }}
                     placeholder=""
+                    value={digit5}
+                    onChange={(e)=> setDigit5(e.target.value)}
                   />
                   <input
                     type="text"
@@ -90,19 +144,24 @@ export default function ActivateCode() {
                     className="w-full p-2 h3 rounded outline-0 border border_gray text_gray mb-3 text-center"
                     style={{ width: "100%" }}
                     placeholder=""
+                    value={digit6}
+                    onChange={(e)=> setDigit6(e.target.value)}
                   />
                 </div>
                 <button
-                  className="w-100 btn_primary text-light p-2 rounded fw-bold mt-3"
+                 className={`w-100 text-light p-2 rounded fw-bold mt-3 bg-gray-300 ${!isValid ? 'btn_disabled' : 'btn_primary'}`}
+                    disabled={!isValid}
                   onClick={onContinue}
                 >
                   Continue
                 </button>
                 <div className="d-flex flex-column justify-content-center align-items-center mt-3">
                   <hr className="w-25" />
-                  <p className="fw-bold text_secondary m-0 p-0">
+                  {
+                    isVerified &&  <p className="fw-bold text_secondary m-0 p-0">
                     Activation code has been resent
                   </p>
+                  }
                   <p className="text-secondary fw-bold m-0 p-0 pb-2">
                     Resend Activation Code
                   </p>

@@ -1,32 +1,58 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import { Navbar, Footer } from "../../../components";
 import { BsCheck2Circle } from "react-icons/bs";
-import {useRouter} from "next/router"
+import { useRouter } from "next/router";
 import { RiArrowGoBackLine } from "react-icons/ri";
 export default function RegisterStudent() {
+  const [userType, setUserType] = useState("");
   const [email, setEmail] = useState("");
+  const [guardianEmail1, setGuardianEmail1] = useState("");
+  const [guardianEmail2, setGuardianEmail2] = useState("");
+  const [firstname, setFirstname] = useState("");
+  const [lastname, setLastname] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [termsAgree, setTermsAgree] = useState(false);
   const navigation = useRouter();
 
   const onContinue = () => {
-    window.localStorage.setItem("userType", JSON.stringify(email))
-    window.localStorage.setItem("gkcAuth", JSON.stringify(true))
-   if(email === "parent"){
-    navigation.push("/auth/parentccinfo")
-  }
-  if(email === "instructor"){
-    navigation.push("/auth/registrationmore")
-  }
-  if(email === "instructor"){
+    // window.localStorage.setItem("userType", JSON.stringify(email));
+    window.localStorage.setItem("gkcAuth", JSON.stringify(true));
 
-    navigation.push("/auth/registrationgrade")
-  }
-  }
+
+    var stored = JSON.parse(window.localStorage.getItem("registrationForm"));
+    console.log(stored)
+    stored.email = email;
+    stored.firstname = firstname;
+    stored.lastname = lastname;
+    stored.password = password;
+    stored.guardianEmail1 = guardianEmail1;
+    stored.guardianEmail2 = guardianEmail2;
+    console.log(stored)
+  
+    window.localStorage.setItem("registrationForm", JSON.stringify(stored));
+
+    if(password == confirmPassword) {
+
+    navigation.push("/auth/registrationgrade");
+
+}else {
+  alert("password not matched")
+}
+    // var newData = { firstname, lastname };
+    // stored.push(newData);
+    // window.localStorage.setItem("registrationForm", JSON.stringify(
+    //   stored
+    // ))
+  };
 
   useEffect(() => {
     const value = JSON.parse(window.localStorage.getItem("userType"));
-    setEmail(value);
+    var stored = JSON.parse(window.localStorage.getItem("registrationForm"));
+setEmail(stored.email)
+    setUserType(value);
   }, []);
   return (
     <>
@@ -37,7 +63,7 @@ export default function RegisterStudent() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="container-fluid d-flex flex-column justify-content-between  min-vh-100">
-      <Link
+        <Link
           href="#"
           className="text-decoration-none p-4 d-flex gap-2 align-items-center text-dark"
         >
@@ -58,10 +84,12 @@ export default function RegisterStudent() {
             <div className="w-100 w-md-75 p-5">
               <div>
                 <div className="d-flex justify-content-between align-items-center mb-3">
-                  <h4 className="text-secondary fw-bold text-capitalize" >{email}</h4>
+                  <h4 className="text-secondary fw-bold text-capitalize">
+                    Student
+                  </h4> 
                   <p className="bg_secondary text-white p-2 rounded d-flex align-items-center gap-2 fw-bold">
                     <BsCheck2Circle style={{ fontSize: "22px" }} />
-                    {email}@123.com
+                    {email}
                   </p>
                 </div>
                 <div>
@@ -69,11 +97,18 @@ export default function RegisterStudent() {
                     type="text"
                     className="w-100 p-2 rounded outline-0 border border_gray text_gray  mb-3"
                     placeholder="Enter Parent/Guardian 1 Email"
+                    value={guardianEmail1}
+                    name="guardian1"
+                    onChange={(e)=> setGuardianEmail1(e.target.value)}
                   />
                   <input
                     type="text"
                     className="w-100 p-2 rounded outline-0 border border_gray text_gray "
                     placeholder="Enter Parent/Guardian 2 Email"
+                    value={guardianEmail2}
+                    name="guardian3"
+
+                    onChange={(e)=> setGuardianEmail2(e.target.value)}
                   />
                   <div className="py-2">
                     <label className="text_gray m-0">
@@ -89,11 +124,20 @@ export default function RegisterStudent() {
                       type="text"
                       className="w-100 p-2 rounded outline-0 border border_gray text_gray  mb-3"
                       placeholder="First Name"
+                    name="firstname"
+
+                              value={firstname}
+                                          onChange={(e)=> setFirstname(e.target.value)}
+
                     />
                     <input
                       type="text"
                       className="w-100 p-2 rounded outline-0 border border_gray text_gray  mb-3"
                       placeholder="Last Name"
+                    name="lastname"
+                      value={lastname}
+
+                                          onChange={(e)=> setLastname(e.target.value)}
                     />
                   </div>
                   <div className="d-flex  flex-md-nowrap flex-wrap gap-2">
@@ -101,26 +145,38 @@ export default function RegisterStudent() {
                       type="password"
                       className="w-100 p-2 rounded outline-0 border border_gray text_gray  mb-3"
                       placeholder="Password"
+                      name="password"
+                      value={password}
+                                          onChange={(e)=> setPassword(e.target.value)}
                     />
                     <input
                       type="password"
                       className="w-100 p-2 rounded outline-0 border border_gray text_gray  mb-3"
                       placeholder="Confirm Password"
+                      name="confirmpassword"
+
+                      value={confirmPassword}
+                                          onChange={(e)=> setConfirmPassword(e.target.value)}
                     />
                   </div>
-                  <div class="form-check">
+                  <div className="form-check">
                     <input
-                      class="form-check-input"
+                      className="form-check-input"
                       type="checkbox"
-                      value=""
+                      value={termsAgree}
                       id="flexCheckDefault"
+                      onChange={()=> setTermsAgree(!termsAgree)}
+
                     />
-                    <label class="form-check-label" for="flexCheckDefault">
+                    <label className="form-check-label" for="flexCheckDefault">
                       I agree to the Terms of Use and Privacy Policy of GKC
                     </label>
                   </div>
                   <div className="d-flex flex-wrap gap-2 justify-content-between mt-3">
-                    <button className="w-50 btn_primary text-light p-2 rounded fw-bold " onClick={onContinue}>
+                    <button
+                      className="w-50 btn_primary text-light p-2 rounded fw-bold "
+                      onClick={onContinue}
+                    >
                       Continue
                     </button>
                     <Link

@@ -51,9 +51,9 @@ export default function Selection() {
                   </h5>
                 </div>
                 <div className="d-flex align-items-center justify-content-center gap-3 my-3">
-                  <div class="form-check">
+                  <div className="form-check">
                     <input
-                      class="form-check-input"
+                      className="form-check-input"
                       type="radio"
                       name="userType"
                       value="student"
@@ -61,13 +61,13 @@ export default function Selection() {
                       onChange={()=> setUserType("student")}
                       checked={userType === "student"}
                     />
-                    <label class="form-check-label" for="flexCheckDefault">
+                    <label className="form-check-label" for="flexCheckDefault">
                      Student
                     </label>
                   </div>
-                  <div class="form-check">
+                  <div className="form-check">
                     <input
-                      class="form-check-input"
+                      className="form-check-input"
                       type="radio"
                       name="userType"
                       value="parent"
@@ -76,13 +76,13 @@ export default function Selection() {
                       checked={userType === "parent"}
 
                     />
-                    <label class="form-check-label" for="flexCheckChecked">
+                    <label className="form-check-label" for="flexCheckChecked">
                       Parent
                     </label>
                   </div>
-                  <div class="form-check">
+                  <div className="form-check">
                     <input
-                      class="form-check-input"
+                      className="form-check-input"
                       type="radio"
                       name="userType"
                       value="instructor"
@@ -91,7 +91,7 @@ export default function Selection() {
                       checked={userType === "instructor"}
 
                     />
-                    <label class="form-check-label" for="flexCheckChecked1">
+                    <label className="form-check-label" for="flexCheckChecked1">
                       Instructor
                     </label>
                   </div>

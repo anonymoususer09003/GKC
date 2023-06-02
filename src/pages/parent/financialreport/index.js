@@ -37,13 +37,13 @@ export default function ParentFinancialReport() {
             <div className="col-12 col-md-6">
             <div className=" d-flex align-items-center gap-3">
                   <p className="fw-bold m-0 p-0"> From </p>{" "}
-                  <input id="startDate" class="form-control" type="date" />
+                  <input id="startDate" className="form-control" type="date" />
                 </div>
 </div>
  <div className="col-12 col-md-6">
  <div className=" d-flex align-items-center gap-3">
                   <p className="fw-bold m-0 p-0"> To </p>
-                  <input id="startDate" class="form-control" type="date" />
+                  <input id="startDate" className="form-control" type="date" />
                   <FiRefreshCw style={{ fontSize: "35px" }} />{" "}
                 </div>
 </div>
@@ -52,7 +52,7 @@ export default function ParentFinancialReport() {
 
          <div style={{minWidth:"400px", overflowY:'auto'}}>
 
-              <table class="table ">
+              <table className="table ">
                 <thead>
                   <tr className="bg-light">
                     <th scope="col" style={{minWidth:"150px"}}> Date </th> <th scope="col" style={{minWidth:"150px"}}> Tutor </th>{" "}

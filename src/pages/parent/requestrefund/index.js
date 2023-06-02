@@ -30,78 +30,78 @@ export default function ParentRequestRefund() {
             </h5>
             <div className="w-75 m-auto my-4">
               <div className="d-flex justify-content-center flex-column align-items-center my-4">
-                <div class="form-check">
+                <div className="form-check">
                   <input
-                    class="form-check-input"
+                    className="form-check-input"
                     type="radio"
                     name="flexRadioDefault"
                     id="flexRadioDefault1"
                   />
-                  <label class="form-check-label" for="flexRadioDefault1">
+                  <label className="form-check-label" for="flexRadioDefault1">
                     Option 1
                   </label>
                 </div>
-                <div class="form-check">
+                <div className="form-check">
                   <input
-                    class="form-check-input"
+                    className="form-check-input"
                     type="radio"
                     name="flexRadioDefault"
                     id="flexRadioDefault2"
                   />
-                  <label class="form-check-label" for="flexRadioDefault2">
+                  <label className="form-check-label" for="flexRadioDefault2">
                     Option 3
                   </label>
                 </div>
-                <div class="form-check">
+                <div className="form-check">
                   <input
-                    class="form-check-input"
+                    className="form-check-input"
                     type="radio"
                     name="flexRadioDefault"
                     id="flexRadioDefault2"
                   />
-                  <label class="form-check-label" for="flexRadioDefault2">
+                  <label className="form-check-label" for="flexRadioDefault2">
                     Option 3
                   </label>
                 </div>
 
-                <div class="form-check">
+                <div className="form-check">
                   <input
-                    class="form-check-input"
+                    className="form-check-input"
                     type="radio"
                     name="flexRadioDefault"
                     id="flexRadioDefault2"
                   />
-                  <label class="form-check-label" for="flexRadioDefault2">
+                  <label className="form-check-label" for="flexRadioDefault2">
                     Option 4
                   </label>
                 </div>
 
-                <div class="form-check">
+                <div className="form-check">
                   <input
-                    class="form-check-input"
+                    className="form-check-input"
                     type="radio"
                     name="flexRadioDefault"
                     id="flexRadioDefault2"
                   />
-                  <label class="form-check-label" for="flexRadioDefault2">
+                  <label className="form-check-label" for="flexRadioDefault2">
                     Option 5
                   </label>
                 </div>
 
-                <div class="form-check">
+                <div className="form-check">
                   <input
-                    class="form-check-input"
+                    className="form-check-input"
                     type="radio"
                     name="flexRadioDefault"
                     id="flexRadioDefault2"
                   />
-                  <label class="form-check-label" for="flexRadioDefault2">
+                  <label className="form-check-label" for="flexRadioDefault2">
                     Option 6
                   </label>
                 </div>
               </div>
 
-              <div class="form-floating py-2">
+              <div className="form-floating py-2">
                 <textarea
                   id="floatingTextarea2"
                   className="p-2 rounded"

@@ -81,18 +81,18 @@ const onSignOut = () => {
                   </Link>
               
                     <ul className="list-unstyled">
-                      <li class="dropdown h1 pt-1">
+                      <li className="dropdown h1 pt-1">
                         <IoMdSettings
                           className="h1 ms-2"
                           href="#"
-                          class="dropdown-toggle"
+                          className="dropdown-toggle"
                           data-toggle="dropdown"
                           role="button"
                           aria-haspopup="true"
                           aria-expanded="false"
                         />
                         <ul
-                          class="dropdown-menu shadow"
+                          className="dropdown-menu shadow"
                           style={{ right: "0px", width:"240px"}}
                         >
                          <li className="p-3">

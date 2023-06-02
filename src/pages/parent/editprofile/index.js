@@ -18,8 +18,8 @@ export default function StudentRegistrationCCPay() {
           className="p-5 "
           style={{ minHeight: "90vh", maxWidth: "1700px", margin: "auto" }}
         >
-          <div class="row">
-            <div class="col-4">
+          <div className="row">
+            <div className="col-4">
               <div className="shadow rounded-10 bg-white py-4">
                 <div className="px-4">
                   {/* <h5 className="fw-bold py-3">John Doe</h5> */}
@@ -97,26 +97,26 @@ export default function StudentRegistrationCCPay() {
                 </div>
               </div>
             </div>
-            <div class="col-8">
+            <div className="col-8">
               <div className="shadow rounded-10 p-5 bg-white">
                 <div className="col px-4 border_primary">
                   <h4 className="fw-bold">Dependents:</h4>
-                  <div class="p-4 w-50">
-                    <div class="d-flex justify-content-between gap-4 my-2">
+                  <div className="p-4 w-50">
+                    <div className="d-flex justify-content-between gap-4 my-2">
                       <p className="p-0 m-0">Name One</p>
                       <MdDelete style={{ fontSize: "24px" }} />
                     </div>
-                    <div class="d-flex justify-content-between gap-4 my-2">
+                    <div className="d-flex justify-content-between gap-4 my-2">
                       <p className="p-0 m-0">Name Two</p>
                       <MdDelete style={{ fontSize: "24px" }} />
                     </div>
 
-                    <div class="d-flex justify-content-between gap-4 my-2">
+                    <div className="d-flex justify-content-between gap-4 my-2">
                       <p className="p-0 m-0">Name Three</p>
                       <MdDelete style={{ fontSize: "24px" }} />
                     </div>
 
-                    <div class="d-flex justify-content-between gap-4 my-2">
+                    <div className="d-flex justify-content-between gap-4 my-2">
                       <p className="p-0 m-0">Name Four</p>
                       <MdDelete style={{ fontSize: "24px" }} />
                     </div>

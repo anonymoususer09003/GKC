@@ -40,8 +40,8 @@ export default function EditProfile() {
           className="p-5 "
           style={{ minHeight: "90vh", maxWidth: "1700px", margin: "auto" }}
         >
-          <div class="row">
-            <div class="col-3 position-relative">
+          <div className="row">
+            <div className="col-3 position-relative">
               <div className="shadow rounded-10 bg-white py-4">
                 <div className="px-4 ">
                   <div
@@ -93,7 +93,7 @@ export default function EditProfile() {
                 </div>
               </div>
             </div>
-            <div class="col-8">
+            <div className="col-8">
               <div className="shadow rounded-10 p-5 bg-white">
                 <div className="row">
                   <div className="col">
@@ -105,15 +105,15 @@ export default function EditProfile() {
                   <div className="col-3 border-start px-4 border_primary">
                     <h5 className="fw-bold m-0 p-0">Delivery Mode:</h5>
                 
-                    <div class="form-check pt-2">
-  <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
-  <label class="form-check-label fw-bold" for="flexCheckDefault">
+                    <div className="form-check pt-2">
+  <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
+  <label className="form-check-label fw-bold" for="flexCheckDefault">
    Online
   </label>
 </div>
-<div class="form-check">
-  <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" />
-  <label class="form-check-label fw-bold" for="flexCheckChecked">
+<div className="form-check">
+  <input className="form-check-input" type="checkbox" value="" id="flexCheckChecked" />
+  <label className="form-check-label fw-bold" for="flexCheckChecked">
   In-Person
   </label>
 </div>
@@ -123,30 +123,30 @@ export default function EditProfile() {
                     <h5 className="fw-bold m-0 p-0">
                       Groups you have expertise to teach:
                     </h5>
-                    <div class="form-check pt-2">
-  <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" />
-  <label class="form-check-label fw-bold" for="flexCheckChecked">
+                    <div className="form-check pt-2">
+  <input className="form-check-input" type="checkbox" value="" id="flexCheckChecked" />
+  <label className="form-check-label fw-bold" for="flexCheckChecked">
   Elementory &#40;	&lt; 10yrs&#41;
   </label>
 </div>
 
-<div class="form-check">
-  <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" />
-  <label class="form-check-label fw-bold" for="flexCheckChecked">
+<div className="form-check">
+  <input className="form-check-input" type="checkbox" value="" id="flexCheckChecked" />
+  <label className="form-check-label fw-bold" for="flexCheckChecked">
   Middle School &#40;10yrs - 13yrs&#41;
   </label>
 </div>
 
-<div class="form-check">
-  <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" />
-  <label class="form-check-label fw-bold" for="flexCheckChecked">
+<div className="form-check">
+  <input className="form-check-input" type="checkbox" value="" id="flexCheckChecked" />
+  <label className="form-check-label fw-bold" for="flexCheckChecked">
   High School &#40;14yrs - 16yrs&#41;
   </label>
 </div>
 
-<div class="form-check">
-  <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" />
-  <label class="form-check-label fw-bold" for="flexCheckChecked">
+<div className="form-check">
+  <input className="form-check-input" type="checkbox" value="" id="flexCheckChecked" />
+  <label className="form-check-label fw-bold" for="flexCheckChecked">
   College & beyond &#40;18yrs 	&gt;&#41;
   </label>
 </div>
@@ -170,15 +170,15 @@ export default function EditProfile() {
                       Accept Interview Request
                     </h5>
 <div className="d-flex gap-4 py-2">
-<div class="form-check">
-  <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1"/>
-  <label class="form-check-label" for="flexRadioDefault1">
+<div className="form-check">
+  <input className="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1"/>
+  <label className="form-check-label" for="flexRadioDefault1">
    No
   </label>
 </div>
-<div class="form-check">
-  <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" />
-  <label class="form-check-label" for="flexRadioDefault2">
+<div className="form-check">
+  <input className="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" />
+  <label className="form-check-label" for="flexRadioDefault2">
    Yes
   </label>
 </div>

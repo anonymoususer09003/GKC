@@ -1,15 +1,17 @@
-import React from "react";
+import React, {useState} from "react";
 import Head from "next/head";
 import { Navbar, Footer } from "../../../components";
 import {useRouter} from "next/router"
 import { RiArrowGoBackLine } from "react-icons/ri";
 import Link from "next/link"
 export default function RegistrationGrade() {
+  const [grade, setGrade] = useState(null)
   const navigation = useRouter();
   const onContinue = () => {
-   
-       navigation.push("/auth/registrationcourse")
-  
+    var stored = JSON.parse(window.localStorage.getItem("registrationForm"));
+    stored.grade = grade;
+    window.localStorage.setItem("registrationForm", JSON.stringify(stored));
+    navigation.push("/auth/registrationcourse")
   }
   return (
     <>
@@ -48,11 +50,14 @@ export default function RegistrationGrade() {
               }}
             >
               <input
+value="0"
                 className="form-check-input position-absolute"
                 style={{ top: "5px", right: "5px" }}
                 type="radio"
                 name="flexRadioDefault"
                 id="flexRadioDefault1"
+                checked={grade == 0}
+              onChange={(e)=> setGrade(e.target.value)}
               />
               <div className="position-absolute bottom-0 p-2 bg-light w-100 bg-opacity-50 fw-bold">
                 <small className="text-secondary">
@@ -72,11 +77,14 @@ export default function RegistrationGrade() {
               }}
             >
               <input
+value={1}
                 className="form-check-input position-absolute"
                 style={{ top: "5px", right: "5px" }}
                 type="radio"
                 name="flexRadioDefault"
                 id="flexRadioDefault1"
+                checked={grade == 1}
+              onChange={(e)=> setGrade(e.target.value)}
               />
 
               <div className="position-absolute bottom-0 p-2 bg-light w-100 bg-opacity-50 fw-bold">
@@ -98,11 +106,14 @@ export default function RegistrationGrade() {
               }}
             >
               <input
+value="2"
                 className="form-check-input position-absolute"
                 style={{ top: "5px", right: "5px" }}
                 type="radio"
                 name="flexRadioDefault"
                 id="flexRadioDefault1"
+                checked={grade == 2}
+              onChange={(e)=> setGrade(e.target.value)}
               />
 
               <div className="position-absolute bottom-0 p-2 bg-light w-100 bg-opacity-50 fw-bold">
@@ -124,11 +135,14 @@ export default function RegistrationGrade() {
               }}
             >
               <input
+value="3"
                 className="form-check-input position-absolute"
                 style={{ top: "5px", right: "5px" }}
                 type="radio"
                 name="flexRadioDefault"
                 id="flexRadioDefault1"
+                checked={grade == 3}
+              onChange={(e)=> setGrade(e.target.value)}
               />
 
               <div className="position-absolute bottom-0 p-2 bg-light w-100 bg-opacity-50 fw-bold">
