@@ -41,11 +41,7 @@ export default function RegisterStudent() {
 }else {
   alert("password not matched")
 }
-    // var newData = { firstname, lastname };
-    // stored.push(newData);
-    // window.localStorage.setItem("registrationForm", JSON.stringify(
-    //   stored
-    // ))
+
   };
 
   useEffect(() => {
@@ -172,9 +168,10 @@ setEmail(stored.email)
                       I agree to the Terms of Use and Privacy Policy of GKC
                     </label>
                   </div>
-                  <div className="d-flex flex-wrap gap-2 justify-content-between mt-3">
+                  <div className="d-flex flex-wrap gap-2 justify-content-between align-items-center mt-3">
                     <button
-                      className="w-50 btn_primary text-light p-2 rounded fw-bold "
+                      className={`w-50 text-light p-2 rounded fw-bold  bg-gray-300 ${!termsAgree ? 'btn_disabled' : 'btn_primary'}`}
+                    disabled={!termsAgree}
                       onClick={onContinue}
                     >
                       Continue

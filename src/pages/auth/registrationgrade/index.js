@@ -9,7 +9,7 @@ export default function RegistrationGrade() {
   const navigation = useRouter();
   const onContinue = () => {
     var stored = JSON.parse(window.localStorage.getItem("registrationForm"));
-    stored.grade = grade;
+    stored.grade = Number(grade);
     window.localStorage.setItem("registrationForm", JSON.stringify(stored));
     navigation.push("/auth/registrationcourse")
   }
@@ -153,7 +153,11 @@ value="3"
             </div>
           </div>
           <div className="d-flex gap-2 justify-content-center mt-3">
-            <button className="btn_primary text-light p-2 px-5 rounded fw-bold " onClick={onContinue}>
+            <button 
+              className={`text-light p-2 px-5 rounded fw-bold  bg-gray-300 ${!grade ? 'btn_disabled' : 'btn_primary'}`}
+              disabled={!grade}
+              onClick={onContinue}
+             >
               Continue
             </button>
           </div>
