@@ -33,11 +33,8 @@ export default function RegisterStudent() {
     console.log(stored)
   
     window.localStorage.setItem("registrationForm", JSON.stringify(stored));
-
     if(password == confirmPassword) {
-
     navigation.push("/auth/registrationgrade");
-
 }else {
   alert("password not matched")
 }
@@ -47,7 +44,7 @@ export default function RegisterStudent() {
   useEffect(() => {
     const value = JSON.parse(window.localStorage.getItem("userType"));
     var stored = JSON.parse(window.localStorage.getItem("registrationForm"));
-setEmail(stored.email)
+    setEmail(stored.email)
     setUserType(value);
   }, []);
   return (

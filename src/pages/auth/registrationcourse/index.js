@@ -1,14 +1,79 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Head from "next/head";
 import { Navbar, Footer } from "../../../components";
 import { BsCheck2Circle } from "react-icons/bs";
 import {useRouter} from "next/router"
+import axios from "axios"
+import { MultiSelect } from "react-multi-select-component";
+
 
 export default function StudentRegistrationCourse() {
   const navigation = useRouter();
+  const [courses, setCourses] = useState([])
+  const [coursesWithProficiency, setCoursesWithProficiency] = useState([])
+  const [selected, setSelected] = useState([]);
+  const [selectedLang, setSelectedLang] = useState([]);
+  const lang = [
+     {label: 'Language 1',
+    value: "1"},
+  {label: 'Language 2',
+  value: "2"},
+  {label: 'Language 3',
+  value: "3"}
+  ]
   const onContinue = () => {
+    var stored = JSON.parse(window.localStorage.getItem("registrationForm"));
+    var languageId = [];
+    var courseWithId = [];
+    selectedLang.map((v)=>{
+      languageId.push(Number(v.value))
+          })
+
+          coursesWithProficiency.map((v)=>{
+            courseWithId.push({courseId: v.courseId, proficiencyId: v.proficiencyId})
+                })
+    stored.courseOfInterestAndProficiency = courseWithId;
+    stored.languagePreferencesId = languageId;
+    window.localStorage.setItem("registrationForm", JSON.stringify(stored));
        navigation.push("/auth/registrationccinfo")
   }
+
+  const getCourses = async () => {
+  try {
+    const response = await axios.get(`http://34.227.65.157/course/get-all-courses`);
+
+    var technologyList = [];
+
+response.data.map((v)=>{
+  technologyList.push({  value:v.id, label: v.name })
+  
+})
+    setCourses(technologyList)
+  } catch (error) {
+    console.error(error);
+  }
+
+};
+  useEffect(() => {
+    getCourses();
+  
+  }, []);
+
+
+  const handleAddOrUpdate = (id, newData) => {
+    // Check if the ID exists in the data array
+    const dataIndex = coursesWithProficiency.findIndex(item => item.courseId === id);
+  
+    if (dataIndex === -1) {
+      // ID not found, add the new data to the array
+      setCoursesWithProficiency([...coursesWithProficiency, { id, ...newData }]);
+    } else {
+      // ID found, update the data at the specified index
+      const updatedData = [...coursesWithProficiency];
+      updatedData[dataIndex] = { ...updatedData[dataIndex], ...newData };
+      setCoursesWithProficiency(updatedData);
+    }
+  };
   return (
     <>
       <Head>
@@ -37,81 +102,75 @@ export default function StudentRegistrationCourse() {
                 </h4>
 
                 <div className="py-4">
-                  <select className="w-25 p-2 rounded outline-0 border border_gray text_gray mb-3 ">
-                    <option>Select</option>
-                    <option>Option 1</option>
-                    <option>Option 2</option>
-                  </select>
-
+            
+                  <div className="w-50 mb-3">
+                    <MultiSelect
+                      options={courses}
+                      value={selected}
+                      onChange={setSelected}
+                      labelledBy={"Select Course"}
+                      isCreatable={true}
+                    />
+                  </div>
                   <div className="d-flex flex-wrap gap-2">
-                    <p className="bg_secondary text-white p-2 rounded d-flex align-items-center gap-2 fw-bold">
+                  {
+                    selected.length < 1 ? 
+                    <div style={{padding:'20px 0'}}>
+                    <h5 className="text-dark fw-bold">No Course Selected Yet.</h5>
+                    </div>
+                    :
+                    selected.map((v)=> {
+                      return   <p className="bg_secondary text-white p-2 rounded d-flex align-items-center gap-2 fw-bold">
                       <BsCheck2Circle style={{ fontSize: "22px" }} />
-                      Course 1
-                    </p>{" "}
-                    <p className="bg_secondary text-white p-2 rounded d-flex align-items-center gap-2 fw-bold">
-                      <BsCheck2Circle style={{ fontSize: "22px" }} />
-                      Course 2
-                    </p>{" "}
-                    <p className="bg_secondary text-white p-2 rounded d-flex align-items-center gap-2 fw-bold">
-                      <BsCheck2Circle style={{ fontSize: "22px" }} />
-                      Course 3
-                    </p>{" "}
-                    <p className="bg_secondary text-white p-2 rounded d-flex align-items-center gap-2 fw-bold">
-                      <BsCheck2Circle style={{ fontSize: "22px" }} />
-                      Course 4
+                      {v.label}
                     </p>
+                    })
+                  }
+                  
                   </div>
                 </div>
 
                 <h4 className="text-dark fw-bold pb-2">Proficiency</h4>
 
-                <div className="d-flex  flex-wrap align-items-center gap-2 ">
-                  <p>Course 1</p>
-                  <select className="w-25 p-2 rounded outline-0 border border_gray text_gray mb-3 ">
+
+                {
+                    selected.length < 1 ? 
+                    <div style={{padding:'50px 0'}}>
+                    <h5 className="text-dark fw-bold">No Course Selected Yet.</h5>
+                    </div>
+                    :
+                    selected.map((v)=> {
+                      return   <div className="d-flex  flex-wrap align-items-center gap-2 ">
+                  <p>{v.label}</p>
+                  <select className="w-25 p-2 rounded outline-0 border border_gray text_gray mb-3 " onChange={(e)=> {
+                    handleAddOrUpdate(v.value, {courseId: v.value, proficiencyId: Number(e.target.value)});
+                  }}>
                     <option>Select</option>
-                    <option>Beginner</option>
-                    <option>Intermediate</option>
-                    <option>Semi Expert</option>
+                    <option value={1}>Beginner</option>
+                    <option value={2}>Intermediate</option>
+                    <option value={3}>Semi Expert</option>
                   </select>
                 </div>
-                <div className="d-flex  flex-wrap align-items-center gap-2 ">
-                  <p>Course 2</p>
-                  <select className="w-25 p-2 rounded outline-0 border border_gray text_gray mb-3 ">
-                    <option>Select</option>
-                    <option>Beginner</option>
-                    <option>Intermediate</option>
-                    <option>Semi Expert</option>
-                  </select>
-                </div>
-                <div className="d-flex  flex-wrap align-items-center gap-2">
-                  <p>Course 3</p>
-                  <select className="w-25 p-2 rounded outline-0 border border_gray text_gray mb-3 ">
-                    <option>Select</option>
-                    <option>Beginner</option>
-                    <option>Intermediate</option>
-                    <option>Semi Expert</option>
-                  </select>
-                </div>
-                <div className="d-flex  flex-wrap align-items-center gap-2 py-2">
-                  <p>Course 4</p>
-                  <select className="w-25 p-2 rounded outline-0 border border_gray text_gray mb-3 ">
-                    <option>Select</option>
-                    <option>Beginner</option>
-                    <option>Intermediate</option>
-                    <option>Semi Expert</option>
-                  </select>
-                </div>
+                    })
+                  }
+
+          
                 <div>
                   <h4 className="text-dark fw-bold">
                     Spoken Language Preference?
                   </h4>
 
                   <div className="py-2">
-                    <select className="w-25 p-2 rounded outline-0 border border_gray text_gray mb-3 ">
-                      <option>Select</option>
-                      <option>Option 1</option>
-                      <option>Option 2</option>
-                    </select>
+                  
+                    <div className="w-50 mb-3">
+                    <MultiSelect
+                      options={lang}
+                      value={selectedLang}
+                      onChange={setSelectedLang}
+                      labelledBy={"Select Language"}
+                      isCreatable={true}
+                    />
+                  </div>
                   </div>
 
                   <div className="d-flex gap-2 justify-content-between mt-3">
