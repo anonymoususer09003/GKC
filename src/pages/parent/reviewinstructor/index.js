@@ -57,7 +57,7 @@ export default function ChangePassword() {
                   <div className="col">
                     <div className="w-50">
                       <select
-                        class="form-select"
+                        className="form-select"
                         aria-label="Default select example"
                       >
                         {/* <option selected>Select course</option> */}{" "}

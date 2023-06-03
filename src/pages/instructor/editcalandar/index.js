@@ -43,29 +43,29 @@ export default function StudentRegistrationCCPay() {
               </tr>
               {/* <tr>
 <td>
-  <input class="form-check-input" type="checkbox" id="check1" name="option1" value="something" />
+  <input className="form-check-input" type="checkbox" id="check1" name="option1" value="something" />
 </td>
 <td>
-<input class="form-check-input" type="checkbox" id="check1" name="option1" value="something" />
+<input className="form-check-input" type="checkbox" id="check1" name="option1" value="something" />
 </td>
 <td>
-<input class="form-check-input" type="checkbox" id="check1" name="option1" value="something" />
+<input className="form-check-input" type="checkbox" id="check1" name="option1" value="something" />
 </td>
 <td>
-<input class="form-check-input" type="checkbox" id="check1" name="option1" value="something" />
+<input className="form-check-input" type="checkbox" id="check1" name="option1" value="something" />
 
 </td>
 
 <td>
-<input class="form-check-input" type="checkbox" id="check1" name="option1" value="something" />
+<input className="form-check-input" type="checkbox" id="check1" name="option1" value="something" />
 
 </td>
 <td>
-<input class="form-check-input" type="checkbox" id="check1" name="option1" value="something" />
+<input className="form-check-input" type="checkbox" id="check1" name="option1" value="something" />
 
 </td>
 <td>
-<input class="form-check-input" type="checkbox" id="check1" name="option1" value="something" />
+<input className="form-check-input" type="checkbox" id="check1" name="option1" value="something" />
 
 </td>
 </tr> */}
@@ -77,7 +77,7 @@ export default function StudentRegistrationCCPay() {
               </div>
               <div className="col-8">
                 <input
-                  class="form-check-input"
+                  className="form-check-input"
                   type="checkbox"
                   id="check1"
                   name="option1"

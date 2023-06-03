@@ -1,14 +1,35 @@
-import React from "react";
+import React, { useState } from "react";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
 import { Footer } from "../../../components";
 import { RiArrowGoBackLine } from "react-icons/ri";
-import {useRouter} from "next/router"
+import { useRouter } from "next/router";
+import axios from "axios";
 
 export default function Home() {
   const navigation = useRouter();
+  const [email, setEmail] = useState("");
 
+  const isEmailValid = ((/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)))
+  const handleSubmit = async () => {
+    try {
+     let a = email.replace("@", "%40");
+      const response = await axios.get(`http://34.227.65.157/auth/code?email=${a}`);
+        if (email) {
+          window.localStorage.setItem(
+            "registrationForm",
+            JSON.stringify({
+              email,
+            })
+          );
+          navigation.push("/auth/activatecode");
+        }
+    } catch (error) {
+      console.error(error);
+    }
+  
+  };
   return (
     <>
       <Head>
@@ -49,9 +70,16 @@ export default function Home() {
                     type="text"
                     className="w-100 p-2 rounded outline-0 border border_gray text_gray  mb-3"
                     placeholder="Your Email"
+                    name="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                   />
 
-                  <button className="w-100 btn_primary text-light p-2 rounded fw-bold mt-3" onClick={()=> navigation.push("/auth/activatecode")}>
+                  <button
+                    className={`w-100 text-light p-2 rounded fw-bold mt-3 bg-gray-300 ${!isEmailValid ? 'btn_disabled' : 'btn_primary'}`}
+                    disabled={!isEmailValid}
+                    onClick={() => handleSubmit()}
+                  >
                     Continue
                   </button>
                 </div>

@@ -26,8 +26,8 @@ export default function StudentRegistrationCCPay() {
           className="p-5 "
           style={{ minHeight: "90vh", maxWidth: "1700px", margin: "auto" }}
         >
-          <div class="row">
-            <div class="col-12 col-md-3 position-relative">
+          <div className="row">
+            <div className="col-12 col-md-3 position-relative">
               <div className="shadow rounded-10 bg-white py-4">
                 <div className="px-4 ">
 <div className="bg_primary rounded-circle position-absolute d-flex justify-content-center align-items-center" style={{top:"-40px", width:"105px", height:"105px"}}>
@@ -71,7 +71,7 @@ export default function StudentRegistrationCCPay() {
                 </div>
               </div>
             </div>
-            <div class="col-12 col-md-8">
+            <div className="col-12 col-md-8">
               <div className="shadow rounded-10 p-5 bg-white">
                 <div className="row">
                 <div className="col-12 col-md-4">

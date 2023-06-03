@@ -38,8 +38,8 @@ export default function StudentRegistrationCCPay() {
           className="p-5 "
           style={{ minHeight: "90vh", maxWidth: "1700px", margin: "auto" }}
         >
-          <div class="row">
-            <div class="col-12 col-lg-4">
+          <div className="row">
+            <div className="col-12 col-lg-4">
               <div className="shadow rounded-10 bg-white py-4">
                 <div className="px-4">
                   <h5 className="fw-bold py-3">John Lark</h5>
@@ -74,82 +74,82 @@ export default function StudentRegistrationCCPay() {
                 </div>
               </div>
             </div>
-            <div class="col-12 col-lg-8 py-2">
+            <div className="col-12 col-lg-8 py-2">
               <div className="shadow rounded-10 p-5 bg-white">
                 <div className="row">
                   <div className="col-12 col-md-4">
                     <h4 className="fw-bold">Grade:</h4>
 
-                    <div class="form-check">
+                    <div className="form-check">
                       <input
-                        class="form-check-input"
+                        className="form-check-input"
                         type="radio"
                         value=""
                         id="flexCheckDefault"
                         name="grades"
                       />
-                      <label class="form-check-label" for="flexCheckDefault">
+                      <label className="form-check-label" for="flexCheckDefault">
                         Elementry &#40;&#60;10yrs&#41;
                       </label>
                     </div>
-                    <div class="form-check">
+                    <div className="form-check">
                       <input
-                        class="form-check-input"
+                        className="form-check-input"
                         type="radio"
                         value=""
                         id="flexCheckDefault"
                         name="grades"
                       />
-                      <label class="form-check-label" for="flexCheckDefault">
+                      <label className="form-check-label" for="flexCheckDefault">
                         Middle School &#40;&#60;11yrs - 13yrs&#41;
                       </label>
                     </div>
-                    <div class="form-check">
+                    <div className="form-check">
                       <input
-                        class="form-check-input"
+                        className="form-check-input"
                         type="radio"
                         value=""
                         id="flexCheckDefault"
                         name="grades"
                       />
-                      <label class="form-check-label" for="flexCheckDefault">
+                      <label className="form-check-label" for="flexCheckDefault">
                         High School &#40;&#60;14yrs - 18yrs&#41;
                       </label>
                     </div>
-                    <div class="form-check">
+                    <div className="form-check">
                       <input
-                        class="form-check-input"
+                        className="form-check-input"
                         type="radio"
                         value=""
                         id="flexCheckChecked"
                         name="grades"
                       />
-                      <label class="form-check-label" for="flexCheckChecked">
+                      <label className="form-check-label" for="flexCheckChecked">
                         College & Beyond &#40;&gt;18yrs&#41;
                       </label>
                     </div>
                   </div>
                   <div className="col-12 col-md-4 border-start px-4 border_primary">
                     <h4 className="fw-bold">Delivery Mode:</h4>
-                    <div class="form-check">
+                    <div className="form-check">
                       <input
-                        class="form-check-input"
+                        className="form-check-input"
                         type="checkbox"
                         value=""
                         id="flexCheckDefault"
                       />
-                      <label class="form-check-label" for="flexCheckDefault">
+                      <label className="form-check-label" for="flexCheckDefault">
                         In person
                       </label>
                     </div>{" "}
-                    <div class="form-check">
+                    <div className="form-check">
                       <input
-                        class="form-check-input"
+                        className="form-check-input"
                         type="checkbox"
                         value=""
                         id="flexCheckDefault"
                       />
-                      <label class="form-check-label" for="flexCheckDefault">
+                      <label className="form-check-label" for="flexCheckDefault">
                         Online
                       </label>
                     </div>

@@ -90,14 +90,14 @@ export default function StudentRegistrationCCPay() {
                   />
                 </div>
 
-                <div class="form-check">
+                <div className="form-check">
                   <input
-                    class="form-check-input"
+                    className="form-check-input"
                     type="checkbox"
                     value=""
                     id="flexCheckDefault"
                   />
-                  <label class="form-check-label" for="flexCheckDefault">
+                  <label className="form-check-label" for="flexCheckDefault">
                     Save the payment information for future use
                   </label>
                 </div>

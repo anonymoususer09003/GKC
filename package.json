@@ -1,27 +1,31 @@
 {
-  "name": "my-app",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
-  },
-  "dependencies": {
-    "bootstrap": "^5.2.3",
-    "firebase": "^9.20.0",
-    "moment": "^2.29.4",
-    "next": "13.3.4",
-    "react": "^18.2.0",
-    "react-calendar": "^4.2.1",
-    "react-dom": "18.2.0",
-    "react-icons": "^4.8.0",
-    "react-multi-select-component": "^4.3.4",
-    "react-star-ratings": "^2.3.0"
-  },
-  "devDependencies": {
-    "eslint": "8.39.0",
-    "eslint-config-next": "13.3.4"
-  }
+    "name": "my-app",
+    "version": "0.1.0",
+    "private": true,
+    "scripts": {
+        "dev": "next dev",
+        "build": "next build",
+        "start": "next start",
+        "lint": "next lint"
+    },
+    "dependencies": {
+        "@reduxjs/toolkit": "^1.9.5",
+        "axios": "^1.4.0",
+        "bootstrap": "^5.2.3",
+        "firebase": "^9.22.1",
+        "moment": "^2.29.4",
+        "next": "13.3.4",
+        "next-redux-wrapper": "^8.1.0",
+        "react": "^18.2.0",
+        "react-calendar": "^4.2.1",
+        "react-dom": "18.2.0",
+        "react-icons": "^4.8.0",
+        "react-multi-select-component": "^4.3.4",
+        "react-redux": "^8.0.5",
+        "react-star-ratings": "^2.3.0"
+    },
+    "devDependencies": {
+        "eslint": "8.39.0",
+        "eslint-config-next": "13.3.4"
+    }
 }

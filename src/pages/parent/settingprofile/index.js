@@ -21,8 +21,8 @@ export default function ParentSettingProfile() {
           className="p-5 "
           style={{ minHeight: "90vh", maxWidth: "1700px", margin: "auto" }}
         >
-          <div class="row">
-            <div class="col-4">
+          <div className="row">
+            <div className="col-4">
               <div className="shadow rounded-10 bg-white py-4">
                 <div className="px-4">
                   <h5 className="fw-bold py-3">John Doe</h5>
@@ -50,7 +50,7 @@ export default function ParentSettingProfile() {
                 </div>
               </div>
             </div>
-            <div class="col-8">
+            <div className="col-8">
               <div className="shadow rounded-10 p-5 bg-white  my-4">
                 <div className="row m-0 p-0 ">
                   <div className="col ">

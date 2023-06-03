@@ -2,13 +2,14 @@ import React, { useState } from "react";
 import Head from "next/head";
 import { Navbar, Footer } from "../../../components";
 import {useRouter} from "next/router"
+import axios from "axios";
 
 export default function StudentRegistrationCCInfo() {
   const navigation = useRouter();
+  const [nameCard, setNameCard] = useState("")
+  const [numberCard, setNumberCard] = useState("")
   const  onContinue = () => {
-   
        navigation.push("/auth/registrationccpay")
-  
   }
   return (
     <>
@@ -51,11 +52,13 @@ export default function StudentRegistrationCCInfo() {
                   type="text"
                   className="w-100 p-2 rounded outline-0 border border_gray text_gray  my-2"
                   placeholder="Name on Credit Card"
+                  value=""
                 />
                 <input
                   type="text"
                   className="w-100 p-2 rounded outline-0 border border_gray text_gray  my-2"
                   placeholder="Credit Card Number"
+                                value=""
                 />
 
                 <div className="d-flex gap-2 my-2">
@@ -71,14 +74,14 @@ export default function StudentRegistrationCCInfo() {
                   />
                 </div>
 
-                <div class="form-check">
+                <div className="form-check">
                   <input
-                    class="form-check-input"
+                    className="form-check-input"
                     type="checkbox"
                     value=""
                     id="flexCheckDefault"
                   />
-                  <label class="form-check-label" for="flexCheckDefault">
+                  <label className="form-check-label" for="flexCheckDefault">
                     Save the payment information for future use
                   </label>
                 </div>
