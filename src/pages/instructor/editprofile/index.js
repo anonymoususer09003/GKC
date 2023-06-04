@@ -7,6 +7,7 @@ import Image from "next/image";
 import { MultiSelect } from "react-multi-select-component";
 import {useRouter} from "next/router"
 
+
 export default function EditProfile() {
   const options = [
     { label: "Grapes ", value: "grapes" },
@@ -72,9 +73,7 @@ export default function EditProfile() {
                   <hr className="bg_secondary" />
                   <h4 className="p-0 m-0 py-2 fw-bold">Bio</h4>
                   <div>
-                    
-
-
+                  
                     <textarea  className="border-0 border-bottom w-100" rows="8" >
                     Lorem ipsum dolor, sit amet consectetur adipisicing elit.
                     Tempore molestiae, velit, ex iure fugiat quas officia fuga

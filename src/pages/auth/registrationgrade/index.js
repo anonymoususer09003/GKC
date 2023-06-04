@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState, useeEffect} from "react";
 import Head from "next/head";
 import { Navbar, Footer } from "../../../components";
 import {useRouter} from "next/router"
@@ -13,6 +13,8 @@ export default function RegistrationGrade() {
     window.localStorage.setItem("registrationForm", JSON.stringify(stored));
     navigation.push("/auth/registrationcourse")
   }
+
+  
   return (
     <>
       <Head>

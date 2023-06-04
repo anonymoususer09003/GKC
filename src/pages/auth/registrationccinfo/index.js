@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Head from "next/head";
 import { Navbar, Footer } from "../../../components";
 import {useRouter} from "next/router"
@@ -6,11 +6,31 @@ import axios from "axios";
 
 export default function StudentRegistrationCCInfo() {
   const navigation = useRouter();
+  const [userInfo, setUserInfo] = useState(null)
   const [nameCard, setNameCard] = useState("")
   const [numberCard, setNumberCard] = useState("")
+
   const  onContinue = () => {
-       navigation.push("/auth/registrationccpay")
+    console.log(userInfo)
+    //  navigation.push("/auth/registrationccpay")
   }
+  
+  const onRegister = async() => {
+    console.log(userInfo)
+    try {
+       const response = await axios.post(`http://34.227.65.157/auth/register-student`,{
+        userInfo
+       });
+       console.log(response)
+     } catch (error) {
+       console.error(error);
+     }
+  }
+
+  useEffect(() => {
+    var stored = JSON.parse(window.localStorage.getItem("registrationForm"));
+    setUserInfo(stored)
+  }, []);
   return (
     <>
       <Head>
@@ -91,7 +111,7 @@ export default function StudentRegistrationCCInfo() {
                   </button>
                 </div>
                 <div className="d-flex gap-2 justify-content-center  mt-3">
-                  <button className="w-50 btn_secondary text-light p-2 rounded fw-bold " onClick={onContinue}>
+                  <button className="w-50 btn_secondary text-light p-2 rounded fw-bold " onClick={onRegister}>
                     I wil do this later
                   </button>
                 </div>

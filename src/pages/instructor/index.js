@@ -1,20 +1,50 @@
 import React, { useState } from "react";
 import Head from "next/head";
-import { Navbar,TutorNavbar, Footer } from "../../components";
+import { Navbar, TutorNavbar, Footer } from "../../components";
 import Calendar from "react-calendar";
 import { BsFillChatFill, BsFillSendFill } from "react-icons/bs";
 import { GoDeviceCameraVideo } from "react-icons/go";
 import { FiEdit } from "react-icons/fi";
 import { RiDeleteBin6Line } from "react-icons/ri";
-import {useRouter} from "next/router"
+import { useRouter } from "next/router";
+import moment from "moment";
+import FirebaseChat from "../../hooks/firebase-chat";
 
 export default function StudentRegistrationCCPay() {
   const navigation = useRouter();
 
+  const { sendMessage, messages, setChatInfo, setNewMessage, newMessage } =
+    FirebaseChat();
   const [value, onChange] = useState(new Date());
   const onContinue = () => {
-    navigation.push("/instructor/video")
-  }
+    navigation.push("/instructor/video");
+  };
+  const instructor = {
+    name: "Nouman",
+    id: 1,
+  };
+  const student = {
+    courseId: 1,
+    name: "John",
+    id: 2,
+    parentId: 4,
+  };
+
+  const openChat = (chatId) => {
+    setChatInfo({
+      sender: {
+        ...instructor,
+      },
+      receiver_user: {
+        ...student,
+      },
+      course_id: chatId,
+    });
+  };
+  const handleTextChange = (e) => {
+    setNewMessage(e.target.value);
+  };
+
   return (
     <>
       <Head>
@@ -30,7 +60,10 @@ export default function StudentRegistrationCCPay() {
           style={{ height: "90vh" }}
         >
           <div className="w-50">
-            <div className="d-flex justify-content-end p-2" onClick={()=> navigation.push('/instructor/editcalandar')}>
+            <div
+              className="d-flex justify-content-end p-2"
+              onClick={() => navigation.push("/instructor/editcalandar")}
+            >
               <FiEdit style={{ fontSize: "24px" }} />
             </div>
             <Calendar onChange={onChange} value={value} />
@@ -41,69 +74,33 @@ export default function StudentRegistrationCCPay() {
               className=" shadow p-5 bg-white rounded "
               style={{ minHeight: "400px" }}
             >
-              <div className="d-flex align-items-center py-3">
-                <h5 className="p-0 m-0 flex-fill fw-bold flex-fill">
-                  John Doe
-                </h5>
-                <h5 className="p-0 m-0 flex-fill fw-bold flex-fill">11:00AM</h5>
-                <BsFillChatFill className="p-0 m-0 flex-fill h2 flex-fill"   data-bs-toggle="modal"
-                  data-bs-target="#exampleModal2"/>
+              {[1, 2, 3].map((item) => {
+                return (
+                  <div
+                    onClick={() => openChat(item)}
+                    className="d-flex align-items-center py-3"
+                  >
+                    <h5 className="p-0 m-0 flex-fill fw-bold flex-fill">
+                      John Doe
+                    </h5>
+                    <h5 className="p-0 m-0 flex-fill fw-bold flex-fill">
+                      11:00AM
+                    </h5>
+                    <BsFillChatFill
+                      className="p-0 m-0 flex-fill h2 flex-fill"
+                      data-bs-toggle="modal"
+                      data-bs-target="#exampleModal2"
+                    />
 
-                <GoDeviceCameraVideo
-                  className="p-0 m-0 flex-fill h2 flex-fill"
-                  onClick={()=>onContinue()}
-                />
+                    <GoDeviceCameraVideo
+                      className="p-0 m-0 flex-fill h2 flex-fill"
+                      onClick={() => onContinue()}
+                    />
 
-                <RiDeleteBin6Line className="p-0 m-0 h2 flex-fill" />
-              </div>
-              <div className="d-flex align-items-center py-3">
-                <h5 className="p-0 m-0 flex-fill fw-bold flex-fill">
-                  John Doe
-                </h5>
-                <h5 className="p-0 m-0 flex-fill fw-bold flex-fill">11:00AM</h5>
-                <BsFillChatFill className="p-0 m-0 flex-fill h2 flex-fill"  data-bs-toggle="modal"
-                  data-bs-target="#exampleModal2"/>
-
-                <GoDeviceCameraVideo
-                  className="p-0 m-0 flex-fill h2 flex-fill"
-                  onClick={()=>onContinue()}
-                 
-                />
-
-                <RiDeleteBin6Line className="p-0 m-0 h2 flex-fill" />
-              </div>
-              <div className="d-flex align-items-center py-3">
-                <h5 className="p-0 m-0 flex-fill fw-bold flex-fill">
-                  John Doe
-                </h5>
-                <h5 className="p-0 m-0 flex-fill fw-bold flex-fill">11:00AM</h5>
-                <BsFillChatFill className="p-0 m-0 flex-fill h2 flex-fill" data-bs-toggle="modal"
-                  data-bs-target="#exampleModal2"/>
-
-                <GoDeviceCameraVideo
-                  className="p-0 m-0 flex-fill h2 flex-fill"
-                  onClick={()=>onContinue()}
-                
-                />
-
-                <RiDeleteBin6Line className="p-0 m-0 h2 flex-fill" />
-              </div>
-              <div className="d-flex align-items-center py-3">
-                <h5 className="p-0 m-0 flex-fill fw-bold flex-fill">
-                  John Doe
-                </h5>
-                <h5 className="p-0 m-0 flex-fill fw-bold flex-fill">11:00AM</h5>
-                <BsFillChatFill className="p-0 m-0 flex-fill h2 flex-fill" data-bs-toggle="modal"
-                  data-bs-target="#exampleModal2" />
-
-                <GoDeviceCameraVideo
-                  className="p-0 m-0 flex-fill h2 flex-fill"
-                  onClick={()=>onContinue()}
-          
-                />
-
-                <RiDeleteBin6Line className="p-0 m-0 h2 flex-fill" />
-              </div>
+                    <RiDeleteBin6Line className="p-0 m-0 h2 flex-fill" />
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
@@ -131,28 +128,39 @@ export default function StudentRegistrationCCPay() {
                 </div>
                 <div className="modal-body">
                   <div className=" p-3" style={{ minHeight: "400px" }}>
-                    <div className="py-1 text-end">
-                      <p className="p-0 m-0 fw-bold">
-                        lorem ipsum dolor sit amet, consectetur adipis.
-                      </p>
-                      <small className="p-0 m-0">John Doe 4/11/23 8:15am</small>
-                    </div>
-
-                    <div className="py-1">
-                      <p className="p-0 m-0 fw-bold">
-                        lorem ipsum dolor sit amet, consectetur adipis.
-                      </p>
-                      <small className="p-0 m-0">John Doe 4/11/23 8:15am</small>
-                    </div>
+                    {messages.map((item, index) => {
+                      let date = item.timestamp.seconds * 1000;
+                      return (
+                        <div
+                          key={index}
+                          className={`py-1 ${
+                            item?.user?.id == instructor?.id ? "text-end" : ""
+                          }`}
+                        >
+                          <p className="p-0 m-0 fw-bold">{item.message}</p>
+                          <small className="p-0 m-0">
+                            {`${item?.user?.name}  ${moment(date).format(
+                              "d/MM/YY"
+                            )}`}{" "}
+                            {moment(date).format("hh:mm a")}
+                          </small>
+                        </div>
+                      );
+                    })}
                   </div>
 
                   <div className=" d-flex align-items-center px-2 gap-2">
                     <input
+                      value={newMessage}
+                      onChange={handleTextChange}
                       type="text"
                       placeholde=""
                       className="border  p-2 rounded flex-fill"
                     />{" "}
-                    <BsFillSendFill className="h3 p-0 m-0" />
+                    <BsFillSendFill
+                      onClick={() => sendMessage({ type: "instructor" })}
+                      className="h3 p-0 m-0"
+                    />
                   </div>
                 </div>
               </div>
