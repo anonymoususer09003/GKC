@@ -4,8 +4,12 @@ import { TutorNavbar, Footer } from "../../../components";
 import { BsFillMicFill } from "react-icons/bs";
 import { GoDeviceCameraVideo } from "react-icons/go";
 import { FaShare } from "react-icons/fa";
+import JitsiMeetComponent from "@/components/jitsimeet";
 export default function InstructoVideo() {
-
+  const user = {
+    id: 1,
+    name: "Salman",
+  };
   return (
     <>
       <Head>
@@ -15,30 +19,7 @@ export default function InstructoVideo() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <TutorNavbar isLogin={true} />
-      <main className="container-fluid">
-        <div className="p-5 container" style={{ minHeight: "90vh" }}>
-          <div className="d-flex justify-content-center gap-5 py-3">
-            <GoDeviceCameraVideo className="h1" />
-            <BsFillMicFill className="h1" />
-            <FaShare className="h1" />
-          </div>
-          <div
-            className=" shadow bg-white rounded "
-            style={{ minHeight: "400px" }}
-          >
-            <video width="100%" className="p-0 m-0 rounded" controls>
-              <source src="mov_bbb.mp4" type="video/mp4" />
-              <source src="mov_bbb.ogg" type="video/ogg" />
-              Your browser does not support HTML video.
-            </video>
-          </div>
-          <div className="d-flex gap-2 justify-content-end mt-5">
-            <button className="w-25 btn_primary text-light p-2 rounded fw-bold ">
-              End
-            </button>
-          </div>
-        </div>
-      </main>
+      <JitsiMeetComponent roomName="Maths Course" user={user} />
 
       <Footer />
     </>
