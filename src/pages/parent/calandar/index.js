@@ -1,19 +1,54 @@
 import React, { useState } from "react";
 import Head from "next/head";
-import {  ParentNavbar, Footer } from "../../../components";
+import { ParentNavbar, Footer } from "../../../components";
 import Calendar from "react-calendar";
 import { BsFillChatFill, BsFillSendFill } from "react-icons/bs";
 import { GoDeviceCameraVideo } from "react-icons/go";
 import { RiDeleteBin6Line } from "react-icons/ri";
-import {useRouter} from "next/router"
+import { useRouter } from "next/router";
+import moment from "moment";
+import FirebaseChat from "../../../hooks/firebase-chat";
 
 export default function ParentCalandar() {
   const navigation = useRouter();
-
+  const { sendMessage, messages, setChatInfo, setNewMessage, newMessage } =
+    FirebaseChat();
   const [value, onChange] = useState(new Date());
   const onContinue = () => {
-    navigation.push("/instructor/video")
-  }
+    navigation.push("/instructor/video");
+  };
+  const instructor = {
+    name: "Nouman",
+    id: 1,
+  };
+  const student = {
+    courseId: 1,
+    name: "John",
+    id: 2,
+    parentId: 4,
+  };
+
+  const parent = {
+    courseId: 1,
+    name: "John",
+    id: 4,
+  };
+
+  const openChat = (chatId) => {
+    setChatInfo({
+      sender: {
+        ...student,
+      },
+      receiver_user: {
+        ...instructor,
+      },
+      course_id: chatId,
+    });
+  };
+  const handleTextChange = (e) => {
+    setNewMessage(e.target.value);
+  };
+
   return (
     <>
       <Head>
@@ -24,10 +59,7 @@ export default function ParentCalandar() {
       </Head>
       <ParentNavbar isLogin={true} />
       <main className="container">
-        <div
-          className="row"
-          style={{ height: "90vh" }}
-        >
+        <div className="row" style={{ height: "90vh" }}>
           <div className="col-12 col-lg-6 pt-5">
             <Calendar onChange={onChange} value={value} />
           </div>
@@ -37,84 +69,51 @@ export default function ParentCalandar() {
               className=" shadow p-5 bg-white rounded "
               style={{ minHeight: "400px" }}
             >
-             
-             <div className="d-flex align-items-center py-3 gap-2">
-              <h6 className="p-0 m-0 flex-fill fw-bold  p-2">
+              <div
+                onClick={() => openChat(1)}
+                className="d-flex align-items-center py-3 gap-2"
+              >
+                <h6 className="p-0 m-0 flex-fill fw-bold  p-2">
                   Chalid1 Lastname
                 </h6>
                 <h6 className="p-0 m-0 flex-fill fw-bold flex-fill">
                   John Doe
                 </h6>
                 <h6 className="p-0 m-0 flex-fill fw-bold flex-fill">11:00AM</h6>
-                <BsFillChatFill className="p-0 m-0 flex-fill h4 flex-fill"    data-bs-toggle="modal"
-                  data-bs-target="#exampleModal2" />
+                <BsFillChatFill
+                  className="p-0 m-0 flex-fill h4 flex-fill"
+                  data-bs-toggle="modal"
+                  data-bs-target="#exampleModal2"
+                />
 
                 <GoDeviceCameraVideo
                   className="p-0 m-0 flex-fill h4 flex-fill"
-                  onClick={()=>onContinue()}
-               
+                  onClick={() => onContinue()}
                 />
 
                 <RiDeleteBin6Line className="p-0 m-0 h4 flex-fill" />
               </div>
               <div className="d-flex align-items-center py-3 gap-2">
-              <h6 className="p-0 m-0 flex-fill fw-bold  p-2">
+                <h6 className="p-0 m-0 flex-fill fw-bold  p-2">
                   Chalid1 Lastname
                 </h6>
                 <h6 className="p-0 m-0 flex-fill fw-bold flex-fill">
                   John Doe
                 </h6>
                 <h6 className="p-0 m-0 flex-fill fw-bold flex-fill">11:00AM</h6>
-                <BsFillChatFill className="p-0 m-0 flex-fill h4 flex-fill"    data-bs-toggle="modal"
-                  data-bs-target="#exampleModal2" />
+                <BsFillChatFill
+                  className="p-0 m-0 flex-fill h4 flex-fill"
+                  data-bs-toggle="modal"
+                  data-bs-target="#exampleModal2"
+                />
 
                 <GoDeviceCameraVideo
                   className="p-0 m-0 flex-fill h4 flex-fill"
-                  onClick={()=>onContinue()}
-               
+                  onClick={() => onContinue()}
                 />
 
                 <RiDeleteBin6Line className="p-0 m-0 h4 flex-fill" />
               </div>
-              <div className="d-flex align-items-center py-3 gap-2">
-              <h6 className="p-0 m-0 flex-fill fw-bold  p-2">
-                  Chalid1 Lastname
-                </h6>
-                <h6 className="p-0 m-0 flex-fill fw-bold flex-fill">
-                  John Doe
-                </h6>
-                <h6 className="p-0 m-0 flex-fill fw-bold flex-fill">11:00AM</h6>
-                <BsFillChatFill className="p-0 m-0 flex-fill h4 flex-fill"    data-bs-toggle="modal"
-                  data-bs-target="#exampleModal2" />
-
-                <GoDeviceCameraVideo
-                  className="p-0 m-0 flex-fill h4 flex-fill"
-                  onClick={()=>onContinue()}
-               
-                />
-
-                <RiDeleteBin6Line className="p-0 m-0 h4 flex-fill" />
-              </div>
-              <div className="d-flex align-items-center py-3 gap-2">
-              <h6 className="p-0 m-0 flex-fill fw-bold  p-2">
-                  Chalid1 Lastname
-                </h6>
-                <h6 className="p-0 m-0 flex-fill fw-bold flex-fill">
-                  John Doe
-                </h6>
-                <h6 className="p-0 m-0 flex-fill fw-bold flex-fill">11:00AM</h6>
-                <BsFillChatFill className="p-0 m-0 flex-fill h4 flex-fill"    data-bs-toggle="modal"
-                  data-bs-target="#exampleModal2" />
-
-                <GoDeviceCameraVideo
-                  className="p-0 m-0 flex-fill h4 flex-fill"
-                  onClick={()=>onContinue()}
-               
-                />
-
-                <RiDeleteBin6Line className="p-0 m-0 h4 flex-fill" />
-              </div>
-            
             </div>
           </div>
         </div>
@@ -141,28 +140,41 @@ export default function ParentCalandar() {
                 </div>
                 <div className="modal-body">
                   <div className=" p-3" style={{ minHeight: "400px" }}>
-                    <div className="py-1 text-end">
-                      <p className="p-0 m-0 fw-bold">
-                        lorem ipsum dolor sit amet, consectetur adipis.
-                      </p>
-                      <small className="p-0 m-0">John Doe 4/11/23 8:15am</small>
-                    </div>
-
-                    <div className="py-1">
-                      <p className="p-0 m-0 fw-bold">
-                        lorem ipsum dolor sit amet, consectetur adipis.
-                      </p>
-                      <small className="p-0 m-0">John Doe 4/11/23 8:15am</small>
-                    </div>
+                    {messages.map((item, index) => {
+                      let date = item.timestamp.seconds * 1000;
+                      return (
+                        <div
+                          key={index}
+                          className={`py-1 ${
+                            item?.user?.id == parent?.id ? "text-end" : ""
+                          }`}
+                        >
+                          <p className="p-0 m-0 fw-bold">{item.message}</p>
+                          <small className="p-0 m-0">
+                            {`${item?.user?.name}  ${moment(date).format(
+                              "d/MM/YY"
+                            )}`}{" "}
+                            {moment(date).format("hh:mm a")}
+                          </small>
+                        </div>
+                      );
+                    })}
                   </div>
 
                   <div className=" d-flex align-items-center px-2 gap-2">
                     <input
+                      value={newMessage}
+                      onChange={handleTextChange}
                       type="text"
                       placeholde=""
                       className="border  p-2 rounded flex-fill"
                     />{" "}
-                    <BsFillSendFill className="h3 p-0 m-0" />
+                    <BsFillSendFill
+                      onClick={() =>
+                        sendMessage({ type: "parent", parentInfo: parent })
+                      }
+                      className="h3 p-0 m-0"
+                    />
                   </div>
                 </div>
               </div>
@@ -170,10 +182,7 @@ export default function ParentCalandar() {
           </div>
         </div>
       </main>
-        <Footer />
-
+      <Footer />
     </>
   );
 }
-
-             
