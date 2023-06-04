@@ -40,7 +40,7 @@ export default function StudentRegistrationCourse() {
 
   const getCourses = async () => {
   try {
-    const response = await axios.get(`http://34.227.65.157/course/get-all-courses`);
+    const response = await axios.get(`http://34.227.65.157/public/course/get-all-courses`);
 
     var technologyList = [];
 

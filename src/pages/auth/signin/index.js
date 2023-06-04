@@ -5,24 +5,40 @@ import Link from "next/link";
 import { RiArrowGoBackLine } from "react-icons/ri";
 import { Footer } from "../../../components";
 import {useRouter} from "next/router"
-
+import axios from "axios"
 export default function SignIn() {
   const navigation = useRouter();
   const [userType, setUserType] = useState('student')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
   const onContinue = () => {
     // console.log(userType)
-    window.localStorage.setItem("userType", JSON.stringify(userType))
-    window.localStorage.setItem("gkcAuth", JSON.stringify(true))
-    if(userType === "student"){
-      navigation.push("/")
-    }
-    if(userType === "parent"){
-      navigation.push("/parent")
-    }
-    if(userType === "instructor"){
-      navigation.push("/instructor")
-    }
+    // window.localStorage.setItem("userType", JSON.stringify(userType))
+    // window.localStorage.setItem("gkcAuth", JSON.stringify(true))
+    // if(userType === "student"){
+    //   navigation.push("/")
+    // }
+    // if(userType === "parent"){
+    //   navigation.push("/parent")
+    // }
+    // if(userType === "instructor"){
+    //   navigation.push("/instructor")
+    // }
   };
+
+  const onLogin = async() => {
+    console.log(email, password)
+    try {
+       const response = await axios.post(`http://34.227.65.157/auth/login`,{
+        email: email,
+        password: password
+       });
+       window.localStorage.setItem("gkcAuth", JSON.stringify(response.data))
+       console.log(response.data)
+     } catch (error) {
+       console.error(error);
+     }
+  }
   return (
     <>
       <Head>
@@ -64,22 +80,26 @@ export default function SignIn() {
                   </Link>
                 </div>
                 <div>
-                  <select onChange={(e)=> setUserType(e.target.value) } className="w-100 p-2 rounded outline-0 border border_gray text_gray mb-3 ">
+                  {/* <select onChange={(e)=> setUserType(e.target.value) } className="w-100 p-2 rounded outline-0 border border_gray text_gray mb-3 ">
                     <option value="student">Student</option>
                     <option value="parent">Parent</option>
                     <option value="instructor">Instructor</option>
-                  </select>
+                  </select> */}
                   <input
                     type="text"
                     className="w-100 p-2 rounded outline-0 border border_gray text_gray  mb-3"
                     placeholder="Your Email"
+                    value={email}
+                    onChange={(e)=> setEmail(e.target.value)}
                   />
                   <input
-                    type="text"
+                    type="password"
                     className="w-100 p-2 rounded outline-0 border border_gray  text_gray mb-3"
                     placeholder="Password"
+                    value={password}
+                    onChange={(e)=> setPassword(e.target.value)}
                   />
-                  <button className="w-100 btn_primary text-light p-2 rounded fw-bold mt-3" onClick={onContinue}>
+                  <button className="w-100 btn_primary text-light p-2 rounded fw-bold mt-3" onClick={onLogin}>
                     Sign In
                   </button>
                 </div>

@@ -9,7 +9,7 @@ export default function RegistrationGrade() {
   const navigation = useRouter();
   const onContinue = () => {
     var stored = JSON.parse(window.localStorage.getItem("registrationForm"));
-    stored.grade = Number(grade);
+    stored.gradeId = Number(grade);
     window.localStorage.setItem("registrationForm", JSON.stringify(stored));
     navigation.push("/auth/registrationcourse")
   }

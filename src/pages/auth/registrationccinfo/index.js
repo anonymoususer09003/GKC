@@ -31,6 +31,7 @@ export default function StudentRegistrationCCInfo() {
     var stored = JSON.parse(window.localStorage.getItem("registrationForm"));
     setUserInfo(stored)
   }, []);
+
   return (
     <>
       <Head>

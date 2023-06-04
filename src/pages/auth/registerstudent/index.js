@@ -5,48 +5,111 @@ import { Navbar, Footer } from "../../../components";
 import { BsCheck2Circle } from "react-icons/bs";
 import { useRouter } from "next/router";
 import { RiArrowGoBackLine } from "react-icons/ri";
+import axios from "axios";
+
 export default function RegisterStudent() {
+  const navigation = useRouter();
+  const [countries, setCountries] = useState([]);
+  const [states, setStates] = useState([]);
+  const [cities, setCities] = useState([]);
   const [userType, setUserType] = useState("");
   const [email, setEmail] = useState("");
   const [guardianEmail1, setGuardianEmail1] = useState("");
   const [guardianEmail2, setGuardianEmail2] = useState("");
   const [firstname, setFirstname] = useState("");
   const [lastname, setLastname] = useState("");
+  const [address1, setAddress1] = useState("");
+  const [address2, setAddress2] = useState("");
+  const [country, setCountry] = useState("");
+  const [state, setState] = useState("");
+  const [city, setCity] = useState("");
+  const [zipCode, setZipCode] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [termsAgree, setTermsAgree] = useState(false);
-  const navigation = useRouter();
-
+  const [isInitialRender, setIsInitialRender] = useState(true);
   const onContinue = () => {
-    // window.localStorage.setItem("userType", JSON.stringify(email));
     window.localStorage.setItem("gkcAuth", JSON.stringify(true));
-
-
     var stored = JSON.parse(window.localStorage.getItem("registrationForm"));
-    console.log(stored)
+    console.log(stored);
     stored.email = email;
-    stored.firstname = firstname;
-    stored.lastname = lastname;
+    stored.firstName = firstname;
+    stored.lastName = lastname;
     stored.password = password;
-    stored.guardianEmail1 = guardianEmail1;
-    stored.guardianEmail2 = guardianEmail2;
-    console.log(stored)
-  
+    stored.emailParent1 = guardianEmail1;
+    stored.emailParent2 = guardianEmail2;
+    stored.address1 = address1;
+    stored.address2 = address2;
+    stored.country = country;
+    stored.state = state;
+    stored.city = city;
+    stored.zipCode = zipCode;
+    stored.whoPaysEmail =  email;
+    stored.savePaymentFutureUse = false;
+    console.log(stored);
     window.localStorage.setItem("registrationForm", JSON.stringify(stored));
-    if(password == confirmPassword) {
-    navigation.push("/auth/registrationgrade");
-}else {
-  alert("password not matched")
-}
+    if (password == confirmPassword) {
+      navigation.push("/auth/registrationgrade");
+    } else {
+      alert("password not matched");
+    }
+  };
 
+  const getCountries = async () => {
+    try {
+      const response = await axios.get(
+        "http://34.227.65.157/public/location/get-countries"
+      );
+      setCountries(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  const getStates = async () => {
+    try {
+      const response = await axios.get(
+        `http://34.227.65.157/public/location/get-states?countryName=${country}`
+      );
+      setStates(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const getCities = async () => {
+    try {
+      const response = await axios.get(
+        `http://34.227.65.157/public/location/get-cities?countryName=${country}&stateName=${state}`
+      );
+      setCities(response.data);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   useEffect(() => {
     const value = JSON.parse(window.localStorage.getItem("userType"));
     var stored = JSON.parse(window.localStorage.getItem("registrationForm"));
-    setEmail(stored.email)
+    setEmail(stored.email);
     setUserType(value);
+    getCountries();
+
   }, []);
+
+  useEffect(() => {
+    if (isInitialRender) {
+      setIsInitialRender(false);
+    } else {
+      getStates();
+
+    }}, [country]);
+
+    useEffect(() => {
+      if (isInitialRender) {
+        setIsInitialRender(false);
+      } else {
+        getCities();
+      }}, [state]);
   return (
     <>
       <Head>
@@ -79,7 +142,7 @@ export default function RegisterStudent() {
                 <div className="d-flex justify-content-between align-items-center mb-3">
                   <h4 className="text-secondary fw-bold text-capitalize">
                     Student
-                  </h4> 
+                  </h4>
                   <p className="bg_secondary text-white p-2 rounded d-flex align-items-center gap-2 fw-bold">
                     <BsCheck2Circle style={{ fontSize: "22px" }} />
                     {email}
@@ -92,7 +155,7 @@ export default function RegisterStudent() {
                     placeholder="Enter Parent/Guardian 1 Email"
                     value={guardianEmail1}
                     name="guardian1"
-                    onChange={(e)=> setGuardianEmail1(e.target.value)}
+                    onChange={(e) => setGuardianEmail1(e.target.value)}
                   />
                   <input
                     type="text"
@@ -100,8 +163,7 @@ export default function RegisterStudent() {
                     placeholder="Enter Parent/Guardian 2 Email"
                     value={guardianEmail2}
                     name="guardian3"
-
-                    onChange={(e)=> setGuardianEmail2(e.target.value)}
+                    onChange={(e) => setGuardianEmail2(e.target.value)}
                   />
                   <div className="py-2">
                     <label className="text_gray m-0">
@@ -117,20 +179,74 @@ export default function RegisterStudent() {
                       type="text"
                       className="w-100 p-2 rounded outline-0 border border_gray text_gray  mb-3"
                       placeholder="First Name"
-                    name="firstname"
-
-                              value={firstname}
-                                          onChange={(e)=> setFirstname(e.target.value)}
-
+                      name="firstname"
+                      value={firstname}
+                      onChange={(e) => setFirstname(e.target.value)}
                     />
                     <input
                       type="text"
                       className="w-100 p-2 rounded outline-0 border border_gray text_gray  mb-3"
                       placeholder="Last Name"
-                    name="lastname"
+                      name="lastname"
                       value={lastname}
-
-                                          onChange={(e)=> setLastname(e.target.value)}
+                      onChange={(e) => setLastname(e.target.value)}
+                    />
+                  </div>
+                  <div className="d-flex   flex-md-nowrap flex-wrap gap-2">
+                    <input
+                      type="text"
+                      className="w-100 p-2 rounded outline-0 border border_gray text_gray  mb-3"
+                      placeholder="Address 1"
+                      name="address1"
+                      value={address1}
+                      onChange={(e) => setAddress1(e.target.value)}
+                    />
+                    <input
+                      type="text"
+                      className="w-100 p-2 rounded outline-0 border border_gray text_gray  mb-3"
+                      placeholder="Address 2"
+                      name="address2"
+                      value={address2}
+                      onChange={(e) => setAddress2(e.target.value)}
+                    />
+                  </div>
+                  <div className="d-flex   flex-md-nowrap flex-wrap gap-2">
+                    <select
+                      onChange={(e) => setCountry(e.target.value)}
+                      className="w-100 p-2 rounded outline-0 border border_gray text_gray mb-3 "
+                    >
+                      <option value="">Select Country</option>
+                      {countries.map((v, i) => {
+                        return <option value={v.name} key={i}>{v.name}</option>;
+                      })}
+                    </select>
+                    <select
+                      onChange={(e) => setState(e.target.value)}
+                      className="w-100 p-2 rounded outline-0 border border_gray text_gray mb-3 "
+                    >
+                      <option value="">Select State</option>
+                      {states.map((v, i) => {
+                        return <option value={v.name} key={i}>{v.name}</option>;
+                      })}
+                    </select>
+                  </div>
+                  <div className="d-flex   flex-md-nowrap flex-wrap gap-2">
+                    <select
+                      onChange={(e) => setCity(e.target.value)}
+                      className="w-100 p-2 rounded outline-0 border border_gray text_gray mb-3"
+                    >
+                      <option value="student">Select City</option>
+                      {cities.map((v, i) => {
+                        return <option value={v.name} key={i}>{v.name}</option>;
+                      })}
+                    </select>
+                    <input
+                      type="text"
+                      className="w-100 p-2 rounded outline-0 border border_gray text_gray  mb-3"
+                      placeholder="Zip"
+                      name="zip"
+                      value={zipCode}
+                      onChange={(e) => setZipCode(e.target.value)}
                     />
                   </div>
                   <div className="d-flex  flex-md-nowrap flex-wrap gap-2">
@@ -140,16 +256,15 @@ export default function RegisterStudent() {
                       placeholder="Password"
                       name="password"
                       value={password}
-                                          onChange={(e)=> setPassword(e.target.value)}
+                      onChange={(e) => setPassword(e.target.value)}
                     />
                     <input
                       type="password"
                       className="w-100 p-2 rounded outline-0 border border_gray text_gray  mb-3"
                       placeholder="Confirm Password"
                       name="confirmpassword"
-
                       value={confirmPassword}
-                                          onChange={(e)=> setConfirmPassword(e.target.value)}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
                     />
                   </div>
                   <div className="form-check">
@@ -158,8 +273,7 @@ export default function RegisterStudent() {
                       type="checkbox"
                       value={termsAgree}
                       id="flexCheckDefault"
-                      onChange={()=> setTermsAgree(!termsAgree)}
-
+                      onChange={() => setTermsAgree(!termsAgree)}
                     />
                     <label className="form-check-label" for="flexCheckDefault">
                       I agree to the Terms of Use and Privacy Policy of GKC
@@ -167,8 +281,10 @@ export default function RegisterStudent() {
                   </div>
                   <div className="d-flex flex-wrap gap-2 justify-content-between align-items-center mt-3">
                     <button
-                      className={`w-50 text-light p-2 rounded fw-bold  bg-gray-300 ${!termsAgree ? 'btn_disabled' : 'btn_primary'}`}
-                    disabled={!termsAgree}
+                      className={`w-50 text-light p-2 rounded fw-bold  bg-gray-300 ${
+                        !termsAgree ? "btn_disabled" : "btn_primary"
+                      }`}
+                      disabled={!termsAgree}
                       onClick={onContinue}
                     >
                       Continue
