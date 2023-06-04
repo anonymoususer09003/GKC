@@ -13,7 +13,7 @@ export default function ForgotPassword() {
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
   const [password, setPassword] = useState("");
-  const [isSent, setIsSent] = useState(true);
+  const [isSent, setIsSent] = useState(false);
 
 const isEmailValid = ((/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)))
 
@@ -92,6 +92,7 @@ const changePassword = async () => {
                     type="text"
                     className="w-100 p-2 rounded outline-0 border border_gray text_gray  mb-3"
                     placeholder="Enter Confirmation Code"
+                    name="code"
                     value={code}
                     onChange={(e)=> setCode(e.target.value)}
                   />
@@ -100,6 +101,7 @@ const changePassword = async () => {
                   isSent &&
                   <input
                     type="password"
+                    name="password"
                     className="w-100 p-2 rounded outline-0 border border_gray text_gray  mb-3"
                     placeholder="Enter New Password"
                     value={password}
