@@ -3,6 +3,7 @@ import Head from "next/head";
 import { Navbar, Footer } from "../../../components";
 import { useRouter } from "next/router";
 import axios from "axios";
+import PaymentForm from "@/components/stripe/PaymentForm";
 
 export default function StudentRegistrationCCInfo() {
   const navigation = useRouter();
@@ -45,8 +46,8 @@ export default function StudentRegistrationCCInfo() {
         );
         window.localStorage.setItem("gkcAuth", JSON.stringify(response.data))
         console.log(response.data)
-        window.localStorage.removeItem("registrationForm")
-        window.localStorage.removeItem("userType")
+         window.localStorage.removeItem("registrationForm")
+            window.localStorage.removeItem("userType")
         navigation.push("/");
 
       } catch (error) {
@@ -74,8 +75,6 @@ export default function StudentRegistrationCCInfo() {
         );
         window.localStorage.setItem("gkcAuth", JSON.stringify(response.data))
        console.log(response.data)
-       window.localStorage.removeItem("registrationForm")
-       window.localStorage.removeItem("userType")
       navigation.push("/parent");
 
       } catch (error) {
@@ -125,35 +124,7 @@ export default function StudentRegistrationCCInfo() {
                   <h4 className="text-dark fw-bold p-0 m-0 text-center">OR</h4>
                 </div>
 
-                <h4 className="text-dark fw-bold pb-2">
-                  Add credit card information
-                </h4>
-                <input
-                  type="text"
-                  className="w-100 p-2 rounded outline-0 border border_gray text_gray  my-2"
-                  placeholder="Name on Credit Card"
-                  value=""
-                />
-                <input
-                  type="text"
-                  className="w-100 p-2 rounded outline-0 border border_gray text_gray  my-2"
-                  placeholder="Credit Card Number"
-                  value=""
-                />
-
-                <div className="d-flex gap-2 my-2">
-                  <input
-                    type="text"
-                    className="w-100 p-2 rounded outline-0 border border_gray text_gray  mb-3"
-                    placeholder="CVV"
-                  />
-                  <input
-                    type="text"
-                    className="w-100 p-2 rounded outline-0 border border_gray text_gray  mb-3"
-                    placeholder="Expiration Date"
-                  />
-                </div>
-
+                <PaymentForm title={" Add credit card information"} />
                 <div className="form-check">
                   <input
                     className="form-check-input"
