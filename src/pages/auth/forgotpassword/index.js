@@ -1,10 +1,10 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
 import { Footer } from "../../../components";
 import { RiArrowGoBackLine } from "react-icons/ri";
-import axios from "axios"
+import axios from "axios";
 import { useRouter } from "next/router";
 
 export default function ForgotPassword() {
@@ -15,35 +15,38 @@ export default function ForgotPassword() {
   const [password, setPassword] = useState("");
   const [isSent, setIsSent] = useState(false);
 
-const isEmailValid = ((/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)))
+  const isEmailValid = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(
+    email
+  );
 
-const handleSubmit = async () => {
-  try {
-   let a = email.replace("@", "%40");
-    const response = await axios.get(`http://34.227.65.157/auth/code?email=${a}`);
-      console.log(response)
-      setIsSent(true)
-  } catch (error) {
-    console.error(error);
-  }
-};
+  const handleSubmit = async () => {
+    try {
+      const response = await axios.get(
+        `http://34.227.65.157/auth/code?email=${email}`
+      );
+      console.log(response);
+      setIsSent(true);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
-const changePassword = async () => {
-  try {
-    const response = await axios.post(`http://34.227.65.157/user/forgot-password`, {
-      email: email,
-      password: password,
-      code: code
-    });
-      console.log(response)
+  const changePassword = async () => {
+    try {
+      const response = await axios.post(
+        `http://34.227.65.157/user/forgot-password`,
+        {
+          email: email,
+          password: password,
+          code: code,
+        }
+      );
+      console.log(response);
       navigation.push("/auth/signin");
-
-  } catch (error) {
-    console.error(error);
-  }
-
-};
-
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <>
@@ -84,52 +87,51 @@ const changePassword = async () => {
                     className="w-100 p-2 rounded outline-0 border border_gray text_gray  mb-3"
                     placeholder="Your Email"
                     value={email}
-                    onChange={(e)=> setEmail(e.target.value)}
+                    onChange={(e) => setEmail(e.target.value)}
                   />
-                       {
-                  isSent &&
-                  <input
-                    type="text"
-                    className="w-100 p-2 rounded outline-0 border border_gray text_gray  mb-3"
-                    placeholder="Enter Confirmation Code"
-                    name="code"
-                    value={code}
-                    onChange={(e)=> setCode(e.target.value)}
-                  />
-                } 
-                {
-                  isSent &&
-                  <input
-                    type="password"
-                    name="password"
-                    className="w-100 p-2 rounded outline-0 border border_gray text_gray  mb-3"
-                    placeholder="Enter New Password"
-                    value={password}
-                    onChange={(e)=> setPassword(e.target.value)}
-                  />
-                } 
-                {
-                  isSent &&
-                <p className="text-secondary fw-bold py-2 text-center">
-                    Check Email for Confirmation Code
-                  </p>
-                }  
-{
-  isSent ?
-                  <button  className={`w-100 text-light p-2 rounded fw-bold mt-3 bg-gray-300 ${ 'btn_primary'}`}
-                    onClick={() => changePassword()}>
-                    Update Password
-                  </button>
-:
-                  <button  className={`w-100 text-light p-2 rounded fw-bold mt-3 bg-gray-300 ${!isEmailValid ? 'btn_disabled' : 'btn_primary'}`}
-                    disabled={!isEmailValid}
-                    onClick={() => handleSubmit()}>
-                    Continue
-                  </button>
-}
-
-
-                  
+                  {isSent && (
+                    <input
+                      type="text"
+                      className="w-100 p-2 rounded outline-0 border border_gray text_gray  mb-3"
+                      placeholder="Enter Confirmation Code"
+                      name="code"
+                      value={code}
+                      onChange={(e) => setCode(e.target.value)}
+                    />
+                  )}
+                  {isSent && (
+                    <input
+                      type="password"
+                      name="password"
+                      className="w-100 p-2 rounded outline-0 border border_gray text_gray  mb-3"
+                      placeholder="Enter New Password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                    />
+                  )}
+                  {isSent && (
+                    <p className="text-secondary fw-bold py-2 text-center">
+                      Check Email for Confirmation Code
+                    </p>
+                  )}
+                  {isSent ? (
+                    <button
+                      className={`w-100 text-light p-2 rounded fw-bold mt-3 bg-gray-300 ${"btn_primary"}`}
+                      onClick={() => changePassword()}
+                    >
+                      Update Password
+                    </button>
+                  ) : (
+                    <button
+                      className={`w-100 text-light p-2 rounded fw-bold mt-3 bg-gray-300 ${
+                        !isEmailValid ? "btn_disabled" : "btn_primary"
+                      }`}
+                      disabled={!isEmailValid}
+                      onClick={() => handleSubmit()}
+                    >
+                      Continue
+                    </button>
+                  )}
                 </div>
               </div>
             </div>

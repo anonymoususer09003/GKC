@@ -13,9 +13,10 @@ export default function Home() {
 
   const isEmailValid = ((/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)))
   const handleSubmit = async () => {
+    
     try {
-     let a = email.replace("@", "%40");
-      const response = await axios.get(`http://34.227.65.157/auth/code?email=${a}`);
+      const response = await axios.get(`http://34.227.65.157/auth/code?email=${email}`);
+      console.log(response)
         if (email) {
           window.localStorage.setItem(
             "registrationForm",
@@ -25,6 +26,7 @@ export default function Home() {
           );
           navigation.push("/auth/activatecode");
         }
+
     } catch (error) {
       console.error(error);
     }

@@ -10,7 +10,24 @@ export default function InstructorRegistrationMore() {
   const navigation = useRouter();
   const [hourlyRate, setHourlyRate] = useState(null);
   const [instructorBio, setInstructorBio] = useState("");
-  const [deliveryMode, setDeliveryMode] = useState("");
+  const [acceptInterview, setAcceptInterview] = useState(false);
+  const [deliveryMode, setDeliveryMode] = useState('');
+
+  const onContinue = () => {
+    window.localStorage.setItem("gkcAuth", JSON.stringify(true));
+    var stored = JSON.parse(window.localStorage.getItem("registrationForm"));
+    console.log(stored);
+    stored.instructorBio = instructorBio;
+    stored.hourlyRate = Number(hourlyRate);
+    stored.acceptInterviewRequest = acceptInterview;
+    stored.savePaymentFutureUse = true;
+    console.log(stored);
+    window.localStorage.setItem("registrationForm", JSON.stringify(stored));
+      navigation.push("/auth/gradestoteach");
+  };
+
+
+
   return (
     <>
       <Head>
@@ -51,6 +68,8 @@ export default function InstructorRegistrationMore() {
                   id="exampleFormControlTextarea1"
                   rows="8"
                   placeholder="About myself"
+                  value={instructorBio}
+                  onChange={(e)=> setInstructorBio(e.target.value)}
                 ></textarea>
 
                 <p className=" fw-bold ">
@@ -60,7 +79,7 @@ export default function InstructorRegistrationMore() {
                 <input
                   type="file"
                   className="w-100 p-1 rounded outline-0 border border_gray text_gray  mb-3"
-                  placeholder="First Name"
+                  // placeholder="First Name"
                 />
                 <div className="d-flex gap-2 my-2 align-items-center">
                   <p className="fw-bold w-25 p-0 m-0">Hourly Rate:</p>
@@ -69,6 +88,8 @@ export default function InstructorRegistrationMore() {
                       type="text"
                       className="w-25 p-2 rounded outline-0 border border_gray text_gray text-center"
                       placeholder="00:00"
+                        value={hourlyRate}
+                  onChange={(e)=> setHourlyRate(e.target.value)}
                     />
                     <p className="fw-bold p-0 m-0 ">USD/hr</p>
                   </div>
@@ -79,10 +100,13 @@ export default function InstructorRegistrationMore() {
                     Accept Interview Request
                   </p>
 
-                  <select className="w-100 p-2 rounded outline-0 border border_gray text_gray">
-                    <option>Select</option>
-                    <option>Student</option>
-                    <option>Student</option>
+                  <select className="w-100 p-2 rounded outline-0 border border_gray text_gray"
+                              value={acceptInterview}
+                  onChange={(e)=> setAcceptInterview(e.target.value)}
+                  
+                  >
+                    <option value={false}>False</option>
+                    <option value={true}>True</option>
                   </select>
                 </div>
                 <p className="fw-bold w-100 p-0 m-0">
@@ -126,10 +150,13 @@ export default function InstructorRegistrationMore() {
                 <div>
                   <div className=" mt-3 d-flex justify-content-center flex-column align-items-center gap-2">
                     <button
-                      className="w-25 btn_primary text-light p-2 rounded fw-bold "
-                      onClick={() => navigation.push("/auth/gradestoteach")}
+                      className={`w-50 text-light p-2 rounded fw-bold  bg-gray-300 ${
+                        !hourlyRate ? "btn_disabled" : "btn_primary"
+                      }`}
+                      disabled={!hourlyRate}
+                      onClick={() => onContinue()}
                     >
-                      Continue
+                      Continue 
                     </button>
                     <Link
                       href="/"

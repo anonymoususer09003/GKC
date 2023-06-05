@@ -52,13 +52,13 @@ export default function RegistrationGrade() {
               }}
             >
               <input
-value="0"
+value="1"
                 className="form-check-input position-absolute"
                 style={{ top: "5px", right: "5px" }}
                 type="radio"
                 name="flexRadioDefault"
                 id="flexRadioDefault1"
-                checked={grade == 0}
+                checked={grade == 1}
               onChange={(e)=> setGrade(e.target.value)}
               />
               <div className="position-absolute bottom-0 p-2 bg-light w-100 bg-opacity-50 fw-bold">
@@ -79,13 +79,13 @@ value="0"
               }}
             >
               <input
-value={1}
+value={2}
                 className="form-check-input position-absolute"
                 style={{ top: "5px", right: "5px" }}
                 type="radio"
                 name="flexRadioDefault"
                 id="flexRadioDefault1"
-                checked={grade == 1}
+                checked={grade == 2}
               onChange={(e)=> setGrade(e.target.value)}
               />
 
@@ -108,13 +108,13 @@ value={1}
               }}
             >
               <input
-value="2"
+value="3"
                 className="form-check-input position-absolute"
                 style={{ top: "5px", right: "5px" }}
                 type="radio"
                 name="flexRadioDefault"
                 id="flexRadioDefault1"
-                checked={grade == 2}
+                checked={grade == 3}
               onChange={(e)=> setGrade(e.target.value)}
               />
 
@@ -137,13 +137,13 @@ value="2"
               }}
             >
               <input
-value="3"
+value="4"
                 className="form-check-input position-absolute"
                 style={{ top: "5px", right: "5px" }}
                 type="radio"
                 name="flexRadioDefault"
                 id="flexRadioDefault1"
-                checked={grade == 3}
+                checked={grade == 4}
               onChange={(e)=> setGrade(e.target.value)}
               />
 

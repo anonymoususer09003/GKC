@@ -1,35 +1,94 @@
 import React, { useState, useEffect } from "react";
 import Head from "next/head";
 import { Navbar, Footer } from "../../../components";
-import {useRouter} from "next/router"
+import { useRouter } from "next/router";
 import axios from "axios";
 
 export default function StudentRegistrationCCInfo() {
   const navigation = useRouter();
-  const [userInfo, setUserInfo] = useState(null)
-  const [nameCard, setNameCard] = useState("")
-  const [numberCard, setNumberCard] = useState("")
+  const [userType, setUserType] = useState(null);
+  const [userInfo, setUserInfo] = useState(null);
+  const [nameCard, setNameCard] = useState("");
+  const [numberCard, setNumberCard] = useState("");
 
-  const  onContinue = () => {
-    console.log(userInfo)
-    //  navigation.push("/auth/registrationccpay")
-  }
-  
-  const onRegister = async() => {
-    console.log(userInfo)
-    try {
-       const response = await axios.post(`http://34.227.65.157/auth/register-student`,{
-        userInfo
-       });
-       console.log(response)
-     } catch (error) {
-       console.error(error);
-     }
-  }
+  const onContinue = () => {
+    console.log(userInfo);
+  };
+
+  const onRegister = async () => {
+    console.log(userInfo);
+    if (userType === "student") {
+      try {
+        const response = await axios.post(
+          `http://34.227.65.157/auth/register-student`,
+          {
+            firstName: userInfo.firstName,
+            lastName: userInfo.lastName,
+            email: userInfo.email,
+            password: userInfo.password,
+            address1: userInfo.address1,
+            address2: userInfo.address2,
+            country: userInfo.country,
+            state: userInfo.state,
+            city: userInfo.city,
+            zipCode: userInfo.zipCode,
+            savePaymentFutureUse: true,
+            emailParent1: userInfo.emailParent1,
+            emailParent2: userInfo.emailParent2,
+            whoPaysEmail: userInfo.email,
+            gradeId: userInfo.gradeId,
+            courseOfInterestAndProficiency:
+              userInfo.courseOfInterestAndProficiency,
+            languagePreferencesId: userInfo.languagePreferencesId,
+            timeZoneId: 'Asia/Karachi',
+          }
+        );
+        window.localStorage.setItem("gkcAuth", JSON.stringify(response.data))
+        console.log(response.data)
+        window.localStorage.removeItem("registrationForm")
+        window.localStorage.removeItem("userType")
+        navigation.push("/");
+
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    if (userType === "parent") {
+      try {
+        const response = await axios.post(
+          `http://34.227.65.157/auth/register-parent`,
+          {
+            firstName: userInfo.firstName,
+            lastName: userInfo.lastName,
+            email: userInfo.email,
+            password: userInfo.password,
+            address1: userInfo.address1,
+            address2: userInfo.address2,
+            country: userInfo.country,
+            state: userInfo.state,
+            city: userInfo.city,
+            zipCode: userInfo.zipCode,
+            timeZoneId: 'Asia/Karachi',
+            savePaymentFutureUse: true,
+          }
+        );
+        window.localStorage.setItem("gkcAuth", JSON.stringify(response.data))
+       console.log(response.data)
+       window.localStorage.removeItem("registrationForm")
+       window.localStorage.removeItem("userType")
+      navigation.push("/parent");
+
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  };
 
   useEffect(() => {
     var stored = JSON.parse(window.localStorage.getItem("registrationForm"));
-    setUserInfo(stored)
+    var typ = JSON.parse(window.localStorage.getItem("userType"));
+    setUserInfo(stored);
+    setUserType(typ);
   }, []);
 
   return (
@@ -79,7 +138,7 @@ export default function StudentRegistrationCCInfo() {
                   type="text"
                   className="w-100 p-2 rounded outline-0 border border_gray text_gray  my-2"
                   placeholder="Credit Card Number"
-                                value=""
+                  value=""
                 />
 
                 <div className="d-flex gap-2 my-2">
@@ -107,12 +166,18 @@ export default function StudentRegistrationCCInfo() {
                   </label>
                 </div>
                 <div className="d-flex gap-2 justify-content-center mt-3">
-                  <button className="w-50 btn_primary text-light p-2 rounded fw-bold " onClick={onContinue}>
+                  <button
+                    className="w-50 btn_primary text-light p-2 rounded fw-bold "
+                    onClick={onContinue}
+                  >
                     Continue
                   </button>
                 </div>
                 <div className="d-flex gap-2 justify-content-center  mt-3">
-                  <button className="w-50 btn_secondary text-light p-2 rounded fw-bold " onClick={onRegister}>
+                  <button
+                    className="w-50 btn_secondary text-light p-2 rounded fw-bold "
+                    onClick={onRegister}
+                  >
                     I wil do this later
                   </button>
                 </div>
