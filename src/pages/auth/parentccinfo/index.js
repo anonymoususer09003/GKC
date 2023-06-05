@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import Head from "next/head";
 import { Navbar, Footer } from "../../../components";
-import {useRouter} from "next/router"
+import StripeForm from "../../../components/stripe/PaymentForm/index";
+import { useRouter } from "next/router";
 
 export default function ParentRegistrationCCInfo() {
   const navigation = useRouter();
@@ -39,32 +40,7 @@ export default function ParentRegistrationCCInfo() {
                   <h4 className="text-dark fw-bold p-0 m-0 text-center">OR</h4>
                 </div> */}
 
-                <h4 className="text-dark fw-bold pb-2">
-                  Add credit card information
-                </h4>
-                <input
-                  type="text"
-                  className="w-100 p-2 rounded outline-0 border border_gray text_gray  my-2"
-                  placeholder="Name on Credit Card"
-                />
-                <input
-                  type="text"
-                  className="w-100 p-2 rounded outline-0 border border_gray text_gray  my-2"
-                  placeholder="Credit Card Number"
-                />
-
-                <div className="d-flex gap-2 my-2">
-                  <input
-                    type="text"
-                    className="w-100 p-2 rounded outline-0 border border_gray text_gray  mb-3"
-                    placeholder="CVV"
-                  />
-                  <input
-                    type="text"
-                    className="w-100 p-2 rounded outline-0 border border_gray text_gray  mb-3"
-                    placeholder="Expiration Date"
-                  />
-                </div>
+                <StripeForm title="Add credit card information" />
 
                 <div className="form-check">
                   <input
@@ -78,7 +54,10 @@ export default function ParentRegistrationCCInfo() {
                   </label>
                 </div>
                 <div className="d-flex gap-2 justify-content-center mt-3">
-                  <button className="w-25 btn_primary text-light p-2 rounded fw-bold " onClick={()=> navigation.push("/parent")}>
+                  <button
+                    className="w-25 btn_primary text-light p-2 rounded fw-bold "
+                    onClick={() => navigation.push("/parent")}
+                  >
                     Continue
                   </button>
                 </div>

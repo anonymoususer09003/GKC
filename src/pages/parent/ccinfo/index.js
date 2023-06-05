@@ -1,14 +1,13 @@
 import React, { useState } from "react";
 import Head from "next/head";
 import { ParentNavbar, Footer } from "../../../components";
-import {useRouter} from "next/router"
-
+import { useRouter } from "next/router";
+import PaymentForm from "@/components/stripe/PaymentForm";
 export default function ParentCCInfo() {
   const navigation = useRouter();
-  const  onContinue = () => {
-
-          navigation.push("/")
-    }
+  const onContinue = () => {
+    navigation.push("/");
+  };
   return (
     <>
       <Head>
@@ -73,33 +72,7 @@ export default function ParentCCInfo() {
                     <option>Option 2</option>
                   </select>
                 </div>
-                <h5 className="text-dark fw-bold pb-2">
-                  Enter new credit card information
-                </h5>
-                <input
-                  type="text"
-                  className="w-100 p-2 rounded outline-0 border border_gray text_gray  my-2"
-                  placeholder="Name on Credit Card"
-                />
-                <input
-                  type="text"
-                  className="w-100 p-2 rounded outline-0 border border_gray text_gray  my-2"
-                  placeholder="Credit Card Number"
-                />
-
-                <div className="d-flex gap-2 my-2">
-                  <input
-                    type="text"
-                    className="w-100 p-2 rounded outline-0 border border_gray text_gray  mb-3"
-                    placeholder="CVV"
-                  />
-                  <input
-                    type="text"
-                    className="w-100 p-2 rounded outline-0 border border_gray text_gray  mb-3"
-                    placeholder="Expiration Date"
-                  />
-                </div>
-
+                <PaymentForm title=" Enter new credit card information" />
                 <div className="form-check">
                   <input
                     className="form-check-input"
@@ -112,7 +85,10 @@ export default function ParentCCInfo() {
                   </label>
                 </div>
                 <div className="d-flex gap-2 justify-content-center mt-3">
-                  <button className="w-50 btn_primary text-light p-2 rounded fw-bold " onClick={onContinue}>
+                  <button
+                    className="w-50 btn_primary text-light p-2 rounded fw-bold "
+                    onClick={onContinue}
+                  >
                     Pay
                   </button>
                 </div>
