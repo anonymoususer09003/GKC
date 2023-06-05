@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import Head from "next/head";
 import { ParentNavbar, Footer } from "../../../components";
-import {useRouter} from "next/router"
-
+import { useRouter } from "next/router";
+import PaymentForm from "@/components/stripe/PaymentForm";
 export default function StudentRegistrationCCPay() {
   const navigation = useRouter();
 
@@ -63,33 +63,7 @@ export default function StudentRegistrationCCPay() {
                 </div>
                 <h5 className="text-dark fw-bold text-center">OR</h5>
 
-                <h5 className="text-dark fw-bold pb-2">
-                  Enter new credit card information
-                </h5>
-                <input
-                  type="text"
-                  className="w-100 p-2 rounded outline-0 border border_gray text_gray  my-2"
-                  placeholder="Name on Credit Card"
-                />
-                <input
-                  type="text"
-                  className="w-100 p-2 rounded outline-0 border border_gray text_gray  my-2"
-                  placeholder="Credit Card Number"
-                />
-
-                <div className="d-flex gap-2 my-2">
-                  <input
-                    type="text"
-                    className="w-100 p-2 rounded outline-0 border border_gray text_gray  mb-3"
-                    placeholder="CVV"
-                  />
-                  <input
-                    type="text"
-                    className="w-100 p-2 rounded outline-0 border border_gray text_gray  mb-3"
-                    placeholder="Expiration Date"
-                  />
-                </div>
-
+                <PaymentForm title="Enter new credit card information" />
                 <div className="form-check">
                   <input
                     className="form-check-input"
@@ -102,7 +76,10 @@ export default function StudentRegistrationCCPay() {
                   </label>
                 </div>
                 <div className="d-flex gap-2 justify-content-center mt-3">
-                  <button className="w-25 btn_primary text-light p-2 rounded fw-bold " onClick={()=> navigation.push("/parent/messaging")}>
+                  <button
+                    className="w-25 btn_primary text-light p-2 rounded fw-bold "
+                    onClick={() => navigation.push("/parent/messaging")}
+                  >
                     Pay
                   </button>
                 </div>

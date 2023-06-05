@@ -1,35 +1,38 @@
 import React, { useState, useEffect } from "react";
 import Head from "next/head";
 import { Navbar, Footer } from "../../../components";
-import {useRouter} from "next/router"
+import { useRouter } from "next/router";
 import axios from "axios";
-
+import PaymentForm from "@/components/stripe/PaymentForm";
 export default function StudentRegistrationCCInfo() {
   const navigation = useRouter();
-  const [userInfo, setUserInfo] = useState(null)
-  const [nameCard, setNameCard] = useState("")
-  const [numberCard, setNumberCard] = useState("")
+  const [userInfo, setUserInfo] = useState(null);
+  const [nameCard, setNameCard] = useState("");
+  const [numberCard, setNumberCard] = useState("");
 
-  const  onContinue = () => {
-    console.log(userInfo)
+  const onContinue = () => {
+    console.log(userInfo);
     //  navigation.push("/auth/registrationccpay")
-  }
-  
-  const onRegister = async() => {
-    console.log(userInfo)
+  };
+
+  const onRegister = async () => {
+    console.log(userInfo);
     try {
-       const response = await axios.post(`http://34.227.65.157/auth/register-student`,{
-        userInfo
-       });
-       console.log(response)
-     } catch (error) {
-       console.error(error);
-     }
-  }
+      const response = await axios.post(
+        `http://34.227.65.157/auth/register-student`,
+        {
+          userInfo,
+        }
+      );
+      console.log(response);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   useEffect(() => {
     var stored = JSON.parse(window.localStorage.getItem("registrationForm"));
-    setUserInfo(stored)
+    setUserInfo(stored);
   }, []);
 
   return (
@@ -66,35 +69,7 @@ export default function StudentRegistrationCCInfo() {
                   <h4 className="text-dark fw-bold p-0 m-0 text-center">OR</h4>
                 </div>
 
-                <h4 className="text-dark fw-bold pb-2">
-                  Add credit card information
-                </h4>
-                <input
-                  type="text"
-                  className="w-100 p-2 rounded outline-0 border border_gray text_gray  my-2"
-                  placeholder="Name on Credit Card"
-                  value=""
-                />
-                <input
-                  type="text"
-                  className="w-100 p-2 rounded outline-0 border border_gray text_gray  my-2"
-                  placeholder="Credit Card Number"
-                                value=""
-                />
-
-                <div className="d-flex gap-2 my-2">
-                  <input
-                    type="text"
-                    className="w-100 p-2 rounded outline-0 border border_gray text_gray  mb-3"
-                    placeholder="CVV"
-                  />
-                  <input
-                    type="text"
-                    className="w-100 p-2 rounded outline-0 border border_gray text_gray  mb-3"
-                    placeholder="Expiration Date"
-                  />
-                </div>
-
+                <PaymentForm title={" Add credit card information"} />
                 <div className="form-check">
                   <input
                     className="form-check-input"
@@ -107,12 +82,18 @@ export default function StudentRegistrationCCInfo() {
                   </label>
                 </div>
                 <div className="d-flex gap-2 justify-content-center mt-3">
-                  <button className="w-50 btn_primary text-light p-2 rounded fw-bold " onClick={onContinue}>
+                  <button
+                    className="w-50 btn_primary text-light p-2 rounded fw-bold "
+                    onClick={onContinue}
+                  >
                     Continue
                   </button>
                 </div>
                 <div className="d-flex gap-2 justify-content-center  mt-3">
-                  <button className="w-50 btn_secondary text-light p-2 rounded fw-bold " onClick={onRegister}>
+                  <button
+                    className="w-50 btn_secondary text-light p-2 rounded fw-bold "
+                    onClick={onRegister}
+                  >
                     I wil do this later
                   </button>
                 </div>
