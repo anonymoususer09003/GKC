@@ -28,6 +28,10 @@ export default function RegisterStudent() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [termsAgree, setTermsAgree] = useState(false);
   const [isInitialRender, setIsInitialRender] = useState(true);
+
+  let isValidForm = email && firstname && lastname && guardianEmail1 && address1 && country && state && city && zipCode && password  && termsAgree;
+
+
   const onContinue = () => {
     window.localStorage.setItem("gkcAuth", JSON.stringify(true));
     var stored = JSON.parse(window.localStorage.getItem("registrationForm"));
@@ -151,7 +155,7 @@ export default function RegisterStudent() {
                 <div>
                   <input
                     type="text"
-                    className="w-100 p-2 rounded outline-0 border border_gray text_gray  mb-3"
+                    className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
                     placeholder="Enter Parent/Guardian 1 Email"
                     value={guardianEmail1}
                     name="guardian1"
@@ -159,25 +163,25 @@ export default function RegisterStudent() {
                   />
                   <input
                     type="text"
-                    className="w-100 p-2 rounded outline-0 border border_gray text_gray "
+                    className="w-100 p-2 rounded outline-0 border border_gray  "
                     placeholder="Enter Parent/Guardian 2 Email"
                     value={guardianEmail2}
                     name="guardian3"
                     onChange={(e) => setGuardianEmail2(e.target.value)}
                   />
                   <div className="py-2">
-                    <label className="text_gray m-0">
+                    <label className=" m-0">
                       This is to link your account to your parent/guardian
                     </label>
                     <br />
-                    <label className="text_gray m-0">
+                    <label className=" m-0">
                       We do not have any record of parent 2
                     </label>
                   </div>{" "}
                   <div className="d-flex   flex-md-nowrap flex-wrap gap-2">
                     <input
                       type="text"
-                      className="w-100 p-2 rounded outline-0 border border_gray text_gray  mb-3"
+                      className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
                       placeholder="First Name"
                       name="firstname"
                       value={firstname}
@@ -185,7 +189,7 @@ export default function RegisterStudent() {
                     />
                     <input
                       type="text"
-                      className="w-100 p-2 rounded outline-0 border border_gray text_gray  mb-3"
+                      className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
                       placeholder="Last Name"
                       name="lastname"
                       value={lastname}
@@ -195,7 +199,7 @@ export default function RegisterStudent() {
                   <div className="d-flex   flex-md-nowrap flex-wrap gap-2">
                     <input
                       type="text"
-                      className="w-100 p-2 rounded outline-0 border border_gray text_gray  mb-3"
+                      className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
                       placeholder="Address 1"
                       name="address1"
                       value={address1}
@@ -203,7 +207,7 @@ export default function RegisterStudent() {
                     />
                     <input
                       type="text"
-                      className="w-100 p-2 rounded outline-0 border border_gray text_gray  mb-3"
+                      className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
                       placeholder="Address 2"
                       name="address2"
                       value={address2}
@@ -213,7 +217,7 @@ export default function RegisterStudent() {
                   <div className="d-flex   flex-md-nowrap flex-wrap gap-2">
                     <select
                       onChange={(e) => setCountry(e.target.value)}
-                      className="w-100 p-2 rounded outline-0 border border_gray text_gray mb-3 "
+                      className="w-100 p-2 rounded outline-0 border border_gray  mb-3 "
                     >
                       <option value="">Select Country</option>
                       {countries.map((v, i) => {
@@ -222,7 +226,7 @@ export default function RegisterStudent() {
                     </select>
                     <select
                       onChange={(e) => setState(e.target.value)}
-                      className="w-100 p-2 rounded outline-0 border border_gray text_gray mb-3 "
+                      className="w-100 p-2 rounded outline-0 border border_gray  mb-3 "
                     >
                       <option value="">Select State</option>
                       {states.map((v, i) => {
@@ -233,7 +237,7 @@ export default function RegisterStudent() {
                   <div className="d-flex   flex-md-nowrap flex-wrap gap-2">
                     <select
                       onChange={(e) => setCity(e.target.value)}
-                      className="w-100 p-2 rounded outline-0 border border_gray text_gray mb-3"
+                      className="w-100 p-2 rounded outline-0 border border_gray  mb-3"
                     >
                       <option value="student">Select City</option>
                       {cities.map((v, i) => {
@@ -242,7 +246,7 @@ export default function RegisterStudent() {
                     </select>
                     <input
                       type="text"
-                      className="w-100 p-2 rounded outline-0 border border_gray text_gray  mb-3"
+                      className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
                       placeholder="Zip"
                       name="zip"
                       value={zipCode}
@@ -252,7 +256,7 @@ export default function RegisterStudent() {
                   <div className="d-flex  flex-md-nowrap flex-wrap gap-2">
                     <input
                       type="password"
-                      className="w-100 p-2 rounded outline-0 border border_gray text_gray  mb-3"
+                      className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
                       placeholder="Password"
                       name="password"
                       value={password}
@@ -260,7 +264,7 @@ export default function RegisterStudent() {
                     />
                     <input
                       type="password"
-                      className="w-100 p-2 rounded outline-0 border border_gray text_gray  mb-3"
+                      className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
                       placeholder="Confirm Password"
                       name="confirmpassword"
                       value={confirmPassword}
@@ -276,15 +280,15 @@ export default function RegisterStudent() {
                       onChange={() => setTermsAgree(!termsAgree)}
                     />
                     <label className="form-check-label" for="flexCheckDefault">
-                      I agree to the Terms of Use and Privacy Policy of GKC
+                      I agree to the <Link href="/terms-of-policy" className="fw-bold no-underline hover:text_secondary text_secondary"> Terms of Use and Privacy Policy </Link> of GKC
                     </label>
                   </div>
                   <div className="d-flex flex-wrap gap-2 justify-content-between align-items-center mt-3">
                     <button
                       className={`w-50 text-light p-2 rounded fw-bold  bg-gray-300 ${
-                        !termsAgree ? "btn_disabled" : "btn_primary"
+                        !isValidForm ? "btn_disabled" : "btn_primary"
                       }`}
-                      disabled={!termsAgree}
+                      disabled={!isValidForm}
                       onClick={onContinue}
                     >
                       Continue

@@ -78,16 +78,16 @@ export default function InstructorRegistrationMore() {
 
                 <input
                   type="file"
-                  className="w-100 p-1 rounded outline-0 border border_gray text_gray  mb-3"
+                  className="w-100 p-1 rounded outline-0 border border_gray   mb-3"
                   // placeholder="First Name"
                 />
                 <div className="d-flex gap-2 my-2 align-items-center">
                   <p className="fw-bold w-25 p-0 m-0">Hourly Rate:</p>
                   <div className="w-100 d-flex  align-items-center gap-4">
                     <input
-                      type="text"
-                      className="w-25 p-2 rounded outline-0 border border_gray text_gray text-center"
-                      placeholder="00:00"
+                      type="number"
+                      className="w-25 p-2 rounded outline-0 border border_gray  text-center"
+                      placeholder="0:00"
                         value={hourlyRate}
                   onChange={(e)=> setHourlyRate(e.target.value)}
                     />
@@ -100,13 +100,12 @@ export default function InstructorRegistrationMore() {
                     Accept Interview Request
                   </p>
 
-                  <select className="w-100 p-2 rounded outline-0 border border_gray text_gray"
+                  <select className="w-100 p-2 rounded outline-0 border border_gray "
                               value={acceptInterview}
                   onChange={(e)=> setAcceptInterview(e.target.value)}
-                  
                   >
-                    <option value={false}>False</option>
-                    <option value={true}>True</option>
+                    <option value={false}>No</option>
+                    <option value={true}>Yes</option>
                   </select>
                 </div>
                 <p className="fw-bold w-100 p-0 m-0">

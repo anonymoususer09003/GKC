@@ -2,71 +2,73 @@ import React, { useState, useEffect } from "react";
 import Head from "next/head";
 import { Navbar, Footer } from "../../../components";
 import { BsCheck2Circle } from "react-icons/bs";
-import {useRouter} from "next/router"
-import axios from "axios"
+import { useRouter } from "next/router";
+import axios from "axios";
 import { MultiSelect } from "react-multi-select-component";
-
 
 export default function StudentRegistrationCourse() {
   const navigation = useRouter();
-  const [courses, setCourses] = useState([])
-  const [coursesWithProficiency, setCoursesWithProficiency] = useState([])
+  const [courses, setCourses] = useState([]);
+  const [coursesWithProficiency, setCoursesWithProficiency] = useState([]);
   const [selected, setSelected] = useState([]);
   const [selectedLang, setSelectedLang] = useState([]);
   const lang = [
-     {label: 'Language 1',
-    value: "1"},
-  {label: 'Language 2',
-  value: "2"},
-  {label: 'Language 3',
-  value: "3"}
-  ]
+    { label: "Language 1", value: "1" },
+    { label: "Language 2", value: "2" },
+    { label: "Language 3", value: "3" },
+  ];
   const onContinue = () => {
     var stored = JSON.parse(window.localStorage.getItem("registrationForm"));
     var languageId = [];
     var courseWithId = [];
-    selectedLang.map((v)=>{
-      languageId.push(Number(v.value))
-          })
+    selectedLang.map((v) => {
+      languageId.push(Number(v.value));
+    });
 
-          coursesWithProficiency.map((v)=>{
-            courseWithId.push({courseId: v.courseId, proficiencyId: v.proficiencyId})
-                })
+    coursesWithProficiency.map((v) => {
+      courseWithId.push({
+        courseId: v.courseId,
+        proficiencyId: v.proficiencyId,
+      });
+    });
     stored.courseOfInterestAndProficiency = courseWithId;
     stored.languagePreferencesId = languageId;
     window.localStorage.setItem("registrationForm", JSON.stringify(stored));
-       navigation.push("/auth/registrationccinfo")
-  }
+    navigation.push("/auth/registrationccinfo");
+  };
 
   const getCourses = async () => {
-  try {
-    const response = await axios.get(`http://34.227.65.157/public/course/get-all-courses`);
+    try {
+      const response = await axios.get(
+        `http://34.227.65.157/public/course/get-all-courses`
+      );
 
-    var technologyList = [];
+      var technologyList = [];
 
-response.data.map((v)=>{
-  technologyList.push({  value:v.id, label: v.name })
-  
-})
-    setCourses(technologyList)
-  } catch (error) {
-    console.error(error);
-  }
-
-};
+      response.data.map((v) => {
+        technologyList.push({ value: v.id, label: v.name });
+      });
+      setCourses(technologyList);
+    } catch (error) {
+      console.error(error);
+    }
+  };
   useEffect(() => {
     getCourses();
-  
   }, []);
-
 
   const handleAddOrUpdate = (id, newData) => {
     // Check if the ID exists in the data array
-    const dataIndex = coursesWithProficiency.findIndex(item => item.courseId === id);
-  
+    const dataIndex = coursesWithProficiency.findIndex(
+      (item) => item.courseId === id
+    );
+
     if (dataIndex === -1) {
       // ID not found, add the new data to the array
-      setCoursesWithProficiency([...coursesWithProficiency, { id, ...newData }]);
+      setCoursesWithProficiency([
+        ...coursesWithProficiency,
+        { id, ...newData },
+      ]);
     } else {
       // ID found, update the data at the specified index
       const updatedData = [...coursesWithProficiency];
@@ -102,7 +104,6 @@ response.data.map((v)=>{
                 </h4>
 
                 <div className="py-4">
-            
                   <div className="w-50 mb-3">
                     <MultiSelect
                       options={courses}
@@ -113,68 +114,79 @@ response.data.map((v)=>{
                     />
                   </div>
                   <div className="d-flex flex-wrap gap-2">
-                  {
-                    selected.length < 1 ? 
-                    <div style={{padding:'20px 0'}}>
-                    <h5 className="text-dark fw-bold">No Course Selected Yet.</h5>
-                    </div>
-                    :
-                    selected.map((v)=> {
-                      return   <p className="bg_secondary text-white p-2 rounded d-flex align-items-center gap-2 fw-bold">
-                      <BsCheck2Circle style={{ fontSize: "22px" }} />
-                      {v.label}
-                    </p>
-                    })
-                  }
-                  
+                    {selected.length < 1 ? (
+                      <div style={{ padding: "20px 0" }}>
+                        <h5 className="text-dark fw-bold">
+                          No Course Selected Yet.
+                        </h5>
+                      </div>
+                    ) : (
+                      selected.map((v) => {
+                        return (
+                          <p className="bg_secondary text-white p-2 rounded d-flex align-items-center gap-2 fw-bold">
+                            <BsCheck2Circle style={{ fontSize: "22px" }} />
+                            {v.label}
+                          </p>
+                        );
+                      })
+                    )}
                   </div>
                 </div>
 
                 <h4 className="text-dark fw-bold pb-2">Proficiency</h4>
 
+                {selected.length < 1 ? (
+                  <div style={{ padding: "50px 0" }}>
+                    <h5 className="text-dark fw-bold">
+                      No Course Selected Yet.
+                    </h5>
+                  </div>
+                ) : (
+                  selected.map((v) => {
+                    return (
+                      <div className="d-flex  flex-wrap align-items-center gap-2 ">
+                        <p>{v.label}</p>
+                        <select
+                          className="w-25 p-2 rounded outline-0 border border_gray  mb-3 "
+                          onChange={(e) => {
+                            handleAddOrUpdate(v.value, {
+                              courseId: v.value,
+                              proficiencyId: Number(e.target.value),
+                            });
+                          }}
+                        >
+                          <option>Select</option>
+                          <option value={1}>Beginner</option>
+                          <option value={2}>Intermediate</option>
+                          <option value={3}>Semi Expert</option>
+                        </select>
+                      </div>
+                    );
+                  })
+                )}
 
-                {
-                    selected.length < 1 ? 
-                    <div style={{padding:'50px 0'}}>
-                    <h5 className="text-dark fw-bold">No Course Selected Yet.</h5>
-                    </div>
-                    :
-                    selected.map((v)=> {
-                      return   <div className="d-flex  flex-wrap align-items-center gap-2 ">
-                  <p>{v.label}</p>
-                  <select className="w-25 p-2 rounded outline-0 border border_gray text_gray mb-3 " onChange={(e)=> {
-                    handleAddOrUpdate(v.value, {courseId: v.value, proficiencyId: Number(e.target.value)});
-                  }}>
-                    <option>Select</option>
-                    <option value={1}>Beginner</option>
-                    <option value={2}>Intermediate</option>
-                    <option value={3}>Semi Expert</option>
-                  </select>
-                </div>
-                    })
-                  }
-
-          
                 <div>
                   <h4 className="text-dark fw-bold">
                     Spoken Language Preference?
                   </h4>
 
                   <div className="py-2">
-                  
                     <div className="w-50 mb-3">
-                    <MultiSelect
-                      options={lang}
-                      value={selectedLang}
-                      onChange={setSelectedLang}
-                      labelledBy={"Select Language"}
-                      isCreatable={true}
-                    />
-                  </div>
+                      <MultiSelect
+                        options={lang}
+                        value={selectedLang}
+                        onChange={setSelectedLang}
+                        labelledBy={"Select Language"}
+                        isCreatable={true}
+                      />
+                    </div>
                   </div>
 
                   <div className="d-flex gap-2 justify-content-between mt-3">
-                    <button className="w-25 btn_primary text-light p-2 rounded fw-bold " onClick={onContinue}>
+                    <button
+                      className="w-25 btn_primary text-light p-2 rounded fw-bold "
+                      onClick={onContinue}
+                    >
                       Continue
                     </button>
                   </div>

@@ -70,7 +70,7 @@ export default function Home() {
                 <div>
                   <input
                     type="text"
-                    className="w-100 p-2 rounded outline-0 border border_gray text_gray  mb-3"
+                    className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
                     placeholder="Your Email"
                     name="email"
                     value={email}

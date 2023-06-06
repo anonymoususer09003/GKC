@@ -55,7 +55,7 @@ export default function StudentRegistrationCCPay() {
                     Use saved Credit Card?
                   </h5>
 
-                  <select className="w-25 flex-fill p-2 rounded outline-0 border border_gray text_gray ">
+                  <select className="w-25 flex-fill p-2 rounded outline-0 border border_gray  ">
                     <option>Select</option>
                     <option>Option 1</option>
                     <option>Option 2</option>

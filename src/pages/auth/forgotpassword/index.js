@@ -84,7 +84,7 @@ export default function ForgotPassword() {
                 <div>
                   <input
                     type="text"
-                    className="w-100 p-2 rounded outline-0 border border_gray text_gray  mb-3"
+                    className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
                     placeholder="Your Email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
@@ -92,7 +92,7 @@ export default function ForgotPassword() {
                   {isSent && (
                     <input
                       type="text"
-                      className="w-100 p-2 rounded outline-0 border border_gray text_gray  mb-3"
+                      className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
                       placeholder="Enter Confirmation Code"
                       name="code"
                       value={code}
@@ -103,7 +103,7 @@ export default function ForgotPassword() {
                     <input
                       type="password"
                       name="password"
-                      className="w-100 p-2 rounded outline-0 border border_gray text_gray  mb-3"
+                      className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
                       placeholder="Enter New Password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}

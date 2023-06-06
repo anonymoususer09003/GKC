@@ -53,13 +53,13 @@ export default function StudentRegistrationCCPay() {
 
                   <input
                     type="text"
-                    className="w-100 p-2 rounded outline-0 border border_gray text_gray  mb-3"
+                    className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
                     placeholder="Parent1/guardian1"
                   />
                   <p className="p-0 m-0 py-2 fw-bold">Parent2/guardian2</p>
                   <input
                     type="text"
-                    className="w-100 p-2 rounded outline-0 border border_gray text_gray  mb-3"
+                    className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
                     placeholder="Parent2/guardian2"
                   />
                   <hr className="bg_secondary" />
@@ -156,7 +156,7 @@ export default function StudentRegistrationCCPay() {
                   </div>
                   <div className="col-12 col-md-4 border-start px-4 border_primary">
                     <h4 className="fw-bold">Language Preference:</h4>
-                    <select className="w-100 p-2 rounded outline-0 border border_gray text_gray ">
+                    <select className="w-100 p-2 rounded outline-0 border border_gray  ">
                       <option>Select</option>
                       <option>Select</option>
                       <option>Select</option>
@@ -194,7 +194,7 @@ export default function StudentRegistrationCCPay() {
                       <p className="fw-bold m-0 p-0 h5 fw-lighter">Course 1</p>
                     </div>
                     <div className="col ">
-                      <select className="w-100 p-2 rounded outline-0 border border_gray text_gray ">
+                      <select className="w-100 p-2 rounded outline-0 border border_gray  ">
                         <option>Beginner</option>
                         <option>Intermediate</option>
                         <option>Semi-Expert</option>
@@ -208,7 +208,7 @@ export default function StudentRegistrationCCPay() {
                       <p className="fw-bold m-0 p-0 h5 fw-lighter">Course 2</p>
                     </div>
                     <div className="col ">
-                      <select className="w-100 p-2 rounded outline-0 border border_gray text_gray ">
+                      <select className="w-100 p-2 rounded outline-0 border border_gray  ">
                         <option>Beginner</option>
                         <option>Intermediate</option>
                         <option>Semi-Expert</option>
@@ -222,7 +222,7 @@ export default function StudentRegistrationCCPay() {
                       <p className="fw-bold m-0 p-0 h5 fw-lighter">Course 3</p>
                     </div>
                     <div className="col ">
-                      <select className="w-100 p-2 rounded outline-0 border border_gray text_gray ">
+                      <select className="w-100 p-2 rounded outline-0 border border_gray  ">
                         <option>Beginner</option>
                         <option>Intermediate</option>
                         <option>Semi-Expert</option>

@@ -32,7 +32,7 @@ export default function StudentRegistrationCourse() {
                 </h4>
 
                 <div className="py-4">
-                  <select className="w-25 p-2 rounded outline-0 border border_gray text_gray mb-3 ">
+                  <select className="w-25 p-2 rounded outline-0 border border_gray  mb-3 ">
                     <option>Select</option>
                     <option>Option 1</option>
                     <option>Option 2</option>
@@ -62,7 +62,7 @@ export default function StudentRegistrationCourse() {
 
                 <div className="d-flex align-items-center gap-2 ">
                   <p>Course 1</p>
-                  <select className="w-25 p-2 rounded outline-0 border border_gray text_gray mb-3 ">
+                  <select className="w-25 p-2 rounded outline-0 border border_gray  mb-3 ">
                     <option>Select</option>
                     <option>Beginner</option>
                     <option>Intermediate</option>
@@ -71,7 +71,7 @@ export default function StudentRegistrationCourse() {
                 </div>
                 <div className="d-flex align-items-center gap-2 ">
                   <p>Course 2</p>
-                  <select className="w-25 p-2 rounded outline-0 border border_gray text_gray mb-3 ">
+                  <select className="w-25 p-2 rounded outline-0 border border_gray  mb-3 ">
                     <option>Select</option>
                     <option>Beginner</option>
                     <option>Intermediate</option>
@@ -80,7 +80,7 @@ export default function StudentRegistrationCourse() {
                 </div>
                 <div className="d-flex align-items-center gap-2">
                   <p>Course 3</p>
-                  <select className="w-25 p-2 rounded outline-0 border border_gray text_gray mb-3 ">
+                  <select className="w-25 p-2 rounded outline-0 border border_gray  mb-3 ">
                     <option>Select</option>
                     <option>Beginner</option>
                     <option>Intermediate</option>
@@ -89,7 +89,7 @@ export default function StudentRegistrationCourse() {
                 </div>
                 <div className="d-flex align-items-center gap-2 py-2">
                   <p>Course 4</p>
-                  <select className="w-25 p-2 rounded outline-0 border border_gray text_gray mb-3 ">
+                  <select className="w-25 p-2 rounded outline-0 border border_gray  mb-3 ">
                     <option>Select</option>
                     <option>Beginner</option>
                     <option>Intermediate</option>
@@ -102,7 +102,7 @@ export default function StudentRegistrationCourse() {
                   </h4>
 
                   <div className="py-2">
-                    <select className="w-25 p-2 rounded outline-0 border border_gray text_gray mb-3 ">
+                    <select className="w-25 p-2 rounded outline-0 border border_gray  mb-3 ">
                       <option>Select</option>
                       <option>Option 1</option>
                       <option>Option 2</option>

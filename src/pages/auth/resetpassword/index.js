@@ -45,12 +45,12 @@ export default function ResetPassword() {
                   </div>
                   <input
                     type="text"
-                    className="w-100 p-2 rounded outline-0 border border_gray text_gray  mb-3"
+                    className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
                     placeholder="New Password"
                   />
                   <input
                     type="text"
-                    className="w-100 p-2 rounded outline-0 border border_gray text_gray  mb-3"
+                    className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
                     placeholder="Confirm Password"
                   />
 

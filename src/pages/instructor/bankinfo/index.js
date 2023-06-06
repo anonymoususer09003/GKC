@@ -31,7 +31,7 @@ export default function ParentRegistrationCCInfo() {
               <div>
                 {/* <h4 className="text-dark fw-bold">Who pays for tutoring?</h4>
                 <div className="py-4">
-                  <select className="w-25 p-2 rounded outline-0 border border_gray text_gray mb-3 ">
+                  <select className="w-25 p-2 rounded outline-0 border border_gray  mb-3 ">
                     <option>Select</option>
                     <option>Option 1</option>
                     <option>Option 2</option>
@@ -42,30 +42,30 @@ export default function ParentRegistrationCCInfo() {
                 <h4 className="text-dark fw-bold pb-2">
                  Bank Information
                 </h4>
-                <select className="w-100 p-2 rounded outline-0 border border_gray text_gray mb-3 ">
+                <select className="w-100 p-2 rounded outline-0 border border_gray  mb-3 ">
                     <option>Checking</option>
                     <option>Saving</option>
                   </select>
                 <input
                   type="text"
-                  className="w-100 p-2 rounded outline-0 border border_gray text_gray  my-2"
+                  className="w-100 p-2 rounded outline-0 border border_gray   my-2"
                   placeholder="Name on Credit Card"
                 />
                 <input
                   type="text"
-                  className="w-100 p-2 rounded outline-0 border border_gray text_gray  my-2"
+                  className="w-100 p-2 rounded outline-0 border border_gray   my-2"
                   placeholder="Credit Card Number"
                 />
 
                 <div className="d-flex gap-2 my-2">
                   <input
                     type="text"
-                    className="w-100 p-2 rounded outline-0 border border_gray text_gray  mb-3"
+                    className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
                     placeholder="CVV"
                   />
                   <input
                     type="text"
-                    className="w-100 p-2 rounded outline-0 border border_gray text_gray  mb-3"
+                    className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
                     placeholder="Expiration Date"
                   />
                 </div>

@@ -7,9 +7,11 @@ import { Navbar, Footer } from "./../../../components";
 import { RiArrowGoBackLine } from "react-icons/ri";
 import { useRouter } from "next/router";
 import axios from "axios";
+import OtpInput from 'react-otp-input';
 
 export default function ActivateCode() {
   const navigation = useRouter();
+  const [otp, setOtp] = useState('');
   const [isVerified, setIsVerified] = useState(false)
   const [userType, setUserType] = useState("");
   const [digit1, setDigit1] = useState('')
@@ -19,11 +21,11 @@ export default function ActivateCode() {
   const [digit5, setDigit5] = useState('')
   const [digit6, setDigit6] = useState('')
 
-  const isValid = digit1 && digit2 && digit3 && digit4 && digit5 && digit6
+  const isValid = otp.length == 6
 
   const onContinue =async () => {
     try {
-        const code = (digit1 + digit2 + digit3 + digit4 + digit5 + digit6);
+        const code = otp;
         var stored = JSON.parse(window.localStorage.getItem("registrationForm"));
         console.log(code,stored)
         
@@ -73,7 +75,7 @@ export default function ActivateCode() {
         </Link>
         <div className="row">
           <div className="col-12 col-lg-6 d-flex justify-content-center align-items-center ">
-            <div style={{ maxWidth: "380px", width: "100%" }}>
+            <div style={{ maxWidth: "400px", width: "100%" }}>
               {/* <h1 className="text-center mb-5">GSK</h1> */}
               <div className="d-flex justify-content-center mb-5">
                 <Image
@@ -91,62 +93,15 @@ export default function ActivateCode() {
                     Check your email for activation code and enter it below
                   </h5>
                 </div>
-                
+        
                 <div className="d-flex gap-2">
-                  <input
-                    type="text"
-                    maxLength="1"
-                    className="w-full p-2 h3 rounded outline-0 border border_gray text_gray mb-3 text-center"
-                    style={{ width: "100%" }}
-                    placeholder=""
-                    value={digit1}
-                    onChange={(e)=> setDigit1(e.target.value)}
-                  />
-                  <input
-                    type="text"
-                    maxLength="1"
-                    className="w-full p-2 h3 rounded outline-0 border border_gray text_gray mb-3 text-center"
-                    style={{ width: "100%" }}
-                    placeholder=""
-                    value={digit2}
-                    onChange={(e)=> setDigit2(e.target.value)}
-                  />
-                  <input
-                    type="text"
-                    maxLength="1"
-                    className="w-full p-2 h3 rounded outline-0 border border_gray text_gray mb-3 text-center"
-                    style={{ width: "100%" }}
-                    placeholder=""
-                    value={digit3}
-                    onChange={(e)=> setDigit3(e.target.value)}
-                  />
-                  <input
-                    type="text"
-                    maxLength="1"
-                    className="w-full p-2 h3 rounded outline-0 border border_gray text_gray mb-3 text-center"
-                    style={{ width: "100%" }}
-                    placeholder=""
-                    value={digit4}
-                    onChange={(e)=> setDigit4(e.target.value)}
-                  />
-                  <input
-                    type="text"
-                    maxLength="1"
-                    className="w-full p-2 h3 rounded outline-0 border border_gray text_gray mb-3 text-center"
-                    style={{ width: "100%" }}
-                    placeholder=""
-                    value={digit5}
-                    onChange={(e)=> setDigit5(e.target.value)}
-                  />
-                  <input
-                    type="text"
-                    maxLength="1"
-                    className="w-full p-2 h3 rounded outline-0 border border_gray text_gray mb-3 text-center"
-                    style={{ width: "100%" }}
-                    placeholder=""
-                    value={digit6}
-                    onChange={(e)=> setDigit6(e.target.value)}
-                  />
+                <OtpInput
+      value={otp}
+      onChange={setOtp}
+      numInputs={6}
+      renderSeparator={<span className="p-1"> </span>}
+      renderInput={(props) => <input {...props} className="w-full p-2 h3 rounded outline-0 border border_gray  mb-3 text-center" style={{width:"60px"}}/>}
+    />
                 </div>
                 <button
                  className={`w-100 text-light p-2 rounded fw-bold mt-3 bg-gray-300 ${!isValid ? 'btn_disabled' : 'btn_primary'}`}

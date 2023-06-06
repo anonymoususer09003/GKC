@@ -35,6 +35,7 @@ export default function SignIn() {
        });
        window.localStorage.setItem("gkcAuth", JSON.stringify(response.data))
        console.log(response.data)
+       navigation.push("/");
      } catch (error) {
        console.error(error);
      }
@@ -87,14 +88,14 @@ export default function SignIn() {
                   </select> */}
                   <input
                     type="text"
-                    className="w-100 p-2 rounded outline-0 border border_gray text_gray  mb-3"
+                    className="w-100 p-2 rounded outline-0 border border_gray mb-3"
                     placeholder="Your Email"
                     value={email}
                     onChange={(e)=> setEmail(e.target.value)}
                   />
                   <input
                     type="password"
-                    className="w-100 p-2 rounded outline-0 border border_gray  text_gray mb-3"
+                    className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
                     placeholder="Password"
                     value={password}
                     onChange={(e)=> setPassword(e.target.value)}

@@ -29,6 +29,7 @@ export default function RegisterInstructor() {
   const [termsAgree, setTermsAgree] = useState(false);
   const [isInitialRender, setIsInitialRender] = useState(true);
 
+  let isValidForm = email && firstName && lastName && address1 && country && state && city && zipCode && password  && termsAgree;
 
   const onContinue = () => {
     window.localStorage.setItem("gkcAuth", JSON.stringify(true));
@@ -150,7 +151,7 @@ export default function RegisterInstructor() {
                 <div>
                   <input
                     type="text"
-                    className="w-100 p-2 rounded outline-0 border border_gray text_gray  mb-3"
+                    className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
                     placeholder="First Name"
                     name="firstname"
                     value={firstName}
@@ -158,7 +159,7 @@ export default function RegisterInstructor() {
                   />
                   <input
                     type="text"
-                    className="w-100 p-2 rounded outline-0 border border_gray text_gray  mb-3"
+                    className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
                     placeholder="Last Name"
                     name="lastname"
                     value={lastName}
@@ -166,7 +167,7 @@ export default function RegisterInstructor() {
                   />
                   <input
                     type="text"
-                    className="w-100 p-2 rounded outline-0 border border_gray text_gray  mb-3"
+                    className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
                     placeholder="Address 1"
                     value={address1}
                     name="address1"
@@ -174,7 +175,7 @@ export default function RegisterInstructor() {
                   />
                   <input
                     type="text"
-                    className="w-100 p-2 rounded outline-0 border border_gray text_gray  mb-3"
+                    className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
                     placeholder="Address 2"
                     value={address2}
                     name="address2"
@@ -184,7 +185,7 @@ export default function RegisterInstructor() {
                   <div className="d-flex   flex-md-nowrap flex-wrap gap-2">
                   <select
                       onChange={(e) => setCountry(e.target.value)}
-                      className="w-100 p-2 rounded outline-0 border border_gray text_gray mb-3 "
+                      className="w-100 p-2 rounded outline-0 border border_gray  mb-3 "
                     >
                       <option value="">Select Country</option>
                       {countries.map((v, i) => {
@@ -193,7 +194,7 @@ export default function RegisterInstructor() {
                     </select>
                     <select
                       onChange={(e) => setState(e.target.value)}
-                      className="w-100 p-2 rounded outline-0 border border_gray text_gray mb-3 "
+                      className="w-100 p-2 rounded outline-0 border border_gray  mb-3 "
                     >
                       <option value="">Select State</option>
                       {states.map((v, i) => {
@@ -205,7 +206,7 @@ export default function RegisterInstructor() {
                   <div className="d-flex   flex-md-nowrap flex-wrap gap-2">
                   <select
                       onChange={(e) => setCity(e.target.value)}
-                      className="w-100 p-2 rounded outline-0 border border_gray text_gray mb-3"
+                      className="w-100 p-2 rounded outline-0 border border_gray  mb-3"
                     >
                       <option value="student">Select City</option>
                       {cities.map((v, i) => {
@@ -214,7 +215,7 @@ export default function RegisterInstructor() {
                     </select>
                   <input
                       type="text"
-                      className="w-100 p-2 rounded outline-0 border border_gray text_gray  mb-3"
+                      className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
                       placeholder="Zip/Post Code"
                       name="zip"
                       value={zipCode}
@@ -224,7 +225,7 @@ export default function RegisterInstructor() {
                   <div className="d-flex  flex-md-nowrap flex-wrap gap-2">
                     <input
                       type="password"
-                      className="w-100 p-2 rounded outline-0 border border_gray text_gray  mb-3"
+                      className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
                       placeholder="Password"
                       name="password"
                       value={password}
@@ -232,7 +233,7 @@ export default function RegisterInstructor() {
                     />
                     <input
                       type="password"
-                      className="w-100 p-2 rounded outline-0 border border_gray text_gray  mb-3"
+                      className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
                       placeholder="Confirm Password"
                       name="confirmpassword"
                       value={confirmPassword}
@@ -248,15 +249,15 @@ export default function RegisterInstructor() {
                       onChange={() => setTermsAgree(!termsAgree)}
                     />
                     <label className="form-check-label" for="flexCheckDefault">
-                      I agree to the Terms of Use and Privacy Policy of GKC
+                      I agree to the <Link href="/terms-of-policy" className="fw-bold no-underline hover:text_secondary text_secondary"> Terms of Use and Privacy Policy </Link> of GKC
                     </label>
                   </div>
                   <div className="d-flex flex-wrap gap-2 justify-content-between mt-3">
                     <button
                       className={`w-50 text-light p-2 rounded fw-bold  bg-gray-300 ${
-                        !termsAgree ? "btn_disabled" : "btn_primary"
+                        isValidForm ? "btn_primary" : "btn_disabled"
                       }`}
-                      disabled={!termsAgree}
+                      disabled={!isValidForm}
                       onClick={onContinue}
                     >
                       Continue

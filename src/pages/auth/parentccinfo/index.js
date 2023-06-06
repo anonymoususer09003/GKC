@@ -32,7 +32,7 @@ export default function ParentRegistrationCCInfo() {
               <div>
                 {/* <h4 className="text-dark fw-bold">Who pays for tutoring?</h4>
                 <div className="py-4">
-                  <select className="w-25 p-2 rounded outline-0 border border_gray text_gray mb-3 ">
+                  <select className="w-25 p-2 rounded outline-0 border border_gray  mb-3 ">
                     <option>Select</option>
                     <option>Option 1</option>
                     <option>Option 2</option>

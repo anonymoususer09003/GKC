@@ -32,13 +32,13 @@ export default function StudentRegistrationCCPay() {
                   <div className="d-flex align-items-center gap-3 py-2">
                     <input
                       type="text"
-                      className="w-100 p-2 rounded outline-0 border border_gray text_gray  mb-3"
+                      className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
                       placeholder="First Name"
                     />
 
                     <input
                       type="text"
-                      className="w-100 p-2 rounded outline-0 border border_gray text_gray  mb-3"
+                      className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
                       placeholder="Last Name"
                     />
                   </div>
@@ -47,24 +47,24 @@ export default function StudentRegistrationCCPay() {
 
                   <input
                     type="text"
-                    className="w-100 p-2 rounded outline-0 border border_gray text_gray  mb-3"
+                    className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
                     placeholder="1234, Smith Street"
                   />
                   <p className="p-0 m-0 py-2 fw-bold">Address 2</p>
                   <input
                     type="text"
-                    className="w-100 p-2 rounded outline-0 border border_gray text_gray  mb-3"
+                    className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
                     placeholder="Apt. 2"
                   />
 
                   <div className="d-flex align-items-center gap-3 py-2">
-                    <select className="w-25 flex-fill p-2 rounded outline-0 border border_gray text_gray">
+                    <select className="w-25 flex-fill p-2 rounded outline-0 border border_gray ">
                       <option>USA</option>
                       <option>Option 1</option>
                       <option>Option 2</option>
                     </select>
 
-                    <select className="w-25 flex-fill p-2 rounded outline-0 border border_gray text_gray">
+                    <select className="w-25 flex-fill p-2 rounded outline-0 border border_gray ">
                       <option>Texas</option>
                       <option>Option 1</option>
                       <option>Option 2</option>
@@ -72,7 +72,7 @@ export default function StudentRegistrationCCPay() {
                   </div>
 
                   <div className="d-flex align-items-center gap-3 py-2">
-                    <select className="w-25 flex-fill p-2 rounded outline-0 border border_gray text_gray">
+                    <select className="w-25 flex-fill p-2 rounded outline-0 border border_gray ">
                       <option>Houston</option>
                       <option>Option 1</option>
                       <option>Option 2</option>
@@ -80,7 +80,7 @@ export default function StudentRegistrationCCPay() {
 
                     <input
                       type="text"
-                      className="w-25 flex-fill p-2 rounded outline-0 border border_gray text_gray"
+                      className="w-25 flex-fill p-2 rounded outline-0 border border_gray "
                       placeholder="77478"
                     />
                   </div>

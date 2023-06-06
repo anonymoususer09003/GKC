@@ -13,9 +13,10 @@ export default function ParentRegistrationCCInfo() {
     const [bankAccountType, setBankAccountType] = useState('checking')
     const [bankName, setBankName] = useState('')
     const [bankAccountNumber, setBankAccountNumber] = useState('')
+    const [confirmBankAccountNumber, setConfirmBankAccountNumber] = useState('')
     const [bankRoutingNumber, setBankRoutingNumber] = useState('')
     const [confirmBankRoutingNumber, setConfirmBankRoutingNumber] = useState('')
-
+let isValid = bankName !== "" && bankAccountNumber !== "" &&  confirmBankAccountNumber !== "" && bankAccountNumber ==   confirmBankAccountNumber && bankRoutingNumber !== "" &&  confirmBankRoutingNumber !== "" && bankRoutingNumber ==   confirmBankRoutingNumber
     const onContinue = async () => {
         try {
             console.log(
@@ -124,36 +125,46 @@ export default function ParentRegistrationCCInfo() {
                         <h4 className="text-dark fw-bold pb-2">
                  Tell us where to deposit your payments.
                 </h4>
-                <select className="w-100 p-2 rounded outline-0 border border_gray text_gray mb-3 " value={bankAccountType} onChange={(e)=>setBankAccountType(e.target.value)}>
+                <select className="w-100 p-2 rounded outline-0 border border_gray  " value={bankAccountType} onChange={(e)=>setBankAccountType(e.target.value)}>
                     <option value='checking'>Checking</option>
                     <option value='saving'>Saving</option>
                   </select>
                 <input
                   type="text"
-                  className="w-100 p-2 rounded outline-0 border border_gray text_gray  my-2"
+                  className="w-100 p-2 rounded outline-0 border border_gray   mt-3"
                   placeholder="Bank Name"
                   value={bankName} onChange={(e)=>setBankName(e.target.value)}
                 />
-                <input
+             
+   <div className="d-flex gap-2 my-3">
+   <input
                   type="text"
-                  className="w-100 p-2 rounded outline-0 border border_gray text_gray  my-2"
+                  className="w-100 p-2 rounded outline-0 border border_gray  "
                   placeholder="Account Number"
                   value={bankAccountNumber} onChange={(e)=>setBankAccountNumber(e.target.value)}
 
-                />
+                
+                  />
+                  <input
+                    type="text"
+                    className="w-100 p-2 rounded outline-0 border border_gray  "
+                    placeholder="Confirm Account Number"
+                  value={confirmBankAccountNumber} onChange={(e)=> setConfirmBankAccountNumber(e.target.value)}
 
+                  />
+                </div>
                 <div className="d-flex gap-2 my-2">
                   <input
                     type="text"
-                    className="w-100 p-2 rounded outline-0 border border_gray text_gray  mb-3"
+                    className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
                     placeholder="Routing Number"
                   value={bankRoutingNumber} onChange={(e)=>setBankRoutingNumber(e.target.value)}
 
                   />
                   <input
                     type="text"
-                    className="w-100 p-2 rounded outline-0 border border_gray text_gray  mb-3"
-                    placeholder="Confrim Routing Number"
+                    className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
+                    placeholder="Confirm Routing Number"
                   value={confirmBankRoutingNumber} onChange={(e)=>setConfirmBankRoutingNumber(e.target.value)}
 
                   />
@@ -161,9 +172,9 @@ export default function ParentRegistrationCCInfo() {
                 <div className="d-flex gap-2 justify-content-center mt-3">
                   <button
                        className={`w-50 text-light p-2 rounded fw-bold  bg-gray-300 ${
-                        bankRoutingNumber === ''  ? "btn_disabled" : "btn_primary"
+                       isValid ? "btn_primary" : " btn_disabled"
                       }`}
-                      disabled={  bankRoutingNumber === ''}
+                      disabled={!isValid}
                       onClick={onContinue}
                   >
                     Continue
@@ -171,13 +182,13 @@ export default function ParentRegistrationCCInfo() {
                 </div>
                 <div className="d-flex gap-2 justify-content-center  mt-3">
                   <button
-                    className={`w-50 text-light p-2 rounded fw-bold  bg-gray-300 ${
-                        bankRoutingNumber === ''? "btn_disabled" : "btn_secondary"
-                      }`}
-                      disabled={ bankRoutingNumber === ''}
+                    className={`w-50 text-light p-2 rounded fw-bold  bg-gray-300 
+                        btn_secondary
+                      `}
+              
                     onClick={onContinue}
                   >
-                    I wil do this later
+                    I will do this later
                   </button>
                 </div>
            

@@ -56,7 +56,7 @@ export default function ParentCCInfo() {
                 </h5>
 
                 <div className="py-2">
-                  <select className="w-25 p-2 rounded outline-0 border border_gray text_gray mb-3 ">
+                  <select className="w-25 p-2 rounded outline-0 border border_gray  mb-3 ">
                     <option>Select</option>
                     <option>Option 1</option>
                     <option>Option 2</option>
@@ -66,7 +66,7 @@ export default function ParentCCInfo() {
                 <h5 className="text-dark fw-bold">Use saved Credit Card?</h5>
 
                 <div className="py-2">
-                  <select className="w-25 p-2 rounded outline-0 border border_gray text_gray mb-3 ">
+                  <select className="w-25 p-2 rounded outline-0 border border_gray  mb-3 ">
                     <option>Select</option>
                     <option>Option 1</option>
                     <option>Option 2</option>

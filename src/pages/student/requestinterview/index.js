@@ -59,7 +59,7 @@ export default function StudentRegistrationCCPay() {
                   <h6 className="text-dark fw-bold">Course:</h6>
 
                   <div className="py-2">
-                    <select className="w-25 p-2 rounded outline-0 border border_gray text_gray mb-3 ">
+                    <select className="w-25 p-2 rounded outline-0 border border_gray  mb-3 ">
                       <option>Select</option>
                       <option>Option 1</option>
                       <option>Option 2</option>
@@ -69,7 +69,7 @@ export default function StudentRegistrationCCPay() {
                   <h6 className="text-dark fw-bold">Mode:</h6>
 
                   <div className="py-2">
-                    <select className="w-25 p-2 rounded outline-0 border border_gray text_gray mb-3 ">
+                    <select className="w-25 p-2 rounded outline-0 border border_gray  mb-3 ">
                       <option>Select</option>
                       <option>Option 1</option>
                       <option>Option 2</option>

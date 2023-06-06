@@ -157,7 +157,7 @@ export default function EditProfile() {
                     <h5 className="fw-bold m-0 p-0">
                       Spoken Language Preference:
                     </h5>
-                    <select className="w-50 p-2 rounded outline-0 border border_gray text_gray my-3">
+                    <select className="w-50 p-2 rounded outline-0 border border_gray  my-3">
                       <option>Select</option>
                       <option>Select</option>
                       <option>Select</option>
@@ -218,7 +218,7 @@ export default function EditProfile() {
                       <p className="fw-bold m-0 p-0 h5 fw-lighter">Course 1</p>
                     </div>
                     <div className="col ">
-                    <select className="w-50 p-2 rounded outline-0 border border_gray text_gray">
+                    <select className="w-50 p-2 rounded outline-0 border border_gray ">
                       <option>Beginner</option>
                       <option>Intermediate</option>
                       <option>Semi-Expert</option>
@@ -232,7 +232,7 @@ export default function EditProfile() {
                       <p className="fw-bold m-0 p-0 h5 fw-lighter">Course 2</p>
                     </div>
                     <div className="col ">
-                    <select className="w-50 p-2 rounded outline-0 border border_gray text_gray">
+                    <select className="w-50 p-2 rounded outline-0 border border_gray ">
                       <option>Beginner</option>
                       <option>Intermediate</option>
                       <option>Semi-Expert</option>
@@ -246,7 +246,7 @@ export default function EditProfile() {
                       <p className="fw-bold m-0 p-0 h5 fw-lighter">Course 3</p>
                     </div>
                     <div className="col ">
-                    <select className="w-50 p-2 rounded outline-0 border border_gray text_gray">
+                    <select className="w-50 p-2 rounded outline-0 border border_gray ">
                       <option>Beginner</option>
                       <option>Intermediate</option>
                       <option>Semi-Expert</option>

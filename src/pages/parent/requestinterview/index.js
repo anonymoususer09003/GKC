@@ -70,7 +70,7 @@ export default function StudentRegistrationCCPay() {
                       On behalf of:
                     </h6>
 
-                    <select className="w-25 p-2 flex-fill rounded outline-0 border border_gray text_gray">
+                    <select className="w-25 p-2 flex-fill rounded outline-0 border border_gray ">
                       <option>Select</option>
                       <option>Option 1</option>
                       <option>Option 2</option>
@@ -82,7 +82,7 @@ export default function StudentRegistrationCCPay() {
                       Course:
                     </h6>
 
-                    <select className="w-25 flex-fill p-2 rounded outline-0 border border_gray text_gray">
+                    <select className="w-25 flex-fill p-2 rounded outline-0 border border_gray ">
                       <option>Select</option>
                       <option>Option 1</option>
                       <option>Option 2</option>
@@ -94,7 +94,7 @@ export default function StudentRegistrationCCPay() {
                       Mode:
                     </h6>
 
-                    <select className="w-25 flex-fill p-2 rounded outline-0 border border_gray text_gray">
+                    <select className="w-25 flex-fill p-2 rounded outline-0 border border_gray ">
                       <option>Select</option>
                       <option>Option 1</option>
                       <option>Option 2</option>

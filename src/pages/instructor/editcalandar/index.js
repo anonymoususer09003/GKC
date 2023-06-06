@@ -94,7 +94,7 @@ export default function StudentRegistrationCCPay() {
               <div className="col-8">
                 <div className="row pb-2">
                   <p className="col fw-bold">From</p>
-                  <select className="w-100 p-2 rounded outline-0 border border_gray text_gray  col">
+                  <select className="w-100 p-2 rounded outline-0 border border_gray   col">
                     <option>06:00am</option>
                     <option>Student</option>
                     <option>Student</option>
@@ -103,7 +103,7 @@ export default function StudentRegistrationCCPay() {
 
                 <div className="row pb-2">
                   <p className="col fw-bold">To</p>
-                  <select className="w-100 p-2 rounded outline-0 border border_gray text_gray col">
+                  <select className="w-100 p-2 rounded outline-0 border border_gray  col">
                     <option>06:00pm</option>
                     <option>Student</option>
                     <option>Student</option>
