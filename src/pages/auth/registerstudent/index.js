@@ -196,7 +196,6 @@ export default function RegisterStudent() {
                       onChange={(e) => setLastname(e.target.value)}
                     />
                   </div>
-                  <div className="d-flex   flex-md-nowrap flex-wrap gap-2">
                     <input
                       type="text"
                       className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
@@ -213,7 +212,6 @@ export default function RegisterStudent() {
                       value={address2}
                       onChange={(e) => setAddress2(e.target.value)}
                     />
-                  </div>
                   <div className="d-flex   flex-md-nowrap flex-wrap gap-2">
                     <select
                       onChange={(e) => setCountry(e.target.value)}
@@ -280,7 +278,7 @@ export default function RegisterStudent() {
                       onChange={() => setTermsAgree(!termsAgree)}
                     />
                     <label className="form-check-label" for="flexCheckDefault">
-                      I agree to the <Link href="/terms-of-policy" className="fw-bold no-underline hover:text_secondary text_secondary"> Terms of Use and Privacy Policy </Link> of GKC
+                      I agree to the <Link href="/terms-of-use" className="fw-bold no-underline hover:text_secondary text_secondary"> Terms of Use</Link> and <Link href="/privicy-policy" className="fw-bold no-underline hover:text_secondary text_secondary"> Privacy Policy </Link> of GKC
                     </label>
                   </div>
                   <div className="d-flex flex-wrap gap-2 justify-content-between align-items-center mt-3">

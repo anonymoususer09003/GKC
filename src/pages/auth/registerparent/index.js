@@ -49,7 +49,7 @@ export default function RegisterStudent() {
     console.log(stored);
     window.localStorage.setItem("registrationForm", JSON.stringify(stored));
     if (password == confirmPassword) {
-      navigation.push("/auth/registrationccinfo");
+      navigation.push("/auth/parentbankinfo");
     } else {
       alert("password not matched");
     }
@@ -249,7 +249,7 @@ export default function RegisterStudent() {
                       onChange={() => setTermsAgree(!termsAgree)}
                     />
                     <label className="form-check-label" for="flexCheckDefault">
-                      I agree to the <Link href="/terms-of-policy" className="fw-bold no-underline hover:text_secondary text_secondary"> Terms of Use and Privacy Policy </Link> of GKC
+                      I agree to the <Link href="/terms-of-use" className="fw-bold no-underline hover:text_secondary text_secondary"> Terms of Use</Link> and <Link href="/privicy-policy" className="fw-bold no-underline hover:text_secondary text_secondary"> Privacy Policy </Link> of GKC
                     </label>
                   </div>
                   <div className="d-flex flex-wrap gap-2 justify-content-between mt-3">

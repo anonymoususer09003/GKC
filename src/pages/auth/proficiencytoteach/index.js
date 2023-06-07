@@ -13,6 +13,7 @@ export default function StudentRegistrationCourse() {
   const [selected, setSelected] = useState([]);
   const [selectedLang, setSelectedLang] = useState([]);
   const [lang, setLang] = useState([]);
+  const [proficiency, setProficiency] = useState([]);
 
   const onContinue = () => {
     var stored = JSON.parse(window.localStorage.getItem("registrationForm"));
@@ -68,9 +69,25 @@ export default function StudentRegistrationCourse() {
     }
   };
 
+  const getProficiency = async () => {
+    try {
+      const response = await axios.get(
+        `http://34.227.65.157/public/proficiency/get-all-proficiencies`
+      );
+      var arr = [];
+      response.data.map((v) => {
+        arr.push({ value: v.id, label: v.name });
+      });
+      setProficiency(arr);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
     getCourses();
     getLang();
+    getProficiency()
   }, []);
 
   const handleAddOrUpdate = (id, newData) => {
@@ -91,6 +108,17 @@ export default function StudentRegistrationCourse() {
       updatedData[dataIndex] = { ...updatedData[dataIndex], ...newData };
       setCoursesWithProficiency(updatedData);
     }
+  };
+
+
+  const handleSelectCourse = (selectedOptions) => {
+    console.log(...selectedOptions)
+    // setSelected()
+    setSelected((prevData) => {
+      const newData = [...prevData];
+      newData[optionIndex].selectedOptions = selectedOptions;
+      return newData;
+    });
   };
   return (
     <>
@@ -124,9 +152,11 @@ export default function StudentRegistrationCourse() {
                     <MultiSelect
                       options={courses}
                       value={selected}
-                      onChange={setSelected}
+                      onChange={(selectedOptions) =>
+                        handleSelectCourse(selectedOptions)
+                      }
                       labelledBy={"Select Course"}
-                      isCreatable={true}
+                      // isCreatable={true}
                     />
                   </div>
                   <div className="d-flex flex-wrap gap-2">
@@ -184,9 +214,12 @@ export default function StudentRegistrationCourse() {
                           }}
                         >
                           <option>Select</option>
-                          <option value={1}>Beginner</option>
-                          <option value={2}>Intermediate</option>
-                          <option value={3}>Semi Expert</option>
+                          {
+                            proficiency.map((v,i)=>{
+                              return <option value={v.value} key={i}>{v.label}</option>
+                            })
+                          }
+                
                         </select>
                       </div>
                     );

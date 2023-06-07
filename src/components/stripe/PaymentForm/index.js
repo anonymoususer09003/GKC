@@ -7,7 +7,7 @@ import {
 
 import { useStripe, useElements } from "@stripe/react-stripe-js";
 
-const PaymentForm = ({ isEdit, onClose, title }) => {
+const PaymentForm = ({ isEdit, onClose, title , onValueReceived}) => {
   const stripe = useStripe();
   const elements = useElements();
   const [billingDetail, setBillingDetail] = useState({
@@ -18,6 +18,7 @@ const PaymentForm = ({ isEdit, onClose, title }) => {
   });
   const onChange = (e) => {
     setBillingDetail({ ...billingDetail, [e.target.name]: e.target.value });
+    onValueReceived(billingDetail)
   };
 
   const handlePayment = async (event) => {

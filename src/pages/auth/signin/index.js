@@ -35,7 +35,25 @@ export default function SignIn() {
        });
        window.localStorage.setItem("gkcAuth", JSON.stringify(response.data))
        console.log(response.data)
-       navigation.push("/");
+       console.log(response.data.accessToken)
+       const res = await axios.get('http://34.227.65.157/user/logged-user-role',{
+        headers: {
+          Authorization: `Bearer ${response.data.accessToken}`
+        }
+      })
+      console.log(res.data.name)
+if(res.data.name === "Student"){
+  navigation.push("/");
+}
+
+if(res.data.name === "Instructor"){
+  navigation.push("/instructor");
+}
+
+
+if(res.data.name === "Parent"){
+  navigation.push("/parent");
+}
      } catch (error) {
        console.error(error);
      }

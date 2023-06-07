@@ -1,12 +1,14 @@
-import React, { useState, useeEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Head from "next/head";
 import { Navbar, Footer } from "../../../components";
 import { useRouter } from "next/router";
 import { RiArrowGoBackLine } from "react-icons/ri";
 import Link from "next/link";
+import axios from "axios"
+
 export default function RegistrationGrade() {
   const navigation = useRouter();
-  const [grade, setGrade] = useState(null);
+  const [grades, setGrades] = useState([]);
   const [grade1, setGrade1] = useState(null);
   const [grade2, setGrade2] = useState(null);
   const [grade3, setGrade3] = useState(null);
@@ -14,11 +16,11 @@ export default function RegistrationGrade() {
 
   const onContinue = () => {
     var stored = JSON.parse(window.localStorage.getItem("registrationForm"));
-    let grades = [];
+    let gradess = [];
     console.log([grade1, grade2, grade3, grade4]);
     [grade1, grade2, grade3, grade4].forEach((v) => {
       if(v !== null){
-        grades.push(Number(v))
+        gradess.push(Number(v))
       }
     })
     stored.gradesIdToTutor = grades;
@@ -26,6 +28,17 @@ export default function RegistrationGrade() {
     navigation.push("/auth/proficiencytoteach");
   };
 
+  const getGrades = async() => {
+    try {
+    const response = await axios.get(`http://34.227.65.157/public/grade/get-all-grades`);
+    setGrades(response.data)
+  } catch (error) {
+    console.error(error);
+  }
+  }
+  useEffect(() => {
+    getGrades();
+  }, []);
   return (
     <>
       <Head>
@@ -51,6 +64,35 @@ export default function RegistrationGrade() {
             className=" d-flex flex-wrap justify-content-center m-auto gap-4 py-5"
             style={{ maxWidth: "700px" }}
           >
+          {/* {
+            grades.map((v,i)=> {
+              return   <div
+              style={{
+                backgroundImage: 'url("/assets/5_plus.png")',
+                backgroundRepeat: "no-repeat",
+                backgroundSize: "100% 100%",
+                width: "240px",
+                height: "240px",
+                position: "relative",
+                borderRadius: "10px",
+              }}
+              id="box1"
+            >
+              <input
+                value={v.id}
+                className="form-check-input position-absolute"
+                style={{ top: "5px", right: "5px" }}
+                type="checkbox"
+                onChange={(e) => setGrade1( grade1 == 1 ? null: 1)}
+              />
+              <div className="position-absolute bottom-0 p-2 bg-light w-100 bg-opacity-50 fw-bold">
+                <small className="text-secondary">
+                  {v.name} &#40;{v.description}&#41;
+                </small>
+              </div>
+            </div>
+            })
+          } */}
             <div
               style={{
                 backgroundImage: 'url("/assets/5_plus.png")',

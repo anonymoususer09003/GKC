@@ -12,11 +12,9 @@ export default function StudentRegistrationCourse() {
   const [coursesWithProficiency, setCoursesWithProficiency] = useState([]);
   const [selected, setSelected] = useState([]);
   const [selectedLang, setSelectedLang] = useState([]);
-  const lang = [
-    { label: "Language 1", value: "1" },
-    { label: "Language 2", value: "2" },
-    { label: "Language 3", value: "3" },
-  ];
+  const [lang, setLang] = useState([]);
+  const [proficiency, setProficiency] = useState([]);
+
   const onContinue = () => {
     var stored = JSON.parse(window.localStorage.getItem("registrationForm"));
     var languageId = [];
@@ -53,8 +51,42 @@ export default function StudentRegistrationCourse() {
       console.error(error);
     }
   };
+  
+  const getLang = async () => {
+    try {
+      const response = await axios.get(
+        `http://34.227.65.157/public/language/get-all-languages`
+      );
+      var arr = [];
+      response.data.map((v) => {
+        arr.push({ value: v.id, label: v.name });
+      });
+      setLang(arr);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+    
+  const getProficiency = async () => {
+    try {
+      const response = await axios.get(
+        `http://34.227.65.157/public/proficiency/get-all-proficiencies`
+      );
+      var arr = [];
+      response.data.map((v) => {
+        arr.push({ value: v.id, label: v.name });
+      });
+      setProficiency(arr);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
     getCourses();
+    getLang();
+    getProficiency()
   }, []);
 
   const handleAddOrUpdate = (id, newData) => {
@@ -156,9 +188,12 @@ export default function StudentRegistrationCourse() {
                           }}
                         >
                           <option>Select</option>
-                          <option value={1}>Beginner</option>
-                          <option value={2}>Intermediate</option>
-                          <option value={3}>Semi Expert</option>
+                          {
+                            proficiency.map((v,i)=>{
+                              return <option value={v.value} key={i}>{v.label}</option>
+                            })
+                          }
+                
                         </select>
                       </div>
                     );
@@ -172,7 +207,7 @@ export default function StudentRegistrationCourse() {
 
                   <div className="py-2">
                     <div className="w-50 mb-3">
-                      <MultiSelect
+                       <MultiSelect
                         options={lang}
                         value={selectedLang}
                         onChange={setSelectedLang}
@@ -184,8 +219,9 @@ export default function StudentRegistrationCourse() {
 
                   <div className="d-flex gap-2 justify-content-between mt-3">
                     <button
-                      className="w-25 btn_primary text-light p-2 rounded fw-bold "
                       onClick={onContinue}
+                      className={`w-25 text-light p-2 px-5 rounded fw-bold  ${ selected.length == 0 || selectedLang.length == 0 ? 'btn_disabled' : 'btn_primary'}`}
+                      disabled={selected.length == 0 || selectedLang.length == 0 ? true : false}
                     >
                       Continue
                     </button>
