@@ -7,49 +7,55 @@ import { Navbar, Footer } from "./../../../components";
 import { RiArrowGoBackLine } from "react-icons/ri";
 import { useRouter } from "next/router";
 import axios from "axios";
-import OtpInput from 'react-otp-input';
+import OtpInput from "react-otp-input";
 
 export default function ActivateCode() {
   const navigation = useRouter();
-  const [otp, setOtp] = useState('');
-  const [isVerified, setIsVerified] = useState(false)
+  const [otp, setOtp] = useState("");
+  const [isVerified, setIsVerified] = useState(false);
+  const [isResent, setIsResent] = useState(false);
   const [userType, setUserType] = useState("");
-  const [digit1, setDigit1] = useState('')
-  const [digit2, setDigit2] = useState('')
-  const [digit3, setDigit3] = useState('')
-  const [digit4, setDigit4] = useState('')
-  const [digit5, setDigit5] = useState('')
-  const [digit6, setDigit6] = useState('')
 
-  const isValid = otp.length == 6
+  const isValid = otp.length == 6;
 
-  const onContinue =async () => {
+  const onContinue = async () => {
     try {
-        const code = otp;
-        var stored = JSON.parse(window.localStorage.getItem("registrationForm"));
-        console.log(code,stored)
-        
-        const response = await axios.post(`http://34.227.65.157/auth/code`, {
-          email: stored.email,
-          code: code
-        });
+      const code = otp;
+      var stored = JSON.parse(window.localStorage.getItem("registrationForm"));
 
-        setIsVerified(true)
-        console.log(response);
-            if (userType === "parent") {
-      navigation.push("/auth/registerparent");
-    }
-    if (userType === "instructor") {
-      navigation.push("/auth/registerinstructor");
-    }
-    if (userType === "student") {
-      navigation.push("/auth/registerstudent");
-    }
-     
-      } catch (error) {
-        console.error(error);
+      const response = await axios.post(`http://34.227.65.157/auth/code`, {
+        email: stored.email,
+        code: code,
+      });
+
+      setIsVerified(true);
+      console.log(response);
+      if (userType === "parent") {
+        navigation.push("/auth/registerparent");
       }
+      if (userType === "instructor") {
+        navigation.push("/auth/registerinstructor");
+      }
+      if (userType === "student") {
+        navigation.push("/auth/registerstudent");
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
+
+  const onResendCode = async () => {
+    try {
+      var stored = JSON.parse(window.localStorage.getItem("registrationForm"));
+      const response = await axios.get(
+        `http://34.227.65.157/auth/code?email=${stored.email}`
+      );
+      console.log(response);
+      setIsResent(true);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   useEffect(() => {
@@ -57,7 +63,7 @@ export default function ActivateCode() {
     setUserType(value);
   }, []);
 
-    return (
+  return (
     <>
       <Head>
         <title>Auth | Activate Code</title>
@@ -76,7 +82,6 @@ export default function ActivateCode() {
         <div className="row">
           <div className="col-12 col-lg-6 d-flex justify-content-center align-items-center ">
             <div style={{ maxWidth: "400px", width: "100%" }}>
-              {/* <h1 className="text-center mb-5">GSK</h1> */}
               <div className="d-flex justify-content-center mb-5">
                 <Image
                   src="/assets/logo.png"
@@ -93,33 +98,42 @@ export default function ActivateCode() {
                     Check your email for activation code and enter it below
                   </h5>
                 </div>
-        
+
                 <div className="d-flex gap-2">
-                <OtpInput
-      value={otp}
-      onChange={setOtp}
-      numInputs={6}
-      renderSeparator={<span className="p-1"> </span>}
-      renderInput={(props) => <input {...props} className="w-full p-2 h3 rounded outline-0 border border_gray  mb-3 text-center" style={{width:"60px"}}/>}
-    />
+                  <OtpInput
+                    value={otp}
+                    onChange={setOtp}
+                    numInputs={6}
+                    renderSeparator={<span className="p-1"> </span>}
+                    renderInput={(props) => (
+                      <input
+                        {...props}
+                        className="w-full p-2 h3 rounded outline-0 border border_gray  mb-3 text-center"
+                        style={{ width: "60px" }}
+                      />
+                    )}
+                  />
                 </div>
                 <button
-                 className={`w-100 text-light p-2 rounded fw-bold mt-3 bg-gray-300 ${!isValid ? 'btn_disabled' : 'btn_primary'}`}
-                    disabled={!isValid}
+                  className={`w-100 text-light p-2 rounded fw-bold mt-3 bg-gray-300 ${
+                    !isValid ? "btn_disabled" : "btn_primary"
+                  }`}
+                  disabled={!isValid}
                   onClick={onContinue}
                 >
                   Continue
                 </button>
                 <div className="d-flex flex-column justify-content-center align-items-center mt-3">
                   <hr className="w-25" />
-                  {
-                    isVerified &&  <p className="fw-bold text_secondary m-0 p-0">
-                    Activation code has been resent
-                  </p>
-                  }
-                  <p className="text-secondary fw-bold m-0 p-0 pb-2">
+
+                  <button className="text-secondary fw-bold m-0 p-0 pb-2 border-0 bg-transparent" onClick={()=> onResendCode()}>
                     Resend Activation Code
-                  </p>
+                  </button>
+                  {isResent && (
+                    <p className="fw-bold text_secondary m-0 pb-3">
+                      Activation code has been resent
+                    </p>
+                  )}
 
                   <button
                     className="w-50 btn_secondary text-light p-2 rounded fw-bold "

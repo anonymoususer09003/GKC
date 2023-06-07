@@ -184,7 +184,6 @@ export default function StudentRegistrationCourse() {
                           }}
                         >
                           <option>Select</option>
-
                           <option value={1}>Beginner</option>
                           <option value={2}>Intermediate</option>
                           <option value={3}>Semi Expert</option>
