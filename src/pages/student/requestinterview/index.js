@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import Head from "next/head";
 import { Navbar, Footer } from "../../../components";
 import Calendar from "react-calendar";
+import { withRole } from '../../../utils/withAuthorization';
 
-export default function StudentRegistrationCCPay() {
+function RequestInterview() {
   const [value, onChange] = useState(new Date());
 
   return (
@@ -101,3 +102,6 @@ export default function StudentRegistrationCCPay() {
     </>
   );
 }
+
+
+export default withRole(RequestInterview, ['Student']);

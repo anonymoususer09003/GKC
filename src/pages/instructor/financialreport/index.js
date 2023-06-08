@@ -5,7 +5,9 @@ import { TutorNavbar, Footer } from "../../../components";
 import { FiRefreshCw } from "react-icons/fi";
 import { TbSpeakerphone } from "react-icons/tb";
 import {useRouter} from "next/router"
-export default function InstructorFinancialReport() {
+import { withRole } from './../../utils/withAuthorization';
+
+function InstructorFinancialReport() {
   const navigation = useRouter()
   const onContinue = () => {
     navigation.push('/instructor/requestrefund')
@@ -113,3 +115,6 @@ export default function InstructorFinancialReport() {
     </>
   );
 }
+
+
+export default withRole(InstructorFinancialReport, ['Instructor']);

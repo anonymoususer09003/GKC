@@ -8,8 +8,9 @@ import { RiDeleteBin6Line } from "react-icons/ri";
 import { useRouter } from "next/router";
 import moment from "moment";
 import FirebaseChat from "../../../hooks/firebase-chat";
+import { withRole } from './../../utils/withAuthorization';
 
-export default function ParentCalandar() {
+function ParentCalandar() {
   const navigation = useRouter();
   const { sendMessage, messages, setChatInfo, setNewMessage, newMessage } =
     FirebaseChat();
@@ -186,3 +187,6 @@ export default function ParentCalandar() {
     </>
   );
 }
+
+
+export default withRole(ParentCalandar, ['Parent']);

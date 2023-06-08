@@ -4,7 +4,9 @@ import { ParentNavbar, Footer } from "../../../components";
 import { BsFillSendFill } from "react-icons/bs";
 import firebaseChatHook from "../../../hooks/firebase-chat";
 import moment from "moment";
-export default function ParentMessaging() {
+import { withRole } from './../../utils/withAuthorization';
+
+function ParentMessaging() {
   const {
     sendMessage,
     messages,
@@ -135,3 +137,5 @@ export default function ParentMessaging() {
     </>
   );
 }
+
+export default withRole(ParentMessaging, ['Parent']);

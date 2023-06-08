@@ -4,8 +4,9 @@ import { ParentNavbar, Footer } from "../../../components";
 import { MdEmail, MdLocationOn } from "react-icons/md";
 import { FiEdit } from "react-icons/fi";
 import {useRouter} from "next/router"
+import { withRole } from './../../utils/withAuthorization';
 
-export default function ParentSettingProfile() {
+function ParentSettingProfile() {
   const navigation = useRouter();
   return (
     <>
@@ -72,3 +73,5 @@ export default function ParentSettingProfile() {
     </>
   );
 }
+
+export default withRole(ParentSettingProfile, ['Parent']);

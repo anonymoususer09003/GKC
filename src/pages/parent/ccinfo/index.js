@@ -3,7 +3,9 @@ import Head from "next/head";
 import { ParentNavbar, Footer } from "../../../components";
 import { useRouter } from "next/router";
 import PaymentForm from "@/components/stripe/PaymentForm";
-export default function ParentCCInfo() {
+import { withRole } from './../../utils/withAuthorization';
+
+function ParentCCInfo() {
   const navigation = useRouter();
   const onContinue = () => {
     navigation.push("/");
@@ -102,3 +104,5 @@ export default function ParentCCInfo() {
     </>
   );
 }
+
+export default withRole(ParentCCInfo, ['Parent']);

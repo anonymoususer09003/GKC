@@ -5,9 +5,9 @@ import { ParentNavbar, Footer } from "../../../components";
 import { FiRefreshCw } from "react-icons/fi";
 import { TbSpeakerphone } from "react-icons/tb";
 import {useRouter} from "next/router"
+import { withRole } from './../../utils/withAuthorization';
 
-
-export default function ParentRequestRefundSubmited() {
+function ParentRequestRefundSubmited() {
   const navigation = useRouter();
   const onRequestRefund = () => {
       navigation.push("/parent")
@@ -100,3 +100,5 @@ export default function ParentRequestRefundSubmited() {
     </>
   );
 }
+
+export default withRole(ParentRequestRefundSubmited, ['Parent']);

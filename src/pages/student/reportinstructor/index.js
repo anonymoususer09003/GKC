@@ -2,8 +2,9 @@ import { useState } from "react";
 import styles from "@/styles/Navbar.module.css";
 import { Navbar, Footer } from "../../../components";
 import Head from "next/head";
+import { withRole } from '../../../utils/withAuthorization';
 
-export default function ReportInstructor() {
+ function ReportInstructor() {
   const instructors = ["John Doe", "Jone Rich", "Katy Long"];
   const [instructor, setInstructor] = useState("John Doe");
   return (
@@ -95,3 +96,6 @@ export default function ReportInstructor() {
     </>
   );
 }
+
+
+export default withRole(ReportInstructor, ['Student']);

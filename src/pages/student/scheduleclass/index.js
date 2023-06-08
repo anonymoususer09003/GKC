@@ -3,8 +3,9 @@ import Head from "next/head";
 import { Navbar, Footer } from "../../../components";
 import Calendar from "react-calendar";
 import { BsFillSendFill } from "react-icons/bs";
+import { withRole } from '../../../utils/withAuthorization';
 
-export default function StudentRegistrationCCPay() {
+function StudentScheduleClass() {
   const [value, onChange] = useState(new Date());
 
   return (
@@ -166,3 +167,6 @@ export default function StudentRegistrationCCPay() {
     </>
   );
 }
+
+
+export default withRole(StudentScheduleClass, ['Student']);

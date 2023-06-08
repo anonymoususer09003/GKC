@@ -3,7 +3,9 @@ import Head from "next/head";
 import { ParentNavbar, Footer } from "../../../components";
 import { useRouter } from "next/router";
 import PaymentForm from "@/components/stripe/PaymentForm";
-export default function StudentRegistrationCCPay() {
+import { withRole } from './../../utils/withAuthorization';
+
+function CCPayment() {
   const navigation = useRouter();
 
   return (
@@ -93,3 +95,5 @@ export default function StudentRegistrationCCPay() {
     </>
   );
 }
+
+export default withRole(CCPayment, ['Parent']);

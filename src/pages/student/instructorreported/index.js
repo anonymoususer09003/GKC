@@ -5,7 +5,9 @@ import { useRouter } from "next/router";
 import StarRatings from "react-star-ratings";
 import { Navbar, Footer } from "../../../components";
 import Head from "next/head";
-export default function ChangePassword() {
+import { withRole } from '../../../utils/withAuthorization';
+
+function InstructorReported() {
   const [showActivation, setShowActivation] = useState(false);
   const instructors = ["John Doe", "Jone Rich", "Katy Long"];
   const [rating1, setRating1] = useState(0);
@@ -86,3 +88,6 @@ export default function ChangePassword() {
     </>
   );
 }
+
+
+export default withRole(InstructorReported, ['Student']);

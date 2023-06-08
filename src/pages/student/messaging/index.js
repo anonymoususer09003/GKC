@@ -4,6 +4,7 @@ import { Navbar, Footer } from "../../../components";
 import { BsFillSendFill } from "react-icons/bs";
 import firebaseChatHook from "../../../hooks/firebase-chat";
 import moment from "moment";
+import { withRole } from '../../../utils/withAuthorization';
 
 const instructor = {
   name: "Nouman",
@@ -22,7 +23,7 @@ const parent = {
   id: 4,
 };
 
-export default function StudentRegistrationCCPay() {
+function StudentMessaging() {
   const {
     sendMessage,
     messages,
@@ -134,3 +135,7 @@ export default function StudentRegistrationCCPay() {
     </>
   );
 }
+
+
+
+export default withRole(StudentMessaging, ['Student']);

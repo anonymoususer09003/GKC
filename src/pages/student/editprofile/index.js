@@ -5,8 +5,9 @@ import { BsCheck2Circle } from "react-icons/bs";
 import { MdEmail, MdArrowForwardIos } from "react-icons/md";
 import { MultiSelect } from "react-multi-select-component";
 import { useRouter } from "next/router";
+import { withRole } from '../../../utils/withAuthorization';
 
-export default function StudentRegistrationCCPay() {
+function EditProfile() {
   const options = [
     { label: "Grapes ", value: "grapes" },
     { label: "Mango ", value: "mango" },
@@ -240,3 +241,6 @@ export default function StudentRegistrationCCPay() {
     </>
   );
 }
+
+
+export default withRole(EditProfile, ['Student']);

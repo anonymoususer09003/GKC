@@ -5,8 +5,9 @@ import { BsFillMicFill } from "react-icons/bs";
 import { GoDeviceCameraVideo } from "react-icons/go";
 import { FaShare } from "react-icons/fa";
 import JitsiMeetComponent from "@/components/jitsimeet";
+import { withRole } from './../../utils/withAuthorization';
 
-export default function ParentVideo() {
+function ParentVideo() {
   const user = {
     id: 1,
     name: "Femi",
@@ -26,3 +27,5 @@ export default function ParentVideo() {
     </>
   );
 }
+
+export default withRole(ParentVideo, ['Parent']);

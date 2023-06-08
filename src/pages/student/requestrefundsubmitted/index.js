@@ -5,8 +5,9 @@ import { Navbar, Footer } from "../../../components";
 import { FiRefreshCw } from "react-icons/fi";
 import { TbSpeakerphone } from "react-icons/tb";
 import {useRouter} from "next/router"
+import { withRole } from '../../../utils/withAuthorization';
 
-export default function StudentFinancialReport() {
+function RequestRefundSubmited() {
   const navigation = useRouter();
   const onRequestRefundSubmit = () => {
       navigation.push("/")
@@ -99,3 +100,5 @@ export default function StudentFinancialReport() {
     </>
   );
 }
+
+export default withRole(RequestRefundSubmited, ['Student']);

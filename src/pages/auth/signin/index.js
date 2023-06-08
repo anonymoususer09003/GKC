@@ -1,16 +1,16 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
 import { RiArrowGoBackLine } from "react-icons/ri";
 import { Footer } from "../../../components";
-import {useRouter} from "next/router"
-import axios from "axios"
+import { useRouter } from "next/router";
+import axios from "axios";
 export default function SignIn() {
   const navigation = useRouter();
-  const [userType, setUserType] = useState('student')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const [userType, setUserType] = useState("student");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const onContinue = () => {
     // console.log(userType)
     // window.localStorage.setItem("userType", JSON.stringify(userType))
@@ -26,38 +26,39 @@ export default function SignIn() {
     // }
   };
 
-  const onLogin = async() => {
-    console.log(email, password)
+  const onLogin = async () => {
+    console.log(email, password);
     try {
-       const response = await axios.post(`http://34.227.65.157/auth/login`,{
+      const response = await axios.post(`http://34.227.65.157/auth/login`, {
         email: email,
-        password: password
-       });
-       window.localStorage.setItem("gkcAuth", JSON.stringify(response.data))
-       console.log(response.data)
-       console.log(response.data.accessToken)
-       const res = await axios.get('http://34.227.65.157/user/logged-user-role',{
-        headers: {
-          Authorization: `Bearer ${response.data.accessToken}`
+        password: password,
+      });
+      console.log(response.data.accessToken);
+      const res = await axios.get(
+        "http://34.227.65.157/user/logged-user-role",
+        {
+          headers: {
+            Authorization: `Bearer ${response.data.accessToken}`,
+          },
         }
-      })
-      console.log(res.data.name)
-if(res.data.name === "Student"){
-  navigation.push("/");
-}
+      );
+      console.log(res.data);
+      window.localStorage.setItem("gkcAuth", JSON.stringify({accessToken: response.data.accessToken, role: res.data.name}));
+      if (res.data.name === "Student") {
+        navigation.push("/");
+      }
 
-if(res.data.name === "Instructor"){
-  navigation.push("/instructor");
-}
+      if (res.data.name === "Instructor") {
+        navigation.push("/instructor");
+      }
 
-
-if(res.data.name === "Parent"){
-  navigation.push("/parent");
-}
-     } catch (error) {
-       console.error(error);
-     }
-  }
+      if (res.data.name === "Parent") {
+        navigation.push("/parent");
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
   return (
     <>
       <Head>
@@ -109,16 +110,19 @@ if(res.data.name === "Parent"){
                     className="w-100 p-2 rounded outline-0 border border_gray mb-3"
                     placeholder="Your Email"
                     value={email}
-                    onChange={(e)=> setEmail(e.target.value)}
+                    onChange={(e) => setEmail(e.target.value)}
                   />
                   <input
                     type="password"
                     className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
                     placeholder="Password"
                     value={password}
-                    onChange={(e)=> setPassword(e.target.value)}
+                    onChange={(e) => setPassword(e.target.value)}
                   />
-                  <button className="w-100 btn_primary text-light p-2 rounded fw-bold mt-3" onClick={onLogin}>
+                  <button
+                    className="w-100 btn_primary text-light p-2 rounded fw-bold mt-3"
+                    onClick={onLogin}
+                  >
                     Sign In
                   </button>
                 </div>

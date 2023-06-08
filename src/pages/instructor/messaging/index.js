@@ -4,7 +4,9 @@ import { TutorNavbar, Footer } from "../../../components";
 import { BsFillSendFill } from "react-icons/bs";
 import firebaseChatHook from "../../../hooks/firebase-chat";
 import moment from "moment";
-export default function InstructorMessaging() {
+import { withRole } from './../../utils/withAuthorization';
+
+function InstructorMessaging() {
   const {
     sendMessage,
     messages,
@@ -129,3 +131,5 @@ export default function InstructorMessaging() {
     </>
   );
 }
+
+export default withRole(InstructorMessaging, ['Instructor']);

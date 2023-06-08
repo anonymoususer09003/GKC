@@ -8,7 +8,9 @@ import { RiDeleteBin6Line } from "react-icons/ri";
 import { useRouter } from "next/router";
 import moment from "moment";
 import FirebaseChat from "../../../hooks/firebase-chat";
-export default function StudentRegistrationCCPay() {
+import { withRole } from '../../../utils/withAuthorization';
+
+function StudentCalandar() {
   const navigation = useRouter();
   const { sendMessage, messages, setChatInfo, setNewMessage, newMessage } =
     FirebaseChat();
@@ -179,3 +181,6 @@ export default function StudentRegistrationCCPay() {
     </>
   );
 }
+
+
+export default withRole(StudentCalandar, ['Student']);

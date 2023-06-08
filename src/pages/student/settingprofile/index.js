@@ -4,7 +4,10 @@ import { Navbar, Footer } from "../../../components";
 import { MdEmail, MdArrowForwardIos } from "react-icons/md";
 import { FiEdit } from "react-icons/fi";
 import { useRouter } from "next/router";
-export default function SettingProfle() {
+import { withRole } from '../../../utils/withAuthorization';
+
+
+function SettingProfle() {
 const navigation = useRouter();
 const onEditProfile = () => {
   navigation.push("/student/editprofile")
@@ -140,3 +143,6 @@ const onEditProfile = () => {
     </>
   );
 }
+
+
+export default withRole(SettingProfle, ['Student']);

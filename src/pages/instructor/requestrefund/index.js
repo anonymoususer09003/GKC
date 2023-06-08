@@ -4,7 +4,9 @@ import { Inter } from "next/font/google";
 import { TutorNavbar, Footer } from "../../../components";
 import { FiRefreshCw } from "react-icons/fi";
 import { TbSpeakerphone } from "react-icons/tb";
-export default function StudentFinancialReport() {
+import { withRole } from './../../utils/withAuthorization';
+
+function RequestRefund() {
   return (
     <>
       <Head>
@@ -93,3 +95,5 @@ export default function StudentFinancialReport() {
     </>
   );
 }
+
+export default withRole(RequestRefund, ['Instructor']);

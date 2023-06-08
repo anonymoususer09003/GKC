@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import Head from "next/head";
 import { Navbar,TutorNavbar, Footer } from "../../../components";
 import { BsCheck2Circle } from "react-icons/bs";
+import { withRole } from './../../utils/withAuthorization';
 
-export default function StudentRegistrationCourse() {
+function StudentRegistrationCourse() {
   return (
     <>
       <Head>
@@ -124,3 +125,6 @@ export default function StudentRegistrationCourse() {
     </>
   );
 }
+
+
+export default withRole(StudentRegistrationCourse, ['Instructor']);

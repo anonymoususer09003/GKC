@@ -5,7 +5,9 @@ import Head from "next/head";
 import { ParentNavbar, Footer } from "../../../components";
 import Calendar from "react-calendar";
 import {useRouter} from "next/router"
-export default function StudentRegistrationCCPay() {
+import { withRole } from './../../utils/withAuthorization';
+
+function ParentRequestInterview() {
   const navigation = useRouter();
   const [value, onChange] = useState(new Date());
  
@@ -128,3 +130,5 @@ export default function StudentRegistrationCCPay() {
   );
 }
 
+
+export default withRole(ParentRequestInterview, ['Parent']);

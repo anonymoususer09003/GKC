@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import Head from "next/head";
 import { TutorNavbar, Footer } from "../../../components";
 import {useRouter} from "next/router"
+import { withRole } from './../../utils/withAuthorization';
 
-export default function ParentRegistrationCCInfo() {
+function BankInfo() {
   const navigation = useRouter();
 
   return (
@@ -97,3 +98,5 @@ export default function ParentRegistrationCCInfo() {
     </>
   );
 }
+
+export default withRole(BankInfo, ['Instructor']);

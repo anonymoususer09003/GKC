@@ -4,8 +4,9 @@ import { Inter } from "next/font/google";
 import styles from "@/styles/Home.module.css";
 import { ParentNavbar, Footer, ParentTutorCard } from "../../components";
 const inter = Inter({ subsets: ["latin"] });
+import { withRole } from './../../utils/withAuthorization';
 
-export default function Home() {
+function ParentLandingPage() {
   const [showCards, setShowCards] = useState(true);
   return (
     <>
@@ -99,3 +100,6 @@ export default function Home() {
     </>
   );
 }
+
+
+export default withRole(ParentLandingPage, ['Parent']);

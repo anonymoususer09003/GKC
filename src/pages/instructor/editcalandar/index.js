@@ -6,7 +6,9 @@ import { BsFillChatFill, BsFillSendFill } from "react-icons/bs";
 import { GoDeviceCameraVideo } from "react-icons/go";
 import { FiEdit } from "react-icons/fi";
 import { RiDeleteBin6Line } from "react-icons/ri";
-export default function StudentRegistrationCCPay() {
+import { withRole } from './../../utils/withAuthorization';
+
+function EditCalandar() {
   const [value, onChange] = useState(new Date());
 
   return (
@@ -132,3 +134,5 @@ export default function StudentRegistrationCCPay() {
     </>
   );
 }
+
+export default withRole(EditCalandar, ['Instructor']);

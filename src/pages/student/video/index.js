@@ -2,8 +2,9 @@ import React, { useState, useEffect } from "react";
 import Head from "next/head";
 import { Navbar, Footer } from "../../../components";
 import JitsiMeetComponent from "@/components/jitsimeet";
+import { withRole } from '../../../utils/withAuthorization';
 
-export default function StudentRegistrationCCPay() {
+function StudentVideo() {
   const user = {
     id: 1,
     name: "Nouman",
@@ -22,3 +23,6 @@ export default function StudentRegistrationCCPay() {
     </>
   );
 }
+
+
+export default withRole(StudentVideo, ['Student']);

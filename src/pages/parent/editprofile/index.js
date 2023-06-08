@@ -3,7 +3,9 @@ import Head from "next/head";
 import { ParentNavbar, Footer } from "./../../../components";
 import { BsCheck2Circle } from "react-icons/bs";
 import { MdEmail, MdDelete } from "react-icons/md";
-export default function StudentRegistrationCCPay() {
+import { withRole } from './../../utils/withAuthorization';
+
+function EditProfile() {
   return (
     <>
       <Head>
@@ -132,3 +134,4 @@ export default function StudentRegistrationCCPay() {
     </>
   );
 }
+export default withRole(EditProfile, ['Parent']);

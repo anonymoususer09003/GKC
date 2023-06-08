@@ -6,9 +6,9 @@ import { BsCheck2Circle } from "react-icons/bs";
 import Image from "next/image";
 import { MultiSelect } from "react-multi-select-component";
 import {useRouter} from "next/router"
+import { withRole } from './../../utils/withAuthorization';
 
-
-export default function EditProfile() {
+ function EditProfile() {
   const options = [
     { label: "Grapes ", value: "grapes" },
     { label: "Mango ", value: "mango" },
@@ -264,3 +264,6 @@ export default function EditProfile() {
     </>
   );
 }
+
+
+export default withRole(EditProfile, ['Instructor']);

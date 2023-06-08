@@ -189,9 +189,7 @@ export default function StudentRegistrationCourse() {
 
                         <div className="w-50 mb-3">
                           <MultiSelect
-                            options={[{ value: 1, label: 'Begginer' },
-                            { value: 2, label: 'Intermediate' }
-                            ]}
+                            options={proficiency}
                             value={v.proficienciesId}
                             onChange={(selectedOptions) =>
                                  handleSelection(selectedOptions, index)

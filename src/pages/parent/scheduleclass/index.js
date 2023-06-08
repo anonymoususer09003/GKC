@@ -4,8 +4,9 @@ import { ParentNavbar, Footer } from "../../../components";
 import Calendar from "react-calendar";
 import { BsFillSendFill } from "react-icons/bs";
 import {useRouter} from "next/router"
+import { withRole } from './../../utils/withAuthorization';
   
-export default function StudentRegistrationCCPay() {
+function ParentScheduleClass() {
   const navigation = useRouter();
   const [value, onChange] = useState(new Date());
  
@@ -192,3 +193,5 @@ Your dependent's information
 
 
 
+
+export default withRole(ParentScheduleClass, ['Parent']);

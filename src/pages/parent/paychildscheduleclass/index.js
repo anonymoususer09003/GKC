@@ -9,10 +9,11 @@ import { FaFileVideo } from "react-icons/fa";
 import StarRatings from "react-star-ratings";
 import { BsCheck2Circle, BsFillCameraVideoFill } from "react-icons/bs";
 import {useRouter} from "next/router"
+import { withRole } from './../../utils/withAuthorization';
 
 import { BiMessageAlt } from "react-icons/bi";
 
-export default function ParentPayScheduleClass() {
+function ParentPayScheduleClass() {
   const [value, onChange] = useState(new Date());
   const navigation = useRouter();
 
@@ -281,13 +282,4 @@ export default function ParentPayScheduleClass() {
     </>
   );
 }
-
-
-
-
-
-
-
-
-
-
+export default withRole(ParentPayScheduleClass, ['Parent']);
