@@ -5,6 +5,7 @@ import { BsCheck2Circle } from "react-icons/bs";
 import { useRouter } from "next/router";
 import axios from "axios";
 import { MultiSelect } from "react-multi-select-component";
+import Select from "react-select";
 
 export default function StudentRegistrationCourse() {
   const navigation = useRouter();
@@ -15,6 +16,17 @@ export default function StudentRegistrationCourse() {
   const [lang, setLang] = useState([]);
   const [proficiency, setProficiency] = useState([]);
 
+
+  const handleSelectChange = (selected) => {
+    setSelected(
+      selected && selected.map((option) => ({
+        label: option.label,
+        value: option.value,
+        proficienciesId: []
+      }))
+    );
+  };
+
   const onContinue = () => {
     var stored = JSON.parse(window.localStorage.getItem("registrationForm"));
     var languageId = [];
@@ -22,15 +34,16 @@ export default function StudentRegistrationCourse() {
     selectedLang.map((v) => {
       languageId.push(Number(v.value));
     });
-    coursesWithProficiency.map((v) => {
-      courseWithId.push(v.courseId);
-    });
-    coursesWithProficiency.map((v) => {
+
+    selected.map((v) => {
       courseWithId.push({
-        courseId: v.courseId,
-        proficiencyId: v.proficiencyId,
+        courseId: v.value,
+        proficienciesId: v.proficienciesId.map(val=>{
+         return val.value
+        }),
       });
     });
+
     stored.courseToTeachAndProficiency = courseWithId;
     stored.languagesIdPreference = languageId;
     window.localStorage.setItem("registrationForm", JSON.stringify(stored));
@@ -87,39 +100,21 @@ export default function StudentRegistrationCourse() {
   useEffect(() => {
     getCourses();
     getLang();
-    getProficiency()
+    getProficiency();
   }, []);
 
-  const handleAddOrUpdate = (id, newData) => {
-    // Check if the ID exists in the data array
-    const dataIndex = coursesWithProficiency.findIndex(
-      (item) => item.courseId === id
-    );
-
-    if (dataIndex === -1) {
-      // ID not found, add the new data to the array
-      setCoursesWithProficiency([
-        ...coursesWithProficiency,
-        { id, ...newData },
-      ]);
-    } else {
-      // ID found, update the data at the specified index
-      const updatedData = [...coursesWithProficiency];
-      updatedData[dataIndex] = { ...updatedData[dataIndex], ...newData };
-      setCoursesWithProficiency(updatedData);
-    }
-  };
 
 
-  const handleSelectCourse = (selectedOptions) => {
-    console.log(...selectedOptions)
-    // setSelected()
+  const handleSelection = (selectedOptions, optionIndex) => {
     setSelected((prevData) => {
       const newData = [...prevData];
-      newData[optionIndex].selectedOptions = selectedOptions;
+      newData[optionIndex].proficienciesId = selectedOptions;
       return newData;
     });
+
+    console.log(selected)
   };
+
   return (
     <>
       <Head>
@@ -149,15 +144,14 @@ export default function StudentRegistrationCourse() {
 
                 <div className="py-4">
                   <div className="w-50 mb-3">
-                    <MultiSelect
-                      options={courses}
-                      value={selected}
-                      onChange={(selectedOptions) =>
-                        handleSelectCourse(selectedOptions)
-                      }
-                      labelledBy={"Select Course"}
-                      // isCreatable={true}
-                    />
+     
+
+      <Select
+      isMulti
+      options={courses}
+      value={selected}
+      onChange={handleSelectChange}
+    />
                   </div>
                   <div className="d-flex flex-wrap gap-2">
                     {selected.length < 1 ? (
@@ -188,39 +182,24 @@ export default function StudentRegistrationCourse() {
                     </h5>
                   </div>
                 ) : (
-                  selected.map((v) => {
+                  selected.map((v,index) => {
                     return (
                       <div className="d-flex  flex-wrap align-items-center gap-2 ">
                         <p>{v.label}</p>
 
-                        {/* <div className="w-50 mb-3">
+                        <div className="w-50 mb-3">
                           <MultiSelect
-                            options={[{ value: v.id, label: v.name }
+                            options={[{ value: 1, label: 'Begginer' },
+                            { value: 2, label: 'Intermediate' }
                             ]}
-                            value={selectedLang}
-                            onChange={setSelectedLang}
+                            value={v.proficienciesId}
+                            onChange={(selectedOptions) =>
+                                 handleSelection(selectedOptions, index)
+                           }
                             labelledBy={"Select Proficiency"}
                             isCreatable={true}
                           />
-                        </div> */}
-
-                        <select
-                          className="w-25 p-2 rounded outline-0 border border_gray  mb-3 "
-                          onChange={(e) => {
-                            handleAddOrUpdate(v.value, {
-                              courseId: v.value,
-                              proficiencyId: Number(e.target.value),
-                            });
-                          }}
-                        >
-                          <option>Select</option>
-                          {
-                            proficiency.map((v,i)=>{
-                              return <option value={v.value} key={i}>{v.label}</option>
-                            })
-                          }
-                
-                        </select>
+                        </div>
                       </div>
                     );
                   })
@@ -245,7 +224,9 @@ export default function StudentRegistrationCourse() {
 
                   <div className="d-flex gap-2 justify-content-between mt-3">
                     <button
-                      className="w-25 btn_primary text-light p-2 rounded fw-bold "
+                      // className="w-25 btn_primary text-light p-2 rounded fw-bold "
+                      className={`w-25 btn_primary text-light p-2 rounded fw-bold ${selected.length === 0 || selectedLang.length === 0 ? 'btn_disabled' : 'btn_primary'}`}
+                       disabled={selected.length === 0 || selectedLang.length === 0 }
                       onClick={onContinue}
                     >
                       Continue

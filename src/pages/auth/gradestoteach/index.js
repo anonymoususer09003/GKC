@@ -64,35 +64,6 @@ export default function RegistrationGrade() {
             className=" d-flex flex-wrap justify-content-center m-auto gap-4 py-5"
             style={{ maxWidth: "700px" }}
           >
-          {/* {
-            grades.map((v,i)=> {
-              return   <div
-              style={{
-                backgroundImage: 'url("/assets/5_plus.png")',
-                backgroundRepeat: "no-repeat",
-                backgroundSize: "100% 100%",
-                width: "240px",
-                height: "240px",
-                position: "relative",
-                borderRadius: "10px",
-              }}
-              id="box1"
-            >
-              <input
-                value={v.id}
-                className="form-check-input position-absolute"
-                style={{ top: "5px", right: "5px" }}
-                type="checkbox"
-                onChange={(e) => setGrade1( grade1 == 1 ? null: 1)}
-              />
-              <div className="position-absolute bottom-0 p-2 bg-light w-100 bg-opacity-50 fw-bold">
-                <small className="text-secondary">
-                  {v.name} &#40;{v.description}&#41;
-                </small>
-              </div>
-            </div>
-            })
-          } */}
             <div
               style={{
                 backgroundImage: 'url("/assets/5_plus.png")',
@@ -114,7 +85,7 @@ export default function RegistrationGrade() {
               />
               <div className="position-absolute bottom-0 p-2 bg-light w-100 bg-opacity-50 fw-bold">
                 <small className="text-secondary">
-                  Elementry &#40;&#60;10yrs&#41;
+                Elementary &#40;&#60;10yrs&#41;
                 </small>
               </div>
             </div>
@@ -142,7 +113,7 @@ export default function RegistrationGrade() {
 
               <div className="position-absolute bottom-0 p-2 bg-light w-100 bg-opacity-50 fw-bold">
                 <small className="text-secondary">
-                  Middle School &#40;&#60;11yrs - 13yrs&#41;
+                Middle School &#40;&#60;10yrs - 13yrs&#41;
                 </small>
               </div>
             </div>
@@ -172,7 +143,7 @@ export default function RegistrationGrade() {
 
               <div className="position-absolute bottom-0 p-2 bg-light w-100 bg-opacity-50 fw-bold">
                 <small className="text-secondary">
-                  High School &#40;&#60;14yrs - 18yrs&#41;
+                High School &#40;&#60;14yrs - 16yrs&#41;
                 </small>
               </div>
             </div>
