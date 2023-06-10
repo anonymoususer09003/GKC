@@ -16,12 +16,11 @@ export default function ParentRegistrationCCInfo() {
     const [confirmBankAccountNumber, setConfirmBankAccountNumber] = useState('')
     const [bankRoutingNumber, setBankRoutingNumber] = useState('')
     const [confirmBankRoutingNumber, setConfirmBankRoutingNumber] = useState('')
-let isValid = bankName !== "" && bankAccountNumber !== "" &&  confirmBankAccountNumber !== "" && bankAccountNumber ==   confirmBankAccountNumber && bankRoutingNumber !== "" &&  confirmBankRoutingNumber !== "" && bankRoutingNumber ==   confirmBankRoutingNumber
+    let isValid = bankName !== "" && bankAccountNumber !== "" &&  confirmBankAccountNumber !== "" && bankAccountNumber ==   confirmBankAccountNumber && bankRoutingNumber !== "" &&  confirmBankRoutingNumber !== "" && bankRoutingNumber ==   confirmBankRoutingNumber
     const onContinue = async () => {
         try {
-            console.log(
-                {
-                        firstName: userInfo.firstName,
+            console.log(                {
+                firstName: userInfo.firstName,
                 lastName: userInfo.lastName,
                 email: userInfo.email,
                 password: userInfo.password,
@@ -31,19 +30,17 @@ let isValid = bankName !== "" && bankAccountNumber !== "" &&  confirmBankAccount
                 state: userInfo.state,
                 city: userInfo.city,
                 zipCode: userInfo.zipCode,
-                timeZoneId: 'Asia/Karachi',
-                acceptInterviewRequest: true,
-                gradesIdToTutor: userInfo.gradesIdToTutor,
+                timeZoneId: 'Atlantic Standard Time',
                 instructorBio: userInfo.instructorBio,
                 hourlyRate: userInfo.hourlyRate,
-
-                coursesIdToTutor: userInfo.coursesIdToTutor,
-                proficienciesIdOfStudentsToTeach: userInfo.proficienciesIdOfStudentsToTeach,
+                acceptInterviewRequest: true,
+                gradesIdToTutor: userInfo.gradesIdToTutor,
                 languagesIdPreference: userInfo.languagesIdPreference,
+                courseToTeachAndProficiency: userInfo.courseToTeachAndProficiency,
                 bankAccountType: bankAccountType,
+                bankName: bankName,
                 bankAccountNumber:bankAccountNumber,
                 bankRoutingNumber: bankRoutingNumber,
-                bankName: bankName,
                 }
             )
             const response = await axios.post(
@@ -60,18 +57,16 @@ let isValid = bankName !== "" && bankAccountNumber !== "" &&  confirmBankAccount
                 city: userInfo.city,
                 zipCode: userInfo.zipCode,
                 timeZoneId: 'Asia/Karachi',
-                acceptInterviewRequest: true,
                 instructorBio: userInfo.instructorBio,
                 hourlyRate: userInfo.hourlyRate,
-
+                acceptInterviewRequest: true,
                 gradesIdToTutor: userInfo.gradesIdToTutor,
-                coursesIdToTutor: userInfo.coursesIdToTutor,
-                proficienciesIdOfStudentsToTeach: userInfo.proficienciesIdOfStudentsToTeach,
                 languagesIdPreference: userInfo.languagesIdPreference,
+                courseToTeachAndProficiency: userInfo.courseToTeachAndProficiency,
                 bankAccountType: bankAccountType,
+                bankName: bankName,
                 bankAccountNumber:bankAccountNumber,
                 bankRoutingNumber: bankRoutingNumber,
-                bankName: bankName,
               }
             );
             window.localStorage.setItem("gkcAuth", JSON.stringify(response.data))

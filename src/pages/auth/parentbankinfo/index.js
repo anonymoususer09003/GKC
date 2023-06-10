@@ -36,7 +36,16 @@ export default function StudentRegistrationCCInfo() {
           savePaymentFutureUse: true,
         }
       );
-      window.localStorage.setItem("gkcAuth", JSON.stringify(response.data))
+      const res = await axios.get(
+        "http://34.227.65.157/user/logged-user-role",
+        {
+          headers: {
+            Authorization: `Bearer ${response.data.accessToken}`,
+          },
+        }
+      );
+      console.log(res.data);
+      window.localStorage.setItem("gkcAuth", JSON.stringify({accessToken: response.data.accessToken, role: res.data.name}));   
      console.log(response.data)
     navigation.push("/parent");
 

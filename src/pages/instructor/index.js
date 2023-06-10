@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Head from "next/head";
 import { Navbar, TutorNavbar, Footer } from "../../components";
 import Calendar from "react-calendar";
@@ -9,9 +9,10 @@ import { RiDeleteBin6Line } from "react-icons/ri";
 import { useRouter } from "next/router";
 import moment from "moment";
 import FirebaseChat from "../../hooks/firebase-chat";
-import { withRole } from './../../utils/withAuthorization';
+import { withRole } from "./../../utils/withAuthorization";
+import axios from "axios";
 
- function InstructorLandingPage() {
+function InstructorLandingPage() {
   const navigation = useRouter();
 
   const { sendMessage, messages, setChatInfo, setNewMessage, newMessage } =
@@ -46,6 +47,14 @@ import { withRole } from './../../utils/withAuthorization';
     setNewMessage(e.target.value);
   };
 
+  const a = async () => {
+    const res = await axios.get("http://34.227.65.157/user/logged-user-role", {
+      headers: {
+        Authorization: `Bearer ${response.data.accessToken}`,
+      },
+    });
+    console.log(res.data);
+  };
   return (
     <>
       <Head>
@@ -173,6 +182,4 @@ import { withRole } from './../../utils/withAuthorization';
   );
 }
 
-
-
-export default withRole(InstructorLandingPage, ['Instructor']);
+export default withRole(InstructorLandingPage, ["Instructor"]);

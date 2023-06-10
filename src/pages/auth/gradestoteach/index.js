@@ -17,13 +17,13 @@ export default function RegistrationGrade() {
   const onContinue = () => {
     var stored = JSON.parse(window.localStorage.getItem("registrationForm"));
     let gradess = [];
-    console.log([grade1, grade2, grade3, grade4]);
+    // console.log([grade1, grade2, grade3, grade4]);
     [grade1, grade2, grade3, grade4].forEach((v) => {
       if(v !== null){
         gradess.push(Number(v))
       }
     })
-    stored.gradesIdToTutor = grades;
+    stored.gradesIdToTutor = gradess;
     window.localStorage.setItem("registrationForm", JSON.stringify(stored));
     navigation.push("/auth/proficiencytoteach");
   };

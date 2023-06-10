@@ -7,7 +7,6 @@ const withRole = (WrappedComponent, allowedRoles) => {
 
         useEffect(() => {
             const value = JSON.parse(window.localStorage.getItem("gkcAuth"));
-
             // Check if the user's role is allowed for this route
             const userRole = value?.role; // Fetch the user's role from the session
             if(!value){
