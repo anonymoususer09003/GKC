@@ -9,15 +9,12 @@ export default function StudentRegistrationCCInfo() {
   const navigation = useRouter();
   const [userType, setUserType] = useState(null);
   const [userInfo, setUserInfo] = useState(null);
-  const [nameCard, setNameCard] = useState("");
-  const [numberCard, setNumberCard] = useState("");
-  const [parents, setParents] =useState([])
-  const [selectedParent, setSelectedParent] = useState('')
-  const onContinue = () => {
-    console.log(userInfo);
-  };
+  const [confirmPayment, setConfirmPayment] = useState(false);
+  const [parents, setParents] = useState([]);
+  const [selectedParent, setSelectedParent] = useState("");
+  const [savePaymentFutureUse, setSavePaymentFutureUse] = useState(false);
 
-  const onRegister = async () => {
+  const onRegister = async ({ getPayment }) => {
     try {
       const response = await axios.post(
         `http://34.227.65.157/auth/register-student`,
@@ -32,7 +29,7 @@ export default function StudentRegistrationCCInfo() {
           state: userInfo.state,
           city: userInfo.city,
           zipCode: userInfo.zipCode,
-          savePaymentFutureUse: true,
+          savePaymentFutureUse,
           emailParent1: userInfo.emailParent1,
           emailParent2: userInfo.emailParent2,
           whoPaysEmail: selectedParent || userInfo.emailParent1,
@@ -40,15 +37,18 @@ export default function StudentRegistrationCCInfo() {
           courseOfInterestAndProficiency:
             userInfo.courseOfInterestAndProficiency,
           languagePreferencesId: userInfo.languagePreferencesId,
-          timeZoneId: 'Asia/Karachi',
+          timeZoneId: "Asia/Karachi",
         }
       );
-      window.localStorage.setItem("gkcAuth", JSON.stringify(response.data))
-      console.log(response.data)
-       window.localStorage.removeItem("registrationForm")
-          window.localStorage.removeItem("userType")
-      navigation.push("/");
 
+      if (getPayment && selectedParent == "") {
+        setConfirmPayment(true);
+        window.localStorage.setItem("gkcAuth", JSON.stringify(response.data));
+      } else {
+        window.localStorage.removeItem("registrationForm");
+        window.localStorage.removeItem("userType");
+        navigation.push("/");
+      }
     } catch (error) {
       console.error(error);
     }
@@ -56,20 +56,25 @@ export default function StudentRegistrationCCInfo() {
 
   useEffect(() => {
     var stored = JSON.parse(window.localStorage.getItem("registrationForm"));
+    console.log("storeed", stored);
     var typ = JSON.parse(window.localStorage.getItem("userType"));
     setUserInfo(stored);
     setUserType(typ);
 
     const arr = [];
-    [stored?.emailParent1, stored?.emailParent1].map((v)=>{
-      if(v){
-        arr.push(v)
+    [stored?.emailParent1, stored?.emailParent1].map((v) => {
+      if (v) {
+        arr.push(v);
       }
-    })
+    });
 
-    setParents(arr)
+    setParents(arr);
   }, []);
-
+  const handlePaymentRequest = (status) => {
+    window.localStorage.removeItem("registrationForm");
+    window.localStorage.removeItem("userType");
+    navigation.push("/");
+  };
   return (
     <>
       <Head>
@@ -96,23 +101,52 @@ export default function StudentRegistrationCCInfo() {
                 <h4 className="text-dark fw-bold">Who pays for tutoring?</h4>
 
                 <div className="py-4">
-                  <select className="w-25 p-2 rounded outline-0 border border_gray  mb-3 " onChange={(e)=> setSelectedParent(e.target.value)} value={selectedParent}>
-                    <option>Select</option>
-                    {
-                      parents.map((v,i)=>{
-                        return  <option value={v} key={i}>{v}</option>
-                      })
+                  <select
+                    className="w-25 p-2 rounded outline-0 border border_gray  mb-3 "
+                    onChange={(e) =>
+                      setSelectedParent(
+                        e.target.value == "Select" ? "" : e.target.value
+                      )
                     }
+                    value={selectedParent}
+                  >
+                    <option>Select</option>
+                    {parents.map((v, i) => {
+                      return (
+                        <option value={v} key={i}>
+                          {v}
+                        </option>
+                      );
+                    })}
                   </select>
                   <h4 className="text-dark fw-bold p-0 m-0 text-center">OR</h4>
                 </div>
 
-                <PaymentForm title={" Add credit card information"} />
-       
+                <PaymentForm
+                  onValueReceived={() => {}}
+                  title={" Add credit card information"}
+                  onPay={confirmPayment}
+                  userInfo={userInfo}
+                  onPaymentRequest={handlePaymentRequest}
+                  disabled={selectedParent != "" ? true : false}
+                />
+                <div className="form-check">
+                  <input
+                    disabled={selectedParent != "" ? true : false}
+                    className="form-check-input"
+                    type="checkbox"
+                    value={savePaymentFutureUse}
+                    id="flexCheckDefault"
+                    onChange={(e) => setSavePaymentFutureUse(e.target.checked)}
+                  />
+                  <label className="form-check-label" for="flexCheckDefault">
+                    Save the payment information for future use
+                  </label>
+                </div>
                 <div className="d-flex gap-2 justify-content-center mt-3">
                   <button
                     className="w-50 btn_primary text-light p-2 rounded fw-bold "
-                    onClick={onRegister}
+                    onClick={() => onRegister({ getPayment: true })}
                   >
                     Continue
                   </button>
