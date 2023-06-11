@@ -3,9 +3,9 @@ import Head from "next/head";
 import { Navbar, Footer } from "../../../components";
 import { useRouter } from "next/router";
 import PaymentForm from "@/components/stripe/PaymentForm";
-import { withRole } from '../../../utils/withAuthorization';
+import { withRole } from "../../../utils/withAuthorization";
 
-export default function CreditCardInfo() {
+function CreditCardInfo() {
   const navigation = useRouter();
 
   return (
@@ -49,5 +49,4 @@ export default function CreditCardInfo() {
   );
 }
 
-
-export default withRole(CreditCardInfo, ['Student']);
+export default withRole(CreditCardInfo, ["Student"]);

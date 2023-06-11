@@ -3,7 +3,7 @@ import Head from "next/head";
 import { ParentNavbar, Footer } from "../../../components";
 import { useRouter } from "next/router";
 import PaymentForm from "@/components/stripe/PaymentForm";
-import { withRole } from './../../utils/withAuthorization';
+import { withRole } from "./../../utils/withAuthorization";
 
 function ParentCCInfo() {
   const navigation = useRouter();
@@ -105,4 +105,4 @@ function ParentCCInfo() {
   );
 }
 
-export default withRole(ParentCCInfo, ['Parent']);
+export default withRole(ParentCCInfo, ["Parent"]);
