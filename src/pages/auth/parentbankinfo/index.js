@@ -11,12 +11,13 @@ export default function StudentRegistrationCCInfo() {
   const [userInfo, setUserInfo] = useState(null);
   const [nameCard, setNameCard] = useState("");
   const [numberCard, setNumberCard] = useState("");
+  const [confirmPayment, setConfirmPayment] = useState(false);
 
   const onContinue = () => {
     console.log(userInfo);
   };
 
-  const onRegister = async () => {
+  const onRegister = async ({ getPayment }) => {
     console.log(userInfo);
     try {
       const response = await axios.post(
@@ -32,7 +33,7 @@ export default function StudentRegistrationCCInfo() {
           state: userInfo.state,
           city: userInfo.city,
           zipCode: userInfo.zipCode,
-          timeZoneId: "Asia/Karachi",
+          timeZoneId: userInfo.timeZoneId,
           savePaymentFutureUse: true,
         }
       );
@@ -52,10 +53,13 @@ export default function StudentRegistrationCCInfo() {
           role: res.data,
         })
       );
-      window.localStorage.removeItem("registrationForm")
-      window.localStorage.removeItem("userType")
-      console.log(response.data);
-      navigation.push("/parent");
+      if (getPayment) {
+        setConfirmPayment(!confirmPayment);
+      } else {
+        navigation.push("/parent");
+      }
+      // console.log(response.data);
+      // navigation.push("/parent");
     } catch (error) {
       console.error(error);
     }
@@ -72,7 +76,9 @@ export default function StudentRegistrationCCInfo() {
     setNameCard(value);
     // Do something with the value in the parent component
   };
-
+  const handlePaymentRequest = (status) => {
+    navigation.push("/parent");
+  };
   return (
     <>
       <Head>
@@ -99,11 +105,14 @@ export default function StudentRegistrationCCInfo() {
                 <PaymentForm
                   title={" Add credit card information"}
                   onValueReceived={handleValueReceived}
+                  onPay={confirmPayment}
+                  userInfo={userInfo}
+                  onPaymentRequest={handlePaymentRequest}
                 />
 
                 <div className="d-flex gap-2 justify-content-center mt-3">
                   <button
-                    onClick={onRegister}
+                    onClick={() => onRegister({ getPayment: true })}
                     className={`w-50 text-light p-2 px-5 rounded fw-bold  bg-gray-300 ${
                       !nameCard ? "btn_disabled" : "btn_primary"
                     }`}
