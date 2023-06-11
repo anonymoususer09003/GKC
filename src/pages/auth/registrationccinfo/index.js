@@ -40,13 +40,29 @@ export default function StudentRegistrationCCInfo() {
           courseOfInterestAndProficiency:
             userInfo.courseOfInterestAndProficiency,
           languagePreferencesId: userInfo.languagePreferencesId,
-          timeZoneId: 'Asia/Karachi',
+          timeZoneId: userInfo.timeZoneId
+          
         }
       );
-      window.localStorage.setItem("gkcAuth", JSON.stringify(response.data))
-      console.log(response.data)
-       window.localStorage.removeItem("registrationForm")
-          window.localStorage.removeItem("userType")
+      const res = await axios.get(
+        "http://34.227.65.157/user/logged-user-role",
+        {
+          headers: {
+            Authorization: `Bearer ${response.data.accessToken}`,
+          },
+        }
+      );
+      console.log(res.data);
+      window.localStorage.setItem(
+        "gkcAuth",
+        JSON.stringify({
+          accessToken: response.data.accessToken,
+          role: res.data,
+        })
+      );
+      window.localStorage.removeItem("registrationForm")
+      window.localStorage.removeItem("userType")
+      console.log(response.data);
       navigation.push("/");
 
     } catch (error) {

@@ -34,6 +34,7 @@ export default function RegisterStudent() {
   const onContinue = () => {
     window.localStorage.setItem("gkcAuth", JSON.stringify(true));
     var stored = JSON.parse(window.localStorage.getItem("registrationForm"));
+    let timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     console.log(stored);
     stored.email = email;
     stored.firstName = firstName;
@@ -46,8 +47,10 @@ export default function RegisterStudent() {
     stored.city = city;
     stored.zipCode = zipCode;
     stored.savePaymentFutureUse = true;
+    stored.timeZoneId = timezone;
     console.log(stored);
     window.localStorage.setItem("registrationForm", JSON.stringify(stored));
+    
     if (password == confirmPassword) {
       navigation.push("/auth/parentbankinfo");
     } else {

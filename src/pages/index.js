@@ -5,9 +5,21 @@ import styles from "@/styles/Home.module.css";
 import { Navbar, Footer, TutorCard } from "./../components";
 const inter = Inter({ subsets: ["latin"] });
 import { withRole } from './../utils/withAuthorization';
+import axios from "axios"
 
 function StudentLandingPage() {
   const [showCards, setShowCards] = useState(false);
+
+  const a = async () => {
+    var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
+
+    const res = await axios.get("http://34.227.65.157/user/logged-user-details", {
+      headers: {
+        Authorization: `Bearer ${typ.accessToken}`,
+      },
+    });
+    console.log(res.data);
+  };
   return (
     <>
       <Head>
@@ -71,7 +83,7 @@ function StudentLandingPage() {
             />
             <button
               className={`btn_primary py-2 px-5 fw-bold text-white rounded`}
-              onClick={() => setShowCards(true)}
+              onClick={() => a(true)}
             >
               Search
             </button>

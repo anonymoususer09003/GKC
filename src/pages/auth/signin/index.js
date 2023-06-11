@@ -43,16 +43,16 @@ export default function SignIn() {
         }
       );
       console.log(res.data);
-      window.localStorage.setItem("gkcAuth", JSON.stringify({accessToken: response.data.accessToken, role: res.data.name}));
-      if (res.data.name === "Student") {
+      window.localStorage.setItem("gkcAuth", JSON.stringify({accessToken: response.data.accessToken, role: res.data}));
+      if (res.data === "Student") {
         navigation.push("/");
       }
 
-      if (res.data.name === "Instructor") {
+      if (res.data === "Instructor") {
         navigation.push("/instructor");
       }
 
-      if (res.data.name === "Parent") {
+      if (res.data === "Parent") {
         navigation.push("/parent");
       }
     } catch (error) {

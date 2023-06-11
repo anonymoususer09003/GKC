@@ -31,8 +31,8 @@ export default function StudentRegistrationCCInfo() {
           country: userInfo.country,
           state: userInfo.state,
           city: userInfo.city,
-          zipCode: userInfo.zipCode,          
-          timeZoneId: 'Asia/Karachi',
+          zipCode: userInfo.zipCode,
+          timeZoneId: "Asia/Karachi",
           savePaymentFutureUse: true,
         }
       );
@@ -45,10 +45,17 @@ export default function StudentRegistrationCCInfo() {
         }
       );
       console.log(res.data);
-      window.localStorage.setItem("gkcAuth", JSON.stringify({accessToken: response.data.accessToken, role: res.data.name}));   
-     console.log(response.data)
-    navigation.push("/parent");
-
+      window.localStorage.setItem(
+        "gkcAuth",
+        JSON.stringify({
+          accessToken: response.data.accessToken,
+          role: res.data,
+        })
+      );
+      window.localStorage.removeItem("registrationForm")
+      window.localStorage.removeItem("userType")
+      console.log(response.data);
+      navigation.push("/parent");
     } catch (error) {
       console.error(error);
     }
@@ -60,7 +67,6 @@ export default function StudentRegistrationCCInfo() {
     setUserInfo(stored);
     setUserType(typ);
   }, []);
-
 
   const handleValueReceived = (value) => {
     setNameCard(value);
@@ -90,14 +96,17 @@ export default function StudentRegistrationCCInfo() {
           <div className="col-12 col-lg-7 d-flex justify-content-center align-items-center ">
             <div className="w-100 w-md-75 p-5">
               <div>
-  
-                <PaymentForm title={" Add credit card information"}  onValueReceived={handleValueReceived}/>
-          
+                <PaymentForm
+                  title={" Add credit card information"}
+                  onValueReceived={handleValueReceived}
+                />
+
                 <div className="d-flex gap-2 justify-content-center mt-3">
                   <button
                     onClick={onRegister}
-                    className={`w-50 text-light p-2 px-5 rounded fw-bold  bg-gray-300 ${!nameCard ? 'btn_disabled' : 'btn_primary'}`}
-
+                    className={`w-50 text-light p-2 px-5 rounded fw-bold  bg-gray-300 ${
+                      !nameCard ? "btn_disabled" : "btn_primary"
+                    }`}
                     disabled={!nameCard}
                   >
                     Continue

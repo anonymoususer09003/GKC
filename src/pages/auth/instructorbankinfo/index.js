@@ -30,7 +30,7 @@ export default function ParentRegistrationCCInfo() {
                 state: userInfo.state,
                 city: userInfo.city,
                 zipCode: userInfo.zipCode,
-                timeZoneId: 'Atlantic Standard Time',
+                timeZoneId: userInfo.timeZoneId,
                 instructorBio: userInfo.instructorBio,
                 hourlyRate: userInfo.hourlyRate,
                 acceptInterviewRequest: true,
@@ -56,7 +56,7 @@ export default function ParentRegistrationCCInfo() {
                 state: userInfo.state,
                 city: userInfo.city,
                 zipCode: userInfo.zipCode,
-                timeZoneId: 'Asia/Karachi',
+                timeZoneId: userInfo.timeZoneId,
                 instructorBio: userInfo.instructorBio,
                 hourlyRate: userInfo.hourlyRate,
                 acceptInterviewRequest: true,
@@ -69,10 +69,24 @@ export default function ParentRegistrationCCInfo() {
                 bankRoutingNumber: bankRoutingNumber,
               }
             );
-            window.localStorage.setItem("gkcAuth", JSON.stringify(response.data))
+            const res = await axios.get(
+              "http://34.227.65.157/user/logged-user-role",
+              {
+                headers: {
+                  Authorization: `Bearer ${response.data.accessToken}`,
+                },
+              }
+            );
+            console.log(res.data);
+            window.localStorage.setItem(
+              "gkcAuth",
+              JSON.stringify({
+                accessToken: response.data.accessToken,
+                role: res.data,
+              })
+            );
             window.localStorage.removeItem("registrationForm")
             window.localStorage.removeItem("userType")
-            console.log(response.data)
             navigation.push("/instructor");
 
     

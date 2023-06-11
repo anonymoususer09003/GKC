@@ -1,17 +1,39 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Head from "next/head";
 import { Navbar, Footer } from "../../../components";
 import { MdEmail, MdArrowForwardIos } from "react-icons/md";
 import { FiEdit } from "react-icons/fi";
 import { useRouter } from "next/router";
 import { withRole } from '../../../utils/withAuthorization';
-
+import axios from 'axios'
 
 function SettingProfle() {
 const navigation = useRouter();
 const onEditProfile = () => {
   navigation.push("/student/editprofile")
 }
+
+
+const [profile, setProfile] = useState({});
+
+useEffect(() => {
+  const fetchProfileData = async () => {
+    try {
+      var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
+    const res = await axios.get("http://34.227.65.157/user/logged-user-details", {
+      headers: {
+        Authorization: `Bearer ${typ.accessToken}`,
+      },
+    });
+    console.log(res.data);
+    setProfile(res.data);
+    } catch (error) {
+      console.error('Error fetching profile data:', error);
+    }
+  };
+
+  fetchProfileData();
+}, []);
   return (
     <>
       <Head>
@@ -30,11 +52,11 @@ const onEditProfile = () => {
             <div className="col-12 col-lg-4">
               <div className="shadow rounded-10 bg-white py-4">
                 <div className="px-4">
-                  <h5 className="fw-bold py-3">John Lark</h5>
+                  <h5 className="fw-bold py-3">{profile.firstName} {profile.lastName}</h5>
 
                   <p className="w-75 bg_secondary text-white p-2 rounded d-flex align-items-center gap-2 fw-bold">
                     <MdEmail style={{ fontSize: "22px" }} />
-                    student@123.com
+                    {profile.email}
                   </p>
 
                   <p className="p-0 m-0 py-2 fw-bold">Parent1/guardian1</p>

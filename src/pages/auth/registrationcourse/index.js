@@ -22,7 +22,6 @@ export default function StudentRegistrationCourse() {
     selectedLang.map((v) => {
       languageId.push(Number(v.value));
     });
-
     coursesWithProficiency.map((v) => {
       courseWithId.push({
         courseId: v.courseId,
@@ -31,6 +30,7 @@ export default function StudentRegistrationCourse() {
     });
     stored.courseOfInterestAndProficiency = courseWithId;
     stored.languagePreferencesId = languageId;
+
     window.localStorage.setItem("registrationForm", JSON.stringify(stored));
     navigation.push("/auth/registrationccinfo");
   };
