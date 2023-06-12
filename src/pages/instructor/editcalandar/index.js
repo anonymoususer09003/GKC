@@ -6,7 +6,7 @@ import { BsFillChatFill, BsFillSendFill } from "react-icons/bs";
 import { GoDeviceCameraVideo } from "react-icons/go";
 import { FiEdit } from "react-icons/fi";
 import { RiDeleteBin6Line } from "react-icons/ri";
-import { withRole } from './../../utils/withAuthorization';
+import { withRole } from './../../../utils/withAuthorization';
 
 function EditCalandar() {
   const [value, onChange] = useState(new Date());

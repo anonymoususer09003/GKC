@@ -9,13 +9,20 @@
         "lint": "next lint"
     },
     "dependencies": {
+        "@fullcalendar/daygrid": "^6.1.8",
+        "@fullcalendar/react": "^6.1.8",
         "@jitsi/react-sdk": "^1.3.0",
         "@reduxjs/toolkit": "^1.9.5",
         "@stripe/react-stripe-js": "^2.1.0",
         "@stripe/stripe-js": "^1.54.0",
         "axios": "^1.4.0",
         "bootstrap": "^5.2.3",
+        "date-fns": "^2.30.0",
+        "file-saver": "^2.0.5",
         "firebase": "^9.22.1",
+        "fullcalendar": "^6.1.8",
+        "ical": "^0.8.0",
+        "ical.js": "^1.5.0",
         "moment": "^2.29.4",
         "next": "13.3.4",
         "next-redux-wrapper": "^8.1.0",
@@ -29,7 +36,8 @@
         "react-redux": "^8.0.5",
         "react-select": "^5.7.3",
         "react-star-ratings": "^2.3.0",
-        "stripe": "^12.8.0"
+        "stripe": "^12.8.0",
+        "uuid": "^9.0.0"
     },
     "devDependencies": {
         "eslint": "8.39.0",

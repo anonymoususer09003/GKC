@@ -20,7 +20,7 @@ useEffect(() => {
   const fetchProfileData = async () => {
     try {
       var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
-    const res = await axios.get("http://34.227.65.157/user/logged-user-details", {
+      const res = await axios.get("http://34.227.65.157/user/logged-user-details", {
       headers: {
         Authorization: `Bearer ${typ.accessToken}`,
       },
