@@ -122,17 +122,17 @@ function InstructorLandingPage() {
 
         try {
           var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
-          const res = await axios.get("http://34.227.65.157/user/logged-user-details", {
+          const resp = await axios.get("http://34.227.65.157/user/logged-user-details", {
           headers: {
             Authorization: `Bearer ${typ.accessToken}`,
           },
           });
-          console.log('=============>',res.data.id);
+          console.log('=============>', resp.data.id);
 
         
         try {
           var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
-          const res = await axios.get(`http://34.227.65.157/instructor/schedule-and-unavailable-days-iCal?instructorId=${res.data.id}`, {
+          const res = await axios.get(`http://34.227.65.157/instructor/schedule-and-unavailable-days-iCal?instructorId=${resp.data.id}`, {
           headers: {
             Authorization: `Bearer ${typ.accessToken}`,
           },
@@ -250,10 +250,10 @@ function InstructorLandingPage() {
       <TutorNavbar isLogin={true} />
       <main className="container-fluid">
         <div
-          className="d-flex justify-content-between gap-5  p-5 "
           style={{ height: "90vh" }}
         >
-          <div className="w-50">
+      <div className="row p-5">
+          <div className="col-12 col-lg-6 ">
             <div
               className="d-flex justify-content-end p-2"
               onClick={() => navigation.push("/instructor/editcalandar")}
@@ -265,7 +265,7 @@ function InstructorLandingPage() {
               tileClassName={tileContent}
             />
           </div>
-          <div className="w-50">
+          <div className="col-12 col-lg-6">
             <h3 className="text-center" onClick={()=> loogeduserdata()}>Schedule</h3>
             <div
               className=" shadow p-5 bg-white rounded "
@@ -363,6 +363,7 @@ function InstructorLandingPage() {
                 </div>
               </div>
             </div>
+          </div>
           </div>
         </div>
       </main>
