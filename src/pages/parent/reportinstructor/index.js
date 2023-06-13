@@ -2,7 +2,7 @@ import { useState } from "react";
 import styles from "@/styles/Navbar.module.css";
 import { ParentNavbar, Footer } from "../../../components";
 import Head from "next/head";
-import { withRole } from './../../utils/withAuthorization';
+import { withRole } from '../../../utils/withAuthorization';
 
 function ReportInstructor() {
   const instructors = ["John Doe", "Jone Rich", "Katy Long"];

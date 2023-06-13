@@ -4,7 +4,7 @@ import { Inter } from "next/font/google";
 import styles from "@/styles/Home.module.css";
 import { ParentNavbar, Footer, ParentTutorCard } from "../../components";
 const inter = Inter({ subsets: ["latin"] });
-import { withRole } from './../../utils/withAuthorization';
+import { withRole } from '../.././utils/withAuthorization';
 
 function ParentLandingPage() {
   const [showCards, setShowCards] = useState(true);

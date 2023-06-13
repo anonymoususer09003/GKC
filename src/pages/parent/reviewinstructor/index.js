@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import StarRatings from "react-star-ratings";
 import { ParentNavbar, Footer } from "../../../components";
 import Head from "next/head";
-import { withRole } from './../../utils/withAuthorization';
+import { withRole } from '../../../utils/withAuthorization';
 
 function ParentInstructorReview() {
   const [showActivation, setShowActivation] = useState(false);

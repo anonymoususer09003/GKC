@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import StarRatings from "react-star-ratings";
 import { TutorNavbar, Footer } from "../../../components";
 import Head from "next/head";
-import { withRole } from './../../utils/withAuthorization';
+import { withRole } from '../../../utils/withAuthorization';
 
 function ReportStudentParent() {
   const [showActivation, setShowActivation] = useState(false);

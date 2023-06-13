@@ -4,7 +4,7 @@ import { Inter } from "next/font/google";
 import { TutorNavbar, Footer } from "../../../components";
 import { FiRefreshCw } from "react-icons/fi";
 import { TbSpeakerphone } from "react-icons/tb";
-import { withRole } from './../../utils/withAuthorization';
+import { withRole } from '../../../utils/withAuthorization';
 
 function RequestRefund() {
   return (

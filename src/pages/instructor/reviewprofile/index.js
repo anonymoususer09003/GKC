@@ -9,7 +9,7 @@ import { BsCheck2Circle, BsFillCameraVideoFill } from "react-icons/bs";
 import { BiMessageAlt } from "react-icons/bi";
 import { MdOutlineCelebration } from "react-icons/md";
 import StarRatings from "react-star-ratings";
-import { withRole } from './../../utils/withAuthorization';
+import { withRole } from '../../../utils/withAuthorization';
 
 function ReviewProfile() {
   return (

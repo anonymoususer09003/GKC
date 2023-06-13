@@ -9,7 +9,7 @@ import { FaFileVideo } from "react-icons/fa";
 import StarRatings from "react-star-ratings";
 import { BsCheck2Circle, BsFillCameraVideoFill } from "react-icons/bs";
 import {useRouter} from "next/router"
-import { withRole } from './../../utils/withAuthorization';
+import { withRole } from '../../../utils/withAuthorization';
 
 import { BiMessageAlt } from "react-icons/bi";
 

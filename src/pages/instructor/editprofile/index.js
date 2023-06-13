@@ -6,7 +6,7 @@ import { BsCheck2Circle } from "react-icons/bs";
 import Image from "next/image";
 import { MultiSelect } from "react-multi-select-component";
 import {useRouter} from "next/router"
-import { withRole } from './../../utils/withAuthorization';
+import { withRole } from '../../../utils/withAuthorization';
 
  function EditProfile() {
   const options = [

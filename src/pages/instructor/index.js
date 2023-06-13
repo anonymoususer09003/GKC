@@ -9,7 +9,7 @@ import { RiDeleteBin6Line } from "react-icons/ri";
 import { useRouter } from "next/router";
 import moment from "moment";
 import FirebaseChat from "../../hooks/firebase-chat";
-import { withRole } from "./../../utils/withAuthorization";
+import { withRole } from "../../utils/withAuthorization";
 import axios from "axios";
 import { parseISO, format } from 'date-fns'
 

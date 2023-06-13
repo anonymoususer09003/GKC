@@ -3,7 +3,7 @@ import Head from "next/head";
 import { ParentNavbar, Footer } from "./../../../components";
 import { BsCheck2Circle } from "react-icons/bs";
 import { MdEmail, MdDelete } from "react-icons/md";
-import { withRole } from './../../utils/withAuthorization';
+import { withRole } from '../../../utils/withAuthorization';
 
 function EditProfile() {
   return (

@@ -5,7 +5,7 @@ import { MdEmail,MdLocationOn, MdArrowForwardIos } from "react-icons/md";
 import { FiEdit } from "react-icons/fi";
 import Image from "next/image";
 import {useRouter} from "next/router"
-import { withRole } from './../../utils/withAuthorization';
+import { withRole } from '../../../utils/withAuthorization';
 
 function SettingProfile() {
   const navigation = useRouter();

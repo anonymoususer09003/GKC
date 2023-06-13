@@ -4,7 +4,7 @@ import { ParentNavbar, Footer } from "../../../components";
 import Calendar from "react-calendar";
 import { BsFillSendFill } from "react-icons/bs";
 import {useRouter} from "next/router"
-import { withRole } from './../../utils/withAuthorization';
+import { withRole } from '../../../utils/withAuthorization';
   
 function ParentScheduleClass() {
   const navigation = useRouter();

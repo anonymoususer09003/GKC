@@ -3,9 +3,9 @@ import Head from "next/head";
 import { TutorNavbar, Footer } from "../../../components";
 import { BsFillMicFill } from "react-icons/bs";
 import { GoDeviceCameraVideo } from "react-icons/go";
-import { FaShare } from "react-icons/fa";
+// import { FaShare } from "react-icons/fa";
 import JitsiMeetComponent from "@/components/jitsimeet";
-import { withRole } from './../../utils/withAuthorization';
+import { withRole } from '../../../utils/withAuthorization';
 
 function InstructoVideo() {
   const user = {
