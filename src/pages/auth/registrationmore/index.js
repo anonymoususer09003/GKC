@@ -5,29 +5,68 @@ import { Navbar, Footer, TutorNavbar } from "../../../components";
 import { BsCheck2Circle } from "react-icons/bs";
 import { useRouter } from "next/router";
 import { RiArrowGoBackLine } from "react-icons/ri";
-
+import axios from "axios";
 export default function InstructorRegistrationMore() {
   const navigation = useRouter();
   const [hourlyRate, setHourlyRate] = useState(null);
   const [instructorBio, setInstructorBio] = useState("");
   const [acceptInterview, setAcceptInterview] = useState(false);
-  const [deliveryMode, setDeliveryMode] = useState('');
+  const [deliveryModes, setDeliveryModes] = useState([]);
 
   const onContinue = () => {
     window.localStorage.setItem("gkcAuth", JSON.stringify(true));
     var stored = JSON.parse(window.localStorage.getItem("registrationForm"));
-    console.log(stored);
+ 
+    console.log(modes);
     stored.instructorBio = instructorBio;
     stored.hourlyRate = Number(hourlyRate);
     stored.acceptInterviewRequest = acceptInterview;
     stored.savePaymentFutureUse = true;
-    console.log(stored);
+       
+    var modes = [];
+    deliveryModes.map((v) => {
+      if(v.checked){
+        modes.push(v.label);
+      }
+    });
+    stored.deliveryModes = modes;
     window.localStorage.setItem("registrationForm", JSON.stringify(stored));
-      navigation.push("/auth/gradestoteach");
+    navigation.push("/auth/gradestoteach");
+  };
+
+  const getDeliveryModes = async () => {
+    try {
+      const response = await axios.get(
+        `http://34.227.65.157/public/register/get-all-delivery-modes`
+      );
+      var arr = [];
+      response.data.map((v) => {
+        arr.push({ id: v.id, label: v.name, checked: false });
+      });
+      setDeliveryModes(arr);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    getDeliveryModes();
+  }, []);
+
+
+  const handleCheckboxChange = (event) => {
+    const itemId = parseInt(event.target.value);
+    const updatedItems = deliveryModes.map((item) => {
+      if (item.id === itemId) {
+        return { ...item, checked: !item.checked };
+      }
+      return item;
+    });
+    setDeliveryModes(updatedItems);
   };
 
 
-
+console.log(deliveryModes)
   return (
     <>
       <Head>
@@ -69,7 +108,7 @@ export default function InstructorRegistrationMore() {
                   rows="8"
                   placeholder="About myself"
                   value={instructorBio}
-                  onChange={(e)=> setInstructorBio(e.target.value)}
+                  onChange={(e) => setInstructorBio(e.target.value)}
                 ></textarea>
 
                 <p className=" fw-bold ">
@@ -88,8 +127,8 @@ export default function InstructorRegistrationMore() {
                       type="number"
                       className="w-25 p-2 rounded outline-0 border border_gray  text-center"
                       placeholder="0:00"
-                        value={hourlyRate}
-                  onChange={(e)=> setHourlyRate(e.target.value)}
+                      value={hourlyRate}
+                      onChange={(e) => setHourlyRate(e.target.value)}
                     />
                     <p className="fw-bold p-0 m-0 ">USD/hr</p>
                   </div>
@@ -100,9 +139,10 @@ export default function InstructorRegistrationMore() {
                     Accept Interview Request
                   </p>
 
-                  <select className="w-100 p-2 rounded outline-0 border border_gray "
-                              value={acceptInterview}
-                  onChange={(e)=> setAcceptInterview(e.target.value)}
+                  <select
+                    className="w-100 p-2 rounded outline-0 border border_gray "
+                    value={acceptInterview}
+                    onChange={(e) => setAcceptInterview(e.target.value)}
                   >
                     <option value={false}>No</option>
                     <option value={true}>Yes</option>
@@ -115,34 +155,25 @@ export default function InstructorRegistrationMore() {
                   <p className="fw-bold w-100 p-0 m-0">Delivery Mode</p>
 
                   <div className="fw-bold w-100 p-0 m-0">
-                    <div className="form-check">
-                      <input
-                        className="form-check-input"
-                        type="checkbox"
-                        value=""
-                        id="flexCheckDefault"
-                      />
-                      <label
-                        className="form-check-label"
-                        for="flexCheckDefault"
-                      >
-                        Online
-                      </label>
-                    </div>
-                    <div className="form-check">
-                      <input
-                        className="form-check-input"
-                        type="checkbox"
-                        value=""
-                        id="flexCheckDefault"
-                      />
-                      <label
-                        className="form-check-label"
-                        for="flexCheckDefault"
-                      >
-                        In-Persion
-                      </label>
-                    </div>
+                    {deliveryModes.map((v, i) => {
+                      return (
+                        <div className="form-check">
+                          <input
+                            className="form-check-input"
+                            type="checkbox"
+                            onChange={handleCheckboxChange}
+                            value={v.id}
+                            checked={v.checked}
+                          />
+                          <label
+                            className="form-check-label"
+                            for="flexCheckDefault"
+                          >
+                            {v.label}
+                          </label>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
 
@@ -155,7 +186,7 @@ export default function InstructorRegistrationMore() {
                       disabled={!hourlyRate}
                       onClick={() => onContinue()}
                     >
-                      Continue 
+                      Continue
                     </button>
                     <Link
                       href="/"

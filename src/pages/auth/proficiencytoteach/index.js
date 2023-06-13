@@ -70,8 +70,8 @@ export default function StudentRegistrationCourse() {
   const getLang = async () => {
     try {
       const response = await axios.get(
-        `http://34.227.65.157/public/language/get-all-languages`
-      );
+        `http://34.227.65.157/public/register/get-all-languages`
+              );
       var arr = [];
       response.data.map((v) => {
         arr.push({ value: v.id, label: v.name });
@@ -85,7 +85,7 @@ export default function StudentRegistrationCourse() {
   const getProficiency = async () => {
     try {
       const response = await axios.get(
-        `http://34.227.65.157/public/proficiency/get-all-proficiencies`
+        `http://34.227.65.157/public/course/get-all-proficiencies`
       );
       var arr = [];
       response.data.map((v) => {
