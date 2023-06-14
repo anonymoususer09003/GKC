@@ -1,13 +1,9 @@
 import React, { useState } from "react";
 import Head from "next/head";
-import { ParentNavbar, Footer } from "../../../components";
 import { useRouter } from "next/router";
-import PaymentForm from "@/components/stripe/PaymentForm";
-import { withRole } from '../../../utils/withAuthorization';
-
+import { withRole } from "../../../utils/withAuthorization";
+import ParentDetail from "../../../components/stripe/PaymentDetail/index";
 function CreditCardInfo() {
-  const navigation = useRouter();
-
   return (
     <>
       <Head>
@@ -16,37 +12,9 @@ function CreditCardInfo() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className=" d-flex flex-column justify-content-between  min-vh-100">
-        <ParentNavbar />
-        <div className="m-auto" style={{ maxWidth: "600px", width: "100%" }}>
-          <div>
-            <PaymentForm title="Credit card information" />
-            {/* <div className="form-check">
-                  <input
-                    className="form-check-input"
-                    type="checkbox"
-                    value=""
-                    id="flexCheckDefault"
-                  />
-                  <label className="form-check-label" for="flexCheckDefault">
-                    Save the payment information for future use
-                  </label>
-                </div> */}
-            <div className="d-flex gap-2 justify-content-center mt-3">
-              <button
-                className="w-25 btn_primary text-light p-2 rounded fw-bold "
-                onClick={() => navigation.push("/")}
-              >
-                Save
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <Footer />
-      </main>
+      <ParentDetail />
     </>
   );
 }
 
-export default withRole(CreditCardInfo, ['Parent']);
+export default withRole(CreditCardInfo, ["Parent"]);
