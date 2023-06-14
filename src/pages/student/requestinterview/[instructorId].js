@@ -8,6 +8,7 @@ import axios from "axios"
 function RequestInterview() {
   const router = useRouter();
   const { instructorId } = router.query;
+  const [profile, setProfile] = useState(null);
   const [value, onChange] = useState(new Date());
   const [events, setEvents] = useState([
 
@@ -17,18 +18,33 @@ function RequestInterview() {
 
   ]);
 
+
+  const getInfo = async () => {
+    try {
+      var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
+      const res = await axios.get("http://34.227.65.157/user/logged-user-details", {
+      headers: {
+        Authorization: `Bearer ${typ.accessToken}`,
+      },
+    });
+    console.log(res.data);
+    setProfile(res.data);
+    } catch (error) {
+      console.error('Error fetching profile data:', error);
+    }
+  };
+
+
+
   useEffect(() => {
 
    
-
+    getInfo();
     const fetchProfileData = async () => {
-
-
       var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
       console.log(typ)
-      
       try {
-        const res = await axios.get(`http://34.227.65.157/instructor/schedule-and-unavailable-days-iCal?instructorId=${instructorId}`, {
+        const res = await axios.get(`http://34.227.65.157/instructor/schedule-and-unavailable-days-iCal?instructorId={instructorId}`, {
         headers: {
           Authorization: `Bearer ${typ.accessToken}`,
         },
@@ -191,13 +207,13 @@ fetchProfileData()
                     </select>
                   </div>
 
-                  <h6 className="text-dark fw-bold">Mode:</h6>
+                  <h6 className="text-dark fw-bold">Skill:</h6>
 
-                  <p className="text-dark fw-bold py-2">Intermediate</p>
+                  <p className="text-dark fw-bold py-2">{profile?.grade.name}</p>
 
                   <h6 className="text-dark fw-bold">Grade:</h6>
 
-                  <p className="text-dark fw-bold py-2">Middle School</p>
+                  <p className="text-dark fw-bold py-2">{profile?.grade.name}</p>
                 </div>
               </div>
               <div className="d-flex gap-2 justify-content-center pt-5">
