@@ -28,7 +28,7 @@ function RequestInterview() {
       console.log(typ)
       
       try {
-        const res = await axios.get(`http://34.227.65.157/instructor/schedule-and-unavailable-days-iCal?instructorId=$48`, {
+        const res = await axios.get(`http://34.227.65.157/instructor/schedule-and-unavailable-days-iCal?instructorId=${instructorId}`, {
         headers: {
           Authorization: `Bearer ${typ.accessToken}`,
         },
