@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Head from "next/head";
 import { Inter } from "next/font/google";
 import styles from "@/styles/Home.module.css";
@@ -9,17 +9,34 @@ import axios from "axios"
 
 function StudentLandingPage() {
   const [showCards, setShowCards] = useState(false);
-
+  const [insructors, setInsructors] = useState([]);
   const a = async () => {
-    var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
+    setShowCards(true)
+    // var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
 
-    const res = await axios.get("http://34.227.65.157/user/logged-user-details", {
-      headers: {
-        Authorization: `Bearer ${typ.accessToken}`,
-      },
-    });
-    console.log(res.data);
+    // const res = await axios.get("http://34.227.65.157/user/logged-user-details", {
+    //   headers: {
+    //     Authorization: `Bearer ${typ.accessToken}`,
+    //   },
+    // });
+    // console.log(res.data);
   };
+
+
+
+
+  const getInstructors = async () => {
+  try {
+    const res = await axios.get("http://34.227.65.157/public/landing/filter?page=0&size=10");
+    setInsructors(res.data);
+  // setProfile(res.data);
+  } catch (error) {
+    console.error('Error fetching profile data:', error);
+  }
+};
+  useEffect(()=>{
+    getInstructors()
+  }, [])
   return (
     <>
       <Head>
@@ -29,7 +46,7 @@ function StudentLandingPage() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Navbar />
-      <main  className="container-fluid" >
+      <main  className="" >
         <div className="container py-4" >
           <div className="d-flex justify-content-center gap-2 flex-wrap py-3">
             <input
@@ -99,11 +116,13 @@ function StudentLandingPage() {
           }}
           className=""
         >
-          {showCards && (
+            {insructors && (
             <div className="container py-4">
-              <TutorCard  />
-              <TutorCard  />
-              <TutorCard  />
+            {
+              insructors.map((instructor)=> {
+                return <TutorCard data={instructor} key={instructor.id} />
+              })
+            }
             </div>
           )}
         </div>

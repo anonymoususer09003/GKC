@@ -1,13 +1,29 @@
-import React, { useState } from "react";
+import React, { useState,  useEffect } from "react";
 import Head from "next/head";
 import { Inter } from "next/font/google";
 import styles from "@/styles/Home.module.css";
 import { ParentNavbar, Footer, ParentTutorCard } from "../../components";
 const inter = Inter({ subsets: ["latin"] });
 import { withRole } from '../.././utils/withAuthorization';
+import axios from "axios";
+import { parseISO, format } from 'date-fns'
 
 function ParentLandingPage() {
   const [showCards, setShowCards] = useState(true);
+  const [insructors, setInsructors] = useState([]);
+
+  const getInstructors = async () => {
+  try {
+    const res = await axios.get("http://34.227.65.157/public/landing/filter?page=0&size=10");
+    setInsructors(res.data);
+  // setProfile(res.data);
+  } catch (error) {
+    console.error('Error fetching profile data:', error);
+  }
+};
+  useEffect(()=>{
+    getInstructors()
+  }, [])
   return (
     <>
       <Head>
@@ -87,11 +103,13 @@ function ParentLandingPage() {
           }}
           className=""
         >
-          {showCards && (
+          {insructors && (
             <div className="container py-4">
-              <ParentTutorCard  />
-              <ParentTutorCard  />
-              <ParentTutorCard  />
+            {
+              insructors.map((instructor)=> {
+                return <ParentTutorCard data={instructor} key={instructor.id} />
+              })
+            }
             </div>
           )}
         </div>

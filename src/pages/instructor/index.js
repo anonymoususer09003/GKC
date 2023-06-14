@@ -250,9 +250,9 @@ function InstructorLandingPage() {
       <TutorNavbar isLogin={true} />
       <main className="container-fluid">
         <div
-          style={{ height: "90vh" }}
+         
         >
-      <div className="row p-5">
+      <div className="row p-5"  style={{ height: "90vh" }}>
           <div className="col-12 col-lg-6 ">
             <div
               className="d-flex justify-content-end p-2"

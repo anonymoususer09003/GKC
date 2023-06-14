@@ -1,12 +1,124 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Head from "next/head";
 import { Navbar, Footer } from "../../../components";
 import Calendar from "react-calendar";
 import { withRole } from '../../../utils/withAuthorization';
-
+import { useRouter } from 'next/router';
+import axios from "axios"
 function RequestInterview() {
+  const router = useRouter();
+  const { instructorId } = router.query;
   const [value, onChange] = useState(new Date());
+  const [events, setEvents] = useState([
 
+    // Add more events as needed
+  ]);
+  const [unavailableDates, setUnavailableDates] = useState([
+
+  ]);
+
+  useEffect(() => {
+
+   
+
+    const fetchProfileData = async () => {
+
+
+      var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
+      console.log(typ)
+      
+      try {
+        const res = await axios.get(`http://34.227.65.157/instructor/schedule-and-unavailable-days-iCal?instructorId=$48`, {
+        headers: {
+          Authorization: `Bearer ${typ.accessToken}`,
+        },
+      });
+      console.log(res.data);
+
+    const calendarData = res.data;
+
+    const events = [];
+    const unavailableDays = [];
+
+    const lines = calendarData.split('\n');
+
+    let currentEvent = null;
+    let currentFreeBusy = null;
+
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i].trim();
+
+      if (line.startsWith('BEGIN:VEVENT')) {
+        currentEvent = {};
+      } else if (line.startsWith('BEGIN:VFREEBUSY')) {
+        currentFreeBusy = {};
+      } else if (line.startsWith('UID:') && (currentEvent || currentFreeBusy)) {
+        const uid = line.split(':')[1];
+        if (currentEvent) {
+          currentEvent.uid = uid;
+        } else if (currentFreeBusy) {
+          currentFreeBusy.uid = uid;
+        }
+      } else if (line.startsWith('DTSTART:') && currentEvent) {
+        const dtStart = line.split(':')[1];
+        const dateString = dtStart;
+        const year = parseInt(dateString.slice(0, 4));
+        const month = parseInt(dateString.slice(4, 6)) - 1; // Month is zero-based in JavaScript's Date object
+        const day = parseInt(dateString.slice(6, 8));
+        const date = new Date(year, month, day);
+        currentEvent.dtStart =  date;
+
+      } else if (line.startsWith('FREEBUSY;FBTYPE=BUSY:') && currentFreeBusy) {
+        const [start, end] = line.split(':')[1].split('/');
+
+        const dateString = start;
+        const year = parseInt(dateString.slice(0, 4));
+        const month = parseInt(dateString.slice(4, 6)) - 1; // Month is zero-based in JavaScript's Date object
+        const day = parseInt(dateString.slice(6, 8));
+        const date = new Date(year, month, day);
+        currentFreeBusy.start = date;
+        currentFreeBusy.end = end;
+      } else if (line.startsWith('END:VEVENT')) {
+        if (currentEvent) {
+          events.push(currentEvent);
+          currentEvent = null;
+        }
+      } else if (line.startsWith('END:VFREEBUSY')) {
+        if (currentFreeBusy) {
+          unavailableDays.push(currentFreeBusy);
+          currentFreeBusy = null;
+        }
+      }
+    }
+
+    // this.setState({ events, unavailableDays });
+    setUnavailableDates(unavailableDays)
+    setEvents(events)
+    console.log(events, unavailableDays)
+  } catch (error) {
+    console.error('Error fetching profile data:', error);
+  }
+};
+
+fetchProfileData()
+  }, []);
+
+
+  const tileContent = ({ date, view }) => {
+    if (view === 'month') {
+      const event = events.find((event) => event.dtStart.getTime() === date.getTime());
+      if (event) {
+        return 'event-day';
+      }
+    }
+
+    return null;
+  };
+
+  
+  const tileDisabled = ({ date }) => {
+    return unavailableDates.some((disabledDay) => date.toDateString() === disabledDay.start.toDateString());
+  };
   return (
     <>
       <Head>
@@ -25,7 +137,9 @@ function RequestInterview() {
           <p className="fw-bold text-center">
               Schedule Interview with John Doe
             </p>
-            <Calendar onChange={onChange} value={value} />
+            <Calendar onChange={onChange} value={value} 
+              tileDisabled={tileDisabled}
+              tileClassName={tileContent} />
           </div>
           <div className="col-12 col-lg-6 pt-5">
           <p className="fw-bold text-center text-white">I</p>
