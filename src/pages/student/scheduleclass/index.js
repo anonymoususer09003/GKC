@@ -3,10 +3,124 @@ import Head from "next/head";
 import { Navbar, Footer } from "../../../components";
 import Calendar from "react-calendar";
 import { BsFillSendFill } from "react-icons/bs";
-import { withRole } from '../../../utils/withAuthorization';
-
+import { withRole } from "../../../utils/withAuthorization";
+import axios from "axios";
+import { useRouter } from 'next/router';
 function StudentScheduleClass() {
-  const [value, onChange] = useState(new Date());
+  const router = useRouter();
+  const { date, mode, time, courseId, instructorId } = router.query;
+  
+  const [classFrequency, setClassFrequency] = useState('');
+  const [value, onChange] = useState(date);
+  const [availableTime, setAvailableTime] = useState([ '7:00', '8:00', '9:00', '10:00', '11:00', '12:00', '13:00','14:00', '15:00', '16:00', '17:00', '18:00', '19:00',  ]);
+
+  console.log( date, mode, time, courseId, instructorId )
+  const scheduleClass = async () => {
+    const dateObject = new Date(date);
+      const dateObj = dateObject;
+    const year = dateObj.getFullYear();
+    const month = (dateObj.getMonth() + 1).toString().padStart(2, '0');
+    const day = dateObj.getDate().toString().padStart(2, '0');
+    const convertedDate = `${year}-${month}-${day}`;
+
+
+
+
+    try {
+      var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
+      const res = await axios.get("http://34.227.65.157/user/logged-user-details", {
+      headers: {
+        Authorization: `Bearer ${typ.accessToken}`,
+      },
+    });
+    console.log(convertedDate, time, mode, classFrequency, Number(courseId), Number(instructorId), res.data.userDetails.id)
+    try {
+      var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
+      const res = await axios.post(
+        `http://34.227.65.157/event/create-class-saved-payment-method`,
+        {
+          start:convertedDate + " " + time,
+          durationInHours: 1,
+          classFrequency: "ONETIME",
+          courseId:  Number(courseId),
+          studentId:  res.data.userDetails.id,
+          whoPaysId: 19,
+          instructorId: Number(instructorId),
+          eventInPerson: mode == 'In-Person' ?  true : false,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${typ.accessToken}`,
+          },
+        }
+      );
+      console.log(res.data);
+    } catch (error) {
+      console.error("Error fetching profile data:", error);
+    }
+
+    } catch (error) {
+      console.error('Error fetching profile data:', error);
+    }
+
+  
+  };
+
+
+  const scheduleClassNoSaved = async () => {
+    const dateObject = new Date(date);
+    const dateObj = dateObject;
+    const year = dateObj.getFullYear();
+    const month = (dateObj.getMonth() + 1).toString().padStart(2, '0');
+    const day = dateObj.getDate().toString().padStart(2, '0');
+    const convertedDate = `${year}-${month}-${day}`;
+
+    try {
+      var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
+      const res = await axios.get("http://34.227.65.157/user/logged-user-details", {
+      headers: {
+        Authorization: `Bearer ${typ.accessToken}`,
+      },
+    });
+    console.log(convertedDate, time, mode, classFrequency, Number(courseId), Number(instructorId), res.data.userDetails.id)
+    try {
+      var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
+      const res = await axios.post(
+        `http://34.227.65.157/event/create-class-no-saved-payment-method`,
+        {
+          classDto: {
+            start:convertedDate + " " + time,
+            durationInHours: 1,
+            classFrequency: "ONETIME",
+            courseId:  Number(courseId),
+            studentId:  res.data.userDetails.id,
+            whoPaysId: 19,
+            instructorId: Number(instructorId),
+            eventInPerson: mode == 'In-Person' ?  true : false,
+          },
+          stripeResponseDTO: {
+            paymentIntentId: string,
+            paymentStatus: string
+          }
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${typ.accessToken}`,
+          },
+        }
+      );
+      console.log(res.data);
+    } catch (error) {
+      console.error("Error fetching profile data:", error);
+    }
+
+    } catch (error) {
+      console.error('Error fetching profile data:', error);
+    }
+
+  
+  };
+
 
   return (
     <>
@@ -16,19 +130,15 @@ function StudentScheduleClass() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-        <Navbar isLogin={true} />
+      <Navbar isLogin={true} />
       <main className="container-fluid">
-      <div
-          className="row"
-          style={{ minHeight: "90vh" }}
-        >
+        <div className="row" style={{ minHeight: "90vh" }}>
           <div className="col-12 col-lg-6 pt-5">
-          <p className="fw-bold text-center">Schedule class with John Doe</p>
-            <Calendar onChange={onChange} value={value} />
+            <p className="fw-bold text-center">Schedule class with John Doe</p>
+            <Calendar value={date} />
           </div>
           <div className="col-12 col-lg-6 pt-5">
-
-          <p className="fw-bold text-center text-white">I</p>
+            <p className="fw-bold text-center text-white">I</p>
             <div className="shadow rounded py-5">
               <div
                 className="d-flex flex-sm-nowrap flex-wrap justify-content-between gap-4 px-5"
@@ -36,25 +146,12 @@ function StudentScheduleClass() {
               >
                 <div className="w-100 ">
                   <p className="p-0 m-0 fw-bold pb-2">Select time</p>
-                  <div className="border rounded">
-                    <p className="p-0 m-0 py-1 fw-bold bg-light p-2  px-3">
-                      7:00 am
-                    </p>
-                    <p className="p-0 m-0 py-1 fw-bold bg-light p-2  px-3">
-                      8:00 am
-                    </p>
-                    <p className="p-0 m-0 py-1 fw-bold p-2  px-3">9:00 am</p>
-                    <br />
-                    <br />
-                    <br />
-                    <br />
-                    <br />
-                    <br />
-                    <br />
-                    <br />
-                    <br />
-                    <p className="p-0 m-0 py-1 fw-bold p-2  px-3">4:00 pm</p>
-                    <p className="p-0 m-0 py-1 fw-bold p-2  px-3">5:00 pm</p>
+                  <div className="border rounded ">
+                  {
+                    availableTime.map((v,i)=> {
+                      return <p className={`m-0 px-3 py-1 fw-bold ${time == v && 'bg-secondary text-white'}`} key={i} onClick={()=> setTime(v)}>{v}</p>
+                    })
+                  }
                   </div>
                 </div>
                 <div className=" w-100">
@@ -62,7 +159,7 @@ function StudentScheduleClass() {
                     Your information
                   </p>
                   <h6 className="text-dark fw-bold">
-                    You selected 2 hours slot
+                    You selected 1 hours slot
                   </h6>
 
                   <div className="py-1">
@@ -72,8 +169,14 @@ function StudentScheduleClass() {
                         type="radio"
                         name="flexRadioDefault"
                         id="flexRadioDefault1"
+                        value='ONETIME'
+                        checked={classFrequency == 'ONETIME'}
+              onChange={(e)=> setClassFrequency(e.target.value)}
                       />
-                      <label className="form-check-label" for="flexRadioDefault1">
+                      <label
+                        className="form-check-label"
+                        for="flexRadioDefault1"
+                      >
                         One-Time
                       </label>
                     </div>
@@ -83,8 +186,14 @@ function StudentScheduleClass() {
                         type="radio"
                         name="flexRadioDefault"
                         id="flexRadioDefault2"
+                        value='WEEKLY'
+                        checked={classFrequency == 'WEEKLY'}
+              onChange={(e)=> setClassFrequency(e.target.value)}
                       />
-                      <label className="form-check-label" for="flexRadioDefault2">
+                      <label
+                        className="form-check-label"
+                        for="flexRadioDefault2"
+                      >
                         Weekly Recurrence
                       </label>
                     </div>
@@ -94,8 +203,16 @@ function StudentScheduleClass() {
                         type="radio"
                         name="flexRadioDefault"
                         id="flexRadioDefault1"
+                        value='BIWEEKLY'
+                        checked={classFrequency == 'BIWEEKLY'}
+              onChange={(e)=> setClassFrequency(e.target.value)}
+
                       />
-                      <label className="form-check-label" for="flexRadioDefault1">
+                      <label
+                        className="form-check-label"
+                        for="flexRadioDefault1"
+                        
+                      >
                         Bi-Weekly
                       </label>
                     </div>
@@ -105,8 +222,14 @@ function StudentScheduleClass() {
                         type="radio"
                         name="flexRadioDefault"
                         id="flexRadioDefault2"
+                        vale='MONTHLY'
+                        checked={classFrequency == 'MONTHLY'}
+              onChange={(e)=> setClassFrequency(e.target.value)}
                       />
-                      <label className="form-check-label" for="flexRadioDefault2">
+                      <label
+                        className="form-check-label"
+                        for="flexRadioDefault2"
+                      >
                         Monthly
                       </label>
                     </div>
@@ -115,7 +238,7 @@ function StudentScheduleClass() {
                   <div className="py-2 d-flex align-items-center gap-4">
                     <h6 className="text-dark fw-bold m-0 p-0">Course:</h6>
 
-                    <select className="w-25 p-2 rounded outline-0 border border_gray   ">
+                    <select className="w-25 p-2 rounded outline-0 border border_gray   " disabled>
                       <option>Select</option>
                       <option>Option 1</option>
                       <option>Option 2</option>
@@ -125,10 +248,10 @@ function StudentScheduleClass() {
                   <div className="py-2 d-flex align-items-center gap-4">
                     <h6 className="text-dark fw-bold m-0 p-0">Mode:</h6>
 
-                    <select className="w-25 p-2 rounded outline-0 border border_gray   ">
+                    <select className="w-25 p-2 rounded outline-0 border border_gray   " value={mode} disabled>
                       <option>Select</option>
-                      <option>Option 1</option>
-                      <option>Option 2</option>
+                      <option value='Online'>Online</option>
+                      <option value='In-Person'>In-Person</option>
                     </select>
                   </div>
 
@@ -152,21 +275,21 @@ function StudentScheduleClass() {
                 </div>
               </div>
               <div className="d-flex gap-2 justify-content-center pt-5">
-                <button className="w-25 btn_primary text-light p-2 rounded fw-bold ">
+                <button
+                  className={`w-25 text-light p-2 rounded fw-bold  ${ !classFrequency ? 'btn_disabled' : 'btn_primary'}`}
+                disabled={ !classFrequency ? true : false} 
+                  onClick={() => scheduleClass()}
+                >
                   Schedule
                 </button>
               </div>
             </div>
           </div>
-          </div>
-        
-
-       
+        </div>
       </main>
-<Footer />
+      <Footer />
     </>
   );
 }
 
-
-export default withRole(StudentScheduleClass, ['Student']);
+export default withRole(StudentScheduleClass, ["Student"]);

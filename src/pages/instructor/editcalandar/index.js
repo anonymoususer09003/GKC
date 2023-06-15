@@ -61,12 +61,12 @@ try {
     Authorization: `Bearer ${typ.accessToken}`,
   },
   });
-  console.log('=============>', resp.data.id);
+  console.log('=============>', resp.data.userDetails.id);
 
 
 try {
   var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
-  const res = await axios.get(`http://34.227.65.157/instructor/schedule-and-unavailable-days-iCal?instructorId=${resp.data.id}`, {
+  const res = await axios.get(`http://34.227.65.157/instructor/schedule-and-unavailable-days-iCal?instructorId=${resp.data.userDetails.id}`, {
   headers: {
     Authorization: `Bearer ${typ.accessToken}`,
   },

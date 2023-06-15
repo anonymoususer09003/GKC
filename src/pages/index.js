@@ -8,6 +8,8 @@ import { withRole } from './../utils/withAuthorization';
 import axios from "axios"
 
 function StudentLandingPage() {
+  const [showModal, setShowModal] = useState(false);
+
   const [showCards, setShowCards] = useState(false);
   const [insructors, setInsructors] = useState([]);
   const a = async () => {
@@ -120,7 +122,11 @@ function StudentLandingPage() {
             <div className="container py-4">
             {
               insructors.map((instructor)=> {
-                return <TutorCard data={instructor} key={instructor.id} />
+                return <TutorCard data={instructor} key={instructor.id}  
+                showModal={showModal}
+            setShowModal={setShowModal}
+
+            />
               })
             }
             </div>

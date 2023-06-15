@@ -12,6 +12,19 @@ function ParentLandingPage() {
   const [showCards, setShowCards] = useState(true);
   const [insructors, setInsructors] = useState([]);
 
+
+  const a = async () => {
+    var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
+
+    const res = await axios.get("http://34.227.65.157/user/logged-user-details", {
+      headers: {
+        Authorization: `Bearer ${typ.accessToken}`,
+      },
+    });
+    console.log(res.data);
+  };
+
+
   const getInstructors = async () => {
   try {
     const res = await axios.get("http://34.227.65.157/public/landing/filter?page=0&size=10");
@@ -22,8 +35,10 @@ function ParentLandingPage() {
   }
 };
   useEffect(()=>{
-    getInstructors()
-  }, [])
+
+    a();
+    getInstructors();
+  }, []);
   return (
     <>
       <Head>
