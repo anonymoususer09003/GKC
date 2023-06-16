@@ -28,14 +28,21 @@ function StudentLandingPage() {
 
 
   const getInstructors = async () => {
-  try {
-    const res = await axios.get("http://34.227.65.157/public/landing/filter?page=0&size=10");
+    try {
+    var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
+    const res = await axios.get("http://34.227.65.157/public/landing/filter?page=0&size=10", {
+      headers: {
+        Authorization: `Bearer ${typ.accessToken}`,
+      },
+    });
     setInsructors(res.data);
-  // setProfile(res.data);
+    console.log(res.data);
   } catch (error) {
     console.error('Error fetching profile data:', error);
   }
-};
+}
+
+
   useEffect(()=>{
     getInstructors()
   }, [])

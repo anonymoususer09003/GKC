@@ -82,7 +82,7 @@ function RequestInterview() {
   const getInstructorInfo = async () => {
     try {
       var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
-      const res = await axios.get(`http://34.227.65.157/instructor/full-name?instructorId=${instructorId}`, {
+      const res = await axios.get(`http://34.227.65.157/instructor/full-name?instructorId=${22}`, {
       headers: {
         Authorization: `Bearer ${typ.accessToken}`,
       },

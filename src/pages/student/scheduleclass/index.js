@@ -15,111 +15,46 @@ function StudentScheduleClass() {
   const [availableTime, setAvailableTime] = useState([ '7:00', '8:00', '9:00', '10:00', '11:00', '12:00', '13:00','14:00', '15:00', '16:00', '17:00', '18:00', '19:00',  ]);
 
   console.log( date, mode, time, courseId, instructorId )
-  const scheduleClass = async () => {
-    const dateObject = new Date(date);
-      const dateObj = dateObject;
-    const year = dateObj.getFullYear();
-    const month = (dateObj.getMonth() + 1).toString().padStart(2, '0');
-    const day = dateObj.getDate().toString().padStart(2, '0');
-    const convertedDate = `${year}-${month}-${day}`;
 
-
-
-
-    try {
-      var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
-      const res = await axios.get("http://34.227.65.157/user/logged-user-details", {
-      headers: {
-        Authorization: `Bearer ${typ.accessToken}`,
-      },
-    });
-    console.log(convertedDate, time, mode, classFrequency, Number(courseId), Number(instructorId), res.data.userDetails.id)
-    try {
-      var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
-      const res = await axios.post(
-        `http://34.227.65.157/event/create-class-saved-payment-method`,
-        {
-          start:convertedDate + " " + time,
-          durationInHours: 1,
-          classFrequency: "ONETIME",
-          courseId:  Number(courseId),
-          studentId:  res.data.userDetails.id,
-          whoPaysId: 19,
-          instructorId: Number(instructorId),
-          eventInPerson: mode == 'In-Person' ?  true : false,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${typ.accessToken}`,
-          },
-        }
-      );
-      console.log(res.data);
-    } catch (error) {
-      console.error("Error fetching profile data:", error);
-    }
-
-    } catch (error) {
-      console.error('Error fetching profile data:', error);
-    }
-
-  
-  };
-
-
-  const scheduleClassNoSaved = async () => {
+  const handleContinue =async () => {
     const dateObject = new Date(date);
     const dateObj = dateObject;
-    const year = dateObj.getFullYear();
-    const month = (dateObj.getMonth() + 1).toString().padStart(2, '0');
-    const day = dateObj.getDate().toString().padStart(2, '0');
-    const convertedDate = `${year}-${month}-${day}`;
+  const year = dateObj.getFullYear();
+  const month = (dateObj.getMonth() + 1).toString().padStart(2, '0');
+  const day = dateObj.getDate().toString().padStart(2, '0');
+  const convertedDate = `${year}-${month}-${day}`;
 
-    try {
-      var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
-      const res = await axios.get("http://34.227.65.157/user/logged-user-details", {
-      headers: {
-        Authorization: `Bearer ${typ.accessToken}`,
-      },
-    });
-    console.log(convertedDate, time, mode, classFrequency, Number(courseId), Number(instructorId), res.data.userDetails.id)
-    try {
-      var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
-      const res = await axios.post(
-        `http://34.227.65.157/event/create-class-no-saved-payment-method`,
-        {
-          classDto: {
-            start:convertedDate + " " + time,
-            durationInHours: 1,
-            classFrequency: "ONETIME",
-            courseId:  Number(courseId),
-            studentId:  res.data.userDetails.id,
-            whoPaysId: 19,
-            instructorId: Number(instructorId),
-            eventInPerson: mode == 'In-Person' ?  true : false,
-          },
-          stripeResponseDTO: {
-            paymentIntentId: string,
-            paymentStatus: string
-          }
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${typ.accessToken}`,
-          },
-        }
-      );
-      console.log(res.data);
-    } catch (error) {
-      console.error("Error fetching profile data:", error);
-    }
+  try {
+    var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
+    const res = await axios.get("http://34.227.65.157/user/logged-user-details", {
+    headers: {
+      Authorization: `Bearer ${typ.accessToken}`,
+    },
+  });
+  const data = {
+    start: convertedDate + " " + time,
+    durationInHours: 1,
+    classFrequency: "ONETIME",
+    courseId:  Number(courseId),
+    studentId:  res.data.userDetails.id,
+    instructorId: Number(instructorId),
+    eventInPerson: mode == 'In-Person' ?  true : false,
+  };
+  console.log(data)
+  router.push({
+    pathname: '/student/coursepay',
+    query: data
+  });
+  } catch (error) {
+    console.error('Error fetching profile data:', error);
+  }
 
-    } catch (error) {
-      console.error('Error fetching profile data:', error);
-    }
+ 
+  };
+
+
 
   
-  };
 
 
   return (
@@ -278,7 +213,7 @@ function StudentScheduleClass() {
                 <button
                   className={`w-25 text-light p-2 rounded fw-bold  ${ !classFrequency ? 'btn_disabled' : 'btn_primary'}`}
                 disabled={ !classFrequency ? true : false} 
-                  onClick={() => scheduleClass()}
+                  onClick={() => handleContinue()}
                 >
                   Schedule
                 </button>
