@@ -23,7 +23,7 @@ export default function index() {
       let res = await GetUserCardDetail();
       const data = res?.data;
       setCardDetail({
-        name: data?.name || "",
+        name: data?.cardOwner || "",
         cardNumber: "***********" + data?.last4Digits,
         brand: data?.brand,
         expiry: data?.expMonth + "/" + data?.expYear,

@@ -1,21 +1,85 @@
-import React, {useState} from "react";
+import React, { useState, useEffect } from "react";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
 import { Footer } from "../../../components";
 import { RiArrowGoBackLine } from "react-icons/ri";
-import {useRouter} from "next/router"
+import { useRouter } from "next/router";
+import GetUserDetail from "../../../services/user/GetUserDetail";
+import GetAuthCode from "@/services/Auth/GetAuthCode";
+import VerifyAuthCode from "@/services/Auth/VerifyAuthCode";
+import ChangePassword from "@/services/user/ChangePassword";
 export default function ForgotPassword() {
-  
-const [showActivation, setShowActivation] = useState(false);
+  const [data, setData] = useState({
+    email: "",
+    verifyCode: "",
+    oldPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
+  const [userDetail, setUserDetail] = useState({});
+  const [showSuccess, setSuccess] = useState(false);
+  const [showActivation, setShowActivation] = useState(false);
+  const [err, setErr] = useState("");
   const navigation = useRouter();
   const onContinue = () => {
-    if (showActivation) {
-      return navigation.push("/auth/signin");
-    }
     setShowActivation(true);
+    GetAuthCode(userDetail?.email);
   };
 
+  const chnagePassword = async () => {
+    try {
+      let { verifyCode, confirmPassword, ...otherProps } = data;
+      let responseChangePassword = await ChangePassword({
+        ...otherProps,
+        email: userDetail.email,
+      });
+
+      setSuccess(true);
+    } catch (err) {
+      setErr("Incorrect Old Password");
+      console.log("err", err);
+    }
+  };
+
+  const verifyCode = async () => {
+    try {
+      setErr("");
+      let res = await VerifyAuthCode({
+        email: userDetail.email,
+        code: data?.verifyCode,
+      });
+      if (res.status == 202) {
+        chnagePassword();
+      }
+      console.log("res", res);
+    } catch (err) {
+      setErr("Incorrect verification code");
+      console.log("err", err);
+    }
+  };
+  const onChange = (e) => {
+    setData({ ...data, [e.target.name]: e.target.value });
+  };
+
+  const fetchUser = async () => {
+    try {
+      let user = await GetUserDetail();
+      setUserDetail(user?.data?.userDetails);
+    } catch (err) {
+      console.log("err", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchUser();
+  }, []);
+  let isValid =
+    data.newPassword != "" &&
+    data.newPassword == data.confirmPassword &&
+    data.oldPassword != ""
+      ? true
+      : false;
   return (
     <>
       <Head>
@@ -35,46 +99,63 @@ const [showActivation, setShowActivation] = useState(false);
         <div className="row">
           <div className="col-12 col-lg-6 d-flex justify-content-center align-items-center ">
             <div style={{ maxWidth: "380px", width: "100%" }}>
-            <div
-          className={`d-flex flex-column justify-content-center  pt-5`}
-        >
-          <div className="">
-            <input
-              className="form-control my-3 1-100"
-              type="password"
-              placeholder="Old password"
-            />
-            <input
-              className="form-control my-3 w-100"
-              type="password"
-              placeholder="New password"
-            />
-            <input
-              className="form-control my-3 w-100"
-              type="password"
-              placeholder="Confirm new password"
-            />
-            {showActivation ? (
-              <input
-                className="form-control my-3 w-100"
-                type="text"
-                placeholder="Verification code"
-              />
-            ) : null}
+              <div
+                className={`d-flex flex-column justify-content-center  pt-5`}
+              >
+                <div className="">
+                  <input
+                    name="oldPassword"
+                    value={data.oldPassword}
+                    className="form-control my-3 1-100"
+                    type="password"
+                    placeholder="Old password"
+                    onChange={onChange}
+                  />
+                  <input
+                    name="newPassword"
+                    value={data.newPassword}
+                    className="form-control my-3 w-100"
+                    type="password"
+                    placeholder="New password"
+                    onChange={onChange}
+                  />
+                  <input
+                    name="confirmPassword"
+                    value={data.confirmPassword}
+                    className="form-control my-3 w-100"
+                    type="password"
+                    placeholder="Confirm new password"
+                    onChange={onChange}
+                  />
+                  {showActivation ? (
+                    <input
+                      name="verifyCode"
+                      onChange={onChange}
+                      className="form-control my-3 w-100"
+                      type="text"
+                      placeholder="Verification code"
+                    />
+                  ) : null}
 
-       
-            <button onClick={onContinue} className="w-100 btn_primary text-light p-2 rounded fw-bold mt-3">
-                   Continue
+                  {err ? <p style={{ color: "red" }}>{err}</p> : null}
+
+                  <button
+                    disabled={isValid ? false : true}
+                    onClick={() =>
+                      showActivation ? verifyCode() : onContinue()
+                    }
+                    className="w-100 btn_primary text-light p-2 rounded fw-bold mt-3"
+                  >
+                    Continue
                   </button>
-            <div>
-              {showActivation ? (
-                <p>Great!!! password updated successfully</p>
-              ) : null}
+                  <div>
+                    {showSuccess ? (
+                      <p>Great!!! password updated successfully</p>
+                    ) : null}
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-        </div>
-           
           </div>
           <div
             className="col-12 col-lg-6 position-relative d-none d-md-block"
@@ -102,8 +183,3 @@ const [showActivation, setShowActivation] = useState(false);
     </>
   );
 }
-
-
-
-
-     
