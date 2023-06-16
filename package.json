@@ -34,9 +34,11 @@
         "react-jitsi": "^1.0.4",
         "react-multi-select-component": "^4.3.4",
         "react-otp-input": "^3.0.2",
-        "react-redux": "^8.0.5",
+        "react-redux": "^8.1.0",
         "react-select": "^5.7.3",
         "react-star-ratings": "^2.3.0",
+        "redux": "^4.2.1",
+        "redux-thunk": "^2.4.2",
         "stripe": "^12.8.0",
         "uuid": "^9.0.0"
     },

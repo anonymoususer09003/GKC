@@ -4,36 +4,31 @@ import { Navbar, Footer } from "../../../components";
 import { MdEmail, MdArrowForwardIos } from "react-icons/md";
 import { FiEdit } from "react-icons/fi";
 import { useRouter } from "next/router";
-import { withRole } from '../../../utils/withAuthorization';
-import axios from 'axios'
+import { withRole } from "../../../utils/withAuthorization";
+import axios from "axios";
+import { connect } from "react-redux";
+import { fetchUser } from "../../../store/actions/userActions";
 
-function SettingProfle() {
-const navigation = useRouter();
-const onEditProfile = () => {
-  navigation.push("/student/editprofile")
-}
-
-
-const [profile, setProfile] = useState({});
-
-useEffect(() => {
-  const fetchProfileData = async () => {
-    try {
-      var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
-      const res = await axios.get("http://34.227.65.157/user/logged-user-details", {
-      headers: {
-        Authorization: `Bearer ${typ.accessToken}`,
-      },
-    });
-    console.log(res.data);
-    setProfile(res.data);
-    } catch (error) {
-      console.error('Error fetching profile data:', error);
-    }
+function SettingProfle({ userInfo, loading, error, fetchUser }) {
+  const navigation = useRouter();
+  const onEditProfile = () => {
+    navigation.push("/student/editprofile");
   };
 
-  fetchProfileData();
-}, []);
+  useEffect(() => {
+    fetchUser();
+  }, [fetchUser]);
+  console.log(userInfo)
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
+
   return (
     <>
       <Head>
@@ -52,11 +47,13 @@ useEffect(() => {
             <div className="col-12 col-lg-4">
               <div className="shadow rounded-10 bg-white py-4">
                 <div className="px-4">
-                  <h5 className="fw-bold py-3">{profile.firstName} {profile.lastName}</h5>
+                  <h5 className="fw-bold py-3">
+                    {userInfo?.firstName} {userInfo?.lastName}
+                  </h5>
 
                   <p className="w-75 bg_secondary text-white p-2 rounded d-flex align-items-center gap-2 fw-bold">
                     <MdEmail style={{ fontSize: "22px" }} />
-                    {profile.email}
+                    {userInfo?.email}
                   </p>
 
                   <p className="p-0 m-0 py-2 fw-bold">Parent1/guardian1</p>
@@ -75,7 +72,10 @@ useEffect(() => {
                   <div></div>
 
                   <div className="d-flex gap-2 justify-content-center py-3">
-                    <button className="w-50 btn_primary text-light p-2 rounded fw-bold d-flex align-items-center justify-content-center gap-2" onClick={() => onEditProfile()}>
+                    <button
+                      className="w-50 btn_primary text-light p-2 rounded fw-bold d-flex align-items-center justify-content-center gap-2"
+                      onClick={() => onEditProfile()}
+                    >
                       <FiEdit /> Edit Profile
                     </button>
                   </div>
@@ -88,8 +88,8 @@ useEffect(() => {
                   <div className="col">
                     <h4 className="fw-bold">Grade:</h4>
                     <p className="fw-bold">
-                      {" "}
-                      Middle School &#40;11yrs - 13yrs&#41;
+                      {userInfo?.grade?.name} <span> &#40;{userInfo?.grade.description}&#41;</span>
+                   
                     </p>
                   </div>
                   <div className="col border-start px-4 border_primary">
@@ -101,14 +101,18 @@ useEffect(() => {
                   <div className="col border-start px-4 border_primary">
                     <h4 className="fw-bold">Language Preference:</h4>
                     <ul className="m-0 primary-list">
-                      <li className="fw-bold m-0 p-0">English</li>
+                    {
+                      userInfo?.languagePreference?.map((lang)=> {
+                        return <li className="fw-bold m-0 p-0" value={lang.id} key={lang.id}>{lang.name}</li>
+                      })
+                    }
                     </ul>
                   </div>
                 </div>
               </div>
 
               <div className="shadow rounded-10 p-5 bg-white  my-4">
-                <div className="row m-0 p-0 ">
+                <div className="row m-0 p-0 pb-4 ">
                   <div className="col ">
                     <h4 className="fw-bold m-0 p-0">Courses:</h4>
                   </div>
@@ -116,45 +120,27 @@ useEffect(() => {
                     <h4 className="fw-bold m-0 p-0">Perference:</h4>
                   </div>
 
-                  <div className="row m-0 p-0 py-2 pt-4">
+                 
+                 
+
+                
+                
+                </div>
+                {
+                      userInfo?.courseOfInterestAndProficiency?.map((course)=> {
+                        return  <div className="row m-0 p-0 pt-1" >
                     <div className="col d-flex align-items-center gap-2">
                       <MdArrowForwardIos className="text_primary h4 p-0 m-0" />
-                      <p className="fw-bold m-0 p-0 h5 fw-lighter">Course 1</p>
+                      <p className="fw-bold m-0 p-0 h5 fw-lighter">{course.course.name}</p>
                     </div>
                     <div className="col ">
                       <ul className="m-0 primary-list">
-                        <li className="fw-bold m-0 p-0">Beginner</li>
+                        <li className="fw-bold m-0 p-0">{course.proficiency.name}</li>
                       </ul>
                     </div>
                   </div>
-
-                  <div className="row m-0 p-0 py-2">
-                    <div className="col d-flex align-items-center gap-2">
-                      <MdArrowForwardIos className="text_primary h4 p-0 m-0" />
-                      <p className="fw-bold m-0 p-0 h5 fw-lighter">Course 2</p>
-                    </div>
-                    <div className="col ">
-                      <ul className="m-0 d-flex gap-4 primary-list">
-                        <li className="fw-bold m-0 p-0">Beginner</li>
-                        <li className="fw-bold m-0 p-0">Intermediate</li>
-                      </ul>
-                    </div>
-                  </div>
-
-                  <div className="row m-0 p-0 py-2">
-                    <div className="col d-flex align-items-center gap-2">
-                      <MdArrowForwardIos className="text_primary h4 p-0 m-0" />
-                      <p className="fw-bold m-0 p-0 h5 fw-lighter">Course 3</p>
-                    </div>
-                    <div className="col ">
-                      <ul className="m-0 d-flex gap-4 primary-list">
-                        <li className="fw-bold m-0 p-0">Beginner</li>
-                        <li className="fw-bold m-0 p-0">Intermediate</li>
-                        <li className="fw-bold m-0 p-0">Semi-Expert</li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
+                      })
+                    }
               </div>
             </div>
           </div>
@@ -167,4 +153,11 @@ useEffect(() => {
 }
 
 
-export default withRole(SettingProfle, ['Student']);
+const mapStateToProps = (state) => ({
+  userInfo: state.user.userInfo,
+  loading: state.user.loading,
+  error: state.user.error,
+});
+
+export default withRole(connect(mapStateToProps, { fetchUser })(SettingProfle), ['Student']);
+

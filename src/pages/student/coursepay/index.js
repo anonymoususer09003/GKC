@@ -8,7 +8,7 @@ import axios from "axios";
 
 function StudentRegistrationCCPay() {
   const navigation = useRouter();
-  const { start, durationInHours, classFrequency,studentId, courseId, instructorId, eventInPerson } = navigation.query;
+  const { start, durationInHours, classFrequency,studentId, courseId, instructorId, eventInPerson, hourlyRate } = navigation.query;
   const [whoPaysId, setWhoPaysId] = useState('');
 
   const scheduleSaved = async () => {
@@ -102,7 +102,7 @@ function StudentRegistrationCCPay() {
                 <div className="py-2">
                   <div className="d-flex gap-3 py-1">
                     <p className="p-0 m-0 fw-bold">Hourly Rate:</p>
-                    <p className="p-0 m-0 fw-bold">$30</p>
+                    <p className="p-0 m-0 fw-bold">${hourlyRate}</p>
                   </div>
                   <div className="d-flex gap-3 py-1">
                     <p className="p-0 m-0 fw-bold">No. of Hours:</p>
@@ -114,7 +114,7 @@ function StudentRegistrationCCPay() {
                   </div>
                   <div className="d-flex gap-3 py-1">
                     <p className="p-0 m-0 fw-bold">Total Due:</p>
-                    <p className="p-0 m-0 fw-bold">$63</p>
+                    <p className="p-0 m-0 fw-bold">${hourlyRate * durationInHours}</p>
                   </div>
                 </div>
                 <h5 className="text-dark fw-bold">

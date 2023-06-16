@@ -1,14 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Head from "next/head";
 import { Navbar, Footer } from "../../../components";
 import Calendar from "react-calendar";
 import { BsFillSendFill } from "react-icons/bs";
 import { withRole } from "../../../utils/withAuthorization";
-import axios from "axios";
 import { useRouter } from 'next/router';
-function StudentScheduleClass() {
+import { connect } from "react-redux";
+import { fetchUser } from "../../../store/actions/userActions";
+
+
+function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
   const router = useRouter();
-  const { date, mode, time, courseId, instructorId } = router.query;
+  const { date, mode, time, courseId, instructorId, hourlyRate } = router.query;
   
   const [classFrequency, setClassFrequency] = useState('');
   const [value, onChange] = useState(date);
@@ -24,38 +27,39 @@ function StudentScheduleClass() {
   const day = dateObj.getDate().toString().padStart(2, '0');
   const convertedDate = `${year}-${month}-${day}`;
 
-  try {
-    var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
-    const res = await axios.get("http://34.227.65.157/user/logged-user-details", {
-    headers: {
-      Authorization: `Bearer ${typ.accessToken}`,
-    },
-  });
+
   const data = {
     start: convertedDate + " " + time,
     durationInHours: 1,
     classFrequency: "ONETIME",
     courseId:  Number(courseId),
-    studentId:  res.data.userDetails.id,
+    studentId:  userInfo.id,
     instructorId: Number(instructorId),
     eventInPerson: mode == 'In-Person' ?  true : false,
+    hourlyRate: hourlyRate
   };
   console.log(data)
   router.push({
     pathname: '/student/coursepay',
     query: data
   });
-  } catch (error) {
-    console.error('Error fetching profile data:', error);
-  }
-
- 
   };
 
 
 
   
+  useEffect(() => {
+    fetchUser();
+  }, [fetchUser]);
+  console.log(userInfo)
 
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
   return (
     <>
@@ -227,4 +231,12 @@ function StudentScheduleClass() {
   );
 }
 
-export default withRole(StudentScheduleClass, ["Student"]);
+
+const mapStateToProps = (state) => ({
+  userInfo: state.user.userInfo,
+  loading: state.user.loading,
+  error: state.user.error,
+});
+
+export default withRole(connect(mapStateToProps, { fetchUser })(StudentScheduleClass), ['Student']);
+

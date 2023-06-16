@@ -9,8 +9,11 @@ import { RiDeleteBin6Line } from "react-icons/ri";
 import { withRole } from "../../../utils/withAuthorization";
 import { isSameDay, format } from "date-fns";
 import axios from "axios";
+import { connect } from "react-redux";
+import { fetchUser } from "../../../store/actions/userActions";
+ 
 
-function EditCalandar() {
+function EditCalandar({ userInfo, loading, error, fetchUser }) {
   const [value, onChange] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState();
   const [events, setEvents] = useState([
@@ -54,19 +57,12 @@ const [unavailableDates, setUnavailableDates] = useState([
 
   const fetchProfileData = async () => {
 
-try {
-  var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
-  const resp = await axios.get("http://34.227.65.157/user/logged-user-details", {
-  headers: {
-    Authorization: `Bearer ${typ.accessToken}`,
-  },
-  });
-  console.log('=============>', resp.data.userDetails.id);
+
 
 
 try {
   var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
-  const res = await axios.get(`http://34.227.65.157/instructor/schedule-and-unavailable-days-iCal?instructorId=${resp.data.userDetails.id}`, {
+  const res = await axios.get(`http://34.227.65.157/instructor/schedule-and-unavailable-days-iCal?instructorId=${userInfo.id}`, {
   headers: {
     Authorization: `Bearer ${typ.accessToken}`,
   },
@@ -129,7 +125,6 @@ if (line.startsWith('BEGIN:VEVENT')) {
 }
 }
 
-// this.setState({ events, unavailableDays });
 setUnavailableDates(unavailableDays)
 setEvents(events)
 console.log(events, unavailableDays)
@@ -138,10 +133,6 @@ console.error('Error fetching profile data:', error);
 }
 
 
-// setProfile(res.data);
-} catch (error) {
-  console.error('Error fetching profile data:', error);
-}
 
 };
 
@@ -157,7 +148,6 @@ fetchProfileData()
   const tileContent = ({ date, view }) => {
     if (view === 'month') {
       const event = events.find((event) => event.dtStart.getTime() === date.getTime());
-      // const event = events.find((event) =>console.log(date.getTime()));
       if (event) {
         return 'event-day';
       }
@@ -168,9 +158,21 @@ fetchProfileData()
 
   
   const tileDisabled = ({ date }) => {
-    // return unavailableDates.some((disabledDay) => date.start.toDateString() === disabledDay.toDateString());
     return unavailableDates.some((disabledDay) => date.toDateString() === disabledDay.start.toDateString());
   };
+
+  useEffect(() => {
+    fetchUser();
+  }, [fetchUser]);
+  console.log(userInfo)
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
   return (
     <>
@@ -273,4 +275,13 @@ fetchProfileData()
   );
 }
 
-export default withRole(EditCalandar, ["Instructor"]);
+
+
+const mapStateToProps = (state) => ({
+  userInfo: state.user.userInfo,
+  loading: state.user.loading,
+  error: state.user.error,
+});
+
+export default withRole(connect(mapStateToProps, { fetchUser })(EditCalandar), ['Instructor']);
+

@@ -5,7 +5,11 @@ import Calendar from "react-calendar";
 import { withRole } from '../../../utils/withAuthorization';
 import { useRouter } from 'next/router';
 import axios from "axios"
-function RequestInterview() {
+import { connect } from "react-redux";
+import { fetchUser } from "../../../store/actions/userActions";
+
+
+function RequestInterview({ userInfo, loading, error, fetchUser }) {
   const router = useRouter();
   const { instructorId } = router.query;
   const [date, setDate] = useState(new Date());
@@ -14,7 +18,6 @@ function RequestInterview() {
   const [mode, setMode] = useState('');
   const [courses, setCourses] = useState([]);
   const [availableTime, setAvailableTime] = useState([ '7:00', '8:00', '9:00', '10:00', '11:00', '12:00', '13:00','14:00', '15:00', '16:00', '17:00', '18:00', '19:00',  ]);
-  const [profile, setProfile] = useState(null);
   const [insName, setInsName] = useState(null);
   const [value, onChange] = useState(new Date());
   const [events, setEvents] = useState([
@@ -35,7 +38,8 @@ function RequestInterview() {
       time:  time,
       courseId: courseId,
       mode: mode,
-      instructorId:instructorId ,
+      instructorId:instructorId,
+      hourlyRate: insName.hourlyRate
     };
 
     router.push({
@@ -63,31 +67,17 @@ function RequestInterview() {
   };
 
 
-  const getInfo = async () => {
-    try {
-      var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
-      const res = await axios.get("http://34.227.65.157/user/logged-user-details", {
-      headers: {
-        Authorization: `Bearer ${typ.accessToken}`,
-      },
-    });
-    console.log(res.data.userDetails);
-    setProfile(res.data.userDetails);
-    } catch (error) {
-      console.error('Error fetching profile data:', error);
-    }
-  };
 
 
   const getInstructorInfo = async () => {
     try {
       var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
-      const res = await axios.get(`http://34.227.65.157/instructor/full-name?instructorId=${22}`, {
+      const res = await axios.get(`http://34.227.65.157/instructor/instructor-details-for-scheduling?instructorId=${instructorId}`, {
       headers: {
         Authorization: `Bearer ${typ.accessToken}`,
       },
     });
-    console.log(res.data);
+    // console.log(res.data);
     setInsName(res.data);
     } catch (error) {
       console.error('Error fetching profile data:', error);
@@ -97,8 +87,7 @@ function RequestInterview() {
 
 
   useEffect(() => {
-    getCourses()
-    getInfo();
+    getCourses();
     getInstructorInfo();
     const fetchProfileData = async () => {
       var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
@@ -203,7 +192,19 @@ fetchProfileData()
 
 
 
-  
+  useEffect(() => {
+    fetchUser();
+  }, [fetchUser]);
+  console.log(userInfo)
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
   return (
     <>
       <Head>
@@ -220,7 +221,7 @@ fetchProfileData()
         >
           <div className="col-12 col-lg-6 pt-5">
           <p className="fw-bold text-center">
-              Schedule Interview with {insName}
+              Schedule Interview with {insName?.fullName}
             </p>
             <Calendar onChange={setDate} value={date} 
               tileDisabled={tileDisabled}
@@ -275,7 +276,7 @@ fetchProfileData()
 
                   <h6 className="text-dark fw-bold">Grade:</h6>
 
-                  <p className="text-dark fw-bold py-2">{profile?.grade?.name}</p>
+                  <p className="text-dark fw-bold py-2">{userInfo?.grade?.name} <span> &#40;{userInfo?.grade.description}&#41;</span></p>
                 </div>
               </div>
               <div className="d-flex gap-2 justify-content-center pt-5">
@@ -298,5 +299,10 @@ fetchProfileData()
   );
 }
 
+const mapStateToProps = (state) => ({
+  userInfo: state.user.userInfo,
+  loading: state.user.loading,
+  error: state.user.error,
+});
 
-export default withRole(RequestInterview, ['Student']);
+export default withRole(connect(mapStateToProps, { fetchUser })(RequestInterview), ['Student']);
