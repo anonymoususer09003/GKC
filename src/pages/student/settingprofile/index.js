@@ -18,6 +18,7 @@ function SettingProfle({ userInfo, loading, error, fetchUser }) {
   useEffect(() => {
     fetchUser();
   }, [fetchUser]);
+  
   console.log(userInfo)
 
   if (loading) {
@@ -65,7 +66,7 @@ function SettingProfle({ userInfo, loading, error, fetchUser }) {
 
                   <div className="d-flex gap-1 align-items-center gap-2 pb-3 ">
                     <MdEmail className="h5 p-0 m-0" />
-                    guardian2@123.com
+                      guardian2@123.com
                   </div>
                   <hr className="bg_secondary" />
 
@@ -119,16 +120,10 @@ function SettingProfle({ userInfo, loading, error, fetchUser }) {
                   <div className="col ">
                     <h4 className="fw-bold m-0 p-0">Perference:</h4>
                   </div>
-
-                 
-                 
-
-                
-                
                 </div>
                 {
-                      userInfo?.courseOfInterestAndProficiency?.map((course)=> {
-                        return  <div className="row m-0 p-0 pt-1" >
+                      userInfo?.courseOfInterestAndProficiency?.map((course,ind)=> {
+                        return  <div className="row m-0 p-0 pt-1" key={ind}>
                     <div className="col d-flex align-items-center gap-2">
                       <MdArrowForwardIos className="text_primary h4 p-0 m-0" />
                       <p className="fw-bold m-0 p-0 h5 fw-lighter">{course.course.name}</p>

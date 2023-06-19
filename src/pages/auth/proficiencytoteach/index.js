@@ -144,8 +144,6 @@ export default function StudentRegistrationCourse() {
 
                 <div className="py-4">
                   <div className="w-50 mb-3">
-     
-
       <Select
       isMulti
       options={courses}

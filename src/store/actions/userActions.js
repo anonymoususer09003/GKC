@@ -8,7 +8,7 @@ export const fetchUserSuccess = (userInfo) => ({
     type: "FETCH_USER_SUCCESS",
     payload: userInfo,
 });
-
+ 
 export const fetchUserFailure = (error) => ({
     type: "FETCH_USER_FAILURE",
     payload: error,

@@ -1,11 +1,138 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import { ParentNavbar, Footer } from "./../../../components";
 import { BsCheck2Circle } from "react-icons/bs";
 import { MdEmail, MdDelete } from "react-icons/md";
 import { withRole } from '../../../utils/withAuthorization';
+import { connect } from "react-redux";
+import { fetchUser } from "../../../store/actions/userActions";
+import axios from "axios"
+function EditProfile({ userInfo, loading, error, fetchUser }) {
+  const [updated, setUpdated] = useState(false);
+  const [countries, setCountries] = useState([]);
+  const [states, setStates] = useState([]);
+  const [cities, setCities] = useState([]);
 
-function EditProfile() {
+
+  const [firstName, setFirstName] =useState('')
+  const [lastName, setLastName] =useState('')
+  const [address1, setAddress1] =useState('')
+  const [address2, setAddress2] =useState('')
+  const [selectedCountry, setSelectedCountry] =useState('')
+  const [selectedState, setSelectedState] =useState('')
+  const [selectedCity, setSelectedCity] =useState('')
+  const [zipCode, setZipCode] =useState('')
+  const [dependents, setDependents] = useState([])
+
+const handleSubmit =async () => {
+  try {
+    var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
+    const response = await axios.put(
+      "http://34.227.65.157/user/parent/update",
+      {
+          firstName: firstName,
+          lastName: lastName,
+          address1: address1,
+          address2: address2,
+          country: selectedCountry,
+          state: selectedState,
+          city: selectedCity,
+          zipCode: zipCode,
+          dependentsId: dependents
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${typ.accessToken}`,
+      },
+      }
+    );
+    console.log(response);
+    // setCountries(response.data);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+  const getCountries = async () => {
+    try {
+      const response = await axios.get(
+        "http://34.227.65.157/public/location/get-countries"
+      );
+      console.log(response.data);
+      setCountries(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const getStates = async () => {
+    try {
+      const response = await axios.get(
+        `http://34.227.65.157/public/location/get-states?countryName=${selectedCountry}`
+      );
+      setStates(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const getCities = async () => {
+    try {
+      const response = await axios.get(
+        `http://34.227.65.157/public/location/get-cities?countryName=${selectedCountry}&stateName=${selectedState}`
+      );
+      setCities(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUser();
+  }, [fetchUser]);
+  
+  useEffect(() => {
+    if (userInfo) {
+      setFirstName(userInfo.firstName);
+      setLastName(userInfo.lastName);
+      setAddress1(userInfo.address1);
+      setAddress2(userInfo.address2);
+      setSelectedCountry(userInfo.country);
+      setSelectedState(userInfo.state);
+      setSelectedCity(userInfo.city);
+      setZipCode(userInfo.zipCode);
+      setDependents(userInfo.dependents)
+    }
+  }, [userInfo]);
+
+  useEffect(() => {
+      getCountries();
+      getStates();
+      getCities()
+  }, []);
+
+  useEffect(() => {
+    if(selectedCountry){
+    getStates();
+    }
+  }, [selectedCountry]);
+  
+  useEffect(() => {
+    if(selectedCountry && selectedState){
+      getCities()
+    }
+  }, [selectedState]);
+
+
+  console.log(userInfo)
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
   return (
     <>
       <Head>
@@ -28,7 +155,7 @@ function EditProfile() {
 
                   <p className="w-75 bg_secondary text-white p-2 rounded d-flex align-items-center gap-2 fw-bold">
                     <MdEmail style={{ fontSize: "22px" }} />
-                    parent@123.com
+                    {userInfo?.email}
                   </p>
 
                   <div className="d-flex align-items-center gap-3 py-2">
@@ -36,12 +163,16 @@ function EditProfile() {
                       type="text"
                       className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
                       placeholder="First Name"
+                      value={firstName}
+                      onChange={(e)=>setFirstName(e.target.value)}
                     />
 
                     <input
                       type="text"
                       className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
                       placeholder="Last Name"
+                      value={lastName}
+                      onChange={(e)=>setLastName(e.target.value)}
                     />
                   </div>
 
@@ -51,39 +182,48 @@ function EditProfile() {
                     type="text"
                     className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
                     placeholder="1234, Smith Street"
+                    value={address1}
+                      onChange={(e)=>setAddress1(e.target.value)}
                   />
                   <p className="p-0 m-0 py-2 fw-bold">Address 2</p>
                   <input
                     type="text"
                     className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
                     placeholder="Apt. 2"
+                    value={address2}
+                    onChange={(e)=>setAddress2(e.target.value)}
                   />
 
                   <div className="d-flex align-items-center gap-3 py-2">
-                    <select className="w-25 flex-fill p-2 rounded outline-0 border border_gray ">
-                      <option>USA</option>
-                      <option>Option 1</option>
-                      <option>Option 2</option>
+                    <select className="w-25 flex-fill p-2 rounded outline-0 border border_gray " value={selectedCountry} onChange={(e)=>setSelectedCountry(e.target.value)}>
+                      <option>Select Country</option>
+                         {countries.map((v, i) => {
+                        return <option value={v.name} key={i}>{v.name}</option>;
+                      })}
                     </select>
 
-                    <select className="w-25 flex-fill p-2 rounded outline-0 border border_gray ">
-                      <option>Texas</option>
-                      <option>Option 1</option>
-                      <option>Option 2</option>
+                    <select className="w-25 flex-fill p-2 rounded outline-0 border border_gray " value={selectedState} onChange={(e)=>setSelectedState(e.target.value)}>
+                    <option>Select State</option>
+                         {states.map((v, i) => {
+                        return <option value={v.name} key={i}>{v.name}</option>;
+                      })}
                     </select>
                   </div>
 
                   <div className="d-flex align-items-center gap-3 py-2">
-                    <select className="w-25 flex-fill p-2 rounded outline-0 border border_gray ">
-                      <option>Houston</option>
-                      <option>Option 1</option>
-                      <option>Option 2</option>
+                    <select className="w-25 flex-fill p-2 rounded outline-0 border border_gray " value={selectedCity} onChange={(e)=>setSelectedCity(e.target.value)}>
+                    <option>Select City</option>
+                         {cities.map((v, i) => {
+                        return <option value={v.name} key={i}>{v.name}</option>;
+                      })}
                     </select>
 
                     <input
                       type="text"
                       className="w-25 flex-fill p-2 rounded outline-0 border border_gray "
-                      placeholder="77478"
+                      placeholder="Zip/State Code"
+                      value={zipCode}
+                      onChange={(e)=> setZipCode(e.target.value)}
                     />
                   </div>
 
@@ -92,7 +232,7 @@ function EditProfile() {
                   <div></div>
 
                   <div className="d-flex gap-2 justify-content-center py-3">
-                    <button className="px-4 btn btn-success text-light p-2 rounded fw-bold d-flex align-items-center justify-content-center gap-2">
+                    <button className="px-4 btn btn-success text-light p-2 rounded fw-bold d-flex align-items-center justify-content-center gap-2" onClick={()=>handleSubmit()}>
                       <BsCheck2Circle className="h3 m-0 p-0" /> Save Profile
                     </button>
                   </div>
@@ -104,24 +244,16 @@ function EditProfile() {
                 <div className="col px-4 border_primary">
                   <h4 className="fw-bold">Dependents:</h4>
                   <div className="p-4 w-50">
-                    <div className="d-flex justify-content-between gap-4 my-2">
+                  {dependents.length == 0 ? 
+                  <div>
+                    <p className="fw-bold">You don't have any Dependent Yet!</p>
+                  </div>
+                  :dependents.map((dep,ind)=>{
+                    return  <div className="d-flex justify-content-between gap-4 my-2">
                       <p className="p-0 m-0">Name One</p>
                       <MdDelete style={{ fontSize: "24px" }} />
                     </div>
-                    <div className="d-flex justify-content-between gap-4 my-2">
-                      <p className="p-0 m-0">Name Two</p>
-                      <MdDelete style={{ fontSize: "24px" }} />
-                    </div>
-
-                    <div className="d-flex justify-content-between gap-4 my-2">
-                      <p className="p-0 m-0">Name Three</p>
-                      <MdDelete style={{ fontSize: "24px" }} />
-                    </div>
-
-                    <div className="d-flex justify-content-between gap-4 my-2">
-                      <p className="p-0 m-0">Name Four</p>
-                      <MdDelete style={{ fontSize: "24px" }} />
-                    </div>
+                  })}
                   </div>
                 </div>
               </div>
@@ -134,4 +266,12 @@ function EditProfile() {
     </>
   );
 }
-export default withRole(EditProfile, ['Parent']);
+
+
+const mapStateToProps = (state) => ({
+  userInfo: state.user.userInfo,
+  loading: state.user.loading,
+  error: state.user.error,
+});
+
+export default withRole(connect(mapStateToProps, { fetchUser })(EditProfile), ['Parent']);

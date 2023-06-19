@@ -1,15 +1,15 @@
-import React, { useState, useEffect } from "react";
+
+
+import React, { useEffect, useState } from "react";
 import Head from "next/head";
-import { Navbar, Footer } from "../../../components";
+import { ParentNavbar, Footer } from "../../../components";
 import Calendar from "react-calendar";
+import {useRouter} from "next/router"
 import { withRole } from '../../../utils/withAuthorization';
-import { useRouter } from 'next/router';
-import axios from "axios"
 import { connect } from "react-redux";
 import { fetchUser } from "../../../store/actions/userActions";
- 
 
-function RequestInterview({ userInfo, loading, error, fetchUser }) {
+function ParentRequestInterview({ userInfo, loading, error, fetchUser }) {
   const router = useRouter();
   const { instructorId } = router.query;
   const [date, setDate] = useState(new Date());
@@ -72,12 +72,14 @@ function RequestInterview({ userInfo, loading, error, fetchUser }) {
   const getInstructorInfo = async () => {
     try {
       var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
-      const res = await axios.get(`http://34.227.65.157/instructor/instructor-details-for-scheduling?instructorId=${instructorId}`, {
-      headers: {
-        Authorization: `Bearer ${typ.accessToken}`,
-      },
-    });
-    // console.log(res.data);
+      const res = await axios.get(`http://34.227.65.157/instructor/instructor-details-for-scheduling?instructorId=${instructorId}`
+    //   , {
+    //   headers: {
+    //     Authorization: `Bearer ${typ.accessToken}`,
+    //   },
+    // }
+    );
+    console.log(res.data);
     setInsName(res.data);
     } catch (error) {
       console.error('Error fetching profile data:', error);
@@ -205,6 +207,9 @@ fetchProfileData()
     return <div>Error: {error}</div>;
   }
 
+  const onContinue = () => {
+    router.push("/parent/scheduleclass")
+  }
   return (
     <>
       <Head>
@@ -213,7 +218,7 @@ fetchProfileData()
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Navbar isLogin={true} />
+      <ParentNavbar isLogin={true} />
       <main className="container-fluid">
       <div
           className="row"
@@ -225,8 +230,7 @@ fetchProfileData()
             </p>
             <Calendar onChange={setDate} value={date} 
               tileDisabled={tileDisabled}
-              tileClassName={tileContent}
-               />
+              tileClassName={tileContent} />
           </div>
           <div className="col-12 col-lg-6 pt-5">
           <p className="fw-bold text-center text-white">I</p>
@@ -237,53 +241,80 @@ fetchProfileData()
               >
                 <div className="w-100 ">
                   <p className="p-0 m-0 fw-bold pb-2">Select time</p>
-                  <div className="border rounded ">
-                  {
-                    availableTime.map((v,i)=> {
-                      return <p className={`m-0 px-3 py-1 fw-bold ${time == v && 'bg-secondary text-white'}`} key={i} onClick={()=> setTime(v)}>{v}</p>
-                    })
-                  }
+                  <div className="border rounded p-2 px-3">
+                    <p className="p-0 m-0 py-1 fw-bold">7:00 am</p>
+                    <p className="p-0 m-0 py-1 fw-bold">7:15 am</p>
+                    <p className="p-0 m-0 py-1 fw-bold">7:30 am</p>
+                    <br />
+                    <br />
+                    <br />
+                    <br />
+                    <br />
+                    <br />
+                    <br />
+                    <br />
+                    <br />
+                    <p className="p-0 m-0 py-1 fw-bold">4:45 pm</p>
+                    <p className="p-0 m-0 py-1 fw-bold">5:00 pm</p>
                   </div>
                 </div>
                 <div className=" w-100">
-                  <p className="p-0 m-0 fw-bold text-center py-2">
-                    Your information
-                  </p>
-                  <h6 className="text-dark fw-bold">Course:</h6>
+            
 
-                  <div className="py-2">
-                    <select className="w-25 p-2 rounded outline-0 border border_gray  mb-3 " onChange={(e)=> setCourseId(e.target.value)}>
+<p className="p-0 m-0 fw-bold text-center py-2">
+                    Your dependent's information
+                  </p>
+
+                  <div className="d-flex align-items-center gap-3 py-3">
+                    <h6 className="text-dark fw-bold p-0 m-0 flex-fill">
+                      On behalf of:
+                    </h6>
+
+                    <select className="w-25 p-2 flex-fill rounded outline-0 border border_gray ">
                       <option>Select</option>
-                      {courses.map((course)=>{
-                        return <option key={course.value}  value={course.value}>{course.label}</option>
-                      })}
+                      <option>Option 1</option>
+                      <option>Option 2</option>
+                    </select>
+                  </div>
+
+                  <div className="d-flex align-items-center gap-3 py-3">
+                    <h6 className="text-dark fw-bold p-0 m-0 flex-fill">
+                      Course:
+                    </h6>
+
+                    <select className="w-25 flex-fill p-2 rounded outline-0 border border_gray ">
+                      <option>Select</option>
+                      <option>Option 1</option>
+                      <option>Option 2</option>
+                    </select>
+                  </div>
+
+                  <div className="d-flex align-items-center gap-3 py-3">
+                    <h6 className="text-dark fw-bold p-0 m-0 flex-fill">
+                      Mode:
+                    </h6>
+
+                    <select className="w-25 flex-fill p-2 rounded outline-0 border border_gray ">
+                      <option>Select</option>
+                      <option>Option 1</option>
+                      <option>Option 2</option>
                     </select>
                   </div>
 
                   <h6 className="text-dark fw-bold">Mode:</h6>
 
-                  <div className="py-2">
-                    <select className="w-25 p-2 rounded outline-0 border border_gray  mb-3 " onChange={(e)=>  setMode(e.target.value)}>
-                      <option>Select</option>
-                      <option value='Online'>Online</option>
-                      <option value='In-Person'>In-Person</option>
-                    </select>
-                  </div>
-
-                  <h6 className="text-dark fw-bold">Skill:</h6>
-
-                  <p className="text-dark fw-bold py-2"></p>
+                  <p className="text-dark fw-bold py-2">Intermediate</p>
 
                   <h6 className="text-dark fw-bold">Grade:</h6>
 
-                  <p className="text-dark fw-bold py-2">{userInfo?.grade?.name} <span> &#40;{userInfo?.grade.description}&#41;</span></p>
+                  <p className="text-dark fw-bold py-2">Middle School</p>
+               
                 </div>
               </div>
               <div className="d-flex gap-2 justify-content-center pt-5">
-                <button
-                 className={`w-25 text-light p-2 rounded fw-bold  ${ !time || !courseId || !mode ? 'btn_disabled' : 'btn_primary'}`}
-                disabled={ !time || !courseId || !mode ? true : false}     
-                 onClick={()=> handleContinue()}>
+                <button className="w-25 btn_primary text-light p-2 rounded fw-bold " 
+                onClick={()=>onContinue()}
+                >
                   Schedule
                 </button>
               </div>
@@ -305,4 +336,4 @@ const mapStateToProps = (state) => ({
   error: state.user.error,
 });
 
-export default withRole(connect(mapStateToProps, { fetchUser })(RequestInterview), ['Student']);
+export default withRole(connect(mapStateToProps, { fetchUser })(ParentRequestInterview), ['Parent']);

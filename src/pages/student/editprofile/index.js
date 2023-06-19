@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import { Navbar, Footer } from "./../../../components";
 import { BsCheck2Circle } from "react-icons/bs";
@@ -6,8 +6,10 @@ import { MdEmail, MdArrowForwardIos } from "react-icons/md";
 import { MultiSelect } from "react-multi-select-component";
 import { useRouter } from "next/router";
 import { withRole } from '../../../utils/withAuthorization';
-
-function EditProfile() {
+import { connect } from "react-redux";
+import { fetchUser } from "../../../store/actions/userActions";
+import axios from "axios"
+function EditProfile({ userInfo, loading, error, fetchUser }) {
   const options = [
     { label: "Grapes ", value: "grapes" },
     { label: "Mango ", value: "mango" },
@@ -21,10 +23,178 @@ function EditProfile() {
   ];
 
   const [selected, setSelected] = useState([]);
+  const [grade, setGrade] = useState('');
+  const [parent1, setParent1] = useState('');
+  const [parent2, setParent2] = useState('');
+  const [courses,   setCourses] = useState([]);
+  const [lang, setLang] = useState([]);
+  
+  const [selectedCourses,   setSelectedCourses] = useState([]);
+  const [selectedLang, setSelectedLang] = useState([]);
+  
   const navigation = useRouter();
-  const onSaveProfile = () => {
-    navigation.push("/student/settingprofile")
+  // const onSaveProfile = () => {
+  //   navigation.push("/student/settingprofile")
+  // }
+
+
+  const handleSubmit =async () => {
+    console.log(selectedLang)
+    const aa = [];
+    const ln = [];
+
+    selectedLang.forEach(v=>{
+      ln.push(v.value)
+    })
+    selectedCourses.forEach(v=>{
+      aa.push({courseId: v.value,proficiencyId: v.proficiencyId.id})
+    })
+
+    try {
+      var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
+      const response = await axios.put(
+        "http://34.227.65.157/user/student/update",
+        {
+          emailParent1: parent1,
+          emailParent2: parent2,
+          gradeId: grade,
+          courseOfInterestAndProficiency: aa,
+          languagePreferencesId: ln,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${typ.accessToken}`,
+        },
+        }
+      );
+      console.log(response);
+      // setCountries(response.data);
+    } catch (error) {
+      console.error(error);
+    }
   }
+
+
+  const handleSelectChange = (selected) => {
+    setSelectedCourses(
+      selected && selected.map((option) => ({
+        label: option.label,
+        value: option.value,
+        proficiencyId: []
+      }))
+    );
+  };
+  
+  const handleAddOrUpdate = (id, newData) => {
+    // Check if the ID exists in the data array
+    const dataIndex = selectedCourses.findIndex(
+      (item) => item.courseId === id
+    );
+
+    // if (dataIndex === -1) {
+    //   // ID not found, add the new data to the array
+    //   setSelectedCourses([
+    //     ...selectedCourses,
+    //     { id, ...newData },
+    //   ]);
+    // } else {
+      // ID found, update the data at the specified index
+      const updatedData = [...selectedCourses];
+      updatedData[dataIndex] = { ...updatedData[dataIndex], ...newData };
+      setSelectedCourses(updatedData);
+    // }
+
+    console.log(selectedCourses)
+  };
+
+
+  const getLang = async () => {
+    try {
+      const response = await axios.get(
+        `http://34.227.65.157/public/register/get-all-languages`
+      );
+      var arr = [];
+      console.log(response.data)
+      response.data.map((v) => {
+        arr.push({ value: v.id, label: v.name });
+      });
+      setLang(arr);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const getCourses = async () => {
+    try {
+      const response = await axios.get(
+        `http://34.227.65.157/public/course/get-all-courses`
+      );
+
+      var technologyList = [];
+
+      response.data.map((v) => {
+        technologyList.push({ value: v.id, label: v.name });
+      });
+      console.log(technologyList);
+      setCourses(technologyList);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    getLang();
+    getCourses()
+  }, []);
+
+  useEffect(() => {
+    fetchUser();
+  }, [fetchUser]);
+
+
+  useEffect(() => {
+    if (userInfo) {
+      setGrade(userInfo?.grade.id)
+      let lanArr = [];
+      userInfo.languagePreference.forEach(v=>{
+        lanArr.push({ value: v.id, label: v.name });
+      });
+
+      setSelectedLang(lanArr);
+
+      let courseOfInterestAndProficiencyArr = [];
+      userInfo.courseOfInterestAndProficiency.forEach(v=>{      
+       courseOfInterestAndProficiencyArr.push({ 
+        label: v.course.name,
+        value: v.course.id,
+        proficiencyId: [v.proficiency]
+      });
+      })
+      setSelectedCourses(courseOfInterestAndProficiencyArr)
+    console.log(courseOfInterestAndProficiencyArr)
+
+      // setFirstName(userInfo.firstName);
+      // setLastName(userInfo.lastName);
+      // setAddress1(userInfo.address1);
+      // setAddress2(userInfo.address2);
+      // setSelectedCountry(userInfo.country);
+      // setSelectedState(userInfo.state);
+      // setSelectedCity(userInfo.city);
+      // setZipCode(userInfo.zipCode);
+      // setDependents(userInfo.dependents)
+    }
+  }, [userInfo]);
+  console.log(userInfo)
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
+
   return (
     <>
       <Head>
@@ -43,11 +213,11 @@ function EditProfile() {
             <div className="col-12 col-lg-4">
               <div className="shadow rounded-10 bg-white py-4">
                 <div className="px-4">
-                  <h5 className="fw-bold py-3">John Lark</h5>
+                  <h5 className="fw-bold py-3">{userInfo?.firstName} {userInfo?.lastName}</h5>
 
                   <p className="w-75 bg_secondary text-white p-2 rounded d-flex align-items-center gap-2 fw-bold">
                     <MdEmail style={{ fontSize: "22px" }} />
-                    student@123.com
+                    {userInfo?.email}
                   </p>
 
                   <p className="p-0 m-0 py-2 fw-bold">Parent1/guardian1</p>
@@ -68,7 +238,7 @@ function EditProfile() {
                   <div></div>
 
                   <div className="d-flex gap-2 justify-content-center py-3">
-                    <button className="px-4 btn btn-success text-light p-2 rounded fw-bold d-flex align-items-center justify-content-center gap-2" onClick={()=>onSaveProfile()}>
+                    <button className="px-4 btn btn-success text-light p-2 rounded fw-bold d-flex align-items-center justify-content-center gap-2" onClick={()=> handleSubmit()}>
                       <BsCheck2Circle className="h3 m-0 p-0" /> Save Profile
                     </button>
                   </div>
@@ -85,11 +255,13 @@ function EditProfile() {
                       <input
                         className="form-check-input"
                         type="radio"
-                        value=""
+                        value="1"
                         id="flexCheckDefault"
                         name="grades"
+                        checked={grade == 1}
+                        onChange={(e)=> setGrade(e.target.value)}
                       />
-                      <label className="form-check-label" for="flexCheckDefault">
+                      <label className="form-check-label" htmlFor="flexCheckDefault">
                         Elementry &#40;&#60;10yrs&#41;
                       </label>
                     </div>
@@ -97,11 +269,13 @@ function EditProfile() {
                       <input
                         className="form-check-input"
                         type="radio"
-                        value=""
+                        value="2"
                         id="flexCheckDefault"
                         name="grades"
+                        checked={grade == 2}
+                        onChange={(e)=> setGrade(e.target.value)}
                       />
-                      <label className="form-check-label" for="flexCheckDefault">
+                      <label className="form-check-label" htmlFor="flexCheckDefault">
                         Middle School &#40;&#60;11yrs - 13yrs&#41;
                       </label>
                     </div>
@@ -109,11 +283,13 @@ function EditProfile() {
                       <input
                         className="form-check-input"
                         type="radio"
-                        value=""
+                        value="3"
                         id="flexCheckDefault"
                         name="grades"
+                        checked={grade == 3}
+                        onChange={(e)=> setGrade(e.target.value)}
                       />
-                      <label className="form-check-label" for="flexCheckDefault">
+                      <label className="form-check-label" htmlFor="flexCheckDefault">
                         High School &#40;&#60;14yrs - 18yrs&#41;
                       </label>
                     </div>
@@ -121,11 +297,13 @@ function EditProfile() {
                       <input
                         className="form-check-input"
                         type="radio"
-                        value=""
+                        value="4"
                         id="flexCheckChecked"
                         name="grades"
+                        checked={grade == 4}
+                        onChange={(e)=> setGrade(e.target.value)}
                       />
-                      <label className="form-check-label" for="flexCheckChecked">
+                      <label className="form-check-label" htmlFor="flexCheckChecked">
                         College & Beyond &#40;&gt;18yrs&#41;
                       </label>
                     </div>
@@ -139,7 +317,7 @@ function EditProfile() {
                         value=""
                         id="flexCheckDefault"
                       />
-                      <label className="form-check-label" for="flexCheckDefault">
+                      <label className="form-check-label" htmlFor="flexCheckDefault">
                         In person
                       </label>
                     </div>{" "}
@@ -150,18 +328,20 @@ function EditProfile() {
                         value=""
                         id="flexCheckDefault"
                       />
-                      <label className="form-check-label" for="flexCheckDefault">
+                      <label className="form-check-label" htmlFor="flexCheckDefault">
                         Online
                       </label>
                     </div>
                   </div>
                   <div className="col-12 col-md-4 border-start px-4 border_primary">
                     <h4 className="fw-bold">Language Preference:</h4>
-                    <select className="w-100 p-2 rounded outline-0 border border_gray  ">
-                      <option>Select</option>
-                      <option>Select</option>
-                      <option>Select</option>
-                    </select>
+                    <MultiSelect
+                        options={lang}
+                        value={selectedLang}
+                        onChange={setSelectedLang}
+                        labelledBy={"Select Language"}
+                        isCreatable={true}
+                      />
                   </div>
                 </div>
               </div>
@@ -173,12 +353,12 @@ function EditProfile() {
                   </h4>
 
                   <MultiSelect
-                    options={options}
-                    value={selected}
-                    onChange={setSelected}
-                    labelledBy={"Select Course"}
-                    isCreatable={true}
-                  />
+                      options={courses}
+                      value={selectedCourses}
+                      onChange={handleSelectChange}
+                      labelledBy={"Select Course"}
+                      isCreatable={true}
+                    />
                 </div>
 
                 <div className="row m-0 p-0 ">
@@ -188,22 +368,42 @@ function EditProfile() {
                   <div className="col ">
                     <h4 className="fw-bold m-0 p-0">Perference:</h4>
                   </div>
-
-                  <div className="row m-0 p-0 py-2 pt-4">
+                  {
+                    selectedCourses.map(v=>{
+                      return  <div className="row m-0 p-0 py-2 pt-4">
                     <div className="col d-flex align-items-center gap-2">
                       <MdArrowForwardIos className="text_primary h4 p-0 m-0" />
-                      <p className="fw-bold m-0 p-0 h5 fw-lighter">Course 1</p>
+                      <p className="fw-bold m-0 p-0 h5 fw-lighter">{v.label}</p>
                     </div>
-                    <div className="col ">
-                      <select className="w-100 p-2 rounded outline-0 border border_gray  ">
-                        <option>Beginner</option>
-                        <option>Intermediate</option>
-                        <option>Semi-Expert</option>
+                    <div className="col">
+                      <select className="w-100 p-2 rounded outline-0 border border_gray"  onChange={(e) => {
+                           const selectedProficiencyId = Number(e.target.value);
+              const selectedProficiencyName = e.target.selectedOptions[0].label;
+
+              const updatedCourses = selectedCourses.map((course) => {
+                if (course.value === v.value) {
+                  return {
+                    ...course,
+                    proficiencyId: { id: selectedProficiencyId, name: selectedProficiencyName },
+                  };
+                }
+                return course;
+              });
+
+              setSelectedCourses(updatedCourses)
+              console.log(updatedCourses)
+                          }}>
+                        <option value="1">Beginner</option>
+                        <option value="2">Intermediate</option>
+                        <option value="3">Semi-Expert</option>
                       </select>
                     </div>
                   </div>
+                    })
+                  }
+                 
 
-                  <div className="row m-0 p-0 py-2">
+                  {/* <div className="row m-0 p-0 py-2">
                     <div className="col d-flex align-items-center gap-2">
                       <MdArrowForwardIos className="text_primary h4 p-0 m-0" />
                       <p className="fw-bold m-0 p-0 h5 fw-lighter">Course 2</p>
@@ -215,9 +415,9 @@ function EditProfile() {
                         <option>Semi-Expert</option>
                       </select>
                     </div>
-                  </div>
+                  </div> */}
 
-                  <div className="row m-0 p-0 py-2">
+                  {/* <div className="row m-0 p-0 py-2">
                     <div className="col d-flex align-items-center gap-2">
                       <MdArrowForwardIos className="text_primary h4 p-0 m-0" />
                       <p className="fw-bold m-0 p-0 h5 fw-lighter">Course 3</p>
@@ -229,18 +429,22 @@ function EditProfile() {
                         <option>Semi-Expert</option>
                       </select>
                     </div>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </div>
           </div>
         </div>
       </main>
-
       <Footer />
     </>
   );
 }
 
+const mapStateToProps = (state) => ({
+  userInfo: state.user.userInfo,
+  loading: state.user.loading,
+  error: state.user.error,
+});
 
-export default withRole(EditProfile, ['Student']);
+export default withRole(connect(mapStateToProps, { fetchUser })(EditProfile), ['Student']);

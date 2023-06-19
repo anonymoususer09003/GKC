@@ -43,6 +43,7 @@ export default function SignIn() {
         }
       );
       console.log(res.data);
+      
       window.localStorage.setItem("gkcAuth", JSON.stringify({accessToken: response.data.accessToken, role: res.data}));
       if (res.data === "Student") {
         navigation.push("/");
