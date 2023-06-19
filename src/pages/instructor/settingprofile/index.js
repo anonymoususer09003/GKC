@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Head from "next/head";
 import { Navbar,TutorNavbar, Footer } from "../../../components";
 import { MdEmail,MdLocationOn, MdArrowForwardIos } from "react-icons/md";
@@ -6,12 +6,32 @@ import { FiEdit } from "react-icons/fi";
 import Image from "next/image";
 import {useRouter} from "next/router"
 import { withRole } from '../../../utils/withAuthorization';
+import { connect } from "react-redux";
+import { fetchUser } from "../../../store/actions/userActions";
 
-function SettingProfile() {
+function SettingProfile({ userInfo, loading, error, fetchUser }) {
   const navigation = useRouter();
 
   const onContinue = () => {
     navigation.push("/instructor/editprofile")
+  }
+
+  const onEditProfile = () => {
+    navigation.push("/student/editprofile");
+  };
+
+  useEffect(() => {
+    fetchUser();
+  }, [fetchUser]);
+  
+  console.log(userInfo)
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
   }
   return (
     <>
@@ -44,25 +64,25 @@ function SettingProfile() {
                 <div className="d-flex justify-content-end">
                 <p className=" bg_secondary text-white p-2 rounded d-flex align-items-center gap-2 fw-bold">
                     <MdEmail style={{ fontSize: "20px" }} />
-                    instructor@123.com
+                    {userInfo?.email}
                   </p>
                 </div>
-                  <h5 className="fw-bold pb-2">John Lark</h5>
+                  <h5 className="fw-bold pb-2">{userInfo?.firstName} {userInfo?.lastName}</h5>
 
                  
 
                   <div className="d-flex gap-1 gap-2 pb-3 ">
                     <MdLocationOn className="h5 p-0 m-0" />
                     <small>
-                    1234, Smith Street, Apt. 2000, Houston, TX 70000, USA
+                    {userInfo?.address1} {userInfo?.address2}
                     </small>
                   </div>
                   <hr className="bg_secondary" />
                   <h4 className="p-0 m-0 py-2 fw-bold">Bio</h4>
                   <div>
-
-                    Lorem ipsum dolor, sit amet consectetur adipisicing elit. Tempore molestiae, velit, ex iure fugiat quas officia fuga sit amet consectetur adipisicing elit. Tempore molestiae, velit, ex iure fugiat quas officia fuga exercitationem nam sunt fugit consectetur qui voluptatum, id placeat pariatur accusamus esse nulla!
-                  </div>
+{
+  userInfo?.instructorBio
+}  </div>
 
                   <div className="d-flex gap-2 justify-content-center py-3 pt-5">
                     <button className="w-50 btn_primary text-light p-2 rounded fw-bold d-flex align-items-center justify-content-center gap-2" onClick={()=> onContinue()}>
@@ -78,15 +98,21 @@ function SettingProfile() {
                 <div className="col-12 col-md-4">
                     <h5 className="fw-bold ">Hourly Rate</h5>
                     <h2 className="fw-bold">
-                      $30/hr
+                      ${
+  userInfo?.hourlyRate
+}/hr
                     </h2>
                   </div>
                
                   <div className="col-12 col-md-3 border-start px-4 border_primary">
                     <h5 className="fw-bold m-0 p-0">Delivery Mode:</h5>
                     <ul className="m-0 px-3 py-2 primary-list">
-                      <li className="fw-bold m-0 p-0">Online</li>
-                      <li className="fw-bold m-0 p-0">In-Person</li>
+                    {
+                      userInfo?.deliveryModes.map((v,i)=>{
+                        return <li className="fw-bold m-0 p-0">{v.name}</li>
+                      })
+                    }
+
                     </ul>
                   </div>
 
@@ -94,8 +120,11 @@ function SettingProfile() {
                     <h5 className="fw-bold m-0 p-0">Groups you have expertise to teach:</h5>
                  
                     <ul className="m-0 px-3 py-2 primary-list">
-                      <li className="fw-bold m-0 p-0">Middle School &#40;10yrs - 13yrs&#41;</li>
-                      <li className="fw-bold m-0 p-0">High School &#40;14yrs - 16yrs&#41;</li>
+                    {
+                      userInfo?.gradesToTutor.map((v,i)=>{
+                        return   <li className="fw-bold m-0 p-0">{v.name} &#40;{v.description}&#41;</li>
+                      })
+                    }
                     </ul>
                   </div>
                 
@@ -104,15 +133,19 @@ function SettingProfile() {
 
                 <div className="col pt-5">
                     <h5 className="fw-bold m-0 p-0">Spoken Language Preference:</h5>
-                    <ul className="m-0 px-3 py-2 primary-list">
-                      <li className="fw-bold m-0 p-0">English</li>
+                    <ul className="m-0 px-3 py-2 primary-list ">
+                    {
+                      userInfo?.languagePreference.map((v,i)=>{
+                        return <li className="fw-bold m-0 p-0">{v.name}</li>
+                      })
+                    }
                     </ul>
                   </div>
 
                   <div className="col pt-5">
                     <h5 className="fw-bold m-0 p-0">Accept Interview Request</h5>
                     <ul className="m-0 px-3 py-2 primary-list">
-                      <li className="fw-bold m-0 p-0">No</li>
+                      <li className="fw-bold m-0 p-0">{userInfo?.acceptInterviewRequest ? "Yes" : 'No'}</li>
                     </ul>
                   </div>
                   </div>
@@ -178,4 +211,12 @@ function SettingProfile() {
 }
 
 
-export default withRole(SettingProfile, ['Instructor']);
+const mapStateToProps = (state) => ({
+  userInfo: state.user.userInfo,
+  loading: state.user.loading,
+  error: state.user.error,
+});
+
+export default withRole(connect(mapStateToProps, { fetchUser })(SettingProfile), ['Instructor']);
+
+

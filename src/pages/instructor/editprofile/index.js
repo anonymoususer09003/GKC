@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Head from "next/head";
 import { Navbar, TutorNavbar, Footer } from "../../../components";
 import { MdEmail, MdLocationOn, MdArrowForwardIos } from "react-icons/md";
@@ -7,8 +7,12 @@ import Image from "next/image";
 import { MultiSelect } from "react-multi-select-component";
 import {useRouter} from "next/router"
 import { withRole } from '../../../utils/withAuthorization';
+import { connect } from "react-redux";
+import { fetchUser } from "../../../store/actions/userActions";
+import axios from "axios"
 
- function EditProfile() {
+ function EditProfile({ userInfo, loading, error, fetchUser }) {
+   const navigation = useRouter();
   const options = [
     { label: "Grapes ", value: "grapes" },
     { label: "Mango ", value: "mango" },
@@ -20,13 +24,106 @@ import { withRole } from '../../../utils/withAuthorization';
     { label: "Pineapple ", value: "pineapple" },
     { label: "Peach ", value: "peach" },
   ];
-
+ 
   const [selected, setSelected] = useState([]);
-  const navigation = useRouter();
+  const [bio, setBio] = useState('');
+  const [hourlyRate, setHourlyRate] = useState('');
+  const [deliveryModes, setDeliveryModes] = useState('');
+  const [acceptInterviewRequest, setAcceptInterviewRequest] = useState(false);
+  
+  const [courses,   setCourses] = useState([]);
+  const [lang, setLang] = useState([]);
+
+
+  const [selectedLang, setSelectedLang] = useState([]);
+
+  // const [hourlyRate, setHourlyRate] = useState('');
 
   const onContinue = () => {
     navigation.push("/instructor/settingprofile")
   }
+
+
+  const getLang = async () => {
+    try {
+      const response = await axios.get(
+        `http://34.227.65.157/public/register/get-all-languages`
+      );
+      var arr = [];
+      response.data.map((v) => {
+        arr.push({ value: v.id, label: v.name });
+      });
+
+      console.log(response)
+      setLang(arr);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+
+  const getCourses = async () => {
+    try {
+      const response = await axios.get(
+        `http://34.227.65.157/public/course/get-all-courses`
+      );
+
+      var technologyList = [];
+
+      response.data.map((v) => {
+        technologyList.push({ value: v.id, label: v.name });
+      });
+      console.log(technologyList);
+      setCourses(technologyList);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  useEffect(() => {
+    getLang();
+    getCourses();
+  }, []);
+
+  useEffect(() => {
+    fetchUser();
+  }, [fetchUser]);
+  
+
+  useEffect(() => {
+    if (userInfo) {
+      setHourlyRate(userInfo.hourlyRate);
+      setBio(userInfo.instructorBio);
+      setDeliveryModes(userInfo.deliveryModes);
+      setAcceptInterviewRequest(userInfo.acceptInterviewRequest ? 'Yes' : 'No');
+      let lanArr = [];
+      userInfo.languagePreference.forEach(v=>{
+        lanArr.push({ value: v.id, label: v.name });
+      });
+
+      setSelectedLang(lanArr);
+      // deliveryModes
+
+      // setLastName(userInfo.lastName);
+      // setAddress1(userInfo.address1);
+      // setAddress2(userInfo.address2);
+      // setSelectedCountry(userInfo.country);
+      // setSelectedState(userInfo.state);
+      // setSelectedCity(userInfo.city);
+      // setZipCode(userInfo.zipCode);
+      // setDependents(userInfo.dependents)
+    }
+  }, [userInfo]);
+
+  console.log(userInfo)
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
   return (
     <>
       <Head>
@@ -42,7 +139,7 @@ import { withRole } from '../../../utils/withAuthorization';
           style={{ minHeight: "90vh", maxWidth: "1700px", margin: "auto" }}
         >
           <div className="row">
-            <div className="col-3 position-relative">
+            <div className="col-12 col-md-3 position-relative">
               <div className="shadow rounded-10 bg-white py-4">
                 <div className="px-4 ">
                   <div
@@ -61,10 +158,10 @@ import { withRole } from '../../../utils/withAuthorization';
                   <div className="d-flex justify-content-end">
                     <p className=" bg_secondary text-white p-2 rounded d-flex align-items-center gap-2 fw-bold">
                       <MdEmail style={{ fontSize: "20px" }} />
-                      instructor@123.com
+                      {userInfo?.email}
                     </p>
                   </div>
-                  <input type="text" className="border-0 h4 p-1 border-bottom w-100 mb-3" defaultValue="John Lark" />
+                  <input type="text" className="border-0 h4 p-1 border-bottom w-100 mb-3" value="John Lark" />
 
                   <div className="d-flex gap-1 gap-2 pb-3 ">
                     <MdLocationOn className="h5 p-0 m-0" />
@@ -74,13 +171,8 @@ import { withRole } from '../../../utils/withAuthorization';
                   <h4 className="p-0 m-0 py-2 fw-bold">Bio</h4>
                   <div>
                   
-                    <textarea  className="border-0 border-bottom w-100" rows="8" >
-                    Lorem ipsum dolor, sit amet consectetur adipisicing elit.
-                    Tempore molestiae, velit, ex iure fugiat quas officia fuga
-                    sit amet consectetur adipisicing elit. Tempore molestiae,
-                    velit, ex iure fugiat quas officia fuga exercitationem nam
-                    sunt fugit consectetur qui voluptatum, id placeat pariatur
-                    accusamus esse nulla!
+                    <textarea  className="border-0 border-bottom w-100" rows="8" value={bio} onChange={(e)=> setBio(e.target.value)}>
+               
                     </textarea>
                   </div>
 
@@ -98,24 +190,25 @@ import { withRole } from '../../../utils/withAuthorization';
                   <div className="col">
                     <h5 className="fw-bold ">Hourly Rate</h5>
                     <h2 className="fw-bold">
-                    <input type="text" defaultValue="$30" className="fw-bold border-0 border-bottom w-25" />                    /hr</h2>
+                    $<input type="text" value={hourlyRate} className="fw-bold border-0 border-bottom w-25" onChange={(e)=> setHourlyRate(e.target.value)} />       
+                                 /hr</h2>
                   </div>
 
                   <div className="col-3 border-start px-4 border_primary">
                     <h5 className="fw-bold m-0 p-0">Delivery Mode:</h5>
                 
                     <div className="form-check pt-2">
-  <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
-  <label className="form-check-label fw-bold" for="flexCheckDefault">
-   Online
-  </label>
-</div>
-<div className="form-check">
-  <input className="form-check-input" type="checkbox" value="" id="flexCheckChecked" />
-  <label className="form-check-label fw-bold" for="flexCheckChecked">
-  In-Person
-  </label>
-</div>
+                    <input className="form-check-input" type="checkbox"  id="flexCheckDefault" />
+                    <label className="form-check-label fw-bold" for="flexCheckDefault">
+                    Online
+                    </label>
+                  </div>
+                  <div className="form-check">
+                    <input className="form-check-input" type="checkbox"  id="flexCheckChecked" />
+                    <label className="form-check-label fw-bold" for="flexCheckChecked">
+                    In-Person
+                    </label>
+                  </div>
                   </div>
 
                   <div className="col-5 border-start px-4 border_primary">
@@ -123,32 +216,32 @@ import { withRole } from '../../../utils/withAuthorization';
                       Groups you have expertise to teach:
                     </h5>
                     <div className="form-check pt-2">
-  <input className="form-check-input" type="checkbox" value="" id="flexCheckChecked" />
-  <label className="form-check-label fw-bold" for="flexCheckChecked">
-  Elementory &#40;	&lt; 10yrs&#41;
-  </label>
-</div>
+                      <input className="form-check-input" type="checkbox" value="1" id="flexCheckChecked" />
+                      <label className="form-check-label fw-bold" for="flexCheckChecked">
+                      Elementory &#40;	&lt; 10yrs&#41;
+                      </label>
+                    </div>
 
-<div className="form-check">
-  <input className="form-check-input" type="checkbox" value="" id="flexCheckChecked" />
-  <label className="form-check-label fw-bold" for="flexCheckChecked">
-  Middle School &#40;10yrs - 13yrs&#41;
-  </label>
-</div>
+                    <div className="form-check">
+                      <input className="form-check-input" type="checkbox" value="2" id="flexCheckChecked" />
+                      <label className="form-check-label fw-bold" for="flexCheckChecked">
+                      Middle School &#40;10yrs - 13yrs&#41;
+                      </label>
+                    </div>
 
-<div className="form-check">
-  <input className="form-check-input" type="checkbox" value="" id="flexCheckChecked" />
-  <label className="form-check-label fw-bold" for="flexCheckChecked">
-  High School &#40;14yrs - 16yrs&#41;
-  </label>
-</div>
+                    <div className="form-check">
+                      <input className="form-check-input" type="checkbox" value="3" id="flexCheckChecked" />
+                      <label className="form-check-label fw-bold" for="flexCheckChecked">
+                      High School &#40;14yrs - 16yrs&#41;
+                      </label>
+                    </div>
 
-<div className="form-check">
-  <input className="form-check-input" type="checkbox" value="" id="flexCheckChecked" />
-  <label className="form-check-label fw-bold" for="flexCheckChecked">
-  College & beyond &#40;18yrs 	&gt;&#41;
-  </label>
-</div>
+                    <div className="form-check">
+                      <input className="form-check-input" type="checkbox" value="4" id="flexCheckChecked" />
+                      <label className="form-check-label fw-bold" for="flexCheckChecked">
+                      College & beyond &#40;18yrs 	&gt;&#41;
+                      </label>
+                    </div>
              
                   </div>
                 </div>
@@ -157,31 +250,33 @@ import { withRole } from '../../../utils/withAuthorization';
                     <h5 className="fw-bold m-0 p-0">
                       Spoken Language Preference:
                     </h5>
-                    <select className="w-50 p-2 rounded outline-0 border border_gray  my-3">
-                      <option>Select</option>
-                      <option>Select</option>
-                      <option>Select</option>
-                    </select>
+                      <MultiSelect
+                          options={lang}
+                          value={selectedLang}
+                          onChange={setSelectedLang}
+                          labelledBy={"Select Language"}
+                          isCreatable={true}
+                        />
                   </div>
 
                   <div className="col pt-5">
                     <h5 className="fw-bold m-0 p-0">
                       Accept Interview Request
                     </h5>
-<div className="d-flex gap-4 py-2">
-<div className="form-check">
-  <input className="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1"/>
-  <label className="form-check-label" for="flexRadioDefault1">
-   No
-  </label>
-</div>
-<div className="form-check">
-  <input className="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" />
-  <label className="form-check-label" for="flexRadioDefault2">
-   Yes
-  </label>
-</div>
-</div>
+                    <div className="d-flex gap-4 py-2">
+                    <div className="form-check">
+                      <input className="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" checked={acceptInterviewRequest === 'No'} value='No' onChange={(e)=> setAcceptInterviewRequest(e.target.value)}/>
+                      <label className="form-check-label" for="flexRadioDefault1" >
+                      No
+                      </label>
+                    </div>
+                    <div className="form-check">
+                      <input className="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" checked={acceptInterviewRequest === 'Yes'}  value='Yes' onChange={(e)=> setAcceptInterviewRequest(e.target.value)}/>
+                      <label className="form-check-label" for="flexRadioDefault2">
+                      Yes
+                      </label>
+                    </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -194,7 +289,7 @@ import { withRole } from '../../../utils/withAuthorization';
                   </h4>
 
                   <MultiSelect
-                    options={options}
+                    options={courses}
                     value={selected}
                     onChange={setSelected}
                     labelledBy={"Select Course"}
@@ -265,5 +360,10 @@ import { withRole } from '../../../utils/withAuthorization';
   );
 }
 
+const mapStateToProps = (state) => ({
+  userInfo: state.user.userInfo,
+  loading: state.user.loading,
+  error: state.user.error,
+});
 
-export default withRole(EditProfile, ['Instructor']);
+export default withRole(connect(mapStateToProps, { fetchUser })(EditProfile), ['Instructor']);

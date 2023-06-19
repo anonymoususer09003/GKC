@@ -50,11 +50,45 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
       aa.push({courseId: v.value,proficiencyId: v.proficiencyId.id})
     })
 
+
+    console.log(
+      {
+        userId: userInfo.id,
+        email: userInfo.email,
+        firstName: userInfo.firstName,
+        lastName: userInfo.lastName,
+        address1: userInfo.address1,
+        address2:userInfo.address2,
+        country: userInfo.country,
+        state: userInfo.state,
+        city: userInfo.city,
+        zipCode: userInfo.zipCode,
+        savePaymentFutureUse: userInfo.savePaymentFutureUse,
+        whoPaysEmail: userInfo.whoPaysEmail,
+        emailParent1: parent1,
+        emailParent2: parent2,
+        gradeId: grade,
+        courseOfInterestAndProficiency: aa,
+        languagePreferencesId: ln,
+      },
+    )
     try {
       var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
       const response = await axios.put(
         "http://34.227.65.157/user/student/update",
         {
+          userId: userInfo.id,
+          email: userInfo.email,
+          firstName: userInfo.firstName,
+          lastName: userInfo.lastName,
+          address1: userInfo.address1,
+          address2:userInfo.address2,
+          country: userInfo.country,
+          state: userInfo.state,
+          city: userInfo.city,
+          zipCode: userInfo.zipCode,
+          savePaymentFutureUse: userInfo.savePaymentFutureUse,
+          whoPaysEmail: userInfo.whoPaysEmail,
           emailParent1: parent1,
           emailParent2: parent2,
           gradeId: grade,
@@ -171,7 +205,7 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
       });
       })
       setSelectedCourses(courseOfInterestAndProficiencyArr)
-    console.log(courseOfInterestAndProficiencyArr)
+      console.log(courseOfInterestAndProficiencyArr)
 
       // setFirstName(userInfo.firstName);
       // setLastName(userInfo.lastName);

@@ -6,8 +6,12 @@ import { MdEmail, MdDelete } from "react-icons/md";
 import { withRole } from '../../../utils/withAuthorization';
 import { connect } from "react-redux";
 import { fetchUser } from "../../../store/actions/userActions";
+import { useRouter } from "next/router";
 import axios from "axios"
+
 function EditProfile({ userInfo, loading, error, fetchUser }) {
+  const navigation = useRouter();
+
   const [updated, setUpdated] = useState(false);
   const [countries, setCountries] = useState([]);
   const [states, setStates] = useState([]);
@@ -30,8 +34,10 @@ const handleSubmit =async () => {
     const response = await axios.put(
       "http://34.227.65.157/user/parent/update",
       {
+          userId: userInfo.id,
           firstName: firstName,
           lastName: lastName,
+          email: userInfo.email,
           address1: address1,
           address2: address2,
           country: selectedCountry,
@@ -47,6 +53,7 @@ const handleSubmit =async () => {
       }
     );
     console.log(response);
+    navigation.push('/parent/settingprofile')
     // setCountries(response.data);
   } catch (error) {
     console.error(error);
