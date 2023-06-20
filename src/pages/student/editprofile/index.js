@@ -47,9 +47,8 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
       ln.push(v.value)
     })
     selectedCourses.forEach(v=>{
-      aa.push({courseId: v.value,proficiencyId: v.proficiencyId.id})
+      aa.push({courseId: v.value, proficiencyId: v.proficiencyId.id})
     })
-
 
     console.log(
       {
@@ -88,7 +87,7 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
           city: userInfo.city,
           zipCode: userInfo.zipCode,
           savePaymentFutureUse: userInfo.savePaymentFutureUse,
-          whoPaysEmail: userInfo.whoPaysEmail,
+          whoPaysEmail: 'dileepwork8@gmail.com',
           emailParent1: parent1,
           emailParent2: parent2,
           gradeId: grade,
@@ -103,6 +102,7 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
       );
       console.log(response);
       // setCountries(response.data);
+      navigation.push("/student/settingprofile")
     } catch (error) {
       console.error(error);
     }
@@ -114,7 +114,7 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
       selected && selected.map((option) => ({
         label: option.label,
         value: option.value,
-        proficiencyId: []
+        proficiencyId: {id: 1, name: 'Beginner'}
       }))
     );
   };
@@ -201,11 +201,11 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
        courseOfInterestAndProficiencyArr.push({ 
         label: v.course.name,
         value: v.course.id,
-        proficiencyId: [v.proficiency]
+        proficiencyId: v.proficiency
       });
       })
       setSelectedCourses(courseOfInterestAndProficiencyArr)
-      console.log(courseOfInterestAndProficiencyArr)
+      // console.log(courseOfInterestAndProficiencyArr)
 
       // setFirstName(userInfo.firstName);
       // setLastName(userInfo.lastName);
@@ -260,12 +260,16 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
                     type="text"
                     className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
                     placeholder="Parent1/guardian1"
+                    value={parent1}
+                    onChange={(e)=>setParent1(e.target.value)}
                   />
                   <p className="p-0 m-0 py-2 fw-bold">Parent2/guardian2</p>
                   <input
                     type="text"
                     className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
                     placeholder="Parent2/guardian2"
+                    value={parent2}
+                    onChange={(e)=>setParent2(e.target.value)}
                   />
                   <hr className="bg_secondary" />
 
@@ -282,7 +286,7 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
             <div className="col-12 col-lg-8 py-2">
               <div className="shadow rounded-10 p-5 bg-white">
                 <div className="row">
-                  <div className="col-12 col-md-4">
+                  <div className="col-12 col-md-6">
                     <h4 className="fw-bold">Grade:</h4>
 
                     <div className="form-check">
@@ -342,7 +346,7 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
                       </label>
                     </div>
                   </div>
-                  <div className="col-12 col-md-4 border-start px-4 border_primary">
+                  {/* <div className="col-12 col-md-4 border-start px-4 border_primary">
                     <h4 className="fw-bold">Delivery Mode:</h4>
                     <div className="form-check">
                       <input
@@ -366,7 +370,7 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
                         Online
                       </label>
                     </div>
-                  </div>
+                  </div> */}
                   <div className="col-12 col-md-4 border-start px-4 border_primary">
                     <h4 className="fw-bold">Language Preference:</h4>
                     <MultiSelect
@@ -403,14 +407,14 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
                     <h4 className="fw-bold m-0 p-0">Perference:</h4>
                   </div>
                   {
-                    selectedCourses.map(v=>{
+                    selectedCourses.map((v,ind)=>{
                       return  <div className="row m-0 p-0 py-2 pt-4">
                     <div className="col d-flex align-items-center gap-2">
                       <MdArrowForwardIos className="text_primary h4 p-0 m-0" />
                       <p className="fw-bold m-0 p-0 h5 fw-lighter">{v.label}</p>
                     </div>
                     <div className="col">
-                      <select className="w-100 p-2 rounded outline-0 border border_gray"  onChange={(e) => {
+                      <select className="w-100 p-2 rounded outline-0 border border_gray" value={v.proficiencyId.id} onChange={(e) => {
                            const selectedProficiencyId = Number(e.target.value);
               const selectedProficiencyName = e.target.selectedOptions[0].label;
 
@@ -427,9 +431,9 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
               setSelectedCourses(updatedCourses)
               console.log(updatedCourses)
                           }}>
-                        <option value="1">Beginner</option>
+                        <option value={1}>Beginner</option>
                         <option value="2">Intermediate</option>
-                        <option value="3">Semi-Expert</option>
+                        <option value={3}>Semi-Expert</option>
                       </select>
                     </div>
                   </div>

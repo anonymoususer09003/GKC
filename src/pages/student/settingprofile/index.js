@@ -93,12 +93,12 @@ function SettingProfle({ userInfo, loading, error, fetchUser }) {
                    
                     </p>
                   </div>
-                  <div className="col border-start px-4 border_primary">
+                  {/* <div className="col border-start px-4 border_primary">
                     <h4 className="fw-bold">Delivery Mode:</h4>
                     <ul className="m-0 primary-list">
                       <li className="fw-bold m-0 p-0">Online</li>
                     </ul>
-                  </div>
+                  </div> */}
                   <div className="col border-start px-4 border_primary">
                     <h4 className="fw-bold">Language Preference:</h4>
                     <ul className="m-0 primary-list">

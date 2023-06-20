@@ -63,6 +63,7 @@ export default function InstructorRegistrationMore() {
       return item;
     });
     setDeliveryModes(updatedItems);
+    console.log(deliveryModes)
   };
 
 

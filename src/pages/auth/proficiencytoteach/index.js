@@ -177,7 +177,7 @@ export default function StudentRegistrationCourse() {
                   <div style={{ padding: "50px 0" }}>
                     <h5 className="text-dark fw-bold">
                       No Course Selected Yet.
-                    </h5>
+                    </h5> 
                   </div>
                 ) : (
                   selected.map((v,index) => {

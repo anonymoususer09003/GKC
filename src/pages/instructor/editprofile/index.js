@@ -26,15 +26,22 @@ import axios from "axios"
   ];
  
   const [selected, setSelected] = useState([]);
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [address1, setAddress1] = useState('');
+  const [address2, setAddress2] = useState('');
   const [bio, setBio] = useState('');
   const [hourlyRate, setHourlyRate] = useState('');
-  const [deliveryModes, setDeliveryModes] = useState('');
+  const [deliveryModes, setDeliveryModes] = useState([]);
   const [acceptInterviewRequest, setAcceptInterviewRequest] = useState(false);
+  const [grades, setGrades] = useState([]);
+  const [proficiency, setProficiency] = useState([]);
   
   const [courses,   setCourses] = useState([]);
   const [lang, setLang] = useState([]);
-
-
+  
+  
+  const [selectedCourses, setSelectedCourses] = useState([])
   const [selectedLang, setSelectedLang] = useState([]);
 
   // const [hourlyRate, setHourlyRate] = useState('');
@@ -44,6 +51,138 @@ import axios from "axios"
   }
 
 
+  const handleSelectChange = (selected) => {
+    setSelectedCourses(
+      selected && selected.map((option) => ( {
+        label: option.label,
+        value: option.value,
+        proficiencies: [{value: 1, label: 'Beginner'}]
+      }))
+    );
+
+    console.log(selectedCourses)
+  };
+  
+
+  const handleSelection = (selectedOptions, optionIndex) => {
+    setSelectedCourses((prevData) => {
+      const newData = [...prevData];
+      newData[optionIndex].proficiencies = selectedOptions;
+      return newData;
+    });
+
+    console.log(selectedCourses)
+  };
+
+
+  const handleCheckboxChange = (event) => {
+    const itemId = parseInt(event.target.value);
+    const updatedItems = deliveryModes.map((item) => {
+      if (item.id === itemId) {
+        return { ...item, checked: !item.checked };
+      }
+      return item;
+    });
+    setDeliveryModes(updatedItems);
+    console.log(deliveryModes)
+  };
+
+  const handleChangeGrade = (event) => {
+    const itemId = parseInt(event.target.value);
+    const updatedItems = grades.map((item) => {
+      if (item.id === itemId) {
+        return { ...item, checked: !item.checked };
+      }
+      return item;
+    });
+    setGrades(updatedItems);
+  };
+
+  const onSubmit =async () => {
+    var modes = [];
+    deliveryModes.map((v) => {
+      if(v.checked){
+        modes.push(v.label);
+      }
+    });
+
+    var langs= [];
+    selectedLang.map((v) => {
+      langs.push(v.value);
+    });
+
+    var course = [];
+    selectedCourses.map((v) => {
+      course.push({courseId: v.value,  proficienciesId:  v.proficiencies.map(val=>{
+        return val.value
+       })   });
+    });
+
+    var gradess = [];
+    grades.map((v) => {
+      if(v.checked){
+        gradess.push(v.id);
+      }
+    });
+
+
+    console.log(course)
+    console.log(
+      {
+          userId: userInfo.id,
+          firstName: firstName,
+          lastName: lastName,
+          email: userInfo.email,
+          address1: address1,
+          address2: address2,
+          country: userInfo.country,
+          state: userInfo.state,
+          city: userInfo.city,
+          zipCode: userInfo.zipCode,
+          instructorBio: bio,
+          hourlyRate: hourlyRate,
+          acceptInterviewRequest: acceptInterviewRequest == 'Yes' ? true : false,
+          deliveryModes: modes,
+          gradesIdToTutor: gradess,
+          languagesIdPreference: langs,
+          courseToTeachAndProficiency: course,
+      },
+    )
+    try {
+      var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
+      const response = await axios.put(
+        "http://34.227.65.157/user/instructor/update",
+        {
+          userId: userInfo.id,
+          firstName: firstName,
+          lastName: lastName,
+          email: userInfo.email,
+          address1: address1,
+          address2: address2,
+          country: userInfo.country,
+          state: userInfo.state,
+          city: userInfo.city,
+          zipCode: userInfo.zipCode,
+          instructorBio: bio,
+          hourlyRate: hourlyRate,
+          acceptInterviewRequest: acceptInterviewRequest == 'Yes' ? true : false,
+          deliveryModes: modes,
+          gradesIdToTutor: gradess,
+          languagesIdPreference: langs,
+         courseToTeachAndProficiency: course,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${typ.accessToken}`,
+        },
+        }
+      );
+      console.log(response);
+      navigation.push("/instructor/settingprofile")
+    } catch (error) {
+      console.error(error);
+    }
+  }
   const getLang = async () => {
     try {
       const response = await axios.get(
@@ -79,9 +218,26 @@ import axios from "axios"
       console.error(error);
     }
   };
+
+  const getProficiency = async () => {
+    try {
+      const response = await axios.get(
+        `http://34.227.65.157/public/course/get-all-proficiencies`
+      );
+      var arr = [];
+      response.data.map((v) => {
+        arr.push({ value: v.id, label: v.name });
+      });
+      setProficiency(arr);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
     getLang();
     getCourses();
+    getProficiency()
   }, []);
 
   useEffect(() => {
@@ -93,24 +249,76 @@ import axios from "axios"
     if (userInfo) {
       setHourlyRate(userInfo.hourlyRate);
       setBio(userInfo.instructorBio);
-      setDeliveryModes(userInfo.deliveryModes);
       setAcceptInterviewRequest(userInfo.acceptInterviewRequest ? 'Yes' : 'No');
       let lanArr = [];
       userInfo.languagePreference.forEach(v=>{
         lanArr.push({ value: v.id, label: v.name });
       });
-
+      
       setSelectedLang(lanArr);
-      // deliveryModes
 
-      // setLastName(userInfo.lastName);
-      // setAddress1(userInfo.address1);
-      // setAddress2(userInfo.address2);
-      // setSelectedCountry(userInfo.country);
-      // setSelectedState(userInfo.state);
-      // setSelectedCity(userInfo.city);
-      // setZipCode(userInfo.zipCode);
-      // setDependents(userInfo.dependents)
+      let delArr = [];
+      userInfo.deliveryModes.forEach(v=>{
+        delArr.push({ value: v.id, label: v.name, checked: false });
+      });
+      console.log(delArr);
+
+      let courseArr = [];
+      userInfo?.coursesToTutorAndProficiencies.forEach(v=>{
+       let avalue = v.course.id
+       let alabel = v.course.name;
+
+       let prof = [];
+       v.proficiencies.forEach(val=>{
+        prof.push({value: val.id, label: val.name})
+       })
+
+        courseArr.push({ value: avalue, label: alabel, proficiencies: prof });
+      });
+      setSelectedCourses(courseArr);
+      console.log(courseArr)
+      setFirstName(userInfo.firstName)
+      setLastName(userInfo.lastName)
+      setAddress1(userInfo.address1)
+      setAddress2(userInfo.address2)
+
+
+      let modes = [{checked: false, id  : 1,label: "In-Person"}, {checked  : false,   id :  2, label  : "Online"}]
+      let delMode = [];
+      userInfo.deliveryModes.forEach(v=>{
+        delMode.push({ checked: true, id  : v.id,label   :   v.name})
+      })
+
+      const newArray = modes.map(item => {
+        const matchingItem = delMode.find(elem => elem.id === item.id);
+        if (matchingItem) {
+          return matchingItem; // Replace the item from array2
+        } else {
+          return item; // Keep the item from array1
+        }
+      });
+      
+      console.log(newArray);
+
+      setDeliveryModes(newArray);
+    
+
+      let gradess = [{checked: false, id  : 1,label: "Elementary <10yrs"}, {checked  : false,   id :  2, label  : "Middle School <10yrs - 13yrs"}, {checked  : false,   id :  3, label  : "High School <14yrs - 16yrs"},{checked  : false,   id : 4, label  : "College & Beyond >18yrs"}]
+      let selectGrades = [];
+      userInfo.gradesToTutor.forEach(v=>{
+        selectGrades.push({ checked: true, id: v.id,label   :   v.name + " " + v.description})
+      })
+      const newGradesArray = gradess.map(item => {
+        const matchingItem = selectGrades.find(elem => elem.id === item.id);
+        if (matchingItem) {
+          return matchingItem; // Replace the item from array2
+        } else {
+          return item; // Keep the item from array1
+        }
+      });
+      
+      setGrades(newGradesArray);
+
     }
   }, [userInfo]);
 
@@ -161,12 +369,14 @@ import axios from "axios"
                       {userInfo?.email}
                     </p>
                   </div>
-                  <input type="text" className="border-0 h4 p-1 border-bottom w-100 mb-3" value="John Lark" />
+                  <input type="text" className="border-0 h4 p-1 border-bottom w-100 mb-1" value={firstName} onChange={(e)=> setFirstName(e.target.value)}/>
+                  <input type="text" className="border-0 h4 p-1 border-bottom w-100 mb-3"  value={lastName} onChange={(e)=> setLastName(e.target.value)}/>
 
                   <div className="d-flex gap-1 gap-2 pb-3 ">
                     <MdLocationOn className="h5 p-0 m-0" />
-                    <input type="text" className="border-0 border-bottom w-100" defaultValue=" 1234, Smith Street, Apt. 2000, Houston, TX 70000, USA" />
+                    <input type="text" className="border-0 border-bottom w-100" value={address1} onChange={(e)=> setAddress1(e.target.value)} />
                   </div>
+                    <input type="text" className="border-0 border-bottom w-100" value={address1} onChange={(e)=> setAddress1(e.target.value)} />
                   <hr className="bg_secondary" />
                   <h4 className="p-0 m-0 py-2 fw-bold">Bio</h4>
                   <div>
@@ -177,7 +387,7 @@ import axios from "axios"
                   </div>
 
                   <div className="d-flex gap-2 justify-content-center py-3 pt-5">
-                    <button className="w-50 btn btn-success text-light p-2 rounded fw-bold d-flex align-items-center justify-content-center gap-2" onClick={()=> onContinue()}>
+                    <button className="w-50 btn btn-success text-light p-2 rounded fw-bold d-flex align-items-center justify-content-center gap-2" onClick={()=> onSubmit()}>
                       <BsCheck2Circle /> Save Profile
                     </button>
                   </div>
@@ -196,52 +406,45 @@ import axios from "axios"
 
                   <div className="col-3 border-start px-4 border_primary">
                     <h5 className="fw-bold m-0 p-0">Delivery Mode:</h5>
-                
-                    <div className="form-check pt-2">
-                    <input className="form-check-input" type="checkbox"  id="flexCheckDefault" />
-                    <label className="form-check-label fw-bold" for="flexCheckDefault">
-                    Online
-                    </label>
-                  </div>
-                  <div className="form-check">
-                    <input className="form-check-input" type="checkbox"  id="flexCheckChecked" />
-                    <label className="form-check-label fw-bold" for="flexCheckChecked">
-                    In-Person
-                    </label>
-                  </div>
+                    {deliveryModes.map((v, i) => {
+                      return (
+                        <div className="form-check">
+                          <input
+                            className="form-check-input"
+                            type="checkbox"
+                            onChange={handleCheckboxChange}
+                            value={v.id}
+                            checked={v.checked}
+                          />
+                          <label
+                            className="form-check-label fw-bold"
+                            for="flexCheckDefault"
+                          >
+                            {v.label}
+                          </label>
+                        </div>
+                      );
+                    })}
+                  
                   </div>
 
                   <div className="col-5 border-start px-4 border_primary">
                     <h5 className="fw-bold m-0 p-0">
                       Groups you have expertise to teach:
                     </h5>
-                    <div className="form-check pt-2">
-                      <input className="form-check-input" type="checkbox" value="1" id="flexCheckChecked" />
+                    {
+                      grades.map((v,i)=> {
+                        return  <div className="form-check pt-2" key={v.id}>
+                      <input className="form-check-input" type="checkbox" value="1" id="flexCheckChecked" checked={v.checked}    value={v.id} onChange={handleChangeGrade}/>
                       <label className="form-check-label fw-bold" for="flexCheckChecked">
-                      Elementory &#40;	&lt; 10yrs&#41;
+                      {v.label}
                       </label>
                     </div>
+                      })
+                    }
+                   
 
-                    <div className="form-check">
-                      <input className="form-check-input" type="checkbox" value="2" id="flexCheckChecked" />
-                      <label className="form-check-label fw-bold" for="flexCheckChecked">
-                      Middle School &#40;10yrs - 13yrs&#41;
-                      </label>
-                    </div>
-
-                    <div className="form-check">
-                      <input className="form-check-input" type="checkbox" value="3" id="flexCheckChecked" />
-                      <label className="form-check-label fw-bold" for="flexCheckChecked">
-                      High School &#40;14yrs - 16yrs&#41;
-                      </label>
-                    </div>
-
-                    <div className="form-check">
-                      <input className="form-check-input" type="checkbox" value="4" id="flexCheckChecked" />
-                      <label className="form-check-label fw-bold" for="flexCheckChecked">
-                      College & beyond &#40;18yrs 	&gt;&#41;
-                      </label>
-                    </div>
+              
              
                   </div>
                 </div>
@@ -290,8 +493,8 @@ import axios from "axios"
 
                   <MultiSelect
                     options={courses}
-                    value={selected}
-                    onChange={setSelected}
+                    value={selectedCourses}
+                    onChange={handleSelectChange}
                     labelledBy={"Select Course"}
                     isCreatable={true}
                   />
@@ -306,48 +509,29 @@ import axios from "axios"
                       Profieiency of student you'd rather teach
                     </p>
                   </div>
-
-                  <div className="row m-0 p-0 py-2 pt-4">
+                  {
+                    selectedCourses.map((v,i)=>{
+                      return   <div className="row m-0 p-0 py-2 pt-4">
                     <div className="col d-flex align-items-center gap-2">
                       <MdArrowForwardIos className="text_primary h4 p-0 m-0" />
-                      <p className="fw-bold m-0 p-0 h5 fw-lighter">Course 1</p>
+                      <p className="fw-bold m-0 p-0 h5 fw-lighter">{v.label}</p>
                     </div>
                     <div className="col ">
-                    <select className="w-50 p-2 rounded outline-0 border border_gray ">
-                      <option>Beginner</option>
-                      <option>Intermediate</option>
-                      <option>Semi-Expert</option>
-                    </select>
+                        <MultiSelect
+                        options={proficiency}
+                        value={v.proficiencies}
+                        onChange={(selectedOptions) =>
+                                 handleSelection(selectedOptions, i)
+                           }
+                        labelledBy={"Select Proficiency"}
+                        isCreatable={true}
+                      />
+            
                     </div>
                   </div>
-
-                  <div className="row m-0 p-0 py-2">
-                    <div className="col d-flex align-items-center gap-2">
-                      <MdArrowForwardIos className="text_primary h4 p-0 m-0" />
-                      <p className="fw-bold m-0 p-0 h5 fw-lighter">Course 2</p>
-                    </div>
-                    <div className="col ">
-                    <select className="w-50 p-2 rounded outline-0 border border_gray ">
-                      <option>Beginner</option>
-                      <option>Intermediate</option>
-                      <option>Semi-Expert</option>
-                    </select>
-                    </div>
-                  </div>
-
-                  <div className="row m-0 p-0 py-2">
-                    <div className="col d-flex align-items-center gap-2">
-                      <MdArrowForwardIos className="text_primary h4 p-0 m-0" />
-                      <p className="fw-bold m-0 p-0 h5 fw-lighter">Course 3</p>
-                    </div>
-                    <div className="col ">
-                    <select className="w-50 p-2 rounded outline-0 border border_gray ">
-                      <option>Beginner</option>
-                      <option>Intermediate</option>
-                      <option>Semi-Expert</option>
-                    </select>
-                    </div>
-                  </div>
+                    })
+                  }
+              
                 </div>
               </div>
             </div>

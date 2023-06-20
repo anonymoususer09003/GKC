@@ -93,7 +93,7 @@ export default function RegisterInstructor() {
   useEffect(() => {
     const value = JSON.parse(window.localStorage.getItem("userType"));
     var stored = JSON.parse(window.localStorage.getItem("registrationForm"));
-    setEmail(stored.email);
+    setEmail(stored?.email);
     setUserType(value);
     getCountries();
 
