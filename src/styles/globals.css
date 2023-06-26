@@ -200,19 +200,28 @@ abbr {
     font-size: 30px !important;
 }
 
-.dropdown:hover .dropdown-menu {
+dropdown:hover 
+dropdown-menu 
+   {
     display: block;
     margin-top: 0;
-    /* remove the gap so it doesn't close */
 }
+
 
 .jitsi-container {
     height: 100% !important;
     width: 100% !important;
 }
 
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 700px) {
     .w-md-100 {
         width: 100% !important;
     }
+    input {
+        min-width: 95vw;
+        width: 100%;
+      }
+      select {
+          width: 100%;
+      }
 }
