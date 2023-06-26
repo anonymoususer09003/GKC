@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import styles from "@/styles/Navbar.module.css";
+import styles from "./navbar.module.css";
 import Link from "next/link";
 import { IoMdSettings } from "react-icons/io";
 import { FcCalendar } from "react-icons/fc";
@@ -9,6 +9,7 @@ const Navbar = ({ isLogin }) => {
 
   const [value, setValue] = useState(false);
   console.log(value);
+
   useEffect(() => {
     const stored = localStorage.getItem("gkcAuth");
     console.log(stored);
@@ -54,7 +55,7 @@ const Navbar = ({ isLogin }) => {
                 </>
               )}
               <li className="nav-item">
-                <a className="nav-link active" aria-current="page" href="/">
+                <a className={`nav-link ${styles.homeLink}`} aria-current="page" href="/">
                   Home
                 </a>
               </li>
@@ -64,7 +65,7 @@ const Navbar = ({ isLogin }) => {
                 <>
                   <li className="nav-item">
                     <a
-                      className="nav-link active"
+                      className={`nav-link ${styles.homeLink}`}
                       aria-current="page"
                       href="/student/messaging"
                     >
@@ -74,28 +75,17 @@ const Navbar = ({ isLogin }) => {
                 </>
               )}
             </ul>
-            <form className="d-flex align-items-center gap-2">
+            <div className="d-flex align-items-center gap-2">
               {value || isLogin ? (
-                <>
-                  <Link
-                    href="/auth/signin"
-                    onClick={onSignOut}
-                    className="btn_primary py-2 px-4 fw-bold text-white rounded text-decoration-none "
-                  >
-                    Sign Out
-                  </Link>
-
+                <div className={styles["burger-menu-wrapper"]}>
                   <ul className="list-unstyled">
-                    <li className="dropdown pt-1">
-                      <IoMdSettings
-                        className="h1 ms-2 dropdown-toggle"
-                        href="#"
-                        style={{ fontSize: "35px" }}
-                        data-toggle="dropdown"
-                        role="button"
-                        aria-haspopup="true"
-                        aria-expanded="false"
-                      />
+                    <div className="dropdown">
+                      <button className="btn btn-lg dropdown-toggle" 
+                      data-bs-toggle="dropdown" 
+                      type="button"
+                      aria-expanded="false">
+                        <IoMdSettings/>
+                      </button>
                       <ul
                         className="dropdown-menu shadow"
                         style={{ right: "0px", width: "240px" }}
@@ -149,9 +139,20 @@ const Navbar = ({ isLogin }) => {
                           </a>
                         </li>
                       </ul>
-                    </li>
+                      
+                    </div>
+ 
                   </ul>
-                </>
+                  <Link
+                    href="/auth/signin"
+                    onClick={onSignOut}
+                    className={`btn_primary py-2 px-4 fw-bold text-white rounded text-decoration-none ${styles.signOutBtn}`}
+                  >
+                    Sign Out
+                  </Link>
+                </div>
+         
+
               ) : (
                 <Link
                   href="/auth/signin"
@@ -160,7 +161,7 @@ const Navbar = ({ isLogin }) => {
                   Sign In
                 </Link>
               )}
-            </form>
+            </div>
           </div>
         </div>
       </nav>
