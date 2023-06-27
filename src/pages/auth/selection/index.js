@@ -5,6 +5,7 @@ import Link from "next/link";
 import {  Footer } from "../../../components";
 import { RiArrowGoBackLine } from "react-icons/ri";
 import {useRouter} from "next/router"
+import styles from "../../../styles/Home.module.css"
 
 export default function Selection() {
   const [userType, setUserType] =useState('student')
@@ -53,7 +54,7 @@ export default function Selection() {
                 <div className="d-flex align-items-center justify-content-center gap-3 my-3">
                   <div className="form-check">
                     <input
-                      className="form-check-input"
+                      className={`form-check-input ${styles.checklInputs}`}
                       type="radio"
                       name="userType"
                       value="student"
@@ -67,7 +68,7 @@ export default function Selection() {
                   </div>
                   <div className="form-check">
                     <input
-                      className="form-check-input"
+                      className={`form-check-input ${styles.checklInputs}`}
                       type="radio"
                       name="userType"
                       value="parent"
@@ -82,7 +83,7 @@ export default function Selection() {
                   </div>
                   <div className="form-check">
                     <input
-                      className="form-check-input"
+                      className={`form-check-input ${styles.checklInputs}`}
                       type="radio"
                       name="userType"
                       value="instructor"

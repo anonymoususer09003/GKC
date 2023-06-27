@@ -80,14 +80,14 @@ const Navbar = ({ isLogin }) => {
                 <div className={styles["burger-menu-wrapper"]}>
                   <ul className="list-unstyled">
                     <div className="dropdown">
-                      <button className="btn btn-lg dropdown-toggle" 
-                      data-bs-toggle="dropdown" 
-                      type="button"
-                      aria-expanded="false">
+                      <button className="btn btn-lg dropdown-toggle"
+                        data-bs-toggle="dropdown" 
+                        type="button"
+                        aria-expanded="false">
                         <IoMdSettings/>
                       </button>
                       <ul
-                        className="dropdown-menu shadow"
+                        className={`dropdown-menu shadow ${styles.dropDown}`}
                         style={{ right: "0px", width: "240px" }}
                       >
                         <li className="p-3">

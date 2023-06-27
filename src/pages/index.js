@@ -26,12 +26,12 @@ function StudentLandingPage() {
   const [insructors, setInsructors] = useState([]);
   const search = async () => {
     try {
-      var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
+     //var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
       const res = await axios.get(`http://34.227.65.157/public/landing/filter?name=${name}&hourlyRate=${hourlyRate}&grades=${ageGroup}&courses=${selectedCourse}&spokenLanguage=${selectedLang}&deliveryModes=${mode}&page=0&size=10`, {
-        headers: {
+      /*  headers: {
           Authorization: `Bearer ${typ.accessToken}`,
-        },
-      });
+        },*/
+      })
       setInsructors(res.data);
       console.log(res);
     } catch (error) {
@@ -122,7 +122,7 @@ const getLang = async () => {
             <input
               type="text"
               placeholder="Search for a tutor by Name"
-              className="p-2 rounded w-25 outline-0 border border_gray"
+              className={`p-2 rounded outline-0 border border_gray ${styles.landingInputs}`}
               onChange={(e)=>setName(e.target.value)}
             />
           </div>
@@ -171,7 +171,7 @@ const getLang = async () => {
             <input
               type="number"
               placeholder="Hourly Rate"
-              className="p-2 rounded w-25 outline-0 border border_gray"
+              className={`p-2 rounded outline-0 border border_gray ${styles.landingInputs}`}
               onChange={(e)=> setHourlyRate(e.target.value)}
             />
             <select className="p-2 rounded outline-0 border border_gray">
@@ -185,7 +185,7 @@ const getLang = async () => {
             <input
               type="text"
               placeholder="Enter City and state or Zip/Post Code"
-              className="p-2 rounded w-25 outline-0 border border_gray"
+              className={`p-2 rounded outline-0 border border_gray ${styles.landingInputs}`}
               onChange={(e)=> setSelectedZip(e.target.value)}
             />
             <button

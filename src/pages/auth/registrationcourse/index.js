@@ -5,6 +5,7 @@ import { BsCheck2Circle } from "react-icons/bs";
 import { useRouter } from "next/router";
 import axios from "axios";
 import { MultiSelect } from "react-multi-select-component";
+import styles from "../../../styles/Home.module.css";
 
 export default function StudentRegistrationCourse() {
   const navigation = useRouter();
@@ -129,14 +130,14 @@ export default function StudentRegistrationCourse() {
             }}
           ></div>
           <div className="col-12 col-lg-7 d-flex justify-content-center align-items-center ">
-            <div className="w-100 w-md-50 p-5">
+            <div className={`w-100 w-md-50 p-5 ${styles.courseWrapper}`}>
               <div>
                 <h4 className="text-dark fw-bold">
                   Which courses are you interested in?
                 </h4>
 
                 <div className="py-4">
-                  <div className="w-50 mb-3">
+                  <div className={`w-50 mb-3 ${styles.courseDropdowns}`}>
                     <MultiSelect
                       options={courses}
                       value={selected}
@@ -206,7 +207,7 @@ export default function StudentRegistrationCourse() {
                   </h4>
 
                   <div className="py-2">
-                    <div className="w-50 mb-3">
+                    <div className={`w-50 mb-3 ${styles.courseDropdowns}`}>
                        <MultiSelect
                         options={lang}
                         value={selectedLang}
@@ -217,10 +218,10 @@ export default function StudentRegistrationCourse() {
                     </div>
                   </div>
 
-                  <div className="d-flex gap-2 justify-content-between mt-3">
+                  <div className={`d-flex gap-2 mt-3 ${styles.courseBtnWrapper}`}>
                     <button
                       onClick={onContinue}
-                      className={`w-25 text-light p-2 px-5 rounded fw-bold  ${ selected.length == 0 || selectedLang.length == 0 ? 'btn_disabled' : 'btn_primary'}`}
+                      className={`text-light p-2 px-5 rounded fw-bold  ${selected.length == 0 || selectedLang.length == 0 ? 'btn_disabled' : 'btn_primary'}`}
                       disabled={selected.length == 0 || selectedLang.length == 0 ? true : false}
                     >
                       Continue
