@@ -6,8 +6,10 @@ import { BsCheck2Circle } from "react-icons/bs";
 import { useRouter } from "next/router";
 import { RiArrowGoBackLine } from "react-icons/ri";
 import axios from "axios";
+import styles from "../../../styles/Home.module.css"
 
 export default function RegisterStudent() {
+  const router = useRouter()
   const navigation = useRouter();
   const [countries, setCountries] = useState([]);
   const [states, setStates] = useState([]);
@@ -29,7 +31,7 @@ export default function RegisterStudent() {
   const [termsAgree, setTermsAgree] = useState(false);
   const [isInitialRender, setIsInitialRender] = useState(true);
 
-  let isValidForm = email && firstname && lastname && guardianEmail1 && address1 && country && state && city && zipCode && password  && termsAgree;
+  let isValidForm = country && state && city && zipCode && password  && termsAgree;
 
 
   const onContinue = () => {
@@ -54,7 +56,6 @@ export default function RegisterStudent() {
     stored.savePaymentFutureUse = false;
     stored.timeZoneId = timezone;
 
-    console.log(stored);
     window.localStorage.setItem("registrationForm", JSON.stringify(stored));
     if (password == confirmPassword) {
       navigation.push("/auth/registrationgrade");
@@ -118,6 +119,10 @@ export default function RegisterStudent() {
       } else {
         getCities();
       }}, [state]);
+
+      const handleBack = () => {
+        router.push("/auth/activatecode")
+      }
   return (
     <>
       <Head>
@@ -130,6 +135,7 @@ export default function RegisterStudent() {
         <Link
           href="#"
           className="text-decoration-none p-4 d-flex gap-2 align-items-center text-dark"
+          onClick={handleBack}
         >
           <RiArrowGoBackLine />
           <p className="fw-bold m-0 p-0 ">Back</p>
@@ -147,7 +153,7 @@ export default function RegisterStudent() {
           <div className="col-12 col-lg-6 d-flex justify-content-center align-items-center ">
             <div className="w-100 w-md-75 p-5">
               <div>
-                <div className="d-flex justify-content-between align-items-center mb-3">
+                <div className={`d-flex justify-content-between align-items-center mb-3 ${styles.studentEmailWrapper}`}>
                   <h4 className="text-secondary fw-bold text-capitalize">
                     Student
                   </h4>
@@ -236,7 +242,7 @@ export default function RegisterStudent() {
                       })}
                     </select>
                   </div>
-                  <div className="d-flex   flex-md-nowrap flex-wrap gap-2">
+                  <div className="d-flex flex-md-nowrap flex-wrap gap-2">
                     <select
                       onChange={(e) => setCity(e.target.value)}
                       className="w-100 p-2 rounded outline-0 border border_gray  mb-3"

@@ -6,34 +6,20 @@ import { RiArrowGoBackLine } from "react-icons/ri";
 import { Footer } from "../../../components";
 import { useRouter } from "next/router";
 import axios from "axios";
+
+
 export default function SignIn() {
   const navigation = useRouter();
   const [userType, setUserType] = useState("student");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const onContinue = () => {
-    // console.log(userType)
-    // window.localStorage.setItem("userType", JSON.stringify(userType))
-    // window.localStorage.setItem("gkcAuth", JSON.stringify(true))
-    // if(userType === "student"){
-    //   navigation.push("/")
-    // }
-    // if(userType === "parent"){
-    //   navigation.push("/parent")
-    // }
-    // if(userType === "instructor"){
-    //   navigation.push("/instructor")
-    // }
-  };
 
   const onLogin = async () => {
-    console.log(email, password);
     try {
       const response = await axios.post(`http://34.227.65.157/auth/login`, {
         email: email,
         password: password,
       });
-      console.log(response.data.accessToken);
       const res = await axios.get(
         "http://34.227.65.157/user/logged-user-role",
         {
@@ -42,7 +28,6 @@ export default function SignIn() {
           },
         }
       );
-      console.log(res.data);
       
       window.localStorage.setItem("gkcAuth", JSON.stringify({accessToken: response.data.accessToken, role: res.data}));
       if (res.data === "Student") {
@@ -78,7 +63,7 @@ export default function SignIn() {
         </Link>
         <div className="row">
           <div className="col-12 col-lg-6 d-flex justify-content-center align-items-center p-4 ">
-            <div style={{ maxWidth: "400px", width: "100%" }}>
+            <div>
               {/* <h1 className="text-center mb-5">GSK</h1> */}
               <div className="d-flex justify-content-center mb-5">
                 <Image
@@ -115,7 +100,7 @@ export default function SignIn() {
                   />
                   <input
                     type="password"
-                    className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
+                    className="w-100 p-2 rounded outline-0 border border_gray mb-3"
                     placeholder="Password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}

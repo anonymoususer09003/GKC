@@ -190,6 +190,27 @@
         background: linear-gradient( to bottom, transparent 0%, rgb(var(--background-end-rgb)) 40%);
         z-index: 1;
     }
+
+    .checklInputs {
+        min-width: 0;
+    }
+    .studentEmailWrapper {
+        flex-direction: column;
+    }
+
+    .courseWrapper {
+      padding: 0.5rem !important
+    }
+
+    .courseDropdowns {
+        width: 100% !important;
+    }
+    .courseBtnWrapper {
+        justify-content: center;
+    }
+    .landingInputs {
+        width: 100%;
+    }
 }
 
 

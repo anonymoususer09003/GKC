@@ -9,6 +9,9 @@
   display: flex !important;
   flex-direction: row;
 }
+.dropDown {
+  left: -176px !important;
+}
 @media (max-width: 700px) {
   .navLinks {
    padding-top: 10px;

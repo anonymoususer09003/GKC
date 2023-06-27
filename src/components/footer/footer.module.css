@@ -1,0 +1,12 @@
+@media (max-width: 700px) {
+  .linksContainer {
+    width: 100vw;
+    justify-content: space-between;
+  }
+  
+  .allRights {
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+  }
+}
