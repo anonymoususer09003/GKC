@@ -3,6 +3,9 @@ import PaymentForm from "../PaymentForm";
 import { useRouter } from "next/router";
 import { ParentNavbar, Footer } from "../../";
 import GetUserCardDetail from "@/services/stripe/GetUserCardDetail";
+
+
+
 export default function index() {
   const navigation = useRouter();
   const [isEdit, setIsEdit] = useState(false);
@@ -37,7 +40,6 @@ export default function index() {
   }, []);
   return (
     <main className=" d-flex flex-column justify-content-between  min-vh-100">
-      <ParentNavbar />
       <div className="m-auto" style={{ maxWidth: "600px", width: "100%" }}>
         <div>
           {isEdit && (

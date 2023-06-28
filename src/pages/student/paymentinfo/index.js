@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Head from "next/head";
 import ParentDetail from "../../../components/stripe/PaymentDetail/index";
 import { withRole } from "../../../utils/withAuthorization";
+import StudentLayout from "@/common/StudentLayout";
 
 function CreditCardInfo() {
   return (
@@ -12,7 +13,9 @@ function CreditCardInfo() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <ParentDetail />
+      <StudentLayout>
+        <ParentDetail />
+      </StudentLayout>
     </>
   );
 }
