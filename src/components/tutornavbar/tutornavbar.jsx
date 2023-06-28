@@ -4,6 +4,9 @@ import styles from "@/styles/Navbar.module.css";
 import Link from "next/link";
 import { IoMdSettings } from "react-icons/io";
 import { FcCalendar } from "react-icons/fc";
+import onSignOut from "@/utils/signOut";
+import LogoutTimer from "../common/signOutTimer";
+
 const TutorNavbar = ({ isLogin }) => {
   const [value, setValue] = useState(false)
   console.log(value);
@@ -14,12 +17,11 @@ const TutorNavbar = ({ isLogin }) => {
 
       setValue(stored ? JSON.parse(stored) : false);
   },[])
-const onSignOut = () => {
-  window.localStorage.removeItem("gkcAuth")
-}
+
   return (
     <>
       <nav className="navbar navbar-expand-lg navbar-light bg-light p-3">
+      <LogoutTimer logout={onSignOut}/>
         <div className="container-fluid">
           <div className="pe-4">
             <Image
@@ -76,16 +78,16 @@ const onSignOut = () => {
                   <Link
                     href="/auth/signin"
                     className="btn_primary py-2 px-4 fw-bold text-white rounded text-decoration-none "
+                    onClick={onSignOut}
                   >
                     Sign Out
                   </Link>
               
                     <ul className="list-unstyled">
-                      <li className="dropdown h1 pt-1">
+                      <li className="dropdown h1 pt-1 dropdown-toggle">
                         <IoMdSettings
                           className="h1 ms-2"
                           href="#"
-                          className="dropdown-toggle"
                           data-toggle="dropdown"
                           role="button"
                           aria-haspopup="true"

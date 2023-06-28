@@ -6,8 +6,27 @@ import { Navbar, Footer, TutorCard } from "./../components";
 const inter = Inter({ subsets: ["latin"] });
 import { withRole } from './../utils/withAuthorization';
 import axios from "axios"
+import { isAuthenticated } from "@/pages/isAuth";
 
+/*
+export async function getServerSideProps(context) {
+  const authenticated = isAuthenticated();
+
+  if (!authenticated) {
+    return {
+      redirect: {
+        destination: '/auth/signin', // Redirect to the login page
+        permanent: false,
+      },
+
+    };
+  }
+  console.log(authenticated, "heeee")
+}
+*/
 function StudentLandingPage() {
+  const authenticated = isAuthenticated();
+
   const [showModal, setShowModal] = useState(false);
 
   const [showCards, setShowCards] = useState(false);
@@ -24,6 +43,7 @@ function StudentLandingPage() {
   const [lang, setLang] = useState([]);
   const [proficiency, setProficiency] = useState([]);
   const [insructors, setInsructors] = useState([]);
+
   const search = async () => {
     try {
      //var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
@@ -212,7 +232,7 @@ const getLang = async () => {
               insructors.map((instructor)=> {
                 return <TutorCard data={instructor} key={instructor.id}  
                 showModal={showModal}
-            setShowModal={setShowModal}
+                setShowModal={setShowModal}
 
             />
               })

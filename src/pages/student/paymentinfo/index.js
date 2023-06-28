@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Head from "next/head";
 import ParentDetail from "../../../components/stripe/PaymentDetail/index";
 import { withRole } from "../../../utils/withAuthorization";
-import StudentLayout from "@/common/StudentLayout";
+import StudentLayout from "@/components/common/StudentLayout";
 
 function CreditCardInfo() {
   return (
