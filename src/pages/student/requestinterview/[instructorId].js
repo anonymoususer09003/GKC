@@ -52,7 +52,7 @@ function RequestInterview({ userInfo, loading, error, fetchUser }) {
   const getCourses = async () => {
     try {
       const response = await axios.get(
-        `http://34.227.65.157/public/course/get-all-courses`
+        `http://34.227.65.157/public/course/with-instructors`
       );
 
       var technologyList = [];

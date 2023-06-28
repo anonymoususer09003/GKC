@@ -145,7 +145,7 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
   const getLang = async () => {
     try {
       const response = await axios.get(
-        `http://34.227.65.157/public/register/get-all-languages`
+        `http://34.227.65.157/language/with-instructors`
       );
       var arr = [];
       console.log(response.data)
@@ -161,7 +161,7 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
   const getCourses = async () => {
     try {
       const response = await axios.get(
-        `http://34.227.65.157/public/course/get-all-courses`
+        `http://34.227.65.157/public/course/with-instructors`
       );
 
       var technologyList = [];
