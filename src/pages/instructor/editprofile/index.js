@@ -186,7 +186,7 @@ import axios from "axios"
   const getLang = async () => {
     try {
       const response = await axios.get(
-        `http://34.227.65.157/public/register/get-all-languages`
+        `http://34.227.65.157/language/with-instructors`
       );
       var arr = [];
       response.data.map((v) => {
@@ -204,7 +204,7 @@ import axios from "axios"
   const getCourses = async () => {
     try {
       const response = await axios.get(
-        `http://34.227.65.157/public/course/get-all-courses`
+        `http://34.227.65.157/public/course/with-instructors`
       );
 
       var technologyList = [];
@@ -322,8 +322,6 @@ import axios from "axios"
     }
   }, [userInfo]);
 
-  console.log(userInfo)
-
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -435,17 +433,13 @@ import axios from "axios"
                     {
                       grades.map((v,i)=> {
                         return  <div className="form-check pt-2" key={v.id}>
-                      <input className="form-check-input" type="checkbox" value="1" id="flexCheckChecked" checked={v.checked}    value={v.id} onChange={handleChangeGrade}/>
+                      <input className="form-check-input" type="checkbox"  id="flexCheckChecked" checked={v.checked} value={v.id} onChange={handleChangeGrade}/>
                       <label className="form-check-label fw-bold" for="flexCheckChecked">
                       {v.label}
                       </label>
                     </div>
                       })
-                    }
-                   
-
-              
-             
+ }
                   </div>
                 </div>
                 <div className="row">

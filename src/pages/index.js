@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import Head from "next/head";
 import { Inter } from "next/font/google";
-import styles from "@/styles/Home.module.css";
 import { Navbar, Footer, TutorCard } from "./../components";
 const inter = Inter({ subsets: ["latin"] });
 import { withRole } from './../utils/withAuthorization';
 import axios from "axios"
-import { isAuthenticated } from "@/pages/isAuth";
+import styles from "@/styles/Home.module.css";
+
+//import { isAuthenticated } from "@/pages/isAuth";
 
 /*
 export async function getServerSideProps(context) {
@@ -25,7 +26,7 @@ export async function getServerSideProps(context) {
 }
 */
 function StudentLandingPage() {
-  const authenticated = isAuthenticated();
+  //const authenticated = isAuthenticated();
 
   const [showModal, setShowModal] = useState(false);
 
@@ -80,7 +81,7 @@ function StudentLandingPage() {
 const getCourses = async () => {
   try {
     const response = await axios.get(
-      `http://34.227.65.157/public/course/get-all-courses`
+      `http://34.227.65.157/public/course/with-instructors`
     );
     var technologyList = [];
     
@@ -110,7 +111,7 @@ const getProficiency = async () => {
 const getLang = async () => {
   try {
     const response = await axios.get(
-      `http://34.227.65.157/public/register/get-all-languages`
+      `http://34.227.65.157/language/with-instructors`
     );
     var arr = [];
     response.data.map((v) => {
@@ -149,7 +150,7 @@ const getLang = async () => {
 
           <div className="d-flex justify-content-center gap-2 flex-wrap">
             <select className="p-2 rounded outline-0 border border_gray" onChange={(e)=> setSelectCourse(e.target.value)}>
-              <option value="">Select Course</option>
+              <option value="">Course</option>
               {
                 courses.map(course=> {
                   return  <option value={course.value} key={course.value}>{course.label}</option>
@@ -178,24 +179,25 @@ const getLang = async () => {
               <option value="1">In-Person</option>
               <option value="2">Online</option>
             </select>
-            <select className="p-2 rounded outline-0 border border_gray"   onChange={(e)=> setSelectedLang(e.target.value)}>
+            <select 
+              className="p-2 rounded outline-0 border border_gray"   
+              onChange={(e)=> setSelectedLang(e.target.value)}
+              >
               <option value="">Spoken Language</option>
                 {
                   lang.map(lan=> {
                   return  <option value={lan.value} key={lan.value}>{lan.label}</option>
                 })
               }
-              <option value="">Option 2</option>
-              <option value="">Option 3</option>
             </select>
             <input
               type="number"
-              placeholder="Hourly Rate"
+              placeholder="Max Hourly Rate"
               className={`p-2 rounded outline-0 border border_gray ${styles.landingInputs}`}
               onChange={(e)=> setHourlyRate(e.target.value)}
             />
             <select className="p-2 rounded outline-0 border border_gray">
-              <option value="">Stars</option>
+              <option value="">Min.Stars</option>
               <option value="">1 Star</option>
               <option value="">2 Star</option>
               <option value="">3 Star</option>

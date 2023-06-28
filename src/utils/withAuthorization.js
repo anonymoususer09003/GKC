@@ -9,10 +9,15 @@ const withRole = (WrappedComponent, allowedRoles) => {
             const value = JSON.parse(window.localStorage.getItem("gkcAuth"));
             // Check if the user's role is allowed for this route
             const userRole = value?.role; // Fetch the user's role from the session
-          /*  if(!value){
-                router.push('/auth/signin');
+            if(!value && userRole === "student"){
+                router.push('/');
             }
-            if (!allowedRoles.includes(userRole)) {
+            if(!value && userRole === "Parent"){
+                router.push('/parent');
+            }   if(!value && userRole === "Instructor"){
+                router.push('/instructor');
+            }
+           /* if (!allowedRoles.includes(userRole)) {
                 router.push('/unauthorized');
             }*/
         }, []);

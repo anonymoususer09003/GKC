@@ -25,6 +25,7 @@ const [courses, setCourses] = useState([]);
 const [lang, setLang] = useState([]);
 const [proficiency, setProficiency] = useState([]);
 const [insructors, setInsructors] = useState([]);
+
 const search = async () => {
   try {
     var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
@@ -61,7 +62,7 @@ const getInstructors = async () => {
 const getCourses = async () => {
 try {
   const response = await axios.get(
-    `http://34.227.65.157/public/course/get-all-courses`
+    `http://34.227.65.157/public/course/with-instructors`
   );
   var technologyList = [];
   
@@ -91,7 +92,7 @@ try {
 const getLang = async () => {
 try {
   const response = await axios.get(
-    `http://34.227.65.157/public/register/get-all-languages`
+    `http://34.227.65.157/language/with-instructors`
   );
   var arr = [];
   response.data.map((v) => {
@@ -123,14 +124,14 @@ useEffect(()=>{
             <input
               type="text"
               placeholder="Search for a tutor by Name"
-              className="p-2 rounded w-25 outline-0 border border_gray"
+              className={`p-2 rounded outline-0 border border_gray ${styles.landingInputs}`}
               onChange={(e)=>setName(e.target.value)}
             />
           </div>
 
           <div className="d-flex justify-content-center gap-2 flex-wrap">
-            <select className="p-2 rounded outline-0 border border_gray" onChange={(e)=> setSelectCourse(e.target.value)}>
-              <option value="">Select Course</option>
+            <select className="p-2 rounded outline-0 border border_grFay" onChange={(e)=> setSelectCourse(e.target.value)}>
+              <option value="">Course</option>
               {
                 courses.map(course=> {
                   return  <option value={course.value} key={course.value}>{course.label}</option>
@@ -166,17 +167,15 @@ useEffect(()=>{
                   return  <option value={lan.value} key={lan.value}>{lan.label}</option>
                 })
               }
-              <option value="">Option 2</option>
-              <option value="">Option 3</option>
             </select>
             <input
               type="number"
-              placeholder="Hourly Rate"
-              className="p-2 rounded w-25 outline-0 border border_gray"
+              placeholder="Max Hourly Rate"
+              className={`p-2 rounded outline-0 border border_gray ${styles.landingInputs}`}
               onChange={(e)=> setHourlyRate(e.target.value)}
             />
             <select className="p-2 rounded outline-0 border border_gray">
-              <option value="">Stars</option>
+              <option value="">Min.Stars</option>
               <option value="">1 Star</option>
               <option value="">2 Star</option>
               <option value="">3 Star</option>
@@ -186,7 +185,7 @@ useEffect(()=>{
             <input
               type="text"
               placeholder="Enter City and state or Zip/Post Code"
-              className="p-2 rounded w-25 outline-0 border border_gray"
+              className={`p-2 rounded outline-0 border border_gray ${styles.landingInputs}`}
               onChange={(e)=> setSelectedZip(e.target.value)}
             />
             <button
