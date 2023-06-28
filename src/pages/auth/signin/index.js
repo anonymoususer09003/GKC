@@ -6,7 +6,8 @@ import { RiArrowGoBackLine } from "react-icons/ri";
 import { Footer } from "../../../components";
 import { useRouter } from "next/router";
 import axios from "axios";
-
+import girl from "public/assets/auth_girl_1.png"
+import logo from "public/assets/logo.png"
 
 export default function SignIn() {
   const navigation = useRouter();
@@ -67,7 +68,7 @@ export default function SignIn() {
               {/* <h1 className="text-center mb-5">GSK</h1> */}
               <div className="d-flex justify-content-center mb-5">
                 <Image
-                  src="/assets/logo.png"
+                  src={logo}
                   alt="Vercel Logo"
                   className=""
                   width={100}
@@ -133,7 +134,7 @@ export default function SignIn() {
           >
             <div style={{ position: "absolute", right: "0%", bottom: "7%" }}>
               <Image
-                src="/assets/auth_girl_1.png"
+                src={girl}
                 alt="Vercel Logo"
                 className=""
                 width={400}
