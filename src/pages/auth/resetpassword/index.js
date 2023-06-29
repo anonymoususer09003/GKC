@@ -27,7 +27,7 @@ export default function ResetPassword() {
             <div style={{ maxWidth: "380px", width: "100%" }}>
               <div className="d-flex justify-content-center mb-5">
                 <Image
-                  src="/assets/logo.png"
+                  src="https://gkc-images.s3.amazonaws.com/logo.png"
                   alt="Vercel Logo"
                   className=""
                   width={100}

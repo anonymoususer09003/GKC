@@ -39,7 +39,7 @@ function RequestInterview({ userInfo, loading, error, fetchUser }) {
       courseId: courseId,
       mode: mode,
       instructorId:instructorId,
-      hourlyRate: insName.hourlyRate
+     // hourlyRate: insName.hourlyRate
     };
 
     router.push({

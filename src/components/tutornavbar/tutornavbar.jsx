@@ -25,7 +25,7 @@ const TutorNavbar = ({ isLogin }) => {
         <div className="container-fluid">
           <div className="pe-4">
             <Image
-              src="/assets/logo.png"
+              src="https://gkc-images.s3.amazonaws.com/logo.png"
               alt="Vercel Logo"
               className=""
               width={100}

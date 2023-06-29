@@ -111,7 +111,7 @@ const getProficiency = async () => {
 const getLang = async () => {
   try {
     const response = await axios.get(
-      `http://34.227.65.157/language/with-instructors`
+      `http://34.227.65.157/public/language/with-instructors`
     );
     var arr = [];
     response.data.map((v) => {
