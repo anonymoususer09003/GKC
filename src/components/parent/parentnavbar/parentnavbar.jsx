@@ -1,6 +1,6 @@
 import React, {useState, useEffect}  from "react";
 import Image from "next/image";
-import styles from "@/styles/Navbar.module.css";
+import styles from "./parentnavbar.module.css";
 import Link from "next/link";
 import { IoMdSettings } from "react-icons/io";
 import { FcCalendar } from "react-icons/fc";
@@ -13,7 +13,6 @@ const TutorNavbar = ({ isLogin }) => {
 
   useEffect(()=>{
       const stored = localStorage.getItem("gkcAuth");
-  console.log(stored);
 
       setValue(stored ? JSON.parse(stored) : false);
   },[])
@@ -25,7 +24,7 @@ const TutorNavbar = ({ isLogin }) => {
         <div className="container-fluid">
           <div className="pe-4">
             <Image
-              src="/assets/logo.png"
+              src="https://gkc-images.s3.amazonaws.com/logo.png"
               alt="Vercel Logo"
               className=""
               width={100}
@@ -56,7 +55,7 @@ const TutorNavbar = ({ isLogin }) => {
                 </>
               )}
               <li className="nav-item">
-                <a className="nav-link active" aria-current="page" href="/parent">
+                <a className={`nav-link ${styles.homeLink}`}  aria-current="page" href="/parent">
                   Home
                 </a>
               </li>
@@ -65,7 +64,7 @@ const TutorNavbar = ({ isLogin }) => {
               {value && (
                 <>
                   <li className="nav-item">
-                    <a className="nav-link active" aria-current="page" href="/parent/messaging">
+                    <a className={`nav-link ${styles.homeLink}`}  aria-current="page" href="/parent/messaging">
                       Message
                     </a>
                   </li>
@@ -74,29 +73,18 @@ const TutorNavbar = ({ isLogin }) => {
             </ul>
             <form className="d-flex align-items-center gap-2">
               {value ? (
-                <>
-                  <Link
-                    href="/auth/signin"
-                    className="btn_primary py-2 px-4 fw-bold text-white rounded text-decoration-none "
-                    onClick={onSignOut}
-                
-                >
-                    Sign Out
-                  </Link>
-              
+                <div className={styles["burger-menu-wrapper"]}>      
                     <ul className="list-unstyled">
-                      <li className="dropdown h1 pt-1">
-                        <IoMdSettings
-                          className="h1 ms-2 dropdown-toggle"
-                          href="#"
-                          data-toggle="dropdown"
-                          role="button"
-                          aria-haspopup="true"
-                          aria-expanded="false"
-                        />
+                    <div className="dropdown">
+                      <button className="btn btn-lg dropdown-toggle"
+                          data-bs-toggle="dropdown" 
+                          type="button"
+                          aria-expanded="false">
+                          <IoMdSettings/>
+                        </button>
                         <ul
-                          className="dropdown-menu shadow"
-                          style={{ right: "0px", width:"240px"}}
+                        className={`dropdown-menu shadow ${styles.dropDown}`}
+                        style={{ right: "0px", width:"240px"}}
                         >
                         <li className="p-3">
                             <a href="/parent/settingprofile" className="nav-link fw-bold">Profile</a>
@@ -115,13 +103,18 @@ const TutorNavbar = ({ isLogin }) => {
                           </li>
                           <li className="p-3">
                             <a href="/parent/financialreport" className="nav-link fw-bold">Financial Report</a>
-                          </li>
-                    
-                    
+                          </li>           
                         </ul>
-                      </li>
+                      </div>
                     </ul>
-                </>
+                    <Link
+                      href="/auth/signin"
+                      className={`btn_primary py-2 px-4 fw-bold text-white rounded text-decoration-none ${styles.signOutBtn}`}
+                      onClick={onSignOut}
+                >
+                    Sign Out
+                  </Link>
+                </div>
               ) : (
                 <Link
                   href="/auth/signin"

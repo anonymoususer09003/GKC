@@ -145,7 +145,7 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
   const getLang = async () => {
     try {
       const response = await axios.get(
-        `http://34.227.65.157/language/with-instructors`
+        `http://34.227.65.157/public/language/with-instructors`
       );
       var arr = [];
       console.log(response.data)

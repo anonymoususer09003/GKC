@@ -10,11 +10,9 @@ import LogoutTimer from "../common/signOutTimer";
 const Navbar = ({ isLogin }) => {
 
   const [value, setValue] = useState(false);
-  console.log(value);
 
   useEffect(() => {
     const stored = localStorage.getItem("gkcAuth");
-    console.log(stored);
     setValue(stored ? JSON.parse(stored) : false);
   }, []);
 
@@ -25,7 +23,7 @@ const Navbar = ({ isLogin }) => {
         <div className="container-fluid">
           <div className="pe-4">
             <Image
-              src="/assets/logo.png"
+              src="https://gkc-images.s3.amazonaws.com/logo.png"
               alt="Vercel Logo"
               className=""
               width={100}

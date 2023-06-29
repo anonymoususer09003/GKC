@@ -7,7 +7,6 @@ import { Footer } from "../../../components";
 import { useRouter } from "next/router";
 import axios from "axios";
 import girl from "public/assets/auth_girl_1.png"
-import logo from "public/assets/logo.png"
 
 export default function SignIn() {
   const navigation = useRouter();
@@ -68,7 +67,7 @@ export default function SignIn() {
               {/* <h1 className="text-center mb-5">GSK</h1> */}
               <div className="d-flex justify-content-center mb-5">
                 <Image
-                  src={logo}
+                  src="https://gkc-images.s3.amazonaws.com/logo.png"
                   alt="Vercel Logo"
                   className=""
                   width={100}
