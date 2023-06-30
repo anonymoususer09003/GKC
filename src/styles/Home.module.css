@@ -235,6 +235,12 @@
       width: 85vw;
       margin-bottom: 20px;
     }
+
+    .report-table-wrapper {
+        min-width: 0 !important;
+        overflow-x: auto;
+
+    }
 }
 
 

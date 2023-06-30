@@ -47,11 +47,12 @@ function StudentLandingPage() {
 
   const search = async () => {
     try {
-     //var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
+    // var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
       const res = await axios.get(`http://34.227.65.157/public/landing/filter?name=${name}&hourlyRate=${hourlyRate}&grades=${ageGroup}&courses=${selectedCourse}&spokenLanguage=${selectedLang}&deliveryModes=${mode}&page=0&size=10`, {
-      /*  headers: {
+     /*  headers: {
           Authorization: `Bearer ${typ.accessToken}`,
-        },*/
+        },
+        */
       })
       setInsructors(res.data);
       console.log(res);
@@ -191,10 +192,9 @@ const getLang = async () => {
               }
             </select>
             <input
-              type="number"
               placeholder="Max Hourly Rate"
               className={`p-2 rounded outline-0 border border_gray ${styles.landingInputs}`}
-              onChange={(e)=> setHourlyRate(e.target.value)}
+              onChange={(e)=> setHourlyRate(parseFloat(e.target.value))}
             />
             <select className="p-2 rounded outline-0 border border_gray">
               <option value="">Min.Stars</option>

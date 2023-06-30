@@ -1,10 +1,11 @@
 import { useState } from "react";
-import styles from "@/styles/Navbar.module.css";
 import { Navbar, Footer } from "../../../components";
 import Head from "next/head";
 import { withRole } from '../../../utils/withAuthorization';
+import styles from "../../../styles/Home.module.css"
+ 
 
- function ReportInstructor() {
+function ReportInstructor() {
   const instructors = ["John Doe", "Jone Rich", "Katy Long"];
   const [instructor, setInstructor] = useState("John Doe");
   return (
@@ -76,7 +77,7 @@ import { withRole } from '../../../utils/withAuthorization';
                 </label>
               </div>
               <textarea
-                className="form-control"
+                className={`form-control ${styles.reviewDropdown}`}
                 id="exampleFormControlTextarea1"
                 rows="5"
               ></textarea>
