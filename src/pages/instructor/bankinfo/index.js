@@ -79,7 +79,7 @@ function BankInfo() {
                             </div> */}{" "}
                 <div className="d-flex gap-2 justify-content-center mt-3">
                   <button
-                    className="w-25 btn_primary text-light p-2 rounded fw-bold "
+                    className="w-50 btn_primary text-light p-2 rounded fw-bold "
                     onClick={() => navigation.push("/")}
                   >
                     Update{" "}
