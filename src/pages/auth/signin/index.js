@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
@@ -45,6 +45,13 @@ export default function SignIn() {
       console.error(error);
     }
   };
+
+  function handleKeyPress(event) {
+    if (event.keyCode === 13) { // 13 is the keycode for the Enter key
+      onLogin();
+    }
+  }
+
   return (
     <>
       <Head>
@@ -97,13 +104,19 @@ export default function SignIn() {
                     placeholder="Your Email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
+                    onKeyDown={handleKeyPress}
+
                   />
                   <input
                     type="password"
                     className="w-100 p-2 rounded outline-0 border border_gray mb-3"
                     placeholder="Password"
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={(e) => 
+                      setPassword(e.target.value)
+                    }
+                    onKeyDown={handleKeyPress}
+
                   />
                   <button
                     className="w-100 btn_primary text-light p-2 rounded fw-bold mt-3"

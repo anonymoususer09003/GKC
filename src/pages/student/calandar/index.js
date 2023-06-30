@@ -135,7 +135,7 @@ const getEvents = async () => {
           Authorization: `Bearer ${typ.accessToken}`,
         },
         });
-        console.log('=============>', resp);
+        console.log('=============>', resp.data);
 
       
     //   try {

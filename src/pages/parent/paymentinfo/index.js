@@ -3,6 +3,8 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { withRole } from "../../../utils/withAuthorization";
 import ParentDetail from "../../../components/stripe/PaymentDetail/index";
+import ParentLayout from "@/components/common/ParentLayout";
+
 function CreditCardInfo() {
   return (
     <>
@@ -12,7 +14,9 @@ function CreditCardInfo() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <ParentDetail />
+      <ParentLayout>
+        <ParentDetail />
+      </ParentLayout>
     </>
   );
 }

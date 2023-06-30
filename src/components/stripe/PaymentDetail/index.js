@@ -3,7 +3,7 @@ import PaymentForm from "../PaymentForm";
 import { useRouter } from "next/router";
 import { ParentNavbar, Footer } from "../../";
 import GetUserCardDetail from "@/services/stripe/GetUserCardDetail";
-
+import styles from "./payment.module.css"
 
 
 export default function index() {
@@ -39,8 +39,8 @@ export default function index() {
     fetchUserCardDetail();
   }, []);
   return (
-    <main className=" d-flex flex-column justify-content-between  min-vh-100">
-      <div className="m-auto" style={{ maxWidth: "600px", width: "100%" }}>
+    <main className=" d-flex flex-column justify-content-between  min-vh-100 p3">
+      <div className={`m-auto ${styles.paymentWrapper}`}>
         <div>
           {isEdit && (
             <PaymentForm
@@ -87,8 +87,6 @@ export default function index() {
           </div>
         </div>
       </div>
-
-      <Footer />
     </main>
   );
 }

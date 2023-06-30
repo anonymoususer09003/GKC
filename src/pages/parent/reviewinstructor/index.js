@@ -1,10 +1,10 @@
-import styles from "@/styles/Navbar.module.css";
 import { useState } from "react";
 import { useRouter } from "next/router";
 import StarRatings from "react-star-ratings";
 import { ParentNavbar, Footer } from "../../../components";
 import Head from "next/head";
 import { withRole } from '../../../utils/withAuthorization';
+import styles from "../../../styles/Home.module.css"
 
 function ParentInstructorReview() {
   const [showActivation, setShowActivation] = useState(false);
@@ -13,12 +13,8 @@ function ParentInstructorReview() {
   const [rating2, setRating2] = useState(0);
   const [rating3, setRating3] = useState(0);
   const navigation = useRouter();
-  const onContinue = () => {
-    if (showActivation) {
-      return navigation.push("signin");
-    }
-    setShowActivation(true);
-  };
+
+
   return (
     <>
       <Head>
@@ -30,25 +26,15 @@ function ParentInstructorReview() {
       <ParentNavbar isLogin={true} />{" "}
       <main className="container-fluid">
         <div
-          className={` container-sm w-50 pt-5`}
+          className={`container-sm w-50 pt-5 ${styles.reviewContainer}`}
           style={{ minHeight: "90vh" }}
         >
-          <div className="row">
+          <div className={`row ${styles.rowWrapper}`}>
             <div className="col-4">
               <h5 className="py-3"> Your Instructors </h5>{" "}
               <ul className="p-0 m-0" style={{ listStyle: "none" }}>
                 <li className="p-0 m-0 fw-bold bg-light p-3 my-2 rounded ">
                   John Doe{" "}
-                </li>{" "}
-                <li className="p-0 m-0 fw-bold  p-3 my-2 rounded ">
-                  Jane Khan{" "}
-                </li>{" "}
-                <li className="p-0 m-0 fw-bold  p-3 my-2 rounded ">
-                  {" "}
-                  Liz Gibz{" "}
-                </li>{" "}
-                <li className="p-0 m-0 fw-bold  p-3 my-2 rounded ">
-                  Scott Lopez{" "}
                 </li>{" "}
               </ul>{" "}
             </div>{" "}
@@ -59,7 +45,7 @@ function ParentInstructorReview() {
                   <div className="col">
                     <div className="w-50">
                       <select
-                        className="form-select"
+                        className={`form-select ${styles.reviewDropdown}`}
                         aria-label="Default select example"
                       >
                         {/* <option selected>Select course</option> */}{" "}
@@ -137,7 +123,7 @@ function ParentInstructorReview() {
                 /5
               </div>
               <textarea
-                className="form-control"
+                className={`form-control ${styles.reviewDropdown}`}
                 id="exampleFormControlTextarea1"
                 rows="5"
                 placeholder="Tell us about your experience"

@@ -3,7 +3,7 @@ import styles from "./footer.module.css"
 const Footer = () => {
     return (
         <>
-            <footer className="postion-fixed bottom-0">
+            <footer className="postion-fixed bottom-0 w-100">
                 <div className="d-flex justify-content-between align-items-center flex-wrap bg-light p-3">
                     <div className={`flex-1 d-flex gap-5 ${styles.linksContainer}`}>
                         <a href="." className="text-decoration-none text-muted fw-bold small">Privicy Policy</a>

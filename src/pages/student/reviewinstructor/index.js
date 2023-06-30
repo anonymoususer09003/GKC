@@ -13,12 +13,8 @@ function ReviewInstructor() {
   const [rating2, setRating2] = useState(0);
   const [rating3, setRating3] = useState(0);
   const navigation = useRouter();
-  const onContinue = () => {
-    if (showActivation) {
-      return navigation.push("signin");
-    }
-    setShowActivation(true);
-  };
+
+
   return (
     <>
       <Head>

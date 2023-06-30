@@ -6,6 +6,8 @@ import { FiRefreshCw } from "react-icons/fi";
 import { TbSpeakerphone } from "react-icons/tb";
 import {useRouter} from "next/router"
 import { withRole } from '../../../utils/withAuthorization';
+import styles from "../../../styles/Home.module.css";
+
 
 function StudentFinancialReport() {
   const navigation = useRouter();
@@ -33,26 +35,25 @@ function StudentFinancialReport() {
               className="border rounded p-4 my-4"
               style={{ minHeight: "400px" }}
             >
-<div className="w-50 m-auto pb-4">
-<div className="row">
-            <div className="col-12 col-md-6">
+   <div className="w-50 m-auto pb-4">
+      <div className="row">
+         <div className="col-12 col-md-6">
             <div className=" d-flex align-items-center gap-3">
-                  <p className="fw-bold m-0 p-0"> From </p>{" "}
-                  <input id="startDate" className="form-control" type="date" />
-                </div>
-</div>
- <div className="col-12 col-md-6">
- <div className=" d-flex align-items-center gap-3">
+              <p className="fw-bold m-0 p-0"> From </p>{" "}
+              <input id="startDate" className="form-control" type="date" />
+            </div>
+         </div>
+              <div className="col-12 col-md-6">
+              <div className=" d-flex align-items-center gap-3">
                   <p className="fw-bold m-0 p-0"> To </p>
                   <input id="startDate" className="form-control" type="date" />
                   <FiRefreshCw style={{ fontSize: "35px" }} />{" "}
                 </div>
-</div>
-</div>
-</div>
+               </div>
+               </div>
+               </div>
 
-         <div style={{minWidth:"400px", overflowY:'auto'}}>
-
+         <div style={{minWidth:"400px", overflowY:'auto'}} className={styles["report-table-wrapper"]}>
               <table className="table ">
                 <thead>
                   <tr className="bg-light">
@@ -104,7 +105,7 @@ function StudentFinancialReport() {
 
             </div>{" "}
             <div className="d-flex gap-2 justify-content-end mt-3">
-              <button className="w-25 btn_primary text-light p-2 rounded fw-bold ">
+              <button className="w-50 btn_primary text-light p-2 rounded fw-bold ">
                 Download{" "}
               </button>{" "}
             </div>{" "}
