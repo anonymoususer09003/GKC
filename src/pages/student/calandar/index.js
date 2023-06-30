@@ -21,9 +21,8 @@ function StudentCalandar() {
 
 
   
-  const onCalendarClick = (date) => {
+const onCalendarClick = (date) => {
     setSelectedDate(date);
-
     console.log("hey", selectedDate)
   }
 const [events, setEvents] = useState([
@@ -271,9 +270,9 @@ const tileDisabled = ({ date }) => {
             */}
           </div>
           <div className="col-12 col-lg-6">
-            <h3 className="text-center">Schedule</h3>
+            <h3 className={`text-center ${styles.scheduleHeader}` } >Schedule</h3>
             <div
-              className=" shadow p-5 bg-white rounded "
+              className={`shadow p-5 bg-white rounded ${styles.scheduleBox}`}
               style={{ minHeight: "400px" }}
             >
               <div

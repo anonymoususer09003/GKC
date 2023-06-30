@@ -6,6 +6,7 @@ import { FiRefreshCw } from "react-icons/fi";
 import { TbSpeakerphone } from "react-icons/tb";
 import { useRouter } from "next/router";
 import { withRole } from "../../../utils/withAuthorization";
+import styles from "../../../styles/Home.module.css"
 
 function InstructorFinancialReport() {
   const navigation = useRouter();
@@ -59,7 +60,7 @@ function InstructorFinancialReport() {
                 </div>{" "}
               </div>
 
-              <div style={{ minWidth: "400px", overflowY: "auto" }}>
+              <div style={{ minWidth: "400px", overflowY: "auto" }}  className={styles["report-table-wrapper"]}>
                 <table className="table ">
                   <thead>
                     <tr className="bg-light">
@@ -134,7 +135,7 @@ function InstructorFinancialReport() {
               </div>
             </div>{" "}
             <div className="d-flex gap-2 justify-content-end mt-3">
-              <button className="w-25 btn_primary text-light p-2 rounded fw-bold ">
+              <button className="w-50 btn_primary text-light p-2 rounded fw-bold ">
                 Download{" "}
               </button>{" "}
             </div>{" "}

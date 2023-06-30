@@ -8,6 +8,7 @@ import { useRouter } from "next/router";
 import { withRole } from "../../../utils/withAuthorization";
 import { connect } from "react-redux";
 import { fetchUser } from "../../../store/actions/userActions";
+import styles from "../../../styles/Home.module.css";
 
 function SettingProfile({ userInfo, loading, error, fetchUser }) {
   const navigation = useRouter();
@@ -44,13 +45,13 @@ function SettingProfile({ userInfo, loading, error, fetchUser }) {
       <TutorNavbar isLogin={true} />
       <main className="container-fluid">
         <div
-          className="p-5 "
+          className={`p-5 ${styles.instructorProfile}`}
           style={{ minHeight: "90vh", maxWidth: "1700px", margin: "auto" }}
         >
           <div className="row">
-            <div className="col-12 col-md-3 position-relative">
+            <div className={`col-12 col-md-3 position-relative ${styles.cardShadow}`}>
               <div className="shadow rounded-10 bg-white py-4">
-                <div className="px-4 ">
+                <div className={`px-4 ${styles.instructorCards}`}>
                   <div
                     className="bg_primary rounded-circle position-absolute d-flex justify-content-center align-items-center"
                     style={{ top: "-40px", width: "105px", height: "105px" }}
@@ -96,7 +97,7 @@ function SettingProfile({ userInfo, loading, error, fetchUser }) {
               </div>
             </div>
             <div className="col-12 col-md-8">
-              <div className="shadow rounded-10 p-5 bg-white">
+              <div className={`shadow rounded-10 p-5 bg-white ${styles.instructorCards}`}>
                 <div className="row">
                   <div className="col-12 col-md-4">
                     <h5 className="fw-bold ">Hourly Rate</h5>
@@ -153,7 +154,7 @@ function SettingProfile({ userInfo, loading, error, fetchUser }) {
                 </div>
               </div>
 
-              <div className="shadow rounded-10 p-5 bg-white  my-4">
+              <div className={`shadow rounded-10 p-5 bg-white my-4 ${styles.instructorCards}`}>
                 <div className="row m-0 p-0 ">
                   <div className="col ">
                     <h4 className="fw-bold m-0 p-0">Course/s you teach</h4>

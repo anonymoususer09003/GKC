@@ -1,11 +1,11 @@
 import React, {useState, useEffect} from "react";
 import Image from "next/image";
-import styles from "@/styles/Navbar.module.css";
 import Link from "next/link";
 import { IoMdSettings } from "react-icons/io";
 import { FcCalendar } from "react-icons/fc";
 import onSignOut from "@/utils/signOut";
 import LogoutTimer from "../common/signOutTimer";
+import styles from "./tutornavbar.module.css";
 
 const TutorNavbar = ({ isLogin }) => {
   const [value, setValue] = useState(false)
@@ -13,8 +13,6 @@ const TutorNavbar = ({ isLogin }) => {
 
   useEffect(()=>{
       const stored = localStorage.getItem("gkcAuth");
-  console.log(stored);
-
       setValue(stored ? JSON.parse(stored) : false);
   },[])
 
@@ -56,7 +54,7 @@ const TutorNavbar = ({ isLogin }) => {
                 </>
               )} */}
               <li className="nav-item">
-                <a className="nav-link active" aria-current="page" href="/instructor">
+                <a className={`nav-link ${styles.homeLink}`} aria-current="page" href="/instructor">
                   Home
                 </a>
               </li>
@@ -65,7 +63,7 @@ const TutorNavbar = ({ isLogin }) => {
               {value && (
                 <>
                   <li className="nav-item">
-                    <a className="nav-link active" aria-current="page" href="/instructor/messaging">
+                    <a className={`nav-link ${styles.homeLink}`} aria-current="page" href="/instructor/messaging">
                       Message
                     </a>
                   </li>
@@ -74,27 +72,17 @@ const TutorNavbar = ({ isLogin }) => {
             </ul>
             <form className="d-flex align-items-center gap-2">
               {value ? (
-                <>
-                  <Link
-                    href="/auth/signin"
-                    className="btn_primary py-2 px-4 fw-bold text-white rounded text-decoration-none "
-                    onClick={onSignOut}
-                  >
-                    Sign Out
-                  </Link>
-              
-                    <ul className="list-unstyled">
-                      <li className="dropdown h1 pt-1 dropdown-toggle">
-                        <IoMdSettings
-                          className="h1 ms-2"
-                          href="#"
-                          data-toggle="dropdown"
-                          role="button"
-                          aria-haspopup="true"
-                          aria-expanded="false"
-                        />
+                <div className={styles["burger-menu-wrapper"]}>
+                <ul className="list-unstyled">
+                      <div className="dropdown">
+                      <button className="btn btn-lg dropdown-toggle"
+                        data-bs-toggle="dropdown" 
+                        type="button"
+                        aria-expanded="false">
+                        <IoMdSettings/>
+                       </button>
                         <ul
-                          className="dropdown-menu shadow"
+                          className={`dropdown-menu shadow ${styles.dropDown}`}
                           style={{ right: "0px", width:"240px"}}
                         >
                          <li className="p-3">
@@ -109,15 +97,21 @@ const TutorNavbar = ({ isLogin }) => {
                           <li className="p-3">
                             <a href="/instructor/reportedstudentparents" className="nav-link">Report Student/Parent</a>
                           </li>
-              
                           <li className="p-3">
                             <a href="/instructor/financialreport" className="nav-link">Financial Report</a>
                           </li>
-                    
                         </ul>
-                      </li>
-                    </ul>
-                </>
+                      </div>
+                    </ul>                 
+                  <Link
+                    href="/auth/signin"
+                    className={`btn_primary py-2 px-4 fw-bold text-white rounded text-decoration-none ${styles.signOutBtn}`}
+                    onClick={onSignOut}
+                  >
+                    Sign Out
+                  </Link>
+
+                </div>
               ) : (
                 <Link
                   href="/auth/signin"

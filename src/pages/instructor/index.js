@@ -12,6 +12,7 @@ import FirebaseChat from "../../hooks/firebase-chat";
 import { withRole } from "../../utils/withAuthorization";
 import axios from "axios";
 import { parseISO, format } from 'date-fns'
+import styles from "../../styles/Home.module.css"
 
 function InstructorLandingPage() {
   const navigation = useRouter();
@@ -56,10 +57,6 @@ function InstructorLandingPage() {
     setNewMessage(e.target.value);
   };
 
-
-  
-
-
   const getEvents = async () => {
     try {
       var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
@@ -90,8 +87,6 @@ function InstructorLandingPage() {
       }
     };
 
-
-
     const getUnavailableDays = async () => {
       try {
         var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
@@ -115,11 +110,7 @@ function InstructorLandingPage() {
 
 
     useEffect(() => {
-
-   
-
       const fetchProfileData = async () => {
-
         try {
           var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
           const resp = await axios.get("http://34.227.65.157/user/logged-user-details", {
@@ -128,8 +119,6 @@ function InstructorLandingPage() {
           },
           });
           console.log('=============>', resp.data.userDetails.id);
-
-        
         try {
           var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
           const res = await axios.get(`http://34.227.65.157/instructor/schedule-and-unavailable-days-iCal?instructorId=${resp.data.userDetails.id}`, {
@@ -137,7 +126,6 @@ function InstructorLandingPage() {
             Authorization: `Bearer ${typ.accessToken}`,
           },
         });
-        console.log(res.data);
 
       const calendarData = res.data;
   
@@ -252,7 +240,7 @@ function InstructorLandingPage() {
         <div
          
         >
-      <div className="row p-5"  style={{ height: "90vh" }}>
+      <div className={`row ${styles.calendarWrapper}`}>
           <div className="col-12 col-lg-6 ">
             <div
               className="d-flex justify-content-end p-2"
@@ -266,9 +254,9 @@ function InstructorLandingPage() {
             />
           </div>
           <div className="col-12 col-lg-6">
-            <h3 className="text-center" onClick={()=> loogeduserdata()}>Schedule</h3>
+            <h3 className={`text-center ${styles.scheduleHeader}` } onClick={()=> loogeduserdata()}>Schedule</h3>
             <div
-              className=" shadow p-5 bg-white rounded "
+              className={`shadow p-5 bg-white rounded ${styles.scheduleBox}`}
               style={{ minHeight: "400px" }}
             >
               {[1, 2, 3].map((item,i) => {
