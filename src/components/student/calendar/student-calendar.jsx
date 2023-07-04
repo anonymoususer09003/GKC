@@ -2,17 +2,15 @@ import React, { useState, useEffect } from "react";
 import Head from "next/head";
 import { Navbar, Footer } from "../../../components";
 import Calendar from "react-calendar";
-import { BsFillChatFill, BsFillSendFill } from "react-icons/bs";
-import { GoDeviceCameraVideo } from "react-icons/go";
-import { RiDeleteBin6Line } from "react-icons/ri";
+
 import { useRouter } from "next/router";
 import moment from "moment";
 import FirebaseChat from "../../../hooks/firebase-chat";
 import { withRole } from '../../../utils/withAuthorization';
 import axios from "axios";
 import styles from "../../../styles/Home.module.css"
-import ICAL from "ical.js"
-import  parseICS  from 'ics-parser';
+
+import StudentSchedule from "./schedule";
 
 function StudentCalandar() {
   const navigation = useRouter();
@@ -24,30 +22,10 @@ function StudentCalandar() {
 
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [events, setEvents] = useState([]);
-  const [eventDate, setEventDate] = useState([])
+  const [eventId, setEventId] = useState(0);
+  const deleteable = true;
 
-
-  const handleCalendarClick = (clickedDate) => {
-    console.log("hey", clickedDate.toISOString())
-    console.log("event dates", eventDate)
-  // Find the event matching the clicked date
-  let clickedDateISOString; 
-  let eventStartISOString
- /* const clickedEvent = events.find((event) => {
-    clickedDateISOString = clickedDate.toISOString();
-    eventStartISOString = event.DTSTART;
-
-  });
-  if (eventStartISOString.startsWith(clickedDateISOString)) {
-    setSelectedEvent(clickedEvent);
-
-  } 
-  console.log(selectedEvent, "me var nulii")
-  */
-};
-
-
-
+  //iCal data fetching
   useEffect(() => {
         const fetchICalendarData = async () => {
           try {
@@ -60,12 +38,13 @@ function StudentCalandar() {
             });
             const iCalendarData = await response.text();
             const events = [];
+            const dates = []
+
             const eventLines = iCalendarData.split('BEGIN:VEVENT');
             eventLines.shift();
             eventLines.forEach(eventLine => {
               const lines = eventLine.split('\n');
               const event = {};
-              const dates = []
               lines.forEach(line => {
                 const [property, value] = line.split(':');
                 if (property && value) {
@@ -75,12 +54,8 @@ function StudentCalandar() {
               });
               events.push(event);
               dates.push(event.DTSTART)
-              console.log(dates, "datesss")
             });
-        
-            console.log('Parsed iCalendar data:', events);
             setEvents(events);
-            setEventDate(dates)
           } catch (error) {
             console.error('Error fetching iCalendar data:', error);
           }
@@ -88,6 +63,40 @@ function StudentCalandar() {
     fetchICalendarData();
   }, []);
 
+  const handleCalendarClick = (clickedDate) => {
+     const year = clickedDate.toISOString().slice(0, 4);
+     const month = clickedDate.toISOString().slice(5, 7);
+     const day = (parseInt(clickedDate.toISOString().slice(8, 10)) + 1).toString().padStart(2, '0');
+     const modifiedClickedDate = `${year}${month}${day}`;
+  
+     events.map((singleEvent) =>{  
+     if((singleEvent['DTSTART'].slice(0, 8) === modifiedClickedDate) && (singleEvent['EVENT-ID'] != undefined || singleEvent['EVENT-ID'] != null)) {
+         setEventId(parseInt(singleEvent['EVENT-ID']))
+     }}
+  )
+
+
+
+  fetchEventData();
+};
+
+//Event Data Fetching
+
+const fetchEventData = async () => {
+  try {
+    const typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
+
+    const response = await axios.get('http://34.227.65.157/event/logged-user-events', {
+      headers: {
+        Authorization: `Bearer ${typ.accessToken}`,
+      },
+    });
+
+    console.log(response.data, "response");
+  } catch (error) {
+    console.error('Error fetching iCalendar data:', error);
+  }
+};
 
 const tileContent = ({ date, view }) => {
   if (view === 'month') {
@@ -109,29 +118,18 @@ const tileDisabled = ({ date }) => {
   return (
     <>
       <Navbar isLogin={true} />
-      <main className="container">
-      <div className={`row ${styles.calendarWrapper}`}>
-        <div className="col-12 col-lg-6 pt-5">
-           <Calendar 
-             onClickDay={handleCalendarClick}
-   
-           /> 
-        </div>
-  {/* 
-        <Calendar 
-    onClickDay={onCalendarClick}
-    value={value} 
-    tileDisabled={tileDisabled}
-    tileClassName={tileContent}
-  />
-  */}
-</div>
-      
+        <main className="container">
+          <div className={`row ${styles.calendarWrapper}`}>
+            <div className="col-12 col-lg-6 pt-5">
+              <Calendar 
+              onClickDay={handleCalendarClick}
+              /> 
+            </div>
 
-
- 
-      </main>
-      <Footer />
+         <StudentSchedule instructorName={"Nino Glonti"} start={"11:00"} courseName={"Biology"} deleteable={deleteable}/>
+         </div>
+       </main>
+    <Footer />
     </>
   );
 }
