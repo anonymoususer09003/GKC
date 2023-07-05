@@ -9,18 +9,11 @@ import { withRole } from '../../../utils/withAuthorization';
 import { connect } from "react-redux";
 import { fetchUser } from "../../../store/actions/userActions";
 import axios from "axios"
+import styles from "../../../styles/Home.module.css"
+
+
 function EditProfile({ userInfo, loading, error, fetchUser }) {
-  const options = [
-    { label: "Grapes ", value: "grapes" },
-    { label: "Mango ", value: "mango" },
-    { label: "Strawberry ", value: "strawberry" },
-    { label: "Watermelon ", value: "watermelon" },
-    { label: "Pear ", value: "pear", disabled: true },
-    { label: "Apple ", value: "apple" },
-    { label: "Tangerine ", value: "tangerine" },
-    { label: "Pineapple ", value: "pineapple" },
-    { label: "Peach ", value: "peach" },
-  ];
+
 
   const [selected, setSelected] = useState([]);
   const [grade, setGrade] = useState('');
@@ -49,28 +42,6 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
     selectedCourses.forEach(v=>{
       aa.push({courseId: v.value, proficiencyId: v.proficiencyId.id})
     })
-
-    console.log(
-      {
-        userId: userInfo.id,
-        email: userInfo.email,
-        firstName: userInfo.firstName,
-        lastName: userInfo.lastName,
-        address1: userInfo.address1,
-        address2:userInfo.address2,
-        country: userInfo.country,
-        state: userInfo.state,
-        city: userInfo.city,
-        zipCode: userInfo.zipCode,
-        savePaymentFutureUse: userInfo.savePaymentFutureUse,
-        whoPaysEmail: userInfo.whoPaysEmail,
-        emailParent1: parent1,
-        emailParent2: parent2,
-        gradeId: grade,
-        courseOfInterestAndProficiency: aa,
-        languagePreferencesId: ln,
-      },
-    )
     try {
       var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
       const response = await axios.put(
@@ -87,6 +58,7 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
           city: userInfo.city,
           zipCode: userInfo.zipCode,
           savePaymentFutureUse: userInfo.savePaymentFutureUse,
+          // Here is hardcoded
           whoPaysEmail: 'dileepwork8@gmail.com',
           emailParent1: parent1,
           emailParent2: parent2,
@@ -240,7 +212,7 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
       <Navbar isLogin={true} />
       <main className="container-fluid">
         <div
-          className="p-5 "
+          className={`p-5 ${styles.editProfileWrapper}`}
           style={{ minHeight: "90vh", maxWidth: "1700px", margin: "auto" }}
         >
           <div className="row">

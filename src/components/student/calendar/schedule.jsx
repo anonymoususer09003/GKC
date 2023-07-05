@@ -91,7 +91,7 @@ const StudentSchedule = (props) => {
       </div>
       </div> 
     </div>
-
+    {/* CHAT MODAL NEEDS TO BE FIXED */}
      <div className="d-flex justify-content-center align-items-center">
        <div
          className="modal fade"

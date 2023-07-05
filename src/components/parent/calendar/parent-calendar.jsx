@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Head from "next/head";
-import { Navbar, Footer } from "../../../components";
+import { ParentNavbar, Footer } from "../../../components";
 import Calendar from "react-calendar";
 
 import { useRouter } from "next/router";
@@ -11,10 +10,7 @@ import styles from "../../../styles/Home.module.css"
 
 import StudentSchedule from "./schedule";
 
-function StudentCalandar() {
-
-  
-  const [unavailableDates, setUnavailableDates] = useState([])
+function ParentCalandar() {
 
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [events, setEvents] = useState([]);
@@ -90,8 +86,6 @@ const fetchEventData = async () => {
         Authorization: `Bearer ${typ.accessToken}`,
       },
     });
-
-    console.log(response.data, "response");
   } catch (error) {
     console.error('Error fetching iCalendar data:', error);
   }
@@ -100,7 +94,7 @@ const fetchEventData = async () => {
 
   return (
     <>
-      <Navbar isLogin={true} />
+      <ParentNavbar isLogin={true} />
         <main className="container">
           <div className={`row ${styles.calendarWrapper}`}>
             <div className="col-12 col-lg-6 pt-5">
@@ -118,61 +112,3 @@ const fetchEventData = async () => {
 
 
 export default withRole(StudentCalandar, ['Student']);
-
-
-
- /*
-const getEvents = async () => {
-  try {
-    var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
-    const res = await axios.get("http://34.227.65.157/instructor/events-iCal?instructorId=44", {
-    headers: {
-      Authorization: `Bearer ${typ.accessToken}`,
-    },
-  });
-  console.log(res.data);
-  // setProfile(res.data);
-  } catch (error) {
-    console.error('Error fetching profile data:', error);
-  }
-};
-
-  const loogeduserdata = async () => {
-    try {
-      var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
-      const res = await axios.get("http://34.227.65.157/user/logged-user-details", {
-      headers: {
-        Authorization: `Bearer ${typ.accessToken}`,
-      },
-    });
-    console.log(res.data);
-    // setProfile(res.data);
-    } catch (error) {
-      console.error('Error fetching profile data:', error);
-    }
-  };
-
-
-
-  const getUnavailableDays = async () => {
-    try {
-      var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
-      const res = await axios.post(
-        "http://34.227.65.157/instructor/unavailable-day",
-        {
-          date: "2000-12-31",
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${typ.accessToken}`,
-          },
-        }
-      );
-      console.log(res);
-      // setProfile(res.data);
-    } catch (error) {
-      console.error("Error fetching profile data:", error);
-    }
-  };
- */
-

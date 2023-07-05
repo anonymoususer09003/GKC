@@ -39,6 +39,7 @@
         "react-select": "^5.7.3",
         "react-star-ratings": "^2.3.0",
         "redux": "^4.2.1",
+        "redux-devtools-extension": "^2.13.9",
         "redux-thunk": "^2.4.2",
         "stripe": "^12.8.0",
         "uuid": "^9.0.0"

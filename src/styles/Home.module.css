@@ -260,6 +260,10 @@
     .cardShadow {
         margin-bottom: 1rem;
     }
+
+    .editProfileWrapper {
+      padding: 1rem !important;
+    }
 }
 
 
