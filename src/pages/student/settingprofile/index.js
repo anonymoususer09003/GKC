@@ -5,12 +5,13 @@ import { MdEmail, MdArrowForwardIos } from "react-icons/md";
 import { FiEdit } from "react-icons/fi";
 import { useRouter } from "next/router";
 import { withRole } from "../../../utils/withAuthorization";
-import axios from "axios";
 import { connect } from "react-redux";
 import { fetchUser } from "../../../store/actions/userActions";
+import styles from "../../../styles/Home.module.css"
 
 function SettingProfle({ userInfo, loading, error, fetchUser }) {
   const navigation = useRouter();
+  
   const onEditProfile = () => {
     navigation.push("/student/editprofile");
   };
@@ -19,7 +20,6 @@ function SettingProfle({ userInfo, loading, error, fetchUser }) {
     fetchUser();
   }, [fetchUser]);
   
-  console.log(userInfo)
 
   if (loading) {
     return <div>Loading...</div>;
@@ -41,8 +41,9 @@ function SettingProfle({ userInfo, loading, error, fetchUser }) {
       <Navbar isLogin={true} />
       <main className="container-fluid">
         <div
-          className="p-5 "
+          className={`p-5 ${styles.editProfileWrapper}`} 
           style={{ minHeight: "90vh", maxWidth: "1700px", margin: "auto" }}
+
         >
           <div className="row">
             <div className="col-12 col-lg-4">
@@ -56,17 +57,17 @@ function SettingProfle({ userInfo, loading, error, fetchUser }) {
                     <MdEmail style={{ fontSize: "22px" }} />
                     {userInfo?.email}
                   </p>
-
                   <p className="p-0 m-0 py-2 fw-bold">Parent1/guardian1</p>
                   <div className="d-flex gap-1 align-items-center gap-2 pb-3 ">
                     <MdEmail className="h5 p-0 m-0" />
-                    guardian1@123.com
+                    {userInfo?.emailParent1}
+
                   </div>
                   <p className="p-0 m-0 py-2 fw-bold">Parent2/guardian2</p>
 
                   <div className="d-flex gap-1 align-items-center gap-2 pb-3 ">
                     <MdEmail className="h5 p-0 m-0" />
-                      guardian2@123.com
+                    {userInfo?.emailParent2}
                   </div>
                   <hr className="bg_secondary" />
 
@@ -93,12 +94,6 @@ function SettingProfle({ userInfo, loading, error, fetchUser }) {
                    
                     </p>
                   </div>
-                  {/* <div className="col border-start px-4 border_primary">
-                    <h4 className="fw-bold">Delivery Mode:</h4>
-                    <ul className="m-0 primary-list">
-                      <li className="fw-bold m-0 p-0">Online</li>
-                    </ul>
-                  </div> */}
                   <div className="col border-start px-4 border_primary">
                     <h4 className="fw-bold">Language Preference:</h4>
                     <ul className="m-0 primary-list">
@@ -153,6 +148,8 @@ const mapStateToProps = (state) => ({
   loading: state.user.loading,
   error: state.user.error,
 });
+
+console.log()
 
 export default withRole(connect(mapStateToProps, { fetchUser })(SettingProfle), ['Student']);
 

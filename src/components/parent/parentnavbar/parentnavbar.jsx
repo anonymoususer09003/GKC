@@ -7,9 +7,8 @@ import { FcCalendar } from "react-icons/fc";
 import onSignOut from "@/utils/signOut";
 import LogoutTimer from "@/components/common/signOutTimer";
 
-const TutorNavbar = ({ isLogin }) => {
+const ParentNavbar = ({ isLogin }) => {
   const [value, setValue] = useState(false)
-  console.log(value);
 
   useEffect(()=>{
       const stored = localStorage.getItem("gkcAuth");
@@ -131,4 +130,4 @@ const TutorNavbar = ({ isLogin }) => {
   );
 };
 
-export default TutorNavbar;
+export default ParentNavbar;
