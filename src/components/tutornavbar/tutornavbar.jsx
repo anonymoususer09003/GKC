@@ -28,7 +28,7 @@ const TutorNavbar = ({ isLogin }) => {
               className=""
               width={100}
               height={50}
-              priority
+              unoptimized
             />
           </div>
           <button

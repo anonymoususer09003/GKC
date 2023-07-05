@@ -6,7 +6,6 @@ import { RiArrowGoBackLine } from "react-icons/ri";
 import { Footer } from "../../../components";
 import { useRouter } from "next/router";
 import axios from "axios";
-import girl from "public/assets/auth_girl_1.png"
 
 export default function SignIn() {
   const navigation = useRouter();
@@ -146,12 +145,12 @@ export default function SignIn() {
           >
             <div style={{ position: "absolute", right: "0%", bottom: "7%" }}>
               <Image
-                src={girl}
+                src="https://gkc-images.s3.amazonaws.com/auth_girl_1.png"
                 alt="Vercel Logo"
                 className=""
                 width={400}
                 height={600}
-                priority
+                unoptimized
               />
             </div>
           </div>

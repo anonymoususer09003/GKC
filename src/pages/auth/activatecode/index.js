@@ -89,7 +89,7 @@ export default function ActivateCode() {
                   className=""
                   width={100}
                   height={50}
-                  priority
+                  unoptimized
                 />
               </div>
               <div>
@@ -161,7 +161,7 @@ export default function ActivateCode() {
                 className=""
                 width={400}
                 height={600}
-                priority
+                unoptimized
               />
             </div>
           </div>

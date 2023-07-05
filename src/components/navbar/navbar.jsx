@@ -25,10 +25,9 @@ const Navbar = ({ isLogin }) => {
             <Image
               src="https://gkc-images.s3.amazonaws.com/logo.png"
               alt="Vercel Logo"
-              className=""
               width={100}
               height={50}
-              priority
+              unoptimized
             />
           </div>
           <button
