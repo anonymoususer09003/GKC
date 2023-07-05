@@ -6,15 +6,21 @@ import { IoMdSettings } from "react-icons/io";
 import { FcCalendar } from "react-icons/fc";
 import onSignOut from "@/utils/signOut";
 import LogoutTimer from "../common/signOutTimer";
+import { useDispatch, useSelector } from "react-redux";
+import { Dispatch } from "redux";
+import { fetchUser } from "@/store/actions/userActions";
 
 const Navbar = ({ isLogin }) => {
 
   const [value, setValue] = useState(false);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const stored = localStorage.getItem("gkcAuth");
     setValue(stored ? JSON.parse(stored) : false);
   }, []);
+
+
 
   return (
     <>

@@ -7,24 +7,7 @@ import { withRole } from './../utils/withAuthorization';
 import axios from "axios"
 import styles from "@/styles/Home.module.css";
 
-//import { isAuthenticated } from "@/pages/isAuth";
 
-/*
-export async function getServerSideProps(context) {
-  const authenticated = isAuthenticated();
-
-  if (!authenticated) {
-    return {
-      redirect: {
-        destination: '/auth/signin', // Redirect to the login page
-        permanent: false,
-      },
-
-    };
-  }
-  console.log(authenticated, "heeee")
-}
-*/
 function StudentLandingPage() {
   //const authenticated = isAuthenticated();
 

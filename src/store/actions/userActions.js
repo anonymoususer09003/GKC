@@ -26,7 +26,6 @@ export const fetchUser = () => {
                     },
                 }
             );
-            console.log(res.data.userDetails, "Updated data?");
             dispatch(fetchUserSuccess(res.data.userDetails));
         } catch (error) {
             console.error(error);

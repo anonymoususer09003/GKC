@@ -74,17 +74,21 @@ const StudentSchedule = (props) => {
           </h6>
          <h6 className="p-0 m-0 flex-fill fw-bold flex-fill">{props.start}</h6>
          <h6 className="p-0 m-0 flex-fill fw-bold flex-fill">{props.courseName}</h6>
-
-         <BsFillChatFill
-           className="p-0 m-0 flex-fill h4 flex-fill"
-           data-bs-toggle="modal"
-           data-bs-target="#exampleModal2"
-         />
-   
-         <GoDeviceCameraVideo
-           className="p-0 m-0 flex-fill h4 flex-fill"
-           onClick={() => onContinue()}
-         />
+         {props.instructorId &&
+             <BsFillChatFill
+             className="p-0 m-0 flex-fill h4 flex-fill"
+             data-bs-toggle="modal"
+             data-bs-target="#exampleModal2"
+           />
+         }
+     
+        {props.meetingLink && 
+               <GoDeviceCameraVideo
+               className="p-0 m-0 flex-fill h4 flex-fill"
+               onClick={() => onContinue()}
+             />
+        }
+  
          {props.deleteable && (
            <RiDeleteBin6Line className="p-0 m-0 h4 flex-fill" onClick={handleDelete}/>
          )}
