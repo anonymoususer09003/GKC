@@ -57,7 +57,7 @@ const Tutorcard = ({data}) => {
             alt=""
             width={200}
             height={200}
-            priority
+            unoptimized
             className="rounded-circle bg-light"
           />
         </div>

@@ -58,7 +58,7 @@ export default function Home() {
                   className=""
                   width={100}
                   height={50}
-                  priority
+                  unoptimized
                 />
               </div>
               <div>
@@ -105,12 +105,12 @@ export default function Home() {
           >
             <div style={{ position: "absolute", right: "0%", bottom: "7%" }}>
               <Image
-                src="/assets/auth_girl_1.png"
+                src="https://gkc-images.s3.amazonaws.com/auth_girl_1.png"
                 alt="Vercel Logo"
                 className=""
                 width={400}
                 height={600}
-                priority
+                unoptimized
               />
             </div>
           </div>

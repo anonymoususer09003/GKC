@@ -13,8 +13,6 @@ import styles from "../../../styles/Home.module.css"
 
 
 function EditProfile({ userInfo, loading, error, fetchUser }) {
-
-
   const [selected, setSelected] = useState([]);
   const [grade, setGrade] = useState('');
   const [parent1, setParent1] = useState('');
@@ -32,7 +30,6 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
 
 
   const handleSubmit =async () => {
-    console.log(selectedLang)
     const aa = [];
     const ln = [];
 
@@ -110,7 +107,6 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
       setSelectedCourses(updatedData);
     // }
 
-    console.log(selectedCourses)
   };
 
 

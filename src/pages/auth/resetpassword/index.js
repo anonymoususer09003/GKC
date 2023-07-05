@@ -32,7 +32,7 @@ export default function ResetPassword() {
                   className=""
                   width={100}
                   height={50}
-                  priority
+                  unoptimized
                 />
               </div>
               <div>
@@ -72,12 +72,12 @@ export default function ResetPassword() {
           >
             <div style={{ position: "absolute", right: "0%", bottom: "7%" }}>
               <Image
-                src="/assets/auth_girl_2.png"
+                src="https://gkc-images.s3.amazonaws.com/auth_girl_2.png"
                 alt="Vercel Logo"
                 className=""
                 width={450}
                 height={600}
-                priority
+                unoptimized
               />
             </div>
           </div>
