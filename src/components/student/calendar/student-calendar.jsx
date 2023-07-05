@@ -9,11 +9,8 @@ import styles from "../../../styles/Home.module.css"
 import StudentSchedule from "./schedule";
 
 function StudentCalandar() {
-  const [selectedEvent, setSelectedEvent] = useState(null);
   const [events, setEvents] = useState([]);
-  const [eventId, setEventId] = useState(0);
   const [bookedEvents, setBookedEvent] =useState([])
-  const [bookedEventId, setbookedEventId] = useState(0);
   const [singleIcalEvent, setSingleIcalEvent] = useState({})
   const [instructorName, setInstructorName] = useState("");
   const [eventTime, setEventTime] = useState("");
@@ -21,6 +18,8 @@ function StudentCalandar() {
   const [instructorId, setInstructorId] = useState(null);
   const [meetingLink, setMeetingLink] = useState(null)
   const [deleteable, setDeleteable] = useState(false);
+  const [noEvent, setNoEvent] = useState(false);
+  const [eventId, setEventId] = useState(null)
 
   //iCal data fetching
   useEffect(() => {
@@ -50,8 +49,6 @@ function StudentCalandar() {
                 }
               });
               events.push(event);
-              console.log("parsed events", events)
-
               dates.push(event.DTSTART)
             });
             setEvents(events);
@@ -62,6 +59,7 @@ function StudentCalandar() {
     fetchICalendarData();
   }, []);
 
+  //Logged user events
   useEffect(() => {
     const fetchEventData = async () => {
       try {
@@ -74,9 +72,8 @@ function StudentCalandar() {
         });
         
     
-       // console.log(response.data.map((singleEvent) => singleEvent.id) ,"response");
         setBookedEvent(response.data);
-  
+        console.log(response.data);
       } catch (error) {
         console.error('Error fetching iCalendar data:', error);
       }
@@ -86,36 +83,53 @@ function StudentCalandar() {
   
 
   //Calendar Click
-
-  const handleCalendarClick = (clickedDate) => { 
-     const year = clickedDate.toISOString().slice(0, 4);
-     const month = clickedDate.toISOString().slice(5, 7);
-     const day = (parseInt(clickedDate.toISOString().slice(8, 10)) + 1).toString().padStart(2, '0');
-     const modifiedClickedDate = `${year}${month}${day}`;
-    
-     events.map((singleEvent) =>{  
-       if((singleEvent['DTSTART'].slice(0, 8) === modifiedClickedDate) && (singleEvent['EVENT-ID'] != undefined || singleEvent['EVENT-ID'] != null)) {
-         setSingleIcalEvent(singleEvent);
-       }}
-  )
+  const handleCalendarClick = (clickedDate) => {
+    const year = clickedDate.toISOString().slice(0, 4);
+    const month = clickedDate.toISOString().slice(5, 7);
+    const day = (parseInt(clickedDate.toISOString().slice(8, 10)) + 1).toString().padStart(2, '0');
+    const modifiedClickedDate = `${year}${month}${day}`;
+  
+    const selectedIcalEvent = events.find((singleEvent) => singleEvent['DTSTART'].slice(0, 8) === modifiedClickedDate && singleEvent['EVENT-ID']);
+  
+    if (selectedIcalEvent) {
+      setSingleIcalEvent(selectedIcalEvent);
+  
+      const matchedBookedEvent = bookedEvents.find((singleBooked) => singleBooked.id == selectedIcalEvent['EVENT-ID']);
+  
+      if (matchedBookedEvent) {
+        setInstructorName(matchedBookedEvent.instructorName);
+        setEventTime(matchedBookedEvent.start);
+        setDeleteable(matchedBookedEvent.deleteable);
+        setCourseId(matchedBookedEvent.courseId);
+        //HERE WILL BE THE MEETING LINK
+        setMeetingLink("meetinglink");
+        setInstructorId(matchedBookedEvent.instructorId);
+        setNoEvent(false);
+        setEventId(matchedBookedEvent.id)
+      } else {
+        // Clear the states when a matching booked event is not found
+        setNoEvent(true)
+        setInstructorName('');
+        setEventTime('');
+        setDeleteable(false);
+        setCourseId('');
+        setMeetingLink('');
+        setInstructorId('');
+      }
+    } else {
+      // Clear the states when a matching iCal event is not found
+      setNoEvent(true)
+      setSingleIcalEvent(null);
+      setInstructorName('');
+      setEventTime('');
+      setDeleteable(false);
+      setCourseId('');
+      setMeetingLink('');
+      setInstructorId('');
+    }
+  };
   
 
-
-  bookedEvents.map((singleBooked) => {
-    console.log(singleBooked)
-
-    if(singleBooked.id == (singleIcalEvent['EVENT-ID'])) {
-      console.log(singleBooked)
-      setInstructorName(singleBooked.instructorName);
-      setEventTime(singleBooked.start);
-      setDeleteable(singleBooked.deleteable);
-      setCourseId(singleBooked.courseId);
-      setMeetingLink(singleBooked.meetingLink);
-      setInstructorId(singleBooked.instructorId);
-    } 
-  }
-  )
-};
 
   return (
     <>
@@ -127,8 +141,16 @@ function StudentCalandar() {
               onClickDay={handleCalendarClick}
               /> 
             </div>
-              <StudentSchedule instructorName={instructorName} start={eventTime} courseName={courseId} deleteable={deleteable} instructorId={instructorId} meetingLink={meetingLink}/>
-            
+              <StudentSchedule 
+               instructorName={instructorName} 
+               start={eventTime} 
+               courseName={courseId}
+               deleteable={deleteable} 
+               instructorId={instructorId} 
+               meetingLink={meetingLink} 
+               noEvent={noEvent}
+               eventId={eventId}
+               /> 
          </div>
        </main>
     <Footer />
