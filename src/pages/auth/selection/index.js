@@ -42,7 +42,7 @@ export default function Selection() {
                   className=""
                   width={100}
                   height={50}
-                  priority
+                  unoptimized
                 />
               </div>
               <div>
