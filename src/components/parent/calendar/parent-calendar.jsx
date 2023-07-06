@@ -141,7 +141,7 @@ function ParentCalendar() {
               onClickDay={handleCalendarClick}
               /> 
             </div>
-              <ParentCalendar 
+              <ParentSchedule 
                instructorName={instructorName} 
                start={eventTime} 
                courseName={courseId}
