@@ -13,6 +13,9 @@ import { withRole } from "../../../utils/withAuthorization";
 import axios from "axios";
 import { parseISO, format } from 'date-fns'
 import styles from "../../../styles/Home.module.css"
+import { useDispatch, useSelector } from "react-redux";
+import { connect } from 'react-redux';
+import { fetchUser } from "@/store/actions/userActions";
 
 function InstructorCalendar() {
   const navigation = useRouter();
@@ -20,42 +23,25 @@ function InstructorCalendar() {
   const { sendMessage, messages, setChatInfo, setNewMessage, newMessage } =
     FirebaseChat();
   const [value, onChange] = useState(new Date());
-  const [events, setEvents] = useState([
+  const [events, setEvents] = useState([]);
+  const [bookedEvents, setBookedEvent] =useState([])
+  const [unavailableDates, setUnavailableDates] = useState([]);
+  const [eventTime, setEventTime] = useState("");
+  const [eventId, setEventId] = useState(null)
+  const dispatch = useDispatch();
+  const [instructorId, setInstructorId] = useState(null)
+  const [meetingLink, setMeetingLink] = useState(null)
+  const [deleteable, setDeleteable] = useState(false);
+  const [noEvent, setNoEvent] = useState(false);
+  const [student, setStudent] = useState("")
+  const loggedInUser = useSelector((state) => state.user.userInfo)
 
-    // Add more events as needed
-  ]);
-  const [unavailableDates, setUnavailableDates] = useState([
-
-  ]);
 
   const onContinue = () => {
     navigation.push("/instructor/video");
   };
-  const instructor = {
-    name: "Nouman",
-    id: 1,
-  };
-  const student = {
-    courseId: 1,
-    name: "John",
-    id: 2,
-    parentId: 4,
-  };
 
-  const openChat = (chatId) => {
-    setChatInfo({
-      sender: {
-        ...instructor,
-      },
-      receiver_user: {
-        ...student,
-      },
-      course_id: chatId,
-    });
-  };
-  const handleTextChange = (e) => {
-    setNewMessage(e.target.value);
-  };
+
 
   const getEvents = async () => {
     try {
@@ -72,21 +58,80 @@ function InstructorCalendar() {
     }
   };
 
-    const loogeduserdata = async () => {
-      try {
-        var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
-        const res = await axios.get("http://34.227.65.157/user/logged-user-details", {
-        headers: {
-          Authorization: `Bearer ${typ.accessToken}`,
-        },
-      });
-      console.log(res.data);
-      // setProfile(res.data);
-      } catch (error) {
-        console.error('Error fetching profile data:', error);
-      }
-    };
-
+  useEffect(() => {
+    dispatch(fetchUser());
+   // console.log(id, "iddddd")
+   //setInstructorId(loggedInUser.id);
+  // console.log(loggedInUser.id, "pleaseee")
+  }, [dispatch])
+  
+    //iCal data fetching
+/*
+    //Logged user events
+    useEffect(() => {
+        const fetchEventData = async () => {
+          try {
+            const typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
+        
+            const response = await axios.get('http://34.227.65.157/event/logged-user-events', {
+              headers: {
+                Authorization: `Bearer ${typ.accessToken}`,
+              },
+            });
+            
+        
+            setBookedEvent(response.data);
+            console.log(response.data);
+          } catch (error) {
+            console.error('Error fetching iCalendar data:', error);
+          }
+        };
+        fetchEventData();
+      }, [])
+      
+        //Calendar Click
+   const handleCalendarClick = (clickedDate) => {
+     const year = clickedDate.toISOString().slice(0, 4);
+     const month = clickedDate.toISOString().slice(5, 7);
+     const day = (parseInt(clickedDate.toISOString().slice(8, 10)) + 1).toString().padStart(2, '0');
+     const modifiedClickedDate = `${year}${month}${day}`;
+   
+     const selectedIcalEvent = events.find((singleEvent) => singleEvent['DTSTART'].slice(0, 8) === modifiedClickedDate && singleEvent['EVENT-ID']);
+   
+     if (selectedIcalEvent) {
+       setSingleIcalEvent(selectedIcalEvent);
+   
+       const matchedBookedEvent = bookedEvents.find((singleBooked) => singleBooked.id == selectedIcalEvent['EVENT-ID']);
+   
+       if (matchedBookedEvent) {
+         setStudent(matchedBookedEvent.studentName);
+         setEventTime(matchedBookedEvent.start);
+         setDeleteable(matchedBookedEvent.deleteable);
+         //HERE WILL BE THE MEETING LINK
+         setMeetingLink("meetinglink");
+         setInstructorId(matchedBookedEvent.instructorId);
+         setNoEvent(false);
+         setEventId(matchedBookedEvent.id)
+       } else {
+         // Clear the states when a matching booked event is not found
+         setNoEvent(true)
+         setEventTime('');
+         setDeleteable(false);
+         setMeetingLink('');
+         setInstructorId('');
+       }
+     } else {
+       // Clear the states when a matching iCal event is not found
+         setNoEvent(true)
+         setSingleIcalEvent(null);
+         setEventTime('');
+         setDeleteable(false);
+         setMeetingLink('');
+         setInstructorId('');
+     }
+   };
+   */
+  /*
     const getUnavailableDays = async () => {
       try {
         var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
@@ -202,6 +247,7 @@ function InstructorCalendar() {
 
   fetchProfileData()
     }, []);
+    */
 
   // const events = [
   //   { date: new Date(2023, 5, 15), title: 'Event 1' },
@@ -209,6 +255,7 @@ function InstructorCalendar() {
   //   { date: new Date(2023, 5, 22), title: 'Event 3' },
   // ];
 
+  /*
   const tileContent = ({ date, view }) => {
     if (view === 'month') {
       const event = events.find((event) => event.dtStart.getTime() === date.getTime());
@@ -226,7 +273,8 @@ function InstructorCalendar() {
     // return unavailableDates.some((disabledDay) => date.start.toDateString() === disabledDay.toDateString());
     return unavailableDates.some((disabledDay) => date.toDateString() === disabledDay.start.toDateString());
   };
-  console.log(tileDisabled)
+
+  */
   return (
     <>
   
@@ -243,9 +291,11 @@ function InstructorCalendar() {
             >
               <FiEdit style={{ fontSize: "24px" }} />
             </div>
-            <Calendar onChange={onChange} value={value} 
-              tileDisabled={tileDisabled}
-              tileClassName={tileContent}
+            <Calendar 
+              //onChange={onChange} 
+              //value={value} 
+            //  tileDisabled={tileDisabled}
+              //tileClassName={tileContent}
             />
           </div>
           <div className="col-12 col-lg-6">
@@ -333,7 +383,7 @@ function InstructorCalendar() {
                   <div className=" d-flex align-items-center px-2 gap-2">
                     <input
                       value={newMessage}
-                      onChange={handleTextChange}
+                      //onChange={handleTextChange}
                       type="text"
                       placeholde=""
                       className="border  p-2 rounded flex-fill"
@@ -353,5 +403,11 @@ function InstructorCalendar() {
     </>
   );
 }
+
+const mapStateToProps = (state) => ({
+    userInfo: state.user.userInfo,
+    loading: state.user.loading,
+    error: state.user.error,
+  });
 
 export default withRole(InstructorCalendar, ["Instructor"]);
