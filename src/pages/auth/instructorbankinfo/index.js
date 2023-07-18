@@ -19,31 +19,7 @@ export default function ParentRegistrationCCInfo() {
     let isValid = bankName !== "" && bankAccountNumber !== "" &&  confirmBankAccountNumber !== "" && bankAccountNumber ==   confirmBankAccountNumber && bankRoutingNumber !== "" &&  confirmBankRoutingNumber !== "" && bankRoutingNumber ==   confirmBankRoutingNumber
     const onContinue = async () => {
         try {
-            console.log(                {
-                firstName: userInfo.firstName,
-                lastName: userInfo.lastName,
-                email: userInfo.email,
-                password: userInfo.password,
-                address1: userInfo.address1,
-                address2: userInfo.address2,
-                country: userInfo.country,
-                state: userInfo.state,
-                city: userInfo.city,
-                zipCode: userInfo.zipCode,
-                timeZoneId: userInfo.timeZoneId,
-                instructorBio: userInfo.instructorBio,
-                hourlyRate: userInfo.hourlyRate,
-                acceptInterviewRequest: true,
-                gradesIdToTutor: userInfo.gradesIdToTutor,
-                languagesIdPreference: userInfo.languagesIdPreference,
-                courseToTeachAndProficiency: userInfo.courseToTeachAndProficiency,
-                bankAccountType: bankAccountType,
-                bankName: bankName,
-                bankAccountNumber:bankAccountNumber,
-                bankRoutingNumber: bankRoutingNumber,
-                }
-            )
-            const response = await axios.post(
+           const response = await axios.post(
               `http://34.227.65.157/auth/register-instructor`,
               {
                 firstName: userInfo.firstName,
@@ -59,7 +35,8 @@ export default function ParentRegistrationCCInfo() {
                 timeZoneId: userInfo.timeZoneId,
                 instructorBio: userInfo.instructorBio,
                 hourlyRate: userInfo.hourlyRate,
-                acceptInterviewRequest: true,
+                deliveryModes: userInfo.deliveryModes,
+                acceptInterviewRequest: userInfo.acceptInterviewRequest,
                 gradesIdToTutor: userInfo.gradesIdToTutor,
                 languagesIdPreference: userInfo.languagesIdPreference,
                 courseToTeachAndProficiency: userInfo.courseToTeachAndProficiency,
@@ -68,7 +45,9 @@ export default function ParentRegistrationCCInfo() {
                 bankAccountNumber:bankAccountNumber,
                 bankRoutingNumber: bankRoutingNumber,
               }
+              
             );
+            
             const res = await axios.get(
               "http://34.227.65.157/user/logged-user-role",
               {

@@ -26,7 +26,7 @@ export const fetchUser = () => {
                     },
                 }
             );
-            dispatch(fetchUserSuccess(res.data.userDetails));
+            dispatch(fetchUserSuccess(res.data));
         } catch (error) {
             console.error(error);
         }
