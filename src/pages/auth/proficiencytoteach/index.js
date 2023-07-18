@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 import axios from "axios";
 import { MultiSelect } from "react-multi-select-component";
 import Select from "react-select";
+import styles from "../../../styles/Home.module.css";
 
 export default function StudentRegistrationCourse() {
   const navigation = useRouter();
@@ -143,13 +144,13 @@ export default function StudentRegistrationCourse() {
                 </h4>
 
                 <div className="py-4">
-                  <div className="w-50 mb-3">
-      <Select
-      isMulti
-      options={courses}
-      value={selected}
-      onChange={handleSelectChange}
-    />
+                  <div className={`w-50 mb-3 ${styles.courseDropdowns}`}>
+                     <Select
+                       isMulti
+                       options={courses}
+                       value={selected}
+                       onChange={handleSelectChange}
+                   />
                   </div>
                   <div className="d-flex flex-wrap gap-2">
                     {selected.length < 1 ? (
@@ -207,7 +208,7 @@ export default function StudentRegistrationCourse() {
                   </h4>
 
                   <div className="py-2">
-                    <div className="w-50 mb-3">
+                    <div className={`w-50 mb-3 ${styles.courseDropdowns}`}>
                       <MultiSelect
                         options={lang}
                         value={selectedLang}
@@ -221,7 +222,7 @@ export default function StudentRegistrationCourse() {
                   <div className="d-flex gap-2 justify-content-between mt-3">
                     <button
                       // className="w-25 btn_primary text-light p-2 rounded fw-bold "
-                      className={`w-25 btn_primary text-light p-2 rounded fw-bold ${selected.length === 0 || selectedLang.length === 0 ? 'btn_disabled' : 'btn_primary'}`}
+                      className={`w-50 btn_primary text-light p-2 rounded fw-bold ${selected.length === 0 || selectedLang.length === 0 ? 'btn_disabled' : 'btn_primary'}`}
                        disabled={selected.length === 0 || selectedLang.length === 0 }
                       onClick={onContinue}
                     >
