@@ -45,7 +45,7 @@ export default function StudentRegistrationCCInfo() {
           },
         }
       );
-      console.log(res.data);
+
       window.localStorage.setItem(
         "gkcAuth",
         JSON.stringify({

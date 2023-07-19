@@ -4,14 +4,14 @@ import { Navbar, Footer } from "../../../components";
 import Calendar from "react-calendar";
 import { BsFillSendFill } from "react-icons/bs";
 import { withRole } from "../../../utils/withAuthorization";
-import { useRouter } from 'next/router';
+import { useRouter } from "next/router";
 import { connect } from "react-redux";
 import { fetchUser } from "../../../store/actions/userActions";
 import calendarStyles from "../../../styles/Calendar.module.css"
 
-
 function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
   const router = useRouter();
+<<<<<<< HEAD
   const { date, mode, courseId, instructorId, hourlyRate } = router.query;
   
   const [classFrequency, setClassFrequency] = useState('');
@@ -19,16 +19,40 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
   const [availableTime, setAvailableTime] = useState([ '7:00', '8:00', '9:00', '10:00', '11:00', '12:00', '13:00','14:00', '15:00', '16:00', '17:00', '18:00', '19:00',  ]);
   const [time, setTime] = useState();
   // console.log( date, mode, time, courseId, instructorId )
+=======
+  const { date, mode, time, courseId, instructorId, hourlyRate } = router.query;
+  const [_time, setTime] = useState();
+  const [classFrequency, setClassFrequency] = useState("");
+  const [value, onChange] = useState(date);
+  const [availableTime, setAvailableTime] = useState([
+    "7:00",
+    "8:00",
+    "9:00",
+    "10:00",
+    "11:00",
+    "12:00",
+    "13:00",
+    "14:00",
+    "15:00",
+    "16:00",
+    "17:00",
+    "18:00",
+    "19:00",
+  ]);
 
-  const handleContinue =async () => {
+  console.log(date, mode, time, courseId, instructorId);
+>>>>>>> 49cdeb11a0a8c00abdee47a0410139a8daf33bb0
+
+  const handleContinue = async () => {
     const dateObject = new Date(date);
     const dateObj = dateObject;
-  const year = dateObj.getFullYear();
-  const month = (dateObj.getMonth() + 1).toString().padStart(2, '0');
-  const day = dateObj.getDate().toString().padStart(2, '0');
-  const convertedDate = `${year}-${month}-${day}`;
+    const year = dateObj.getFullYear();
+    const month = (dateObj.getMonth() + 1).toString().padStart(2, "0");
 
+    const day = dateObj.getDate().toString().padStart(2, "0");
+    const convertedDate = `${year}-${month}-${day}`;
 
+<<<<<<< HEAD
   const data = {
     start: convertedDate + " " + time,
     durationInHours: 1,
@@ -51,6 +75,29 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
     fetchUser();
   }, [fetchUser]);
   // console.log(userInfo)
+=======
+    const data = {
+      start: convertedDate + " " + time,
+      durationInHours: 1,
+      classFrequency: "ONETIME",
+      courseId: Number(courseId),
+      studentId: userInfo.id,
+      instructorId: Number(instructorId),
+      eventInPerson: mode == "In-Person" ? true : false,
+      hourlyRate: hourlyRate,
+    };
+    console.log(data);
+    router.push({
+      pathname: "/student/coursepay",
+      query: data,
+    });
+  };
+
+  useEffect(() => {
+    fetchUser();
+  }, [fetchUser]);
+  console.log(userInfo);
+>>>>>>> 49cdeb11a0a8c00abdee47a0410139a8daf33bb0
 
   // if (loading) {
   //   return <div>Loading...</div>;
@@ -85,6 +132,7 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
                 <div className="w-100 ">
                   <p className="p-0 m-0 fw-bold pb-2">Select time</p>
                   <div className="border rounded ">
+<<<<<<< HEAD
                   {
                     availableTime.map((v,i)=> {
                       return (
@@ -99,6 +147,21 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
                       )
                     })
                   }
+=======
+                    {availableTime.map((v, i) => {
+                      return (
+                        <p
+                          className={`m-0 px-3 py-1 fw-bold ${
+                            time == v && "bg-secondary text-white"
+                          }`}
+                          key={i}
+                          onClick={() => setTime(v)}
+                        >
+                          {v}
+                        </p>
+                      );
+                    })}
+>>>>>>> 49cdeb11a0a8c00abdee47a0410139a8daf33bb0
                   </div>
                 </div>
                 <div className=" w-100">
@@ -116,9 +179,9 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
                         type="radio"
                         name="flexRadioDefault"
                         id="flexRadioDefault1"
-                        value='ONETIME'
-                        checked={classFrequency == 'ONETIME'}
-              onChange={(e)=> setClassFrequency(e.target.value)}
+                        value="ONETIME"
+                        checked={classFrequency == "ONETIME"}
+                        onChange={(e) => setClassFrequency(e.target.value)}
                       />
                       <label
                         className="form-check-label"
@@ -133,9 +196,9 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
                         type="radio"
                         name="flexRadioDefault"
                         id="flexRadioDefault2"
-                        value='WEEKLY'
-                        checked={classFrequency == 'WEEKLY'}
-              onChange={(e)=> setClassFrequency(e.target.value)}
+                        value="WEEKLY"
+                        checked={classFrequency == "WEEKLY"}
+                        onChange={(e) => setClassFrequency(e.target.value)}
                       />
                       <label
                         className="form-check-label"
@@ -150,15 +213,13 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
                         type="radio"
                         name="flexRadioDefault"
                         id="flexRadioDefault1"
-                        value='BIWEEKLY'
-                        checked={classFrequency == 'BIWEEKLY'}
-              onChange={(e)=> setClassFrequency(e.target.value)}
-
+                        value="BIWEEKLY"
+                        checked={classFrequency == "BIWEEKLY"}
+                        onChange={(e) => setClassFrequency(e.target.value)}
                       />
                       <label
                         className="form-check-label"
                         for="flexRadioDefault1"
-                        
                       >
                         Bi-Weekly
                       </label>
@@ -169,9 +230,9 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
                         type="radio"
                         name="flexRadioDefault"
                         id="flexRadioDefault2"
-                        vale='MONTHLY'
-                        checked={classFrequency == 'MONTHLY'}
-              onChange={(e)=> setClassFrequency(e.target.value)}
+                        vale="MONTHLY"
+                        checked={classFrequency == "MONTHLY"}
+                        onChange={(e) => setClassFrequency(e.target.value)}
                       />
                       <label
                         className="form-check-label"
@@ -185,7 +246,10 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
                   <div className="py-2 d-flex align-items-center gap-4">
                     <h6 className="text-dark fw-bold m-0 p-0">Course:</h6>
 
-                    <select className="w-25 p-2 rounded outline-0 border border_gray   " disabled>
+                    <select
+                      className="w-25 p-2 rounded outline-0 border border_gray   "
+                      disabled
+                    >
                       <option>Select</option>
                       <option>Option 1</option>
                       <option>Option 2</option>
@@ -195,10 +259,14 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
                   <div className="py-2 d-flex align-items-center gap-4">
                     <h6 className="text-dark fw-bold m-0 p-0">Mode:</h6>
 
-                    <select className="w-25 p-2 rounded outline-0 border border_gray   " value={mode} disabled>
+                    <select
+                      className="w-25 p-2 rounded outline-0 border border_gray   "
+                      value={mode}
+                      disabled
+                    >
                       <option>Select</option>
-                      <option value='Online'>Online</option>
-                      <option value='In-Person'>In-Person</option>
+                      <option value="Online">Online</option>
+                      <option value="In-Person">In-Person</option>
                     </select>
                   </div>
 
@@ -223,8 +291,10 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
               </div>
               <div className="d-flex gap-2 justify-content-center pt-5">
                 <button
-                  className={`w-25 text-light p-2 rounded fw-bold  ${ !classFrequency ? 'btn_disabled' : 'btn_primary'}`}
-                disabled={ !classFrequency ? true : false} 
+                  className={`w-25 text-light p-2 rounded fw-bold  ${
+                    !classFrequency ? "btn_disabled" : "btn_primary"
+                  }`}
+                  disabled={!classFrequency ? true : false}
                   onClick={() => handleContinue()}
                 >
                   Schedule
@@ -239,12 +309,13 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
   );
 }
 
-
 const mapStateToProps = (state) => ({
   userInfo: state.user.userInfo,
   loading: state.user.loading,
   error: state.user.error,
 });
 
-export default withRole(connect(mapStateToProps, { fetchUser })(StudentScheduleClass), ['Student']);
-
+export default withRole(
+  connect(mapStateToProps, { fetchUser })(StudentScheduleClass),
+  ["Student"]
+);

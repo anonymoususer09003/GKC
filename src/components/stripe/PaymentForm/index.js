@@ -7,7 +7,7 @@ import {
 
 import { useStripe, useElements } from "@stripe/react-stripe-js";
 import CreateCustomer from "../../../services/stripe/CreateStripeCustomer";
-import OneTimePayment from "../../../services/stripe/OneTimePayment";
+import { OneTimePayment } from "../../../services/stripe/OneTimePayment";
 import SavePaymentCard from "../../../services/stripe/SavePaymentCard";
 import GetUserInfo from "../../../services/user/GetUserDetail";
 const PaymentForm = ({
@@ -21,6 +21,8 @@ const PaymentForm = ({
   oneTimePayment,
   savePaymentFutureUse,
   disabled,
+  data = {},
+  setIsCardValid,
 }) => {
   const stripe = useStripe();
   const elements = useElements();
@@ -30,9 +32,17 @@ const PaymentForm = ({
     vatNumber: "",
     vatType: "",
   });
+
+  const [cardFormValid, setCardFormValid] = useState(false);
+
   const onChange = (e) => {
     setBillingDetail({ ...billingDetail, [e.target.name]: e.target.value });
     onValueReceived(billingDetail);
+  };
+
+  const handleElementChange = (event) => {
+    setIsCardValid(event.complete && !event.error);
+    setCardFormValid(event.complete && !event.error);
   };
 
   const handlePayment = async () => {
@@ -56,36 +66,65 @@ const PaymentForm = ({
         },
       });
       let res = null;
+
       if (oneTimePayment) {
-        res = await OneTimePayment({
-          paymentId: paymentMethod?.id,
-        });
-      }
-      {
+        handleOneTimePayment(paymentMethod?.id);
+
+        // const { error } = await stripe.confirmCardPayment(paymentIntentId, {
+        //   payment_method: {
+        //     card: elements.getElement(CardElement),
+        //     billing_details: {
+        //       // Include billing details if required
+        //     }
+        //   }
+        // });
+      } else {
         res = await CreateCustomer({
           paymentId: paymentMethod?.id,
         });
+
         onPaymentRequest("success");
       }
-      // if (savePaymentFutureUse) {
-      //   const userInfo = await GetUserInfo();
-      //   console.log("userinfo", userInfo.data);
-      //   SavePaymentCard({
-      //     paymentId: paymentMethod?.id,
-      //     whoPaysId: userInfo?.data?.id,
-      //   });
-      // }
-      console.log("res", res);
-      console.log("paymentMethod", paymentMethod);
+      if (savePaymentFutureUse) {
+        SavePaymentCard({
+          paymentId: paymentMethod?.id,
+          whoPaysId: data?.whoPaysId || userInfo?.id,
+          ...data,
+        });
+      }
     } catch (err) {
       onPaymentRequest("failed");
       console.log("err0000-", err);
     }
   };
 
+  const handleOneTimePayment = async (paymentMethodId) => {
+    try {
+      let res = await OneTimePayment(data);
+
+      const { error, paymentIntent } = await stripe.confirmCardPayment(
+        res.data,
+        {
+          payment_method: paymentMethodId,
+        }
+      );
+
+      if (error) {
+        onPaymentRequest(false);
+        alert("Payment failed");
+      } else {
+        onPaymentRequest(true);
+        console.log("Payment successful!");
+        // Perform any necessary actions after successful payment
+      }
+    } catch (err) {
+      console.log("err", err);
+    }
+  };
+
   useEffect(() => {
     if (onPay) {
-      oneTimePayment ? OneTimePayment() : handlePayment();
+      handlePayment();
     }
   }, [onPay]);
   return (
@@ -106,6 +145,7 @@ const PaymentForm = ({
           options={{
             disabled,
           }}
+          onChange={handleElementChange}
         />
 
         <div className="d-flex gap-2 my-3">
@@ -117,6 +157,7 @@ const PaymentForm = ({
               options={{
                 disabled,
               }}
+              onChange={handleElementChange}
             />
           </div>
           <div className="w-100">
@@ -126,6 +167,7 @@ const PaymentForm = ({
               options={{
                 disabled,
               }}
+              onChange={handleElementChange}
             />
           </div>
         </div>

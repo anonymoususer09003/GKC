@@ -3,11 +3,31 @@ import Head from "next/head";
 import { ParentNavbar, Footer } from "../../../components";
 import { useRouter } from "next/router";
 import PaymentForm from "@/components/stripe/PaymentForm";
-import { withRole } from '../../../utils/withAuthorization';
+import { withRole } from "../../../utils/withAuthorization";
+import { useSelector } from "react-redux";
 
 function CCPayment() {
   const navigation = useRouter();
-
+  const [isCardValid, setIsCardValid] = useState(false);
+  const [confirmPayment, setConfirmPayment] = useState(false);
+  const [nameCard, setNameCard] = useState("");
+  const userInfo = useSelector((state) => state?.user?.userInfo);
+  const [whoPaysId, setWhoPaysId] = useState("");
+  const [savePaymentFutureUse, setSavePaymentFutureUse] = useState(true);
+  const handleValueReceived = (value) => {
+    setNameCard(value);
+    // Do something with the value in the parent component
+  };
+  const handlePaymentRequest = (status) => {
+    console.log("status", status);
+    if (status) {
+      alert("Success");
+    } else {
+      alert("Payment Failed");
+    }
+    setPaymentStatus(status);
+    setConfirmPayment(false);
+  };
   return (
     <>
       <Head>
@@ -65,8 +85,22 @@ function CCPayment() {
                 </div>
                 <h5 className="text-dark fw-bold text-center">OR</h5>
 
-                <PaymentForm title="Enter new credit card information" />
                 <div className="form-check">
+                  <div className="w-100 w-md-75 p-5">
+                    <PaymentForm
+                      title="Enter new credit card information"
+                      onValueReceived={handleValueReceived}
+                      onPay={confirmPayment}
+                      userInfo={userInfo}
+                      // data={{ instructorId, durationInHours, whoPaysId }}
+                      data={{}}
+                      onPaymentRequest={handlePaymentRequest}
+                      oneTimePayment={true}
+                      savePaymentFutureUse={savePaymentFutureUse}
+                      setIsCardValid={setIsCardValid}
+                    />
+                  </div>
+
                   <input
                     className="form-check-input"
                     type="checkbox"
@@ -79,8 +113,11 @@ function CCPayment() {
                 </div>
                 <div className="d-flex gap-2 justify-content-center mt-3">
                   <button
-                    className="w-25 btn_primary text-light p-2 rounded fw-bold "
-                    onClick={() => navigation.push("/parent/messaging")}
+                    className={`w-25 btn_primary text-light p-2 rounded fw-bold bg-gray-300 ${
+                      !nameCard || !isCardValid ? "btn_disabled" : "btn_primary"
+                    }`}
+                    disabled={!nameCard || !isCardValid}
+                    onClick={handlePaymentRequest}
                   >
                     Pay
                   </button>
@@ -96,4 +133,4 @@ function CCPayment() {
   );
 }
 
-export default withRole(CCPayment, ['Parent']);
+export default withRole(CCPayment, ["Parent"]);
