@@ -15,13 +15,15 @@ import styles from "../../../styles/Home.module.css"
 function EditProfile({ userInfo, loading, error, fetchUser }) {
   const [selected, setSelected] = useState([]);
   const [grade, setGrade] = useState('');
-  const [parent1, setParent1] = useState('');
+  const [parent1,setParent1] = useState('');
   const [parent2, setParent2] = useState('');
-  const [courses,   setCourses] = useState([]);
+  const [courses, setCourses] = useState([]);
   const [lang, setLang] = useState([]);
   
   const [selectedCourses,   setSelectedCourses] = useState([]);
   const [selectedLang, setSelectedLang] = useState([]);
+
+  let isValidForm = selectedCourses.length > 0 && selectedLang.length > 0 && grade && parent1 && parent2 
   
   const navigation = useRouter();
   // const onSaveProfile = () => {
@@ -69,16 +71,26 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
         },
         }
       );
-      console.log(response);
+      // console.log(response);
       // setCountries(response.data);
       navigation.push("/student/settingprofile")
     } catch (error) {
-      console.error(error);
+      // console.error(error);
     }
   }
 
+  const handleLangSelectChange = (selected) => {
+    setSelectedLang(
+      selected && selected.map((option) => ({
+        label: option.label,
+        value: option.value,
+        proficiencyId: {id: 1, name: 'Beginner'}
+      }))
+    )
+  };
 
-  const handleSelectChange = (selected) => {
+
+  const handleCourseSelectChange = (selected) => {
     setSelectedCourses(
       selected && selected.map((option) => ({
         label: option.label,
@@ -108,6 +120,8 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
     // }
 
   };
+  console.log(selectedCourses)
+  console.log(selectedLang)
 
 
   const getLang = async () => {
@@ -175,22 +189,22 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
       setSelectedCourses(courseOfInterestAndProficiencyArr)
       // console.log(courseOfInterestAndProficiencyArr)
 
-      // setFirstName(userInfo.firstName);
-      // setLastName(userInfo.lastName);
-      // setAddress1(userInfo.address1);
-      // setAddress2(userInfo.address2);
-      // setSelectedCountry(userInfo.country);
-      // setSelectedState(userInfo.state);
-      // setSelectedCity(userInfo.city);
-      // setZipCode(userInfo.zipCode);
-      // setDependents(userInfo.dependents)
+      setFirstName(userInfo.firstName);
+      setLastName(userInfo.lastName);
+      setAddress1(userInfo.address1);
+      setAddress2(userInfo.address2);
+      setSelectedCountry(userInfo.country);
+      setSelectedState(userInfo.state);
+      setSelectedCity(userInfo.city);
+      setZipCode(userInfo.zipCode);
+      setDependents(userInfo.dependents)
     }
   }, [userInfo]);
   console.log(userInfo)
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  // if (loading) {
+  //   return <div>Loading...</div>;
+  // }
 
   if (error) {
     return <div>Error: {error}</div>;
@@ -244,7 +258,11 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
                   <div></div>
 
                   <div className="d-flex gap-2 justify-content-center py-3">
-                    <button className="px-4 btn btn-success text-light p-2 rounded fw-bold d-flex align-items-center justify-content-center gap-2" onClick={()=> handleSubmit()}>
+                    <button 
+                      className="px-4 btn btn-success text-light p-2 rounded fw-bold d-flex align-items-center justify-content-center gap-2" 
+                      onClick={()=> handleSubmit()}
+                      disabled={!isValidForm}
+                    >
                       <BsCheck2Circle className="h3 m-0 p-0" /> Save Profile
                     </button>
                   </div>
@@ -339,40 +357,89 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
                       </label>
                     </div>
                   </div> */}
-                  <div className="col-12 col-md-4 border-start px-4 border_primary">
-                    <h4 className="fw-bold">Language Preference:</h4>
-                    <MultiSelect
-                        options={lang}
-                        value={selectedLang}
-                        onChange={setSelectedLang}
-                        labelledBy={"Select Language"}
-                        isCreatable={true}
-                      />
+                </div>
+              </div>
+
+            <div className="shadow rounded-10 pt-2 pb-5 bg-white  my-4">
+                <div className="p-4 w-50 m-auto">
+                  <h4 className="fw-bold m-0 p-0 pb-3 text-center">
+                    Languages List
+                  </h4>
+
+                  <MultiSelect
+                      options={lang}
+                      value={selectedLang}
+                      onChange={handleLangSelectChange}
+                      labelledBy={"Select Lang"}
+                      isCreatable={true}
+                      hasSelectAll={false}
+                    />
+                </div>
+
+                <div className="row m-0 p-0 ">
+                  <div className="col d-flex justify-content-center">
+                    <h4 className="fw-bold m-0 p-0">Langs</h4>
                   </div>
+                  <div className="col d-flex justify-content-center">
+                    <h4 className="fw-bold m-0 p-0">Proficiency</h4>
+                  </div>
+                  {
+                    selectedLang.map((v,ind)=>{
+                      return  <div className="row m-0 p-0 py-2 pt-4 ">
+                    <div className="col d-flex align-items-center gap-2">
+                      <MdArrowForwardIos className="text_primary h4 p-0 m-0" />
+                      <p className="fw-bold m-0 p-0 h5 fw-lighter">{v.label}</p>
+                    </div>
+                    <div className="col">
+                      <select className="w-100 p-2 rounded outline-0 border border_gray" value={v.proficiencyId.id} onChange={(e) => {
+                        const selectedProficiencyId = Number(e.target.value);
+                        const selectedProficiencyName = e.target.selectedOptions[0].label;
+
+                        const updatedLangs = selectedLang.map((lang) => {
+                          if (lang.value === v.value) {
+                            return {
+                              ...lang,
+                              proficiencyId: { id: selectedProficiencyId, name: selectedProficiencyName },
+                            };
+                          }
+                          return lang;
+                        });
+
+                        setSelectedLang(updatedLangs)
+                        // console.log(updatedLangs)
+                      }}>
+                        <option value={1}>Beginner</option>
+                        <option value="2">Intermediate</option>
+                        <option value={3}>Semi-Expert</option>
+                      </select>
+                    </div>
+                  </div>
+                    })
+                  }
                 </div>
               </div>
 
               <div className="shadow rounded-10 pt-2 pb-5 bg-white  my-4">
                 <div className="p-4 w-50 m-auto">
                   <h4 className="fw-bold m-0 p-0 pb-3 text-center">
-                    Course List:
+                    Course List
                   </h4>
 
                   <MultiSelect
                       options={courses}
                       value={selectedCourses}
-                      onChange={handleSelectChange}
+                      onChange={handleCourseSelectChange}
                       labelledBy={"Select Course"}
                       isCreatable={true}
                     />
                 </div>
 
                 <div className="row m-0 p-0 ">
-                  <div className="col ">
-                    <h4 className="fw-bold m-0 p-0">Courses:</h4>
+                  <div className="col d-flex justify-content-center">
+                    <h4 className="fw-bold m-0 p-0">Courses</h4>
                   </div>
-                  <div className="col ">
-                    <h4 className="fw-bold m-0 p-0">Perference:</h4>
+                  <div className="col d-flex justify-content-center">
+                    <h4 className="fw-bold m-0 p-0">Proficiency</h4>
                   </div>
                   {
                     selectedCourses.map((v,ind)=>{
@@ -454,3 +521,4 @@ const mapStateToProps = (state) => ({
 });
 
 export default withRole(connect(mapStateToProps, { fetchUser })(EditProfile), ['Student']);
+

@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 import { withRole } from '../../../utils/withAuthorization';
 import axios from "axios";
 import styles from "../../../styles/Home.module.css"
+import calendarStyles from "../../../styles/Calendar.module.css"
 import StudentSchedule from "./schedule";
 
 function StudentCalandar() {
@@ -136,9 +137,10 @@ function StudentCalandar() {
       <Navbar isLogin={true} />
         <main className="container">
           <div className={`row ${styles.calendarWrapper}`}>
-            <div className="col-12 col-lg-6 pt-5">
+            <div className="col-12 col-lg-6 pt-5 react-calendar-text-red">
               <Calendar 
               onClickDay={handleCalendarClick}
+              className={calendarStyles.reactCalendar}
               /> 
             </div>
               <StudentSchedule 
