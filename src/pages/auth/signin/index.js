@@ -129,7 +129,7 @@ export default function SignIn() {
                   className="text-decoration-none d-flex gap-2 justify-content-center py-3"
                 >
                   <p className="text-secondary fw-bold">Not yet Register?</p>
-                  <p className="fw-bold text_secondary">Create account?</p>
+                  <p className="fw-bold text_secondary">Create account</p>
                 </Link>
               </div>
             </div>
