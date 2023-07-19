@@ -15,7 +15,7 @@ function StudentCalandar() {
   const [singleIcalEvent, setSingleIcalEvent] = useState({})
   const [instructorName, setInstructorName] = useState("");
   const [eventTime, setEventTime] = useState("");
-  const [courseId, setCourseId] = useState("");
+  const [courseName, setCourseName] = useState("");
   const [instructorId, setInstructorId] = useState(null);
   const [meetingLink, setMeetingLink] = useState(null)
   const [deleteable, setDeleteable] = useState(false);
@@ -27,7 +27,6 @@ function StudentCalandar() {
         const fetchICalendarData = async () => {
           try {
             const typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
-
             const response = await fetch('http://34.227.65.157/event/logged-user-events-iCal', {
               headers: {
                 Authorization: `Bearer ${typ.accessToken}`,
@@ -46,7 +45,6 @@ function StudentCalandar() {
                 const [property, value] = line.split(':');
                 if (property && value) {
                   event[property] = value.replace(/\r/g, '');
-
                 }
               });
               events.push(event);
@@ -65,16 +63,12 @@ function StudentCalandar() {
     const fetchEventData = async () => {
       try {
         const typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
-    
         const response = await axios.get('http://34.227.65.157/event/logged-user-events', {
           headers: {
             Authorization: `Bearer ${typ.accessToken}`,
           },
         });
-        
-    
         setBookedEvent(response.data);
-        console.log(response.data);
       } catch (error) {
         console.error('Error fetching iCalendar data:', error);
       }
@@ -101,7 +95,7 @@ function StudentCalandar() {
         setInstructorName(matchedBookedEvent.instructorName);
         setEventTime(matchedBookedEvent.start);
         setDeleteable(matchedBookedEvent.deleteable);
-        setCourseId(matchedBookedEvent.courseId);
+        setCourseName(matchedBookedEvent.courseName);
         //HERE WILL BE THE MEETING LINK
         setMeetingLink("meetinglink");
         setInstructorId(matchedBookedEvent.instructorId);
@@ -113,7 +107,7 @@ function StudentCalandar() {
         setInstructorName('');
         setEventTime('');
         setDeleteable(false);
-        setCourseId('');
+        setCourseName('');
         setMeetingLink('');
         setInstructorId('');
       }
@@ -130,8 +124,6 @@ function StudentCalandar() {
     }
   };
   
-
-
   return (
     <>
       <Navbar isLogin={true} />
@@ -146,7 +138,7 @@ function StudentCalandar() {
               <StudentSchedule 
                instructorName={instructorName} 
                start={eventTime} 
-               courseName={courseId}
+               courseName={courseName}
                deleteable={deleteable} 
                instructorId={instructorId} 
                meetingLink={meetingLink} 
