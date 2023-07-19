@@ -7,17 +7,18 @@ import { withRole } from "../../../utils/withAuthorization";
 import { useRouter } from 'next/router';
 import { connect } from "react-redux";
 import { fetchUser } from "../../../store/actions/userActions";
+import calendarStyles from "../../../styles/Calendar.module.css"
 
 
 function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
   const router = useRouter();
-  const { date, mode, time, courseId, instructorId, hourlyRate } = router.query;
+  const { date, mode, courseId, instructorId, hourlyRate } = router.query;
   
   const [classFrequency, setClassFrequency] = useState('');
   const [value, onChange] = useState(date);
   const [availableTime, setAvailableTime] = useState([ '7:00', '8:00', '9:00', '10:00', '11:00', '12:00', '13:00','14:00', '15:00', '16:00', '17:00', '18:00', '19:00',  ]);
-
-  console.log( date, mode, time, courseId, instructorId )
+  const [time, setTime] = useState();
+  // console.log( date, mode, time, courseId, instructorId )
 
   const handleContinue =async () => {
     const dateObject = new Date(date);
@@ -38,7 +39,7 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
     eventInPerson: mode == 'In-Person' ?  true : false,
     hourlyRate: hourlyRate
   };
-  console.log(data)
+  // console.log(data)
   router.push({
     pathname: '/student/coursepay',
     query: data
@@ -46,16 +47,14 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
   };
 
 
-
-  
   useEffect(() => {
     fetchUser();
   }, [fetchUser]);
-  console.log(userInfo)
+  // console.log(userInfo)
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  // if (loading) {
+  //   return <div>Loading...</div>;
+  // }
 
   if (error) {
     return <div>Error: {error}</div>;
@@ -74,7 +73,7 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
         <div className="row" style={{ minHeight: "90vh" }}>
           <div className="col-12 col-lg-6 pt-5">
             <p className="fw-bold text-center">Schedule class with John Doe</p>
-            <Calendar value={date} />
+            <Calendar value={date} className={calendarStyles.reactCalendar}/>
           </div>
           <div className="col-12 col-lg-6 pt-5">
             <p className="fw-bold text-center text-white">I</p>
@@ -88,7 +87,16 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
                   <div className="border rounded ">
                   {
                     availableTime.map((v,i)=> {
-                      return <p className={`m-0 px-3 py-1 fw-bold ${time == v && 'bg-secondary text-white'}`} key={i} onClick={()=> setTime(v)}>{v}</p>
+                      return (
+                        <p className={`m-0 px-3 py-1 fw-bold ${time == v && 'bg-secondary text-white'}`} 
+                        key={i} 
+                        onClick={()=> {
+                          setTime(v)
+                        }}
+                        >
+                          {v}
+                        </p>
+                      )
                     })
                   }
                   </div>
