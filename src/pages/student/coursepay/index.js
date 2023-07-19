@@ -5,12 +5,28 @@ import { useRouter } from "next/router";
 import PaymentForm from "@/components/stripe/PaymentForm";
 import { withRole } from "../../../utils/withAuthorization";
 import axios from "axios";
+import { useSelector } from "react-redux";
 
 function StudentRegistrationCCPay() {
   const navigation = useRouter();
-  const { start, durationInHours, classFrequency,studentId, courseId, instructorId, eventInPerson, hourlyRate } = navigation.query;
-  const [whoPaysId, setWhoPaysId] = useState('');
+  const {
+    start,
+    durationInHours,
+    classFrequency,
+    studentId,
+    courseId,
+    instructorId,
+    eventInPerson,
+    hourlyRate,
+  } = navigation.query;
+  const [whoPaysId, setWhoPaysId] = useState("");
+  const [savePaymentFutureUse, setSavePaymentFutureUse] = useState(true);
+  const [confirmPayment, setConfirmPayment] = useState(false);
+  const [isCardValid, setIsCardValid] = useState(false);
+  const userInfo = useSelector((state) => state?.user?.userInfo);
+  const [paymentStatus, setPaymentStatus] = useState("");
 
+  const [nameCard, setNameCard] = useState("");
   const scheduleSaved = async () => {
     try {
       var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
@@ -21,7 +37,7 @@ function StudentRegistrationCCPay() {
           durationInHours: durationInHours,
           classFrequency: classFrequency,
           courseId: courseId,
-          studentId:  studentId,
+          studentId: studentId,
           whoPaysId: whoPaysId,
           instructorId: instructorId,
           eventInPerson: eventInPerson,
@@ -32,13 +48,10 @@ function StudentRegistrationCCPay() {
           },
         }
       );
-      console.log(res.data);
     } catch (error) {
       console.error("Error fetching profile data:", error);
     }
   };
-
-
 
   const scheduleNoSaved = async () => {
     try {
@@ -51,15 +64,15 @@ function StudentRegistrationCCPay() {
             durationInHours: durationInHours,
             classFrequency: classFrequency,
             courseId: courseId,
-            studentId:  studentId,
+            studentId: studentId,
             whoPaysId: whoPaysId,
             instructorId: instructorId,
             eventInPerson: eventInPerson,
           },
           stripeResponseDTO: {
             paymentIntentId: string,
-            paymentStatus: string
-          }
+            paymentStatus: string,
+          },
         },
         {
           headers: {
@@ -67,13 +80,23 @@ function StudentRegistrationCCPay() {
           },
         }
       );
-      console.log(res.data);
     } catch (error) {
       console.error("Error fetching profile data:", error);
     }
   };
-
- 
+  const handleValueReceived = (value) => {
+    setNameCard(value);
+    // Do something with the value in the parent component
+  };
+  const handlePaymentRequest = (status) => {
+    if (status) {
+      scheduleSaved();
+    } else {
+      alert("Payment Failed");
+    }
+    setPaymentStatus(status);
+    setConfirmPayment(false);
+  };
   return (
     <>
       <Head>
@@ -114,7 +137,9 @@ function StudentRegistrationCCPay() {
                   </div>
                   <div className="d-flex gap-3 py-1">
                     <p className="p-0 m-0 fw-bold">Total Due:</p>
-                    <p className="p-0 m-0 fw-bold">${hourlyRate * durationInHours}</p>
+                    <p className="p-0 m-0 fw-bold">
+                      ${hourlyRate * durationInHours}
+                    </p>
                   </div>
                 </div>
                 <h5 className="text-dark fw-bold">
@@ -122,10 +147,14 @@ function StudentRegistrationCCPay() {
                 </h5>
 
                 <div className="py-2">
-                  <select className="w-25 p-2 rounded outline-0 border border_gray  mb-3 " value={whoPaysId} onChange={(e)=> setWhoPaysId(e.target.value)}>
+                  <select
+                    className="w-25 p-2 rounded outline-0 border border_gray  mb-3 "
+                    value={whoPaysId}
+                    onChange={(e) => setWhoPaysId(e.target.value)}
+                  >
                     <option>Select</option>
-                    <option value='1'>example@mail.com</option>
-                    <option value='2'>example2@mail.com</option>
+                    <option value="1">example@mail.com</option>
+                    <option value="2">example2@mail.com</option>
                   </select>
                 </div>
 
@@ -138,16 +167,36 @@ function StudentRegistrationCCPay() {
                     <option>Option 2</option>
                   </select>
                 </div>
-                <PaymentForm title="Enter new credit card information" />
-                <div>
-                  <label className="form-check-label" style={{color: 'gray'}} for="flexCheckDefault">
-                    Card will be saved for future use
+                <PaymentForm
+                  title="Enter new credit card information"
+                  onValueReceived={handleValueReceived}
+                  onPay={confirmPayment}
+                  userInfo={userInfo}
+                  data={{ instructorId, durationInHours, whoPaysId }}
+                  onPaymentRequest={handlePaymentRequest}
+                  oneTimePayment={true}
+                  savePaymentFutureUse={savePaymentFutureUse}
+                  setIsCardValid={setIsCardValid}
+                />
+                <div className="form-check">
+                  <input
+                    className="form-check-input"
+                    type="checkbox"
+                    value={savePaymentFutureUse}
+                    onChange={(e) => setSavePaymentFutureUse(e.target.checked)}
+                    id="flexCheckDefault"
+                  />
+                  <label className="form-check-label" for="flexCheckDefault">
+                    Save the payment information for future use
                   </label>
                 </div>
                 <div className="d-flex gap-2 justify-content-center mt-3">
                   <button
-                    className="w-50 btn_primary text-light p-2 rounded fw-bold "
-                    onClick={scheduleSaved}
+                    className={`w-50 btn_primary text-light p-2 rounded fw-bold bg-gray-300 ${
+                      !nameCard || !isCardValid ? "btn_disabled" : "btn_primary"
+                    }`}
+                    disabled={!nameCard || !isCardValid}
+                    onClick={() => setConfirmPayment(true)}
                   >
                     Pay
                   </button>

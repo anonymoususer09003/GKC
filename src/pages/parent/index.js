@@ -175,17 +175,17 @@ useEffect(()=>{
               onChange={(e)=> setHourlyRate(e.target.value)}
             />
             <select className="p-2 rounded outline-0 border border_gray">
-              <option value="">Min.Stars</option>
+              <option value="">Min Stars</option>
               <option value="">1 Star</option>
-              <option value="">2 Star</option>
-              <option value="">3 Star</option>
-              <option value="">4 Star</option>
-              <option value="">5 Star</option>
+              <option value="">2 Stars</option>
+              <option value="">3 Stars</option>
+              <option value="">4 Stars</option>
+              <option value="">5 Stars</option>
             </select>
             <input
               type="text"
               placeholder="Enter City and state or Zip/Post Code"
-              className={`p-2 rounded outline-0 border border_gray ${styles.landingInputs}`}
+              className={`p-2 rounded outline-0 border border_gray w-25 ${styles.landingInputs}`}
               onChange={(e)=> setSelectedZip(e.target.value)}
             />
             <button
