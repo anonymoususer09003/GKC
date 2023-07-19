@@ -139,15 +139,9 @@ function StudentRegistrationCCPay() {
                   </select>
                 </div>
                 <PaymentForm title="Enter new credit card information" />
-                <div className="form-check">
-                  <input
-                    className="form-check-input"
-                    type="checkbox"
-                    value=""
-                    id="flexCheckDefault"
-                  />
-                  <label className="form-check-label" for="flexCheckDefault">
-                    Save the payment information for future use
+                <div>
+                  <label className="form-check-label" style={{color: 'gray'}} for="flexCheckDefault">
+                    Card will be saved for future use
                   </label>
                 </div>
                 <div className="d-flex gap-2 justify-content-center mt-3">
