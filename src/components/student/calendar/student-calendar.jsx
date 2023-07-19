@@ -88,7 +88,6 @@ function StudentCalandar() {
   
     if (selectedIcalEvent) {
       setSingleIcalEvent(selectedIcalEvent);
-  
       const matchedBookedEvent = bookedEvents.find((singleBooked) => singleBooked.id == selectedIcalEvent['EVENT-ID']);
   
       if (matchedBookedEvent) {
