@@ -7,9 +7,19 @@ import { withRole } from "../../../utils/withAuthorization";
 import { useRouter } from "next/router";
 import { connect } from "react-redux";
 import { fetchUser } from "../../../store/actions/userActions";
+import calendarStyles from "../../../styles/Calendar.module.css"
 
 function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
   const router = useRouter();
+<<<<<<< HEAD
+  const { date, mode, courseId, instructorId, hourlyRate } = router.query;
+  
+  const [classFrequency, setClassFrequency] = useState('');
+  const [value, onChange] = useState(date);
+  const [availableTime, setAvailableTime] = useState([ '7:00', '8:00', '9:00', '10:00', '11:00', '12:00', '13:00','14:00', '15:00', '16:00', '17:00', '18:00', '19:00',  ]);
+  const [time, setTime] = useState();
+  // console.log( date, mode, time, courseId, instructorId )
+=======
   const { date, mode, time, courseId, instructorId, hourlyRate } = router.query;
   const [_time, setTime] = useState();
   const [classFrequency, setClassFrequency] = useState("");
@@ -31,6 +41,7 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
   ]);
 
   console.log(date, mode, time, courseId, instructorId);
+>>>>>>> 49cdeb11a0a8c00abdee47a0410139a8daf33bb0
 
   const handleContinue = async () => {
     const dateObject = new Date(date);
@@ -41,6 +52,30 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
     const day = dateObj.getDate().toString().padStart(2, "0");
     const convertedDate = `${year}-${month}-${day}`;
 
+<<<<<<< HEAD
+  const data = {
+    start: convertedDate + " " + time,
+    durationInHours: 1,
+    classFrequency: "ONETIME",
+    courseId:  Number(courseId),
+    studentId:  userInfo.id,
+    instructorId: Number(instructorId),
+    eventInPerson: mode == 'In-Person' ?  true : false,
+    hourlyRate: hourlyRate
+  };
+  // console.log(data)
+  router.push({
+    pathname: '/student/coursepay',
+    query: data
+  });
+  };
+
+
+  useEffect(() => {
+    fetchUser();
+  }, [fetchUser]);
+  // console.log(userInfo)
+=======
     const data = {
       start: convertedDate + " " + time,
       durationInHours: 1,
@@ -62,10 +97,11 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
     fetchUser();
   }, [fetchUser]);
   console.log(userInfo);
+>>>>>>> 49cdeb11a0a8c00abdee47a0410139a8daf33bb0
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  // if (loading) {
+  //   return <div>Loading...</div>;
+  // }
 
   if (error) {
     return <div>Error: {error}</div>;
@@ -84,7 +120,7 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
         <div className="row" style={{ minHeight: "90vh" }}>
           <div className="col-12 col-lg-6 pt-5">
             <p className="fw-bold text-center">Schedule class with John Doe</p>
-            <Calendar value={date} />
+            <Calendar value={date} className={calendarStyles.reactCalendar}/>
           </div>
           <div className="col-12 col-lg-6 pt-5">
             <p className="fw-bold text-center text-white">I</p>
@@ -96,6 +132,22 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
                 <div className="w-100 ">
                   <p className="p-0 m-0 fw-bold pb-2">Select time</p>
                   <div className="border rounded ">
+<<<<<<< HEAD
+                  {
+                    availableTime.map((v,i)=> {
+                      return (
+                        <p className={`m-0 px-3 py-1 fw-bold ${time == v && 'bg-secondary text-white'}`} 
+                        key={i} 
+                        onClick={()=> {
+                          setTime(v)
+                        }}
+                        >
+                          {v}
+                        </p>
+                      )
+                    })
+                  }
+=======
                     {availableTime.map((v, i) => {
                       return (
                         <p
@@ -109,6 +161,7 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
                         </p>
                       );
                     })}
+>>>>>>> 49cdeb11a0a8c00abdee47a0410139a8daf33bb0
                   </div>
                 </div>
                 <div className=" w-100">
