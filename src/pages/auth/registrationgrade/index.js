@@ -52,7 +52,7 @@ export default function RegistrationGrade() {
               }}
             >
               <input
-value="1"
+                value="1"
                 className="form-check-input position-absolute"
                 style={{ top: "5px", right: "5px" }}
                 type="radio"
@@ -62,7 +62,7 @@ value="1"
               onChange={(e)=> setGrade(e.target.value)}
               />
               <div className="position-absolute bottom-0 p-2 bg-light w-100 bg-opacity-50 fw-bold">
-                <small className="text-secondary">
+                <small className="text-dark">
                   Elementary &#40;&#60;10yrs&#41;
                 </small>
               </div>
@@ -90,7 +90,7 @@ value={2}
               />
 
               <div className="position-absolute bottom-0 p-2 bg-light w-100 bg-opacity-50 fw-bold">
-                <small className="text-secondary">
+                <small className="text-dark">
                   Middle School &#40;&#60;10yrs - 13yrs&#41;
                 </small>
               </div>
@@ -119,7 +119,7 @@ value="3"
               />
 
               <div className="position-absolute bottom-0 p-2 bg-light w-100 bg-opacity-50 fw-bold">
-                <small className="text-secondary">
+                <small className="text-dark">
                   High School &#40;&#60;14yrs - 16yrs&#41;
                 </small>
               </div>
@@ -148,7 +148,7 @@ value="4"
               />
 
               <div className="position-absolute bottom-0 p-2 bg-light w-100 bg-opacity-50 fw-bold">
-                <small className="text-secondary">
+                <small className="text-dark">
                   College & Beyond &#40;&gt;18yrs&#41;
                 </small>
               </div>

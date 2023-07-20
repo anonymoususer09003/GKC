@@ -214,6 +214,7 @@ export default function StudentRegistrationCourse() {
                         onChange={setSelectedLang}
                         labelledBy={"Select Language"}
                         isCreatable={true}
+                        hasSelectAll={false}
                       />
                     </div>
                   </div>
