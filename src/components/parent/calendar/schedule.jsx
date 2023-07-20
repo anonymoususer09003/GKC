@@ -1,5 +1,7 @@
+import { useState } from "react";
 import styles from "../../../styles/Home.module.css"
 import { BsFillChatFill, BsFillSendFill } from "react-icons/bs";
+import { IconContext } from "react-icons";
 import { GoDeviceCameraVideo } from "react-icons/go";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { useRouter } from "next/router";
@@ -7,11 +9,11 @@ import moment from "moment";
 import FirebaseChat from "../../../hooks/firebase-chat";
 import axios from "axios";
 
+const StudentSchedule = (props) => {
 
-
-const ParentSchedule = (props) => {
   const router = useRouter();
   const { sendMessage, messages, setChatInfo, setNewMessage, newMessage } = FirebaseChat();
+  const [enabledCamera, setEnabledCamera] = useState(false);
   
 
   const deleteSingleOccurrence = async (eventId, dateToCancel) => {
@@ -98,28 +100,34 @@ const ParentSchedule = (props) => {
             <h6 className="p-0 m-0 flex-fill fw-bold flex-fill">
               {props.instructorName}
             </h6>
-           <h6 className="p-0 m-0 flex-fill fw-bold flex-fill">{props.start}</h6>
+           <h6 className="p-0 m-0 flex-fill fw-bold flex-fill">{props.start} </h6>
            <h6 className="p-0 m-0 flex-fill fw-bold flex-fill">{props.courseName}</h6>
             {props.instructorId &&
-                <BsFillChatFill
-                className="p-0 m-0 flex-fill h4 flex-fill"
-                data-bs-toggle="modal"
-                data-bs-target="#exampleModal2"
-              />
-            }
+              <IconContext.Provider value={{ color: "#1677d2"}}>
+                  <BsFillChatFill
+                  className="p-0 m-0 flex-fill h4 flex-fill"
+                  data-bs-toggle="modal"
+                  data-bs-target="#exampleModal2"
+                />
+              </IconContext.Provider>
+            } 
      
             {props.meetingLink && 
-                   <GoDeviceCameraVideo
-                   className="p-0 m-0 flex-fill h4 flex-fill"
-                   onClick={() => onContinue()}
-                 />
-            }
+            <IconContext.Provider value={{ color: enabledCamera ? "#126d2b" : "gray" }}>
+                <GoDeviceCameraVideo
+                  className="p-0 m-0 flex-fill h4 flex-fill"
+                  onClick={() => onContinue()}
+                />
+            </IconContext.Provider>
+            } 
            {props.deleteable && (
-                  <RiDeleteBin6Line className="p-0 m-0 h4 flex-fill" onClick={handleDeleteButtonClick}/>
-              )}
+            <IconContext.Provider value={{ color: "gray"}}>
+                <RiDeleteBin6Line className="p-0 m-0 h4 flex-fill" onClick={handleDeleteButtonClick}/>
+            </IconContext.Provider>
+            )}
            
             </>
-            }
+          }
          
       </div>
       </div> 
@@ -193,4 +201,4 @@ const ParentSchedule = (props) => {
   </>
   )
 }
-export default ParentSchedule;
+export default StudentSchedule;

@@ -75,7 +75,7 @@ function ParentSettingProfile({ userInfo, loading, error, fetchUser }) {
                   </div>
                   <ul className="m-0 primary-list py-4">
                   {userInfo?.dependents?.length == 0? <div>
-                    <p className="fw-bold">You don't any Dependent added yet!</p>
+                    <p className="fw-bold">You currently don't have any dependent</p>
                   </div> : userInfo?.dependents.map(dep=> {
                     return  <li className="fw-bold m-0 p-0 ps-4 py-2"> Name One </li>
                   })}

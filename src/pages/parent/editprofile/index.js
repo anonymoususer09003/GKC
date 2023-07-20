@@ -242,6 +242,9 @@ const handleSubmit =async () => {
                     <button className="px-4 btn btn-success text-light p-2 rounded fw-bold d-flex align-items-center justify-content-center gap-2" onClick={()=>handleSubmit()}>
                       <BsCheck2Circle className="h3 m-0 p-0" /> Save Profile
                     </button>
+                    <a href='/parent/settingprofile' className="px-4 btn btn-dark text-light p-2 rounded fw-bold d-flex align-items-center justify-content-center gap-2" onClick={()=>handleSubmit()}>
+                      Exit
+                    </a>
                   </div>
                 </div>
               </div>
@@ -253,7 +256,7 @@ const handleSubmit =async () => {
                   <div className="p-4 w-50">
                   {dependents.length == 0 ? 
                   <div>
-                    <p className="fw-bold">You don't have any Dependent Yet!</p>
+                    <p className="fw-bold">You currently don't have any dependent</p>
                   </div>
                   :dependents.map((dep,ind)=>{
                     return  <div className="d-flex justify-content-between gap-4 my-2">

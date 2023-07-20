@@ -5,6 +5,7 @@ import Calendar from "react-calendar";
 import { useRouter } from "next/router";
 import { withRole } from '../../../utils/withAuthorization';
 import axios from "axios";
+import calendarStyles from "../../../styles/Calendar.module.css"
 import styles from "../../../styles/Home.module.css"
 import ParentSchedule from "./schedule";
 
@@ -139,6 +140,7 @@ function ParentCalendar() {
             <div className="col-12 col-lg-6 pt-5">
               <Calendar 
               onClickDay={handleCalendarClick}
+              className={calendarStyles.reactCalendar}
               /> 
             </div>
               <ParentSchedule 
