@@ -20,9 +20,10 @@ const Navbar = ({ isLogin }) => {
     setValue(stored ? JSON.parse(stored) : false);
   }, []);
 
-  useEffect(() => {
+  /*useEffect(() => {
     dispatch(fetchUser());
   }, [dispatch])
+  */
 
   return (
     <>
