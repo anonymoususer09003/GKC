@@ -127,7 +127,7 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
   const getLang = async () => {
     try {
       const response = await axios.get(
-        `http://34.227.65.157/public/language/with-instructors`
+        `http://34.227.65.157/public/register/get-all-languages`
       );
       var arr = [];
       console.log(response.data)
@@ -143,7 +143,7 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
   const getCourses = async () => {
     try {
       const response = await axios.get(
-        `http://34.227.65.157/public/course/with-instructors`
+        `http://34.227.65.157/public/course/get-all-courses`
       );
 
       var technologyList = [];
@@ -360,7 +360,7 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
                 </div>
               </div>
 
-            <div className="shadow rounded-10 pt-2 pb-5 bg-white  my-4">
+            <div className="shadow rounded-10 pt-2 pb-5 bg-white my-4">
                 <div className="p-4 w-50 m-auto">
                   <h4 className="fw-bold m-0 p-0 pb-3 text-center">
                     Languages List
@@ -376,53 +376,62 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
                     />
                 </div>
 
-                <div className="row m-0 p-0 ">
+                <div className="row m-0 p-0 w-100">
                   <div className="col d-flex justify-content-center">
                     <h4 className="fw-bold m-0 p-0">Langs</h4>
                   </div>
-                  <div className="col d-flex justify-content-center">
+                  <div className="col d-flex justify-content-start">
                     <h4 className="fw-bold m-0 p-0">Proficiency</h4>
                   </div>
-                  {
-                    selectedLang.map((v,ind)=>{
-                      return  <div className="row m-0 p-0 py-2 pt-4 ">
-                    <div className="col d-flex align-items-center gap-2">
-                      <MdArrowForwardIos className="text_primary h4 p-0 m-0" />
-                      <p className="fw-bold m-0 p-0 h5 fw-lighter">{v.label}</p>
-                    </div>
-                    <div className="col">
-                      <select className="w-100 p-2 rounded outline-0 border border_gray" value={v.proficiencyId.id} onChange={(e) => {
-                        const selectedProficiencyId = Number(e.target.value);
-                        const selectedProficiencyName = e.target.selectedOptions[0].label;
 
-                        const updatedLangs = selectedLang.map((lang) => {
-                          if (lang.value === v.value) {
-                            return {
-                              ...lang,
-                              proficiencyId: { id: selectedProficiencyId, name: selectedProficiencyName },
-                            };
-                          }
-                          return lang;
-                        });
+                  
+                  <div className="container">
+                    <div className="row d-flex justify-content-center py-4">
 
-                        setSelectedLang(updatedLangs)
-                        // console.log(updatedLangs)
-                      }}>
-                        <option value={1}>Beginner</option>
-                        <option value="2">Intermediate</option>
-                        <option value={3}>Semi-Expert</option>
-                      </select>
+                    {
+                      selectedLang.map((v,ind)=>{
+                        return (
+                          <>
+                            <div className="col-md-4 item">
+                              {/* <MdArrowForwardIos className="text_primary h4 p-0 m-0" /> */}
+                              <li className="fw-bold m-0 p-0 h5 fw-lighter">{v.label}</li>
+                            </div>
+                            <div className="col-md-4 item">
+                              <select className="w-100 p-2 rounded outline-0 border border_gray" value={v.proficiencyId.id} onChange={(e) => {
+                                const selectedProficiencyId = Number(e.target.value);
+                                const selectedProficiencyName = e.target.selectedOptions[0].label;
+
+                                const updatedLangs = selectedLang.map((lang) => {
+                                  if (lang.value === v.value) {
+                                    return {
+                                      ...lang,
+                                      proficiencyId: { id: selectedProficiencyId, name: selectedProficiencyName },
+                                    };
+                                  }
+                                  return lang;
+                                });
+
+                                setSelectedLang(updatedLangs)
+                                // console.log(updatedLangs)
+                              }}>
+                                <option value={1}>Beginner</option>
+                                <option value="2">Intermediate</option>
+                                <option value={3}>Semi-Expert</option>
+                              </select>
+                            </div>
+                        </>
+                      )})
+                    }
                     </div>
                   </div>
-                    })
-                  }
+                  
                 </div>
               </div>
 
-              <div className="shadow rounded-10 pt-2 pb-5 bg-white  my-4">
+              <div className="shadow rounded-10 pt-2 pb-5 bg-white my-4">
                 <div className="p-4 w-50 m-auto">
                   <h4 className="fw-bold m-0 p-0 pb-3 text-center">
-                    Course List
+                    Courses List
                   </h4>
 
                   <MultiSelect
@@ -431,78 +440,59 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
                       onChange={handleCourseSelectChange}
                       labelledBy={"Select Course"}
                       isCreatable={true}
+                      hasSelectAll={false}
                     />
                 </div>
 
-                <div className="row m-0 p-0 ">
+                <div className="row m-0 p-0 w-100">
                   <div className="col d-flex justify-content-center">
                     <h4 className="fw-bold m-0 p-0">Courses</h4>
                   </div>
-                  <div className="col d-flex justify-content-center">
+                  <div className="col d-flex justify-content-start">
                     <h4 className="fw-bold m-0 p-0">Proficiency</h4>
                   </div>
-                  {
-                    selectedCourses.map((v,ind)=>{
-                      return  <div className="row m-0 p-0 py-2 pt-4">
-                    <div className="col d-flex align-items-center gap-2">
-                      <MdArrowForwardIos className="text_primary h4 p-0 m-0" />
-                      <p className="fw-bold m-0 p-0 h5 fw-lighter">{v.label}</p>
-                    </div>
-                    <div className="col">
-                      <select className="w-100 p-2 rounded outline-0 border border_gray" value={v.proficiencyId.id} onChange={(e) => {
-                           const selectedProficiencyId = Number(e.target.value);
-              const selectedProficiencyName = e.target.selectedOptions[0].label;
 
-              const updatedCourses = selectedCourses.map((course) => {
-                if (course.value === v.value) {
-                  return {
-                    ...course,
-                    proficiencyId: { id: selectedProficiencyId, name: selectedProficiencyName },
-                  };
-                }
-                return course;
-              });
+                  
+                  <div className="container">
+                    <div className="row d-flex justify-content-center py-4">
 
-              setSelectedCourses(updatedCourses)
-              console.log(updatedCourses)
-                          }}>
-                        <option value={1}>Beginner</option>
-                        <option value="2">Intermediate</option>
-                        <option value={3}>Semi-Expert</option>
-                      </select>
+                    {
+                      selectedCourses.map((v,ind)=>{
+                        return (
+                          <>
+                            <div className="col-md-4 item">
+                              {/* <MdArrowForwardIos className="text_primary h4 p-0 m-0" /> */}
+                              <li className="fw-bold m-0 p-0 h5 fw-lighter">{v.label}</li>
+                            </div>
+                            <div className="col-md-4 item">
+                              <select className="w-100 p-2 rounded outline-0 border border_gray" value={v.proficiencyId.id} onChange={(e) => {
+                                const selectedProficiencyId = Number(e.target.value);
+                                const selectedProficiencyName = e.target.selectedOptions[0].label;
+
+                                const updatedCourses = selectedLang.map((lang) => {
+                                  if (lang.value === v.value) {
+                                    return {
+                                      ...lang,
+                                      proficiencyId: { id: selectedProficiencyId, name: selectedProficiencyName },
+                                    };
+                                  }
+                                  return lang;
+                                });
+
+                                setSelectedLang(updatedCourses)
+                                // console.log(updatedLangs)
+                              }}>
+                                <option value={1}>Beginner</option>
+                                <option value="2">Intermediate</option>
+                                <option value={3}>Semi-Expert</option>
+                              </select>
+                            </div>
+                        </>
+                      )})
+                    }
                     </div>
                   </div>
-                    })
-                  }
-                 
-
-                  {/* <div className="row m-0 p-0 py-2">
-                    <div className="col d-flex align-items-center gap-2">
-                      <MdArrowForwardIos className="text_primary h4 p-0 m-0" />
-                      <p className="fw-bold m-0 p-0 h5 fw-lighter">Course 2</p>
-                    </div>
-                    <div className="col ">
-                      <select className="w-100 p-2 rounded outline-0 border border_gray  ">
-                        <option>Beginner</option>
-                        <option>Intermediate</option>
-                        <option>Semi-Expert</option>
-                      </select>
-                    </div>
-                  </div> */}
-
-                  {/* <div className="row m-0 p-0 py-2">
-                    <div className="col d-flex align-items-center gap-2">
-                      <MdArrowForwardIos className="text_primary h4 p-0 m-0" />
-                      <p className="fw-bold m-0 p-0 h5 fw-lighter">Course 3</p>
-                    </div>
-                    <div className="col ">
-                      <select className="w-100 p-2 rounded outline-0 border border_gray  ">
-                        <option>Beginner</option>
-                        <option>Intermediate</option>
-                        <option>Semi-Expert</option>
-                      </select>
-                    </div>
-                  </div> */}
+                  
                 </div>
               </div>
             </div>
