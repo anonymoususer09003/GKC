@@ -8,52 +8,193 @@ import { useRouter } from "next/router";
 import { connect } from "react-redux";
 import { fetchUser } from "../../../store/actions/userActions";
 import calendarStyles from "../../../styles/Calendar.module.css"
+import axios from "axios";
+import { GlobalInstructor } from "@/pages";
+import styles from "../../../styles/Home.module.css";
+
 
 function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
   const router = useRouter();
-  const { date, mode, courseId, instructorId, hourlyRate } = router.query;
-  
-  const [classFrequency, setClassFrequency] = useState('');
-  const [value, onChange] = useState(date);
+  const { instructorId } = router.query;
+
+ // const [value, onChange] = useState(date);
   const [availableTime, setAvailableTime] = useState([ '7:00', '8:00', '9:00', '10:00', '11:00', '12:00', '13:00','14:00', '15:00', '16:00', '17:00', '18:00', '19:00',  ]);
   const [time, setTime] = useState();
   // console.log( date, mode, time, courseId, instructorId )
+  const [instructorCourses, setInstructorCourses] = useState([]);
+  const [radioVal, setRadioVal] = useState("");
+  const [selectedMode, setSelectedMode] = useState('');
+  const [instId, setInstId] = useState(instructorId);
+  const [instructorData, setInstructorData] = useState({});
+  const [courseDuration, setCourseDuration] = useState(null)
+  const [courseId, setCourseId] = useState(null);
+  const [classFrequency, setClassFrequency] = useState('');
+  const [selectedDate, setSelectedDate] = useState(new Date());
 
   const handleContinue = async () => {
-    const dateObject = new Date(date);
-    const dateObj = dateObject;
-    const year = dateObj.getFullYear();
-    const month = (dateObj.getMonth() + 1).toString().padStart(2, "0");
 
-    const day = dateObj.getDate().toString().padStart(2, "0");
-    const convertedDate = `${year}-${month}-${day}`;
 
   const data = {
-    start: convertedDate + " " + time,
-    durationInHours: 1,
-    classFrequency: "ONETIME",
-    courseId:  Number(courseId),
+    start: selectedDate,
+    durationInHours: courseDuration,
+    classFrequency: classFrequency,
+    courseId:  courseId,
     studentId:  userInfo.id,
-    instructorId: Number(instructorId),
-    eventInPerson: mode == 'In-Person' ?  true : false,
-    hourlyRate: hourlyRate
+    instructorId: instructorId,
+    eventInPerson: selectedMode == 'In-Person' ?  true : false,
   };
+  
   // console.log(data)
   router.push({
     pathname: '/student/coursepay',
-    query: data
+   query: data
   });
   };
 
+  //Get Courses
+    const getCourses = async () => {
+    try {
+      const response = await axios.get(
+        `http://34.227.65.157/public/course/with-instructors`
+      );
 
+      var coursesArray = [];
+
+      response.data.map((v) => {
+        coursesArray.push({ value: v.id, label: v.name });
+      });
+      console.log(response)
+      setInstructorCourses(coursesArray);
+
+    } catch (error) {
+      console.error(error);
+    }
+  };
+ //Fetch user details from redux
   useEffect(() => {
     fetchUser();
-  }, [fetchUser]);
-  // console.log(userInfo)
+    setInstId(instructorId);
 
-  // if (loading) {
-  //   return <div>Loading...</div>;
-  // }
+  }, [fetchUser]);
+
+ 
+
+  //get Instructor Data
+
+  useEffect(() => {
+    const getInstructorData = async () => {
+      try {
+        var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
+  
+        const response = await axios.get (
+          `http://34.227.65.157/instructor/details-for-scheduling?instructorId=${instId}`, {
+            headers: {
+              Authorization: `Bearer ${typ.accessToken}`,
+            },
+          }
+        )
+        setInstructorData(response.data);
+      }
+      catch (error) {
+        console.log(error)
+      }
+    }
+    if(instructorId) {
+      getInstructorData()  
+    }
+  }, [])
+
+
+  useEffect(() => {
+    const getInstructorIcal = async () => {
+      try {
+        var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
+  
+        const response = await axios.get (
+          `http://34.227.65.157/instructor/schedule-and-unavailable-days-iCal?instructorId=22`, {
+            headers: {
+              Authorization: `Bearer ${typ.accessToken}`,
+            },
+          }
+        )
+        console.log(response, "Icaaaal")
+      } catch(error) {
+        console.log(error)
+      }
+    }
+
+    getInstructorIcal()
+  }, [])
+
+  
+  const handleDateChange = (clickedDate) =>{
+    /*const dateObj = new Date(clickedDate);
+    
+    const year = dateObj.getFullYear();
+    const month = String(dateObj.getMonth() + 1).padStart(2, "0");
+    const day = String(dateObj.getDate()).padStart(2, "0");
+    const formattedDateStr = `${year}-${month}-${day}`;*/
+    
+
+    const dateObj = new Date(clickedDate);
+
+    const year = dateObj.getFullYear();
+    const month = String(dateObj.getMonth() + 1).padStart(2, "0");
+    const day = String(dateObj.getDate()).padStart(2, "0");
+    const hours = String(dateObj.getHours()).padStart(2, "0");
+    const minutes = String(dateObj.getMinutes()).padStart(2, "0");
+
+    const formattedDateStr = `${year}-${month}-${day} ${hours}:${minutes}`;
+    setSelectedDate(formattedDateStr);
+  }
+
+  useEffect(() => {
+    getCourses();
+  },[])
+
+
+
+
+  //Get Modes 
+  //eventInPerson
+  const handleModeChange = (event) => {
+    setSelectedMode(event.target.value);
+  };
+
+//Get course duration
+const handleDuration = (e) => {
+  setCourseDuration(e.target.value);
+}
+
+//get courseId
+
+const handleCourseId = (event) => {
+
+  setCourseId(event.target.value)
+}
+
+
+/*
+  {
+    "classDto": {
+     -- "start": "2000-01-01 23:59",
+      +"durationInHours": 0, 
+      +"classFrequency": "ONETIME or DAILY or WEEKLY or BIWEEKLY or MONTHLY",
+      + "courseId": 0,
+      +"studentId": 0,
+      +"whoPaysId": 0,
+      +"instructorId": 0,
+      +"eventInPerson": true
+    },
+    "stripeResponseDTO": {
+      "paymentIntentId": "string",
+      "paymentStatus": "string"
+    }
+  }
+  */
+   if (loading) {
+     return <div>Loading...</div>;
+   }
 
   if (error) {
     return <div>Error: {error}</div>;
@@ -70,9 +211,14 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
       <Navbar isLogin={true} />
       <main className="container-fluid">
         <div className="row" style={{ minHeight: "90vh" }}>
+          <p>{instructorId}</p>
           <div className="col-12 col-lg-6 pt-5">
-            <p className="fw-bold text-center">Schedule class with John Doe</p>
-            <Calendar value={date} className={calendarStyles.reactCalendar}/>
+            <Calendar 
+            //value={date} 
+            onChange={handleDateChange} 
+           value={selectedDate} 
+            className={calendarStyles.reactCalendar}
+            />
           </div>
           <div className="col-12 col-lg-6 pt-5">
             <p className="fw-bold text-center text-white">I</p>
@@ -104,10 +250,11 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
                   <p className="p-0 m-0 fw-bold text-center py-2">
                     Your information
                   </p>
-                  <h6 className="text-dark fw-bold">
-                    You selected 1 hours slot
-                  </h6>
-
+                  <p className="p-0 m-0 fw-bold py-2">Course duration in Hours</p>
+                  <input 
+                  onChange={handleDuration}
+                  type="number" 
+                  className={`p-2 rounded outline-0 border border_gray w-100 ${styles.landingInputs}`}/>
                   <div className="py-1">
                     <div className="form-check">
                       <input
@@ -183,12 +330,15 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
                     <h6 className="text-dark fw-bold m-0 p-0">Course:</h6>
 
                     <select
-                      className="w-25 p-2 rounded outline-0 border border_gray   "
-                      disabled
+                      className="w-25 p-2 rounded outline-0 border border_gray"
+                      onChange={handleCourseId}
+                      value={courseId}
                     >
                       <option>Select</option>
-                      <option>Option 1</option>
-                      <option>Option 2</option>
+                      {instructorCourses.map((course) => {
+                        return <option key={course.label} value={course.value}>{course.label}</option>
+                      })}
+                    
                     </select>
                   </div>
 
@@ -197,27 +347,29 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
 
                     <select
                       className="w-25 p-2 rounded outline-0 border border_gray   "
-                      value={mode}
-                      disabled
+                      value={selectedMode}
+                      onChange={handleModeChange}
                     >
-                      <option>Select</option>
+                      <option value="">Select</option>
                       <option value="Online">Online</option>
                       <option value="In-Person">In-Person</option>
                     </select>
                   </div>
 
                   <div className="py-2 d-flex align-items-center gap-4">
-                    <h6 className="text-dark fw-bold m-0 p-0">Skills:</h6>
+                    <h6 className="text-dark fw-bold m-0 p-0">Hourly Rate:</h6>
 
-                    <h6 className="text-dark fw-bold m-0 p-0">Intermediate</h6>
+                    <h6 className="text-dark fw-bold m-0 p-0">{instructorData?.hourlyRate}</h6>
                   </div>
 
                   <div className="py-2 d-flex align-items-start gap-4">
                     <h6 className="text-dark fw-bold m-0 p-0">Grade:</h6>
                     <div>
-                      <h6 className="text-dark fw-bold m-0 p-0">
-                        Middle School
+                    <h6 className="text-dark fw-bold m-0 p-0">
+
+                  
                       </h6>
+
                       <h6 className="text-dark fw-bold m-0 p-0">
                         &#40;12yrs - 14yrs&#41;
                       </h6>
