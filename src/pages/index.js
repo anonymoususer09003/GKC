@@ -7,6 +7,9 @@ import { withRole } from './../utils/withAuthorization';
 import axios from "axios"
 import styles from "@/styles/Home.module.css";
 
+export  const GlobalInstructor = {
+  instructors: []
+}; 
 
 function StudentLandingPage() {
   //const authenticated = isAuthenticated();
@@ -38,7 +41,6 @@ function StudentLandingPage() {
         */
       })
       setInsructors(res.data);
-      console.log(res);
     } catch (error) {
       console.error('Error fetching profile data:', error);
     }
@@ -215,9 +217,11 @@ const getLang = async () => {
             <div className="container py-4">
             {
               insructors.map((instructor)=> {
-                return <TutorCard data={instructor} key={instructor.id}  
-                showModal={showModal}
-                setShowModal={setShowModal}
+                return <TutorCard 
+                data={instructor} 
+                key={instructor.id}  
+                //showModal={showModal}
+                //setShowModal={setShowModal}
 
             />
               })

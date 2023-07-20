@@ -21,7 +21,7 @@ function RequestInterview({ userInfo, loading, error, fetchUser }) {
   const [insName, setInsName] = useState(null);
   const [value, onChange] = useState(new Date());
   const [events, setEvents] = useState([
-  console.log(instructorId  )
+  
     // Add more events as needed
   ]);
   const [unavailableDates, setUnavailableDates] = useState([
@@ -77,7 +77,7 @@ function RequestInterview({ userInfo, loading, error, fetchUser }) {
         Authorization: `Bearer ${typ.accessToken}`,
       },
     });
-    // console.log(res.data);
+    console.log(res.data, "whaaaaat");
     setInsName(res.data);
     } catch (error) {
       console.error('Error fetching profile data:', error);
@@ -223,7 +223,9 @@ fetchProfileData()
           <p className="fw-bold text-center">
               Schedule Interview with {insName?.fullName}
             </p>
-            <Calendar onChange={setDate} value={date} 
+            <Calendar 
+              onChange={setDate} 
+              value={date} 
               tileDisabled={tileDisabled}
               tileClassName={tileContent}
                />
@@ -276,7 +278,9 @@ fetchProfileData()
 
                   <h6 className="text-dark fw-bold">Grade:</h6>
 
+                 {/*
                   <p className="text-dark fw-bold py-2">{userInfo?.grade?.name} <span> &#40;{userInfo?.grade.description}&#41;</span></p>
+                  */}
                 </div>
               </div>
               <div className="d-flex gap-2 justify-content-center pt-5">

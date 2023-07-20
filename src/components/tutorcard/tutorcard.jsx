@@ -11,7 +11,6 @@ const Tutorcard = ({data}) => {
   const navigation = useRouter();
   const [userData, setUserData] = useState(null);
   const [reviews, setReviews] = useState([]);
-  console.log(userData);
   const [showModal, setShowModal] = useState(false);
   const [showModal2, setShowModal2] = useState(false);
 
@@ -251,7 +250,7 @@ const Tutorcard = ({data}) => {
                   <Link   className={`btn_primary py-2 px-3 fw-bold text-white rounded text-decoration-none`} href="/student/requestinterview[instructorId]" as={`/student/requestinterview/${data.id}`} >
                     Request Interview
                   </Link>
-                  <Link   className={`btn_primary py-2 px-3 fw-bold text-white rounded text-decoration-none`} href="/student/requestinterview[instructorId]" as={`/student/requestinterview/${data.id}`} >
+                  <Link   className={`btn_primary py-2 px-3 fw-bold text-white rounded text-decoration-none`} href="/student/scheduleclass[instructorId]" as={`/student/scheduleclass/${data.id}`}  >
                   Select
                   </Link>
 
@@ -346,13 +345,10 @@ const Tutorcard = ({data}) => {
                   </div>
                 </div>
   })
-}
-                
-
-             
+}       
 
                 <div className="d-flex flex-column flex-md-row gap-2 gap-md-0 justify-content-between align-items-center p-3">
-                <Link   className={`btn_primary py-2 px-3 fw-bold text-white rounded text-decoration-none`} href="/student/requestinterview[instructorId]" as={`/student/requestinterview/${data.id}`} >
+                <Link   className={`btn_primary py-2 px-3 fw-bold text-white rounded text-decoration-none`} href="/student/scheduleclass[instructorId]" as={`/student/scheduleclass/${data.id}`} >
                   Select
                   </Link>
 

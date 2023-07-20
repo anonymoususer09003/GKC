@@ -1,14 +1,18 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import { Navbar, Footer } from "../../../components";
 import { useRouter } from "next/router";
 import PaymentForm from "@/components/stripe/PaymentForm";
 import { withRole } from "../../../utils/withAuthorization";
 import axios from "axios";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchUser } from "@/store/actions/userActions";
 
 function StudentRegistrationCCPay() {
   const navigation = useRouter();
+  const dispatch = useDispatch();
+
+
   const {
     start,
     durationInHours,
@@ -17,9 +21,9 @@ function StudentRegistrationCCPay() {
     courseId,
     instructorId,
     eventInPerson,
-    hourlyRate,
   } = navigation.query;
-  const [whoPaysId, setWhoPaysId] = useState("");
+
+  const [whoPaysId, setWhoPaysId] = useState(studentId);
   const [savePaymentFutureUse, setSavePaymentFutureUse] = useState(true);
   const [confirmPayment, setConfirmPayment] = useState(false);
   const [isCardValid, setIsCardValid] = useState(false);
@@ -27,6 +31,14 @@ function StudentRegistrationCCPay() {
   const [paymentStatus, setPaymentStatus] = useState("");
 
   const [nameCard, setNameCard] = useState("");
+
+ useEffect(() => {
+    dispatch(fetchUser());
+  }, [dispatch])
+  
+
+
+
   const scheduleSaved = async () => {
     try {
       var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
@@ -38,7 +50,7 @@ function StudentRegistrationCCPay() {
           classFrequency: classFrequency,
           courseId: courseId,
           studentId: studentId,
-          whoPaysId: whoPaysId,
+          whoPaysId: studentId,
           instructorId: instructorId,
           eventInPerson: eventInPerson,
         },
@@ -70,8 +82,8 @@ function StudentRegistrationCCPay() {
             eventInPerson: eventInPerson,
           },
           stripeResponseDTO: {
-            paymentIntentId: string,
-            paymentStatus: string,
+            paymentIntentId: paymentStatus,
+            paymentStatus: "string",
           },
         },
         {
@@ -84,10 +96,12 @@ function StudentRegistrationCCPay() {
       console.error("Error fetching profile data:", error);
     }
   };
+
   const handleValueReceived = (value) => {
     setNameCard(value);
     // Do something with the value in the parent component
   };
+
   const handlePaymentRequest = (status) => {
     if (status) {
       scheduleSaved();
@@ -96,7 +110,14 @@ function StudentRegistrationCCPay() {
     }
     setPaymentStatus(status);
     setConfirmPayment(false);
+
+    if(status) {
+      scheduleNoSaved()
+    }
+  
   };
+
+
   return (
     <>
       <Head>
@@ -124,21 +145,13 @@ function StudentRegistrationCCPay() {
 
                 <div className="py-2">
                   <div className="d-flex gap-3 py-1">
-                    <p className="p-0 m-0 fw-bold">Hourly Rate:</p>
-                    <p className="p-0 m-0 fw-bold">${hourlyRate}</p>
-                  </div>
-                  <div className="d-flex gap-3 py-1">
                     <p className="p-0 m-0 fw-bold">No. of Hours:</p>
                     <p className="p-0 m-0 fw-bold">{durationInHours}</p>
                   </div>
                   <div className="d-flex gap-3 py-1">
-                    <p className="p-0 m-0 fw-bold">Booking Fee:</p>
-                    <p className="p-0 m-0 fw-bold">$0</p>
-                  </div>
-                  <div className="d-flex gap-3 py-1">
                     <p className="p-0 m-0 fw-bold">Total Due:</p>
                     <p className="p-0 m-0 fw-bold">
-                      ${hourlyRate * durationInHours}
+                    { durationInHours}
                     </p>
                   </div>
                 </div>
