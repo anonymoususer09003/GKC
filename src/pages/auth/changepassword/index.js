@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
-import { Footer } from "../../../components";
+import { Footer, Navbar } from "../../../components";
 import { RiArrowGoBackLine } from "react-icons/ri";
 import { useRouter } from "next/router";
 import GetUserDetail from "../../../services/user/GetUserDetail";
@@ -88,6 +88,7 @@ export default function ForgotPassword() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
+      <Navbar />
       <main className="container-fluid d-flex flex-column justify-content-between  min-vh-100">
         <Link
           href="/"
@@ -96,7 +97,10 @@ export default function ForgotPassword() {
           <RiArrowGoBackLine />
           <p className="fw-bold m-0 p-0 ">Back to home</p>
         </Link>
-        <div className="row">
+        <div className="d-flex justify-content-center">
+          <h1>Change Password</h1>
+        </div>
+        <div className="d-flex justify-content-center">
           <div className="col-12 col-lg-6 d-flex justify-content-center align-items-center ">
             <div style={{ maxWidth: "380px", width: "100%" }}>
               <div
@@ -155,26 +159,6 @@ export default function ForgotPassword() {
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-          <div
-            className="col-12 col-lg-6 position-relative d-none d-md-block"
-            style={{
-              backgroundImage: 'url("/assets/auth_2.png")',
-              height: "100vh",
-              backgroundRepeat: "no-repeat",
-              backgroundSize: "100% 100%",
-            }}
-          >
-            <div style={{ position: "absolute", right: "0%", bottom: "7%" }}>
-              <Image
-                src="/assets/auth_boy_1.png"
-                alt="Vercel Logo"
-                className=""
-                width={600}
-                height={600}
-                priority
-              />
             </div>
           </div>
         </div>
