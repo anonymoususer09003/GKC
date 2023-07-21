@@ -18,14 +18,13 @@ function CCPayment() {
     setNameCard(value);
     // Do something with the value in the parent component
   };
-  const handlePaymentRequest = (status) => {
-    console.log("status", status);
-    if (status) {
-      alert("Success");
+  const handlePaymentRequest = (data) => {
+    if (data.status === "succeeded") {
+      scheduleSaved(data);
     } else {
       alert("Payment Failed");
     }
-    setPaymentStatus(status);
+    setPaymentStatus(data.status);
     setConfirmPayment(false);
   };
   return (

@@ -4,19 +4,13 @@ import { Navbar, Footer } from "../../../components";
 import { BsFillSendFill } from "react-icons/bs";
 import firebaseChatHook from "../../../hooks/firebase-chat";
 import moment from "moment";
-import { withRole } from '../../../utils/withAuthorization';
-
+import { withRole } from "../../../utils/withAuthorization";
+import { useSelector } from "react-redux";
 const instructor = {
   name: "Nouman",
   id: 1,
 };
 
-const student = {
-  courseId: 1,
-  name: "John",
-  id: 2,
-  parentId: 4,
-};
 const parent = {
   courseId: 1,
   name: "John",
@@ -36,8 +30,18 @@ function StudentMessaging() {
     setChatInfo,
   } = firebaseChatHook();
 
+  console.log("my chat list", myChatList);
+
+  const loggedInUser = useSelector((state) => state.user.userInfo);
+  const student = {
+    courseId: loggedInUser?.id,
+    name: loggedInUser?.firstName,
+    id: 2,
+    parentId: 4,
+  };
+  console.log("logged", loggedInUser);
   useEffect(() => {
-    getMyChatList(student.id);
+    getMyChatList(loggedInUser?.id);
     setChatInfo({
       sender: {
         ...student,
@@ -136,6 +140,4 @@ function StudentMessaging() {
   );
 }
 
-
-
-export default withRole(StudentMessaging, ['Student']);
+export default withRole(StudentMessaging, ["Student"]);

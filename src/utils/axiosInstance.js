@@ -1,7 +1,7 @@
-import axios from 'axios';
+import axios from "axios";
 
 const Axios = axios.create({
-    baseURL: process.env.NEXT_API_BASE_URL,
+  baseURL: "http://34.227.65.157",
 });
 
 export default Axios;

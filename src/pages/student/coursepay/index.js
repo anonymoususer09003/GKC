@@ -12,7 +12,6 @@ function StudentRegistrationCCPay() {
   const navigation = useRouter();
   const dispatch = useDispatch();
 
-
   const {
     start,
     durationInHours,
@@ -32,12 +31,9 @@ function StudentRegistrationCCPay() {
 
   const [nameCard, setNameCard] = useState("");
 
- useEffect(() => {
+  useEffect(() => {
     dispatch(fetchUser());
-  }, [dispatch])
-  
-
-
+  }, [dispatch]);
 
   const scheduleSaved = async () => {
     try {
@@ -101,22 +97,19 @@ function StudentRegistrationCCPay() {
     setNameCard(value);
     // Do something with the value in the parent component
   };
-
-  const handlePaymentRequest = (status) => {
-    if (status) {
-      scheduleSaved();
+  const handlePaymentRequest = (data) => {
+    if (data.status === "succeeded") {
+      scheduleSaved(data);
     } else {
       alert("Payment Failed");
     }
-    setPaymentStatus(status);
+    setPaymentStatus(data.status);
     setConfirmPayment(false);
 
-    if(status) {
-      scheduleNoSaved()
+    if (status) {
+      scheduleNoSaved();
     }
-  
   };
-
 
   return (
     <>
@@ -150,9 +143,7 @@ function StudentRegistrationCCPay() {
                   </div>
                   <div className="d-flex gap-3 py-1">
                     <p className="p-0 m-0 fw-bold">Total Due:</p>
-                    <p className="p-0 m-0 fw-bold">
-                    { durationInHours}
-                    </p>
+                    <p className="p-0 m-0 fw-bold">{durationInHours}</p>
                   </div>
                 </div>
                 <h5 className="text-dark fw-bold">

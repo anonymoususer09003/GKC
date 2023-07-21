@@ -44,7 +44,7 @@ const PaymentForm = ({
     setIsCardValid(event.complete && !event.error);
     setCardFormValid(event.complete && !event.error);
   };
-
+  let paymentMethodId = null;
   const handlePayment = async () => {
     try {
       const { paymentMethod } = await stripe?.createPaymentMethod({
@@ -66,7 +66,7 @@ const PaymentForm = ({
         },
       });
       let res = null;
-
+      paymentMethodId = paymentMethod?.id;
       if (oneTimePayment) {
         handleOneTimePayment(paymentMethod?.id);
 
@@ -83,7 +83,7 @@ const PaymentForm = ({
           paymentId: paymentMethod?.id,
         });
 
-        onPaymentRequest("success");
+        onPaymentRequest(true);
       }
       if (savePaymentFutureUse) {
         SavePaymentCard({
@@ -93,7 +93,7 @@ const PaymentForm = ({
         });
       }
     } catch (err) {
-      onPaymentRequest("failed");
+      onPaymentRequest(false);
       console.log("err0000-", err);
     }
   };
@@ -110,10 +110,18 @@ const PaymentForm = ({
       );
 
       if (error) {
-        onPaymentRequest(false);
-        alert("Payment failed");
+        console.log("err", error);
+        onPaymentRequest({
+          ...error,
+          paymentIntentId: paymentMethodId,
+          status: "failed",
+        });
       } else {
-        onPaymentRequest(true);
+        console.log("res", paymentIntent);
+        onPaymentRequest({
+          ...paymentIntent,
+          paymentIntentId: paymentMethodId,
+        });
         console.log("Payment successful!");
         // Perform any necessary actions after successful payment
       }
