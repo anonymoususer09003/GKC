@@ -114,7 +114,7 @@ const PaymentForm = ({
         onPaymentRequest({
           ...error,
           paymentIntentId: paymentMethodId,
-          status: "failed",
+          status: error?.payment_intent?.status,
         });
       } else {
         console.log("res", paymentIntent);

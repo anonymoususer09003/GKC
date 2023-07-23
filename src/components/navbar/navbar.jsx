@@ -11,7 +11,6 @@ import { Dispatch } from "redux";
 import { fetchUser } from "@/store/actions/userActions";
 
 const Navbar = ({ isLogin }) => {
-
   const [value, setValue] = useState(false);
   const dispatch = useDispatch();
 
@@ -28,7 +27,7 @@ const Navbar = ({ isLogin }) => {
   return (
     <>
       <nav className="navbar navbar-expand-lg navbar-light bg-light p-3">
-        <LogoutTimer logout={onSignOut}/>
+        <LogoutTimer logout={onSignOut} />
         <div className="container-fluid">
           <div className="pe-4">
             <Image
@@ -62,7 +61,11 @@ const Navbar = ({ isLogin }) => {
                 </>
               )}
               <li className="nav-item">
-                <a className={`nav-link ${styles.homeLink}`} aria-current="page" href="/">
+                <a
+                  className={`nav-link ${styles.homeLink}`}
+                  aria-current="page"
+                  href="/"
+                >
                   Home
                 </a>
               </li>
@@ -87,11 +90,13 @@ const Navbar = ({ isLogin }) => {
                 <div className={styles["burger-menu-wrapper"]}>
                   <ul className="list-unstyled">
                     <div className="dropdown">
-                      <button className="btn btn-lg dropdown-toggle"
-                        data-bs-toggle="dropdown" 
+                      <button
+                        className="btn btn-lg dropdown-toggle"
+                        data-bs-toggle="dropdown"
                         type="button"
-                        aria-expanded="false">
-                        <IoMdSettings/>
+                        aria-expanded="false"
+                      >
+                        <IoMdSettings />
                       </button>
                       <ul
                         className={`dropdown-menu shadow ${styles.dropDown}`}
@@ -146,9 +151,7 @@ const Navbar = ({ isLogin }) => {
                           </a>
                         </li>
                       </ul>
-                      
                     </div>
- 
                   </ul>
                   <Link
                     href="/auth/signin"
@@ -158,8 +161,6 @@ const Navbar = ({ isLogin }) => {
                     Sign Out
                   </Link>
                 </div>
-         
-
               ) : (
                 <Link
                   href="/auth/signin"

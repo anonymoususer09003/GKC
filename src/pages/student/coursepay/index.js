@@ -11,7 +11,7 @@ import { fetchUser } from "@/store/actions/userActions";
 function StudentRegistrationCCPay() {
   const navigation = useRouter();
   const dispatch = useDispatch();
-
+  console.log("navigation query", navigation.query);
   const {
     start,
     durationInHours,
@@ -23,7 +23,7 @@ function StudentRegistrationCCPay() {
   } = navigation.query;
 
   const [whoPaysId, setWhoPaysId] = useState(studentId);
-  const [savePaymentFutureUse, setSavePaymentFutureUse] = useState(true);
+  const [savePaymentFutureUse, setSavePaymentFutureUse] = useState(false);
   const [confirmPayment, setConfirmPayment] = useState(false);
   const [isCardValid, setIsCardValid] = useState(false);
   const userInfo = useSelector((state) => state?.user?.userInfo);
@@ -61,7 +61,7 @@ function StudentRegistrationCCPay() {
     }
   };
 
-  const scheduleNoSaved = async () => {
+  const scheduleNoSaved = async (data) => {
     try {
       var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
       const res = await axios.post(
@@ -69,17 +69,17 @@ function StudentRegistrationCCPay() {
         {
           classDto: {
             start: start,
-            durationInHours: durationInHours,
+            durationInHours: parseInt(durationInHours),
             classFrequency: classFrequency,
-            courseId: courseId,
-            studentId: studentId,
-            whoPaysId: whoPaysId,
-            instructorId: instructorId,
-            eventInPerson: eventInPerson,
+            courseId: parseInt(courseId),
+            studentId: parseInt(studentId),
+            whoPaysId: parseInt(whoPaysId),
+            instructorId: parseInt(instructorId),
+            eventInPerson: JSON.parse(eventInPerson),
           },
           stripeResponseDTO: {
-            paymentIntentId: paymentStatus,
-            paymentStatus: "string",
+            paymentIntentId: data?.paymentIntentId,
+            paymentStatus: data?.status,
           },
         },
         {
@@ -98,17 +98,19 @@ function StudentRegistrationCCPay() {
     // Do something with the value in the parent component
   };
   const handlePaymentRequest = (data) => {
+    console.log("data", data);
     if (data.status === "succeeded") {
-      scheduleSaved(data);
+      // scheduleSaved();
+      scheduleNoSaved(data);
     } else {
       alert("Payment Failed");
     }
     setPaymentStatus(data.status);
     setConfirmPayment(false);
 
-    if (status) {
-      scheduleNoSaved();
-    }
+    // if (status) {
+    //   scheduleNoSaved();
+    // }
   };
 
   return (
