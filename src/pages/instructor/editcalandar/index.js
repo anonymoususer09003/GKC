@@ -11,6 +11,8 @@ import { isSameDay, format } from "date-fns";
 import axios from "axios";
 import { connect } from "react-redux";
 import { fetchUser } from "../../../store/actions/userActions";
+import calendarStyles from "../../../styles/Calendar.module.css"
+import InstructorCalendar from "@/components/instructor/calendar/instructor-calendar";
  
 
 function EditCalandar({ userInfo, loading, error, fetchUser }) {
@@ -166,9 +168,9 @@ fetchProfileData()
   }, [fetchUser]);
   console.log(userInfo)
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  // if (loading) {
+  //   return <div>Loading...</div>;
+  // }
 
   if (error) {
     return <div>Error: {error}</div>;
@@ -182,10 +184,26 @@ fetchProfileData()
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>{" "}
-      <TutorNavbar isLogin={true} />{" "}
-      <main className="container-fluid">
+      <InstructorCalendar />
+      {/*<main className="container-fluid">
         <div style={{ height: "90vh" }}>
           <div className="row p-5">
+            <div className="col-12 col-lg-6 ">
+                <p className="text-center">
+                  Select days you don 't intend to tutor e.g. Thanksgaving, etc.{" "}
+                  <br />
+                  (Selected days will be blocked on your calandar){" "}
+                </p>{" "}
+                <Calendar
+                  onChange={handleDateChange}
+                  value={selectedDate}
+                  calendarType="US"
+                  tileDisabled={tileDisabled}
+                  tileClassName={tileContent}
+                  className={calendarStyles.reactCalendar}
+                />{" "}
+                <p>{selectedDate.toDateString()}</p>{" "}
+              </div>{" "}
             <div className="col-12 col-lg-6 ">
               <p className="text-center">
                 Let us know the days of the week you are available and your
@@ -241,21 +259,6 @@ fetchProfileData()
                 </div>{" "}
               </div>{" "}
             </div>{" "}
-            <div className="col-12 col-lg-6 ">
-              <p className="text-center">
-                Select days you don 't intend to tutor e.g. Thanksgaving, etc.{" "}
-                <br />
-                (Selected days will be blocked on your calandar){" "}
-              </p>{" "}
-              <Calendar
-                onChange={handleDateChange}
-                value={selectedDate}
-                calendarType="US"
-                tileDisabled={tileDisabled}
-              tileClassName={tileContent}
-              />{" "}
-              {/* <p>{selectedDate.toDateString()}</p> */}{" "}
-            </div>{" "}
           </div>{" "}
           <div className=" mt-3 d-flex justify-content-center flex-column align-items-center gap-2">
             <button
@@ -270,7 +273,7 @@ fetchProfileData()
           </div>{" "}
         </div>{" "}
       </main>{" "}
-      <Footer />
+      <Footer /> */}
     </>
   );
 }

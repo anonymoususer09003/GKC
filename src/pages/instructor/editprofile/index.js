@@ -12,24 +12,18 @@ import { fetchUser } from "../../../store/actions/userActions";
 import axios from "axios"
 
  function EditProfile({ userInfo, loading, error, fetchUser }) {
-   const navigation = useRouter();
-  const options = [
-    { label: "Grapes ", value: "grapes" },
-    { label: "Mango ", value: "mango" },
-    { label: "Strawberry ", value: "strawberry" },
-    { label: "Watermelon ", value: "watermelon" },
-    { label: "Pear ", value: "pear", disabled: true },
-    { label: "Apple ", value: "apple" },
-    { label: "Tangerine ", value: "tangerine" },
-    { label: "Pineapple ", value: "pineapple" },
-    { label: "Peach ", value: "peach" },
-  ];
+
+  const navigation = useRouter();
  
   const [selected, setSelected] = useState([]);
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [address1, setAddress1] = useState('');
   const [address2, setAddress2] = useState('');
+  const [city, setCity] = useState('');
+  const [state, setState] = useState('');
+  const [country, setCountry] = useState('');
+  const [zipCode, setZipCode] = useState('');
   const [bio, setBio] = useState('');
   const [hourlyRate, setHourlyRate] = useState('');
   const [deliveryModes, setDeliveryModes] = useState([]);
@@ -49,6 +43,16 @@ import axios from "axios"
   const onContinue = () => {
     navigation.push("/instructor/settingprofile")
   }
+
+  const handleLangSelectChange = (selected) => {
+    setSelectedLang(
+      selected && selected.map((option) => ({
+        label: option.label,
+        value: option.value,
+        proficiencyId: {id: 1, name: 'Beginner'}
+      }))
+    )
+  };
 
 
   const handleSelectChange = (selected) => {
@@ -169,7 +173,7 @@ import axios from "axios"
           deliveryModes: modes,
           gradesIdToTutor: gradess,
           languagesIdPreference: langs,
-         courseToTeachAndProficiency: course,
+          courseToTeachAndProficiency: course,
         },
         {
           headers: {
@@ -186,7 +190,7 @@ import axios from "axios"
   const getLang = async () => {
     try {
       const response = await axios.get(
-        `http://34.227.65.157/public/language/with-instructors`
+        `http://34.227.65.157/public/register/get-all-languages`
       );
       var arr = [];
       response.data.map((v) => {
@@ -204,7 +208,7 @@ import axios from "axios"
   const getCourses = async () => {
     try {
       const response = await axios.get(
-        `http://34.227.65.157/public/course/with-instructors`
+        `http://34.227.65.157/public/course/get-all-courses`
       );
 
       var technologyList = [];
@@ -281,6 +285,10 @@ import axios from "axios"
       setLastName(userInfo.lastName)
       setAddress1(userInfo.address1)
       setAddress2(userInfo.address2)
+      setCity(userInfo.city)
+      setState(userInfo.country)
+      setCountry(userInfo.country)
+      setZipCode(userInfo.zipCode)
 
 
       let modes = [{checked: false, id  : 1,label: "In-Person"}, {checked  : false,   id :  2, label  : "Online"}]
@@ -322,9 +330,9 @@ import axios from "axios"
     }
   }, [userInfo]);
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  // if (loading) {
+  //   return <div>Loading...</div>;
+  // }
 
   if (error) {
     return <div>Error: {error}</div>;
@@ -339,13 +347,13 @@ import axios from "axios"
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <TutorNavbar isLogin={true} />
-      <main className="container-fluid">
+      <main className="container-fluid" style={{color:'#48494B'}}>
         <div
           className="p-5 "
           style={{ minHeight: "90vh", maxWidth: "1700px", margin: "auto" }}
         >
           <div className="row">
-            <div className="col-12 col-md-3 position-relative">
+            <div className="col-12 col-md-4 position-relative">
               <div className="shadow rounded-10 bg-white py-4">
                 <div className="px-4 ">
                   <div
@@ -369,12 +377,24 @@ import axios from "axios"
                   </div>
                   <input type="text" className="border-0 h4 p-1 border-bottom w-100 mb-1" value={firstName} onChange={(e)=> setFirstName(e.target.value)}/>
                   <input type="text" className="border-0 h4 p-1 border-bottom w-100 mb-3"  value={lastName} onChange={(e)=> setLastName(e.target.value)}/>
-
+{/* 
                   <div className="d-flex gap-1 gap-2 pb-3 ">
                     <MdLocationOn className="h5 p-0 m-0" />
-                    <input type="text" className="border-0 border-bottom w-100" value={address1} onChange={(e)=> setAddress1(e.target.value)} />
-                  </div>
-                    <input type="text" className="border-0 border-bottom w-100" value={address1} onChange={(e)=> setAddress1(e.target.value)} />
+                  </div> */}
+                  <label>Address</label>
+                  <input type="text" className="border-0 border-bottom w-100 mb-2" value={address1} onChange={(e)=> setAddress1(e.target.value)} />
+                  
+                  <label>City</label>
+                  <input type="text" className="border-0 border-bottom w-100 mb-2" value={city} onChange={(e)=> setCity(e.target.value)} />
+                  
+                  <label>State</label>
+                  <input type="text" className="border-0 border-bottom w-100 mb-2" value={state} onChange={(e)=> setCity(e.target.value)} />
+                  
+                  <label>Country</label>
+                  <input type="text" className="border-0 border-bottom w-100 mb-2" value={country} onChange={(e)=> setCity(e.target.value)} />
+                  
+                  <label>Zip Code</label>
+                  <input type="text" className="border-0 border-bottom w-100 mb-2" value={zipCode} onChange={(e)=> setCity(e.target.value)} />
                   <hr className="bg_secondary" />
                   <h4 className="p-0 m-0 py-2 fw-bold">Bio</h4>
                   <div>
@@ -389,13 +409,22 @@ import axios from "axios"
                       <BsCheck2Circle /> Save Profile
                     </button>
                   </div>
+                  <div className="d-flex gap-2 justify-content-center">
+                    <a 
+                      href='/instructor/settingprofile' 
+                      className="w-50 btn btn-dark text-light p-2 rounded fw-bold d-flex align-items-center justify-content-center gap-2" 
+                      onClick={()=> onSubmit()}
+                    >
+                      Exit
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>
-            <div className="col-8">
+            <div className="col-12 col-lg-8 py-2">
               <div className="shadow rounded-10 p-5 bg-white">
                 <div className="row">
-                  <div className="col">
+                  <div className="col-3">
                     <h5 className="fw-bold ">Hourly Rate</h5>
                     <h2 className="fw-bold">
                     $<input type="text" value={hourlyRate} className="fw-bold border-0 border-bottom w-25" onChange={(e)=> setHourlyRate(e.target.value)} />       
@@ -443,18 +472,57 @@ import axios from "axios"
                   </div>
                 </div>
                 <div className="row">
-                  <div className="col pt-5">
+                  {/* <div className="col pt-5">
                     <h5 className="fw-bold m-0 p-0">
                       Spoken Language Preference:
                     </h5>
-                      <MultiSelect
-                          options={lang}
-                          value={selectedLang}
-                          onChange={setSelectedLang}
-                          labelledBy={"Select Language"}
-                          isCreatable={true}
-                        />
+                    <MultiSelect
+                      options={lang}
+                      value={selectedLang}
+                      onChange={handleLangSelectChange}
+                      labelledBy={"Select Lang"}
+                      isCreatable={true}
+                      hasSelectAll={false}
+                    />
+                                      <div className="container">
+                    <div className="row d-flex justify-content-center py-4">
+
+                    {
+                      selectedLang.map((v,ind)=>{
+                        return (
+                          <>
+                            <div className="col-md-4 item">
+                              <li className="fw-bold m-0 p-0 h5 fw-lighter">{v.label}</li>
+                            </div>
+                            <div className="col-md-4 item">
+                              <select className="w-100 p-2 rounded outline-0 border border_gray" value={v.proficiencyId.id} onChange={(e) => {
+                                const selectedProficiencyId = Number(e.target.value);
+                                const selectedProficiencyName = e.target.selectedOptions[0].label;
+
+                                const updatedLangs = selectedLang.map((lang) => {
+                                  if (lang.value === v.value) {
+                                    return {
+                                      ...lang,
+                                      proficiencyId: { id: selectedProficiencyId, name: selectedProficiencyName },
+                                    };
+                                  }
+                                  return lang;
+                                });
+
+                                setSelectedLang(updatedLangs)
+                                // console.log(updatedLangs)
+                              }}>
+                                <option value={1}>Beginner</option>
+                                <option value="2">Intermediate</option>
+                                <option value={3}>Semi-Expert</option>
+                              </select>
+                            </div>
+                        </>
+                      )})
+                    }
+                    </div>
                   </div>
+                  </div> */}
 
                   <div className="col pt-5">
                     <h5 className="fw-bold m-0 p-0">
@@ -475,6 +543,73 @@ import axios from "axios"
                     </div>
                     </div>
                   </div>
+                </div>
+              </div>
+
+              <div className="shadow rounded-10 pt-2 pb-5 bg-white my-4">
+                <div className="p-4 w-50 m-auto">
+                  <h4 className="fw-bold m-0 p-0 pb-3 text-center">
+                    Languages List
+                  </h4>
+
+                  <MultiSelect
+                      options={lang}
+                      value={selectedLang}
+                      onChange={handleLangSelectChange}
+                      labelledBy={"Select Lang"}
+                      isCreatable={true}
+                      hasSelectAll={false}
+                    />
+                </div>
+
+                <div className="row m-0 p-0 w-100">
+                  <div className="col d-flex justify-content-center">
+                    <h4 className="fw-bold m-0 p-0">Langs</h4>
+                  </div>
+                  <div className="col d-flex justify-content-start">
+                    <h4 className="fw-bold m-0 p-0">Proficiency</h4>
+                  </div>
+
+                  
+                  <div className="container">
+                    <div className="row d-flex justify-content-center py-4">
+
+                    {
+                      selectedLang.map((v,ind)=>{
+                        return (
+                          <>
+                            <div className="col-md-5 item py-2">
+                              <li className="fw-bold m-0 p-0 h5 fw-lighter">{v.label}</li>
+                            </div>
+                            <div className="col-md-4 item py-2">
+                              <select className="w-100 p-2 rounded outline-0 border border_gray" value={v.proficiencyId.id} onChange={(e) => {
+                                const selectedProficiencyId = Number(e.target.value);
+                                const selectedProficiencyName = e.target.selectedOptions[0].label;
+
+                                const updatedLangs = selectedLang.map((lang) => {
+                                  if (lang.value === v.value) {
+                                    return {
+                                      ...lang,
+                                      proficiencyId: { id: selectedProficiencyId, name: selectedProficiencyName },
+                                    };
+                                  }
+                                  return lang;
+                                });
+
+                                setSelectedLang(updatedLangs)
+                                // console.log(updatedLangs)
+                              }}>
+                                <option value={1}>Beginner</option>
+                                <option value={2}>Intermediate</option>
+                                <option value={3}>Semi-Expert</option>
+                              </select>
+                            </div>
+                        </>
+                      )})
+                    }
+                    </div>
+                  </div>
+                  
                 </div>
               </div>
 
@@ -499,16 +634,15 @@ import axios from "axios"
                     <h4 className="fw-bold m-0 p-0">Course/s you teach</h4>
                   </div>
                   <div className="col ">
-                    <p className="fw-bold text-muted m-0 p-0">
-                      Profieiency of student you'd rather teach
+                    <p className="fw-bold h5 m-0 p-0">
+                      Proficiency of students you'd rather teach
                     </p>
                   </div>
                   {
                     selectedCourses.map((v,i)=>{
-                      return   <div className="row m-0 p-0 py-2 pt-4">
-                    <div className="col d-flex align-items-center gap-2">
-                      <MdArrowForwardIos className="text_primary h4 p-0 m-0" />
-                      <p className="fw-bold m-0 p-0 h5 fw-lighter">{v.label}</p>
+                      return   <div className="row m-0 p-0 pt-4">
+                    <div className="col d-flex align-items-center gap-2 primary-list">
+                      <li className="fw-bold m-0 p-0 fw-lighter">{v.label}</li>
                     </div>
                     <div className="col ">
                         <MultiSelect

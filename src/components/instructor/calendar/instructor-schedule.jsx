@@ -1,5 +1,7 @@
+import { useState } from "react";
 import styles from "../../../styles/Home.module.css"
 import { BsFillChatFill, BsFillSendFill } from "react-icons/bs";
+import { IconContext } from "react-icons";
 import { GoDeviceCameraVideo } from "react-icons/go";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { useRouter } from "next/router";
@@ -8,120 +10,132 @@ import FirebaseChat from "../../../hooks/firebase-chat";
 import axios from "axios";
 
 const InstructorSchedule = (props) => {
-    const router = useRouter();
-    const { sendMessage, messages, setChatInfo, setNewMessage, newMessage } = FirebaseChat();
-    
+
+  const router = useRouter();
+  const { sendMessage, messages, setChatInfo, setNewMessage, newMessage } = FirebaseChat();
+  const [enabledCamera, setEnabledCamera] = useState(false);
   
-    const deleteSingleOccurrence = async (eventId, dateToCancel) => {
-      try {
-        const response = await axios.delete('http://34.227.65.157/event/delete-single-occurrence', {
-          data: {
-            eventId: eventId,
-            dateToCancel: dateToCancel,
-          },
-        });
-    
-        console.log('Event deletion successful:', response.data);
-      } catch (error) {
-        console.error('Error deleting event:', error);
-      }
-    };
-    
-    // Button click handler
-    const handleDeleteButtonClick = () => {
-      const eventID = props.eventId;
-      const date = props.start.split(' ')[0];
-    
-      deleteSingleOccurrence(eventID, date);
-    };
-    
-    
-    //MESSAGES ALSO PROBABLY NEEDS TO BE CHECKED --- MESSAGE
-  
-    const instructor = {
-      name: "Nouman",
-      id: 1,
-    };
-    
-    const student = {
-      courseId: 1,
-      name: "John",
-      id: 2,
-      parentId: 4,
-    };
-  
-    const parent = {
-      courseId: 1,
-      name: "John",
-      id: 4,
-    };
-  
-    const openChat = (chatId) => {
-      setChatInfo({
-        sender: {
-          ...student,
+
+  const deleteSingleOccurrence = async (eventId, dateToCancel) => {
+    try {
+      const response = await axios.delete('http://34.227.65.157/event/delete-single-occurrence', {
+        data: {
+          eventId: eventId,
+          dateToCancel: dateToCancel,
         },
-        receiver_user: {
-          ...instructor,
-        },
-        course_id: chatId,
       });
-    };
   
-    const handleTextChange = (e) => {
-      setNewMessage(e.target.value);
-    };
+      console.log('Event deletion successful:', response.data);
+    } catch (error) {
+      console.error('Error deleting event:', error);
+    }
+  };
   
-    return (
-      <>
-      <div className="col-12 col-lg-6">
-         <h3 className={`text-center ${styles.scheduleHeader}` } >Schedule</h3>
-         <div
-           className={`shadow p-5 bg-white rounded ${styles.scheduleBox}`}
-           style={{ minHeight: "400px" }}
-         >
-          <div
-            onClick={() => openChat(1)}
-            className="d-flex align-items-center py-3 gap-2"
-          >
-            {props.noEvent ? (
-               <h6 className="p-0 m-0 flex-fill fw-bold flex-fill">
-                No Events Found For This Day
-             </h6>
-            ) : 
-            <>
-              <h6 className="p-0 m-0 flex-fill fw-bold flex-fill">
-                {props.studentName}
-              </h6>
-             <h6 className="p-0 m-0 flex-fill fw-bold flex-fill">{props.start}</h6>
-             <h6 className="p-0 m-0 flex-fill fw-bold flex-fill">{props.courseName}</h6>
-              {props.studentId &&
+  // Button click handler
+  const handleDeleteButtonClick = () => {
+    const eventID = props.eventId;
+    const date = props.start.split(' ')[0];
+  
+    deleteSingleOccurrence(eventID, date);
+  };
+  
+  
+    
+
+
+  //MESSAGES ALSO PROBABLY NEEDS TO BE CHECKED --- MESSAGE
+
+  const instructor = {
+    name: "Nouman",
+    id: 1,
+  };
+  
+  const student = {
+    courseId: 1,
+    name: "John",
+    id: 2,
+    parentId: 4,
+  };
+
+  const parent = {
+    courseId: 1,
+    name: "John",
+    id: 4,
+  };
+
+  const openChat = (chatId) => {
+    setChatInfo({
+      sender: {
+        ...student,
+      },
+      receiver_user: {
+        ...instructor,
+      },
+      course_id: chatId,
+    });
+  };
+
+  const handleTextChange = (e) => {
+    setNewMessage(e.target.value);
+  };
+
+  return (
+    <>
+    <div className="col-12 col-lg-6">
+       <h3 className={`text-center ${styles.scheduleHeader}` } >Schedule</h3>
+       <div
+         className={`shadow p-5 bg-white rounded ${styles.scheduleBox}`}
+         style={{ minHeight: "400px" }}
+       >
+        <div
+          onClick={() => openChat(1)}
+          className="d-flex align-items-center py-3 gap-2"
+        >
+          {props.noEvent ? (
+             <h6 className="p-0 m-0 flex-fill fw-bold flex-fill">
+              No Events Found For This Day
+           </h6>
+          ) : 
+          <>
+            <h6 className="p-0 m-0 flex-fill fw-bold flex-fill">
+              {props.instructorName}
+            </h6>
+           <h6 className="p-0 m-0 flex-fill fw-bold flex-fill">{props.start} </h6>
+           <h6 className="p-0 m-0 flex-fill fw-bold flex-fill">{props.courseName}</h6>
+            {props.instructorId &&
+              <IconContext.Provider value={{ color: "#1677d2"}}>
                   <BsFillChatFill
                   className="p-0 m-0 flex-fill h4 flex-fill"
                   data-bs-toggle="modal"
                   data-bs-target="#exampleModal2"
                 />
-              }
-
-       
-              {props.meetingLink && 
-                     <GoDeviceCameraVideo
-                     className="p-0 m-0 flex-fill h4 flex-fill"
-                     onClick={() => onContinue()}
-                   />
-              }
-             {props.deleteable && (
-                    <RiDeleteBin6Line className="p-0 m-0 h4 flex-fill" onClick={handleDeleteButtonClick}/>
-                )}
-             
-              </>
-              }
+              </IconContext.Provider>
+            } 
+     
+            {props.meetingLink && 
+            <IconContext.Provider value={{ color: enabledCamera ? "#126d2b" : "#48494B" }}>
+                <GoDeviceCameraVideo
+                  className="p-0 m-0 flex-fill h4 flex-fill"
+                  onClick={() => onContinue()}
+                />
+            </IconContext.Provider>
+            } 
+           {/* {props.deleteable && ( */}
+            <IconContext.Provider value={{ color: "#48494B"}}>
+                <RiDeleteBin6Line className="p-0 m-0 h4 flex-fill" onClick={handleDeleteButtonClick}/>
+            </IconContext.Provider>
+            {/* )} */}
            
-        </div>
-        </div> 
+            </>
+          }
+         
       </div>
+      </div> 
+    </div>
 
-          {/* CHAT MODAL NEEDS TO BE FIXED */}
+
+
+    {/* CHAT MODAL NEEDS TO BE FIXED */}
      <div className="d-flex justify-content-center align-items-center">
        <div
          className="modal fade"
@@ -184,8 +198,7 @@ const InstructorSchedule = (props) => {
         </div>
       </div>
     </div>
-      
-    </>
-    )
-  }
-  export default InstructorSchedule;
+  </>
+  )
+}
+export default InstructorSchedule;
