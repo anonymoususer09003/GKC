@@ -27,7 +27,7 @@ export default function ForgotPassword() {
     GetAuthCode(userDetail?.email);
   };
 
-  const chnagePassword = async () => {
+  const changePassword = async () => {
     try {
       let { verifyCode, confirmPassword, ...otherProps } = data;
       let responseChangePassword = await ChangePassword({
@@ -50,7 +50,7 @@ export default function ForgotPassword() {
         code: data?.verifyCode,
       });
       if (res.status == 202) {
-        chnagePassword();
+        changePassword();
       }
       console.log("res", res);
     } catch (err) {
@@ -101,10 +101,10 @@ export default function ForgotPassword() {
           <h1>Change Password</h1>
         </div>
         <div className="d-flex justify-content-center">
-          <div className="col-12 col-lg-6 d-flex justify-content-center align-items-center ">
+          <div className="col-12 col-lg-6 d-flex justify-content-center align-items-center">
             <div style={{ maxWidth: "380px", width: "100%" }}>
               <div
-                className={`d-flex flex-column justify-content-center  pt-5`}
+                className={`d-flex flex-column justify-content-center pt-5`}
               >
                 <div className="">
                   <input
@@ -154,7 +154,7 @@ export default function ForgotPassword() {
                   </button>
                   <div>
                     {showSuccess ? (
-                      <p>Great!!! password updated successfully</p>
+                      <p className="mt-3 d-flex justify-content-center text-secondary">Great! Password updated successfully ✔️</p>
                     ) : null}
                   </div>
                 </div>

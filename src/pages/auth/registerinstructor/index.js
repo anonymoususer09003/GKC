@@ -266,13 +266,13 @@ export default function RegisterInstructor() {
                       Continue
                     </button>
                     <Link
-                      href="/"
+                      href="/auth/signin"
                       className="text-decoration-none d-flex gap-2 justify-content-center"
                     >
                       <p className="text-secondary fw-bold">
                         Already have an Account?
                       </p>
-                      <p className="fw-bold text_secondary">login</p>
+                      <p className="fw-bold text_secondary">Login</p>
                     </Link>
                   </div>
                 </div>
