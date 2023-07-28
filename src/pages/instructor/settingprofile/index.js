@@ -12,7 +12,7 @@ import styles from "../../../styles/Home.module.css";
 
 function SettingProfile({ userInfo, loading, error, fetchUser }) {
   const navigation = useRouter();
-
+  console.log(userInfo)
   const onContinue = () => {
     navigation.push("/instructor/editprofile");
   };
@@ -27,9 +27,9 @@ function SettingProfile({ userInfo, loading, error, fetchUser }) {
 
   console.log(userInfo?.coursesToTutorAndProficiencies);
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  // if (loading) {
+  //   return <div>Loading...</div>;
+  // }
 
   if (error) {
     return <div>Error: {error}</div>;
@@ -46,10 +46,10 @@ function SettingProfile({ userInfo, loading, error, fetchUser }) {
       <main className="container-fluid">
         <div
           className={`p-5 ${styles.instructorProfile}`}
-          style={{ minHeight: "90vh", maxWidth: "1700px", margin: "auto" }}
+          style={{ minHeight: "90vh", maxWidth: "1700px", margin: "auto", color: "#48494B" }}
         >
           <div className="row">
-            <div className={`col-12 col-md-3 position-relative ${styles.cardShadow}`}>
+            <div className={`col-12 col-md-4 position-relative ${styles.cardShadow}`}>
               <div className="shadow rounded-10 bg-white py-4">
                 <div className={`px-4 ${styles.instructorCards}`}>
                   <div
@@ -58,7 +58,7 @@ function SettingProfile({ userInfo, loading, error, fetchUser }) {
                   >
                     <Image
                       src="/assets/student-preview.png"
-                      alt=""
+                      alt="profile image"
                       width={100}
                       height={100}
                       priority
@@ -78,7 +78,8 @@ function SettingProfile({ userInfo, loading, error, fetchUser }) {
                   <div className="d-flex gap-1 gap-2 pb-3 ">
                     <MdLocationOn className="h5 p-0 m-0" />
                     <small>
-                      {userInfo?.address1} {userInfo?.address2}
+                      {userInfo?.address1}, {userInfo?.city}, {userInfo?.zipCode} <br />
+                      {userInfo?.state}, {userInfo?.country}
                     </small>
                   </div>
                   <hr className="bg_secondary" />
@@ -99,13 +100,13 @@ function SettingProfile({ userInfo, loading, error, fetchUser }) {
             <div className="col-12 col-md-8">
               <div className={`shadow rounded-10 p-5 bg-white ${styles.instructorCards}`}>
                 <div className="row">
-                  <div className="col-12 col-md-4">
+                  <div className="col-12 col-md-3">
                     <h5 className="fw-bold ">Hourly Rate</h5>
                     <h2 className="fw-bold">${userInfo?.hourlyRate}/hr</h2>
                   </div>
 
                   <div className="col-12 col-md-3 border-start px-4 border_primary">
-                    <h5 className="fw-bold m-0 p-0">Delivery Mode:</h5>
+                    <h5 className="fw-bold m-0 p-0">Delivery Mode</h5>
                     <ul className="m-0 px-3 py-2 primary-list">
                       {userInfo?.deliveryModes.map((v, i) => {
                         return <li className="fw-bold m-0 p-0">{v.name}</li>;
@@ -115,7 +116,7 @@ function SettingProfile({ userInfo, loading, error, fetchUser }) {
 
                   <div className="col-12 col-md-5 border-start px-4 border_primary">
                     <h5 className="fw-bold m-0 p-0">
-                      Groups you have expertise to teach:
+                      Groups you have expertise to teach
                     </h5>
 
                     <ul className="m-0 px-3 py-2 primary-list">
@@ -132,7 +133,7 @@ function SettingProfile({ userInfo, loading, error, fetchUser }) {
                 <div className="row">
                   <div className="col pt-5">
                     <h5 className="fw-bold m-0 p-0">
-                      Spoken Language Preference:
+                      Spoken Language Preference
                     </h5>
                     <ul className="m-0 px-3 py-2 primary-list ">
                       {userInfo?.languagePreference.map((v, i) => {
@@ -160,21 +161,22 @@ function SettingProfile({ userInfo, loading, error, fetchUser }) {
                     <h4 className="fw-bold m-0 p-0">Course/s you teach</h4>
                   </div>
                   <div className="col ">
-                    <p className="fw-bold text-muted m-0 p-0">
-                      Profieiency of student you'd rather teach
-                    </p>
+                    <h4 className="fw-bold h5 m-0 p-0">
+                      Proficiency of students you'd rather teach
+                    </h4>
                   </div>
                   {
                     userInfo?.coursesToTutorAndProficiencies.map((v,i)=>{
+                      console.log(v)
                       return   <div className="row m-0 p-0 py-2 pt-4" key={i}>
-                    <div className="col d-flex align-items-center gap-2">
-                      <MdArrowForwardIos className="text_primary h4 p-0 m-0" />
-                      <p className="fw-bold m-0 p-0 h5 fw-lighter">{v.course.name}</p>
+                    <div className="col d-flex align-items-center gap-2 primary-list">
+                      <li className="fw-bold m-0 p-0 fw-lighter">{v.course.name}</li>
                     </div>
                     <div className="col ">
                       <ul className="m-0 d-flex flex-wrap gap-4 primary-list">
                       {
                         v.proficiencies.map(val=>{
+                          console.log(val)
                           return   <li className="fw-bold m-0 p-0" key={val.id}>{val.name}</li>
                         })
                       }
