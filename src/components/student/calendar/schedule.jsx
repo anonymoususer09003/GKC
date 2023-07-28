@@ -11,6 +11,7 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 const StudentSchedule = (props) => {
   const router = useRouter();
+  const loggedInUser = useSelector((state) => state.user.userInfo);
   const { sendMessage, messages, setChatInfo, setNewMessage, newMessage } =
     FirebaseChat();
   const [enabledCamera, setEnabledCamera] = useState(false);

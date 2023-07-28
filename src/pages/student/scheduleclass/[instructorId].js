@@ -10,6 +10,7 @@ import { fetchUser } from "../../../store/actions/userActions";
 import calendarStyles from "../../../styles/Calendar.module.css";
 import axios from "axios";
 import { GlobalInstructor } from "@/pages";
+import InstructorScheduleUnavailableDays from "@/services/Instructors/InstructorScheduleUnavailableDays";
 import styles from "../../../styles/Home.module.css";
 
 function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
@@ -80,6 +81,8 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
       console.error(error);
     }
   };
+
+  console.log("instructor data", instructorData);
   //Fetch user details from redux
   useEffect(() => {
     fetchUser();
@@ -112,26 +115,58 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
   }, []);
 
   useEffect(() => {
-    const getInstructorIcal = async () => {
+    const getInstructorIcal = async (instructorId) => {
       try {
-        var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
+        let response = await InstructorScheduleUnavailableDays(instructorId);
 
-        const response = await axios.get(
-          `http://34.227.65.157/instructor/schedule-and-unavailable-days-iCal?instructorId=22`,
-          {
-            headers: {
-              Authorization: `Bearer ${typ.accessToken}`,
-            },
-          }
+        const iCalendarData = await response.data;
+        const events = [];
+        const dates = [];
+
+        const components = iCalendarData.split("END:VEVENT");
+
+        // Extract VEVENT data
+        const extractedEvents = components.map((component) => {
+          // Extract individual properties and their values
+          const uid = component.match(/UID:(.*)/)?.[1];
+          const summary = component.match(/SUMMARY:(.*)/)?.[1];
+          const dtstart = component.match(/DTSTART:(.*)/)?.[1];
+          const dtend = component.match(/DTEND:(.*)/)?.[1];
+
+          return {
+            uid,
+            summary,
+            dtstart,
+            dtend,
+          };
+        });
+
+        // Extract VFREEBUSY data
+        const freeBusyComponent = iCalendarData.match(
+          /BEGIN:VFREEBUSY(.|\n)*END:VFREEBUSY/
         );
-        console.log(response, "Icaaaal");
+        if (freeBusyComponent) {
+          // Extract individual properties and their values
+          const freeBusy = freeBusyComponent[0].match(
+            /FREEBUSY;FBTYPE=BUSY:(.*)/
+          )?.[1];
+
+          // Process the freeBusy data and store them in busySlots state
+          const busySlotsData = freeBusy.split("/");
+          const busySlotsFormatted = busySlotsData.map((slot) => ({
+            start: slot.split("/")[0],
+            end: slot.split("/")[1],
+          }));
+          console.log("busy slots", busySlotsData);
+        }
+
+        console.log("Icaaaal", extractedEvents);
       } catch (error) {
         console.log(error);
       }
     };
-
-    getInstructorIcal();
-  }, []);
+    if (instructorId) getInstructorIcal(instructorId);
+  }, [instructorId]);
 
   const handleDateChange = (clickedDate) => {
     /*const dateObj = new Date(clickedDate);

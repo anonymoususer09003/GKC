@@ -159,8 +159,12 @@ function StudentRegistrationCCPay() {
                     onChange={(e) => setWhoPaysId(e.target.value)}
                   >
                     <option>Select</option>
-                    <option value="1">example@mail.com</option>
-                    <option value="2">example2@mail.com</option>
+                    {userInfo?.emailParent1 && (
+                      <option value="1">{userInfo?.emailParent1}</option>
+                    )}
+                    {userInfo?.emailParent2 && (
+                      <option value="2">{userInfo?.emailParent2}</option>
+                    )}
                   </select>
                 </div>
 

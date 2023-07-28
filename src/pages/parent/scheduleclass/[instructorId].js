@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import { ParentNavbar, Footer } from "../../../components";
 import Calendar from "react-calendar";
 import { BsFillSendFill } from "react-icons/bs";
 import { useRouter } from "next/router";
 import { withRole } from "../../../utils/withAuthorization";
-
+import GetUnConfirmedEventById from "@/services/events/GetUnConfirmedEventById";
 function ParentScheduleClass() {
   const navigation = useRouter();
   const [value, onChange] = useState(new Date());
@@ -16,6 +16,21 @@ function ParentScheduleClass() {
   const onContinue = () => {
     navigation.push("/parent/paychildscheduleclass");
   };
+
+  const getEventDetail = async (eventId) => {
+    try {
+      let res = await GetUnConfirmedEventById(eventId);
+      console.log("res", res);
+    } catch (err) {
+      console.log("err", err);
+    }
+  };
+  useEffect(() => {
+    console.log("evetnt id", eventId);
+    if (eventId) {
+      getEventDetail(eventId);
+    }
+  }, []);
   return (
     <>
       <Head>
