@@ -117,7 +117,7 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
         var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
 
         const response = await axios.get(
-          `http://34.227.65.157/instructor/schedule-and-unavailable-days-iCal?instructorId=22`,
+          `http://34.227.65.157/instructor/schedule-and-unavailable-days-iCal?instructorId=${instructorId}`,
           {
             headers: {
               Authorization: `Bearer ${typ.accessToken}`,
@@ -193,11 +193,14 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
   }
   */
   if (loading) {
-    return <div>Loading...</div>;
+    return ( <div>
+      Loading...
+      </div>
+    )
   }
 
   if (error) {
-    return <div>Error: {error}</div>;
+    return (<div>Error:{error}</div>);
   }
   console.log("selected date", selectedDate);
   return (
@@ -211,7 +214,6 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
       <Navbar isLogin={true} />
       <main className="container-fluid">
         <div className="row" style={{ minHeight: "90vh" }}>
-          <p>{instructorId}</p>
           <div className="col-12 col-lg-6 pt-5">
             <Calendar
               //value={date}

@@ -1,25 +1,234 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import { ParentNavbar, Footer } from "../../../components";
 import Calendar from "react-calendar";
-import { BsFillSendFill } from "react-icons/bs";
 import { useRouter } from "next/router";
 import { withRole } from "../../../utils/withAuthorization";
+import axios from "axios";
+import { fetchUser } from "@/store/actions/userActions";
+import { RRule } from 'rrule';
+import calendarStyles from "../../../styles/Calendar.module.css";
+import styles from "../../../styles/Home.module.css";
+import { connect } from "react-redux";
 
-function ParentScheduleClass() {
+
+function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
   const navigation = useRouter();
   const [value, onChange] = useState(new Date());
   const router = useRouter();
-  const { eventId } = router.query;
+  const { instructorId } = router.query;
+  const [instructorData, setInstructorData] = useState({});
+  const [instructorCourses, setInstructorCourses] = useState([]);
 
-  console.log("event id", eventId);
-  const onContinue = () => {
-    navigation.push("/parent/paychildscheduleclass");
+  const [selectedMode, setSelectedMode] = useState("");
+  const [courseDuration, setCourseDuration] = useState(null);
+  const [courseId, setCourseId] = useState(null);
+  const [classFrequency, setClassFrequency] = useState("");
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [unavailableDates, setUnavailableDates] = useState([]);
+  const [availableTime, setAvailableTime] = useState([
+    "7:00",
+    "8:00",
+    "9:00",
+    "10:00",
+    "11:00",
+    "12:00",
+    "13:00",
+    "14:00",
+    "15:00",
+    "16:00",
+    "17:00",
+    "18:00",
+    "19:00",
+  ]);
+  const [time, setTime] = useState();
+
+
+
+  useEffect(() => {
+    fetchUser();
+    console.log(router.query, "instructoridAAAAAAAA")
+  }, []);
+ 
+    //Get Courses
+    const getCourses = async () => {
+      try {
+        const response = await axios.get(
+          `http://34.227.65.157/public/course/with-instructors`
+        );
+  
+        var coursesArray = [];
+  
+        response.data.map((v) => {
+          coursesArray.push({ value: v.id, label: v.name });
+        });
+        console.log(response);
+        setInstructorCourses(coursesArray);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    useEffect(() => {
+      getCourses();
+    }, []);
+
+    useEffect(() => {
+      const getInstructorIcal = async () => {
+        try {
+          var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
+  
+          const response = await axios.get(
+            `http://34.227.65.157/instructor/schedule-and-unavailable-days-iCal?instructorId=${instructorId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${typ.accessToken}`,
+              },
+            }
+          );
+        // Access the iCal data directly from the response data property
+        const iCalText = response.data;
+
+        // Split the iCal data into separate VCALENDAR components
+        const vcalendarComponents = iCalText.split('BEGIN:VCALENDAR').filter(Boolean);
+
+        // Extract RRULEs from each VEVENT component
+        const rrRuleData = [];
+        vcalendarComponents.forEach((vcalendarComponent) => {
+          const veventStart = vcalendarComponent.indexOf('BEGIN:VEVENT');
+          const veventEnd = vcalendarComponent.indexOf('END:VEVENT', veventStart) + 10; // Add 10 to include 'END:VEVENT' length
+          const veventData = vcalendarComponent.substring(veventStart, veventEnd);
+
+          // Extract the RRULE part from each VEVENT
+          const rrRuleStart = veventData.indexOf('RRULE:');
+          const rrRuleEnd = veventData.indexOf('\r\n', rrRuleStart);
+          const rrRule = veventData.substring(rrRuleStart, rrRuleEnd);
+
+          rrRuleData.push(rrRule);
+        });
+
+        // Parse RRULEs using rrule
+        const events = rrRuleData.map((rrRule) => RRule.fromString(rrRule));
+
+        // Extract the unavailable dates
+        const unavailableDates = [];
+        events.forEach((event) => {
+          event.all().forEach((date) => {
+            unavailableDates.push(date);
+          });
+        });
+        setUnavailableDates(unavailableDates);
+        } catch (error) {
+          console.log(error);
+        }
+      };
+  
+      getInstructorIcal();
+    }, []);
+   
+    //apply styles for unavailableDate
+    const tileClassName = ({ date, view }) => {
+      if (view === 'month') {
+        const dateString = date.toDateString();
+        if (unavailableDates.some((unavailableDate) => unavailableDate.toDateString() === dateString)) {
+          return {
+            backgroundColor: 'gray',
+            color: "black",
+          }
+        }
+      }
+      return null;
+    };
+
+    const tileDisabled = ({ date }) =>
+    unavailableDates.some(
+      (unavailableDate) => unavailableDate.toDateString() === date.toDateString()
+    );
+
+  useEffect(() => {
+    const getInstructorData = async () => {
+      try {
+        var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
+
+        const response = await axios.get(
+          `http://34.227.65.157/instructor/details-for-scheduling?instructorId=${instructorId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${typ.accessToken}`,
+            },
+          }
+        );
+        setInstructorData(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+      getInstructorData();
+  }, []);
+
+  const handleDateChange = (clickedDate) => {
+
+    const dateObj = new Date(clickedDate);
+
+    const year = dateObj.getFullYear();
+    const month = String(dateObj.getMonth() + 1).padStart(2, "0");
+    const day = String(dateObj.getDate()).padStart(2, "0");
+    const hours = String(dateObj.getHours()).padStart(2, "0");
+    const minutes = String(dateObj.getMinutes()).padStart(2, "0");
+
+    const formattedDateStr = `${year}-${month}-${day} ${hours}:${minutes}`;
+    setSelectedDate(formattedDateStr);
+
   };
+
+     //Get Modes
+  //eventInPerson
+  const handleModeChange = (event) => {
+    setSelectedMode(event.target.value);
+  };
+
+  //Get course duration
+  const handleDuration = (e) => {
+    setCourseDuration(e.target.value);
+  };
+
+  //get courseId
+
+  const handleCourseId = (event) => {
+    setCourseId(event.target.value);
+  };
+
+
+    const onContinue = () => {
+      const data = {
+        start: selectedDate,
+        durationInHours: courseDuration,
+        classFrequency: classFrequency,
+        courseId: courseId,
+        studentId: userInfo.id,
+        instructorId: instructorId,
+        eventInPerson: selectedMode == "In-Person" ? true : false,
+      };
+      navigation.push({
+        pathname: "/parent/coursepay",
+        query: data,
+    });
+    };
+
+    if (loading) {
+      return ( <div>
+        Loading...
+        </div>
+      )
+    }
+  
+    if (error) {
+      return (<div>Error:{error}</div>);
+    }
   return (
     <>
       <Head>
-        <title>Student Schedule Class</title>
+        <title>Parent Schedule Class</title>
         <meta name="description" content="Generated by create next app" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
@@ -29,7 +238,13 @@ function ParentScheduleClass() {
         <div className="row" style={{ minHeight: "90vh" }}>
           <div className="col-12 col-lg-6 pt-5">
             <p className="fw-bold text-center">Schedule class with John Doe</p>
-            <Calendar onChange={onChange} value={value} />
+            <Calendar 
+              onChange={handleDateChange} 
+              value={selectedDate} 
+              tileClassName={tileClassName} 
+              tileDisabled={tileDisabled}            
+
+            />
           </div>
           <div className="col-12 col-lg-6 pt-5">
             <p className="fw-bold text-center text-white">I</p>
@@ -41,34 +256,35 @@ function ParentScheduleClass() {
                 <div className="w-100 ">
                   <p className="p-0 m-0 fw-bold pb-2">Select time</p>
                   <div className="border rounded">
-                    <p className="p-0 m-0 py-1 fw-bold bg-light p-2  px-3">
-                      7:00 am
-                    </p>
-                    <p className="p-0 m-0 py-1 fw-bold bg-light p-2  px-3">
-                      8:00 am
-                    </p>
-                    <p className="p-0 m-0 py-1 fw-bold p-2  px-3">9:00 am</p>
-                    <br />
-                    <br />
-                    <br />
-                    <br />
-                    <br />
-                    <br />
-                    <br />
-                    <br />
-                    <br />
-                    <p className="p-0 m-0 py-1 fw-bold p-2  px-3">4:00 pm</p>
-                    <p className="p-0 m-0 py-1 fw-bold p-2  px-3">5:00 pm</p>
+                     {availableTime.map((v, i) => {
+                         return (
+                           <p
+                             className={`m-0 px-3 py-1 fw-bold ${
+                               time == v && "bg-secondary text-white"
+                             }`}
+                             key={i}
+                             onClick={() => {
+                               setTime(v);
+                             }}
+                           >
+                             {v}
+                           </p>
+                         );
+                       })}
                   </div>
                 </div>
                 <div className=" w-100">
                   <p className="p-0 m-0 fw-bold text-center py-2">
-                    Your dependent's information
+                    Your information
                   </p>
-                  <h6 className="text-dark fw-bold">
-                    You selected 2 hours slot
-                  </h6>
-
+                  <p className="p-0 m-0 fw-bold py-2">
+                    Course duration in Hours
+                  </p>
+                  <input
+                    onChange={handleDuration}
+                    type="number"
+                    className={`p-2 rounded outline-0 border border_gray w-100 ${styles.landingInputs}`}
+                  />
                   <div className="py-1">
                     <div className="form-check">
                       <input
@@ -76,10 +292,13 @@ function ParentScheduleClass() {
                         type="radio"
                         name="flexRadioDefault"
                         id="flexRadioDefault1"
+                        value="ONETIME"
+                        checked={classFrequency == "ONETIME"}
+                        onChange={(e) => setClassFrequency(e.target.value)}
                       />
                       <label
                         className="form-check-label"
-                        for="flexRadioDefault1"
+                        htmlFor="flexRadioDefault1"
                       >
                         One-Time
                       </label>
@@ -90,6 +309,9 @@ function ParentScheduleClass() {
                         type="radio"
                         name="flexRadioDefault"
                         id="flexRadioDefault2"
+                        value="WEEKLY"
+                        checked={classFrequency == "WEEKLY"}
+                        onChange={(e) => setClassFrequency(e.target.value)}
                       />
                       <label
                         className="form-check-label"
@@ -104,6 +326,9 @@ function ParentScheduleClass() {
                         type="radio"
                         name="flexRadioDefault"
                         id="flexRadioDefault1"
+                        value="BIWEEKLY"
+                        checked={classFrequency == "BIWEEKLY"}
+                        onChange={(e) => setClassFrequency(e.target.value)}
                       />
                       <label
                         className="form-check-label"
@@ -118,6 +343,9 @@ function ParentScheduleClass() {
                         type="radio"
                         name="flexRadioDefault"
                         id="flexRadioDefault2"
+                        vale="MONTHLY"
+                        checked={classFrequency == "MONTHLY"}
+                        onChange={(e) => setClassFrequency(e.target.value)}
                       />
                       <label
                         className="form-check-label"
@@ -128,54 +356,52 @@ function ParentScheduleClass() {
                     </div>
                   </div>
 
-                  <div className="d-flex align-items-center gap-3 py-2">
-                    <h6 className="text-dark fw-bold p-0 m-0 flex-fill">
-                      On behalf of:
-                    </h6>
+                  <div className="py-2 d-flex align-items-center gap-4">
+                    <h6 className="text-dark fw-bold m-0 p-0">Course:</h6>
 
-                    <select className="w-25 p-2 flex-fill rounded outline-0 border border_gray ">
+                    <select
+                      className="w-25 p-2 rounded outline-0 border border_gray"
+                      onChange={handleCourseId}
+                      value={courseId}
+                    >
                       <option>Select</option>
-                      <option>Option 1</option>
-                      <option>Option 2</option>
-                    </select>
-                  </div>
-
-                  <div className="d-flex align-items-center gap-3 py-2">
-                    <h6 className="text-dark fw-bold p-0 m-0 flex-fill">
-                      Course:
-                    </h6>
-
-                    <select className="w-25 flex-fill p-2 rounded outline-0 border border_gray ">
-                      <option>Select</option>
-                      <option>Option 1</option>
-                      <option>Option 2</option>
-                    </select>
-                  </div>
-
-                  <div className="d-flex align-items-center gap-3 py-2">
-                    <h6 className="text-dark fw-bold p-0 m-0 flex-fill">
-                      Mode:
-                    </h6>
-
-                    <select className="w-25 flex-fill p-2 rounded outline-0 border border_gray ">
-                      <option>Select</option>
-                      <option>Option 1</option>
-                      <option>Option 2</option>
+                      {instructorCourses.map((course) => {
+                        return (
+                          <option key={course.label} value={course.value}>
+                            {course.label}
+                          </option>
+                        );
+                      })}
                     </select>
                   </div>
 
                   <div className="py-2 d-flex align-items-center gap-4">
-                    <h6 className="text-dark fw-bold m-0 p-0">Skills:</h6>
+                    <h6 className="text-dark fw-bold m-0 p-0">Mode:</h6>
 
-                    <h6 className="text-dark fw-bold m-0 p-0">Intermediate</h6>
+                    <select
+                      className="w-25 p-2 rounded outline-0 border border_gray   "
+                      value={selectedMode}
+                      onChange={handleModeChange}
+                    >
+                      <option value="">Select</option>
+                      <option value="Online">Online</option>
+                      <option value="In-Person">In-Person</option>
+                    </select>
+                  </div>
+
+                  <div className="py-2 d-flex align-items-center gap-4">
+                    <h6 className="text-dark fw-bold m-0 p-0">Hourly Rate:</h6>
+
+                    <h6 className="text-dark fw-bold m-0 p-0">
+                      {instructorData?.hourlyRate}
+                    </h6>
                   </div>
 
                   <div className="py-2 d-flex align-items-start gap-4">
                     <h6 className="text-dark fw-bold m-0 p-0">Grade:</h6>
                     <div>
-                      <h6 className="text-dark fw-bold m-0 p-0">
-                        Middle School
-                      </h6>
+                      <h6 className="text-dark fw-bold m-0 p-0"></h6>
+
                       <h6 className="text-dark fw-bold m-0 p-0">
                         &#40;12yrs - 14yrs&#41;
                       </h6>
@@ -200,4 +426,16 @@ function ParentScheduleClass() {
   );
 }
 
-export default withRole(ParentScheduleClass, ["Parent"]);
+const mapStateToProps = (state) => ({
+  userInfo: state.user.userInfo,
+  loading: state.user.loading,
+  error: state.user.error,
+});
+
+export default withRole(
+  connect(mapStateToProps, { fetchUser })(ParentScheduleClass),
+  ["Parent"]
+);
+
+
+

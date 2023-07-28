@@ -8,7 +8,7 @@ import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUser } from "@/store/actions/userActions";
 
-function ParentRegistrationCCPay() {
+function StudentRegistrationCCPay() {
   const navigation = useRouter();
   const dispatch = useDispatch();
   console.log("navigation query", navigation.query);
@@ -152,17 +152,7 @@ function ParentRegistrationCCPay() {
                   Who pays for this tutoring?
                 </h5>
 
-                <div className="py-2">
-                  <select
-                    className="w-25 p-2 rounded outline-0 border border_gray  mb-3 "
-                    value={whoPaysId}
-                    onChange={(e) => setWhoPaysId(e.target.value)}
-                  >
-                    <option>Select</option>
-                    <option value="1">example@mail.com</option>
-                    <option value="2">example2@mail.com</option>
-                  </select>
-                </div>
+            
 
                 <h5 className="text-dark fw-bold">Use saved Credit Card?</h5>
 
@@ -218,4 +208,4 @@ function ParentRegistrationCCPay() {
   );
 }
 
-export default withRole(ParentRegistrationCCPay, ["Parent"]);
+export default withRole(StudentRegistrationCCPay, ["Parent"]);
