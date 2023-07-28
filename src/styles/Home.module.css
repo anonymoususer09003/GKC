@@ -264,6 +264,10 @@
     .editProfileWrapper {
       padding: 1rem !important;
     }
+    
+    .intructorTitle {
+        flex-direction: column;
+    }
 }
 
 
