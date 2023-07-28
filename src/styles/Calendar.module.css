@@ -143,3 +143,9 @@
   .reactCalendar--selectRange .reactCalendar__tile--hover {
     background-color: #e6e6e6;
   }
+
+.unavailableDate {
+  background-color: green;
+  color: white; /* Optional: Set the text color to white for better visibility */
+  border-radius: 50%; /* Optional: Make the date cells circular for a visual effect */
+}
