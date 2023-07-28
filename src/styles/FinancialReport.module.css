@@ -1,0 +1,19 @@
+.topBar {
+  /* background-color: #f48342; */
+  display: flex;
+  justify-content: center;
+  /* justify-content: center; */
+}
+.button {
+  width: 30%;
+  background-color: aliceblue;
+  height: 50px;
+  border: 1px solid black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.btn-text {
+  margin: 0px !important;
+  margin-bottom: 0px !important;
+}

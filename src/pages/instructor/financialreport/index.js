@@ -6,12 +6,12 @@ import { FiRefreshCw } from "react-icons/fi";
 import { TbSpeakerphone } from "react-icons/tb";
 import { useRouter } from "next/router";
 import { withRole } from "../../../utils/withAuthorization";
-import styles from "../../../styles/Home.module.css";
+import styles from "../../../styles/FinancialReport.module.css";
 import FinancialReport from "@/components/financialReport";
 function InstructorFinancialReport() {
   const navigation = useRouter();
 
-  const [activeTab, setActiveTab] = useState("schedule");
+  const [activeTab, setActiveTab] = useState("revenue");
 
   const handleTabClick = (tabName) => {
     setActiveTab(tabName);
@@ -25,22 +25,38 @@ function InstructorFinancialReport() {
         <link rel="icon" href="/favicon.ico" />
       </Head>{" "}
       <TutorNavbar isLogin={true} />
-      <div className="d-flex justify-content-center bg-light p-2">
+      <div className={styles.topBar}>
         <div
-          className={`p-2 cursor-pointer h-100 w-25 border-dark${
-            activeTab === "option1" && "bg-white"
-          }`}
+          className={styles.button}
+          style={{
+            backgroundColor: activeTab === "revenue" ? "#f48342" : "white",
+          }}
           onClick={() => handleTabClick("revenue")}
         >
-          Revenue
+          <p
+            style={{
+              marginBottom: "0px",
+            }}
+            className="btn-text"
+          >
+            Revenue
+          </p>
         </div>
         <div
-          className={`p-2 cursor-pointer  h-100 w-25  ${
-            activeTab === "option2" && "bg-white"
-          }`}
+          className={styles.button}
+          style={{
+            backgroundColor: activeTab === "withdrawal" ? "#f48342" : "white",
+          }}
           onClick={() => handleTabClick("withdrawal")}
         >
-          Withdrawal
+          <p
+            style={{
+              marginBottom: "0px",
+            }}
+            className="btn-text"
+          >
+            Withdrawal
+          </p>
         </div>
         {/* Add more tab items for additional options */}
       </div>
