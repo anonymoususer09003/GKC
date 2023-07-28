@@ -104,7 +104,7 @@ const Navbar = ({ isLogin }) => {
                       >
                         <li className="p-3">
                           <a
-                            href="/student/settingprofile"
+                            href="/instructor/settingprofile"
                             className="nav-link fw-bold"
                           >
                             Profile

@@ -7,19 +7,19 @@ import { useRouter } from "next/router";
 import { withRole } from "../../../utils/withAuthorization";
 import { connect } from "react-redux";
 import { fetchUser } from "../../../store/actions/userActions";
-import styles from "../../../styles/Home.module.css"
+import styles from "../../../styles/Home.module.css";
 
 function SettingProfle({ userInfo, loading, error, fetchUser }) {
   const navigation = useRouter();
-  
+
   const onEditProfile = () => {
     navigation.push("/student/editprofile");
   };
 
   useEffect(() => {
     fetchUser();
+    console.log(localStorage.getItem("gkcAuth"));
   }, [fetchUser]);
-  
 
   if (loading) {
     return <div>Loading...</div>;
@@ -28,7 +28,6 @@ function SettingProfle({ userInfo, loading, error, fetchUser }) {
   if (error) {
     return <div>Error: {error}</div>;
   }
-
 
   return (
     <>
@@ -41,9 +40,8 @@ function SettingProfle({ userInfo, loading, error, fetchUser }) {
       <Navbar isLogin={true} />
       <main className="container-fluid">
         <div
-          className={`p-5 ${styles.editProfileWrapper}`} 
+          className={`p-5 ${styles.editProfileWrapper}`}
           style={{ minHeight: "90vh", maxWidth: "1700px", margin: "auto" }}
-
         >
           <div className="row">
             <div className="col-12 col-lg-4">
@@ -61,7 +59,6 @@ function SettingProfle({ userInfo, loading, error, fetchUser }) {
                   <div className="d-flex gap-1 align-items-center gap-2 pb-3 ">
                     <MdEmail className="h5 p-0 m-0" />
                     {userInfo?.emailParent1}
-
                   </div>
                   <p className="p-0 m-0 py-2 fw-bold">Parent2/guardian2</p>
 
@@ -90,18 +87,24 @@ function SettingProfle({ userInfo, loading, error, fetchUser }) {
                   <div className="col">
                     <h4 className="fw-bold">Grade:</h4>
                     <p className="fw-bold">
-                      {userInfo?.grade?.name} <span> &#40;{userInfo?.grade.description}&#41;</span>
-                   
+                      {userInfo?.grade?.name}{" "}
+                      <span> &#40;{userInfo?.grade.description}&#41;</span>
                     </p>
                   </div>
                   <div className="col border-start px-4 border_primary">
                     <h4 className="fw-bold">Language Preference:</h4>
                     <ul className="m-0 primary-list">
-                    {
-                      userInfo?.languagePreference?.map((lang)=> {
-                        return <li className="fw-bold m-0 p-0" value={lang.id} key={lang.id}>{lang.name}</li>
-                      })
-                    }
+                      {userInfo?.languagePreference?.map((lang) => {
+                        return (
+                          <li
+                            className="fw-bold m-0 p-0"
+                            value={lang.id}
+                            key={lang.id}
+                          >
+                            {lang.name}
+                          </li>
+                        );
+                      })}
                     </ul>
                   </div>
                 </div>
@@ -116,21 +119,27 @@ function SettingProfle({ userInfo, loading, error, fetchUser }) {
                     <h4 className="fw-bold m-0 p-0">Perference:</h4>
                   </div>
                 </div>
-                {
-                      userInfo?.courseOfInterestAndProficiency?.map((course,ind)=> {
-                        return  <div className="row m-0 p-0 pt-1" key={ind}>
-                    <div className="col d-flex align-items-center gap-2">
-                      <MdArrowForwardIos className="text_primary h4 p-0 m-0" />
-                      <p className="fw-bold m-0 p-0 h5 fw-lighter">{course.course.name}</p>
-                    </div>
-                    <div className="col ">
-                      <ul className="m-0 primary-list">
-                        <li className="fw-bold m-0 p-0">{course.proficiency.name}</li>
-                      </ul>
-                    </div>
-                  </div>
-                      })
-                    }
+                {userInfo?.courseOfInterestAndProficiency?.map(
+                  (course, ind) => {
+                    return (
+                      <div className="row m-0 p-0 pt-1" key={ind}>
+                        <div className="col d-flex align-items-center gap-2">
+                          <MdArrowForwardIos className="text_primary h4 p-0 m-0" />
+                          <p className="fw-bold m-0 p-0 h5 fw-lighter">
+                            {course.course.name}
+                          </p>
+                        </div>
+                        <div className="col ">
+                          <ul className="m-0 primary-list">
+                            <li className="fw-bold m-0 p-0">
+                              {course.proficiency.name}
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                    );
+                  }
+                )}
               </div>
             </div>
           </div>
@@ -142,14 +151,15 @@ function SettingProfle({ userInfo, loading, error, fetchUser }) {
   );
 }
 
-
 const mapStateToProps = (state) => ({
   userInfo: state.user.userInfo,
   loading: state.user.loading,
   error: state.user.error,
 });
 
-console.log()
+console.log();
 
-export default withRole(connect(mapStateToProps, { fetchUser })(SettingProfle), ['Student']);
-
+export default withRole(
+  connect(mapStateToProps, { fetchUser })(SettingProfle),
+  ["Student"]
+);

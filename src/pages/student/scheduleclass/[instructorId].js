@@ -10,6 +10,7 @@ import { fetchUser } from "../../../store/actions/userActions";
 import calendarStyles from "../../../styles/Calendar.module.css";
 import axios from "axios";
 import { GlobalInstructor } from "@/pages";
+import InstructorScheduleUnavailableDays from "@/services/Instructors/InstructorScheduleUnavailableDays";
 import styles from "../../../styles/Home.module.css";
 
 function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
@@ -80,6 +81,8 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
       console.error(error);
     }
   };
+
+  console.log("instructor data", instructorData);
   //Fetch user details from redux
   useEffect(() => {
     fetchUser();
@@ -112,26 +115,21 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
   }, []);
 
   useEffect(() => {
-    const getInstructorIcal = async () => {
+    const getInstructorIcal = async (instructorId) => {
       try {
         var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
 
-        const response = await axios.get(
-          `http://34.227.65.157/instructor/schedule-and-unavailable-days-iCal?instructorId=${instructorId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${typ.accessToken}`,
-            },
-          }
+        // Extract VFREEBUSY data
+        const freeBusyComponent = iCalendarData.match(
+          /BEGIN:VFREEBUSY(.|\n)*END:VFREEBUSY/
         );
         console.log(response, "Icaaaal");
       } catch (error) {
         console.log(error);
       }
     };
-
-    getInstructorIcal();
-  }, []);
+    if (instructorId) getInstructorIcal(instructorId);
+  }, [instructorId]);
 
   const handleDateChange = (clickedDate) => {
     /*const dateObj = new Date(clickedDate);
