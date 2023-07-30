@@ -7,11 +7,29 @@ import { Footer } from "../../../components";
 import { useRouter } from "next/router";
 import axios from "axios";
 import { base_url } from "../../../api/client";
+
 export default function SignIn() {
   const navigation = useRouter();
   const [userType, setUserType] = useState("student");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  useEffect(() => {
+    const onLogin = async () => {
+      try {
+        const response = await axios.post("http://34.227.65.157/auth/login", {
+          email: "nitsapath@gmail.com",
+          password: test123,
+        });
+        const accessToken = response.data.accessToken;
+        console.log(accessToken);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    onLogin();
+  });
 
   const onLogin = async () => {
     try {
@@ -19,18 +37,16 @@ export default function SignIn() {
         email: email,
         password: password,
       });
+      const accessToken = response.data.accessToken;
+
       const res = await axios.get(`${base_url}/user/logged-user-role`, {
         headers: {
-          Authorization: `Bearer ${response.data.accessToken}`,
+          Authorization: `Bearer ${accessToken}`,
         },
       });
-
       window.localStorage.setItem(
         "gkcAuth",
-        JSON.stringify({
-          accessToken: response.data.accessToken,
-          role: res.data,
-        })
+        JSON.stringify({ accessToken, role: res.data })
       );
       if (res.data === "Student") {
         navigation.push("/");

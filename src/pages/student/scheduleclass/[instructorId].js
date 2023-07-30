@@ -117,50 +117,13 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
   useEffect(() => {
     const getInstructorIcal = async (instructorId) => {
       try {
-        let response = await InstructorScheduleUnavailableDays(instructorId);
-
-        const iCalendarData = await response.data;
-        const events = [];
-        const dates = [];
-
-        const components = iCalendarData.split("END:VEVENT");
-
-        // Extract VEVENT data
-        const extractedEvents = components.map((component) => {
-          // Extract individual properties and their values
-          const uid = component.match(/UID:(.*)/)?.[1];
-          const summary = component.match(/SUMMARY:(.*)/)?.[1];
-          const dtstart = component.match(/DTSTART:(.*)/)?.[1];
-          const dtend = component.match(/DTEND:(.*)/)?.[1];
-
-          return {
-            uid,
-            summary,
-            dtstart,
-            dtend,
-          };
-        });
+        var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
 
         // Extract VFREEBUSY data
         const freeBusyComponent = iCalendarData.match(
           /BEGIN:VFREEBUSY(.|\n)*END:VFREEBUSY/
         );
-        if (freeBusyComponent) {
-          // Extract individual properties and their values
-          const freeBusy = freeBusyComponent[0].match(
-            /FREEBUSY;FBTYPE=BUSY:(.*)/
-          )?.[1];
-
-          // Process the freeBusy data and store them in busySlots state
-          const busySlotsData = freeBusy.split("/");
-          const busySlotsFormatted = busySlotsData.map((slot) => ({
-            start: slot.split("/")[0],
-            end: slot.split("/")[1],
-          }));
-          console.log("busy slots", busySlotsData);
-        }
-
-        console.log("Icaaaal", extractedEvents);
+        console.log(response, "Icaaaal");
       } catch (error) {
         console.log(error);
       }
@@ -228,11 +191,14 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
   }
   */
   if (loading) {
-    return <div>Loading...</div>;
+    return ( <div>
+      Loading...
+      </div>
+    )
   }
 
   if (error) {
-    return <div>Error: {error}</div>;
+    return (<div>Error:{error}</div>);
   }
   console.log("selected date", selectedDate);
   return (
@@ -246,7 +212,6 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
       <Navbar isLogin={true} />
       <main className="container-fluid">
         <div className="row" style={{ minHeight: "90vh" }}>
-          <p>{instructorId}</p>
           <div className="col-12 col-lg-6 pt-5">
             <Calendar
               //value={date}

@@ -7,6 +7,7 @@ import { useRouter } from "next/router";
 import { RiArrowGoBackLine } from "react-icons/ri";
 import axios from "axios";
 import { base_url } from "../../../api/client";
+import styles from "../../../styles/Home.module.css";
 
 export default function RegisterInstructor() {
   const navigation = useRouter();
@@ -59,7 +60,7 @@ export default function RegisterInstructor() {
     stored.zipCode = zipCode;
     stored.savePaymentFutureUse = true;
     stored.timeZoneId = timezone;
-    console.log(stored);
+
     window.localStorage.setItem("registrationForm", JSON.stringify(stored));
     if (password == confirmPassword) {
       navigation.push("/auth/registrationmore");
@@ -152,7 +153,9 @@ export default function RegisterInstructor() {
           <div className="col-12 col-lg-6 d-flex justify-content-center align-items-center ">
             <div className="w-100 w-md-75 p-5">
               <div>
-                <div className="d-flex justify-content-between align-items-center mb-3">
+                <div
+                  className={`d-flex justify-content-between align-items-center mb-3 ${styles.intructorTitle}`}
+                >
                   <h4 className="text-secondary fw-bold text-capitalize">
                     Instructor
                   </h4>
