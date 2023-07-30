@@ -11,7 +11,7 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import { base_url } from "../../../api/client";
 const StudentSchedule = (props) => {
-  const router = useRouter();
+  const navigation = useRouter();
   const loggedInUser = useSelector((state) => state.user.userInfo);
   const { sendMessage, messages, setChatInfo, setNewMessage, newMessage } =
     FirebaseChat();
@@ -118,7 +118,9 @@ const StudentSchedule = (props) => {
                 {props.meetingLink && (
                   <GoDeviceCameraVideo
                     className="p-0 m-0 flex-fill h4 flex-fill"
-                    onClick={() => onContinue()}
+                    onClick={() =>
+                      navigation.push(`/student/video?${"eventname"}`)
+                    }
                   />
                 )}
                 {props.deleteable && (

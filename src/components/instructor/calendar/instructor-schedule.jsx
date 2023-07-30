@@ -1,5 +1,5 @@
 import { useState } from "react";
-import styles from "../../../styles/Home.module.css"
+import styles from "../../../styles/Home.module.css";
 import { BsFillChatFill, BsFillSendFill } from "react-icons/bs";
 import { IconContext } from "react-icons";
 import { GoDeviceCameraVideo } from "react-icons/go";
@@ -10,38 +10,37 @@ import FirebaseChat from "../../../hooks/firebase-chat";
 import axios from "axios";
 
 const InstructorSchedule = (props) => {
-
   const router = useRouter();
-  const { sendMessage, messages, setChatInfo, setNewMessage, newMessage } = FirebaseChat();
+  const navigation = useRouter();
+  const { sendMessage, messages, setChatInfo, setNewMessage, newMessage } =
+    FirebaseChat();
   const [enabledCamera, setEnabledCamera] = useState(false);
-  
 
   const deleteSingleOccurrence = async (eventId, dateToCancel) => {
     try {
-      const response = await axios.delete('http://34.227.65.157/event/delete-single-occurrence', {
-        data: {
-          eventId: eventId,
-          dateToCancel: dateToCancel,
-        },
-      });
-  
-      console.log('Event deletion successful:', response.data);
+      const response = await axios.delete(
+        "http://34.227.65.157/event/delete-single-occurrence",
+        {
+          data: {
+            eventId: eventId,
+            dateToCancel: dateToCancel,
+          },
+        }
+      );
+
+      console.log("Event deletion successful:", response.data);
     } catch (error) {
-      console.error('Error deleting event:', error);
+      console.error("Error deleting event:", error);
     }
   };
-  
+
   // Button click handler
   const handleDeleteButtonClick = () => {
     const eventID = props.eventId;
-    const date = props.start.split(' ')[0];
-  
+    const date = props.start.split(" ")[0];
+
     deleteSingleOccurrence(eventID, date);
   };
-  
-  
-    
-
 
   //MESSAGES ALSO PROBABLY NEEDS TO BE CHECKED --- MESSAGE
 
@@ -49,7 +48,7 @@ const InstructorSchedule = (props) => {
     name: "Nouman",
     id: 1,
   };
-  
+
   const student = {
     courseId: 1,
     name: "John",
@@ -81,124 +80,129 @@ const InstructorSchedule = (props) => {
 
   return (
     <>
-    <div className="col-12 col-lg-6">
-       <h3 className={`text-center ${styles.scheduleHeader}` } >Schedule</h3>
-       <div
-         className={`shadow p-5 bg-white rounded ${styles.scheduleBox}`}
-         style={{ minHeight: "400px" }}
-       >
+      <div className="col-12 col-lg-6">
+        <h3 className={`text-center ${styles.scheduleHeader}`}>Schedule</h3>
         <div
-          onClick={() => openChat(1)}
-          className="d-flex align-items-center py-3 gap-2"
+          className={`shadow p-5 bg-white rounded ${styles.scheduleBox}`}
+          style={{ minHeight: "400px" }}
         >
-          {props.noEvent ? (
-             <h6 className="p-0 m-0 flex-fill fw-bold flex-fill">
-              No Events Found For This Day
-           </h6>
-          ) : 
-          <>
-            <h6 className="p-0 m-0 flex-fill fw-bold flex-fill">
-              {props.instructorName}
-            </h6>
-           <h6 className="p-0 m-0 flex-fill fw-bold flex-fill">{props.start} </h6>
-           <h6 className="p-0 m-0 flex-fill fw-bold flex-fill">{props.courseName}</h6>
-            {props.instructorId &&
-              <IconContext.Provider value={{ color: "#1677d2"}}>
-                  <BsFillChatFill
-                  className="p-0 m-0 flex-fill h4 flex-fill"
-                  data-bs-toggle="modal"
-                  data-bs-target="#exampleModal2"
-                />
-              </IconContext.Provider>
-            } 
-     
-            {props.meetingLink && 
-            <IconContext.Provider value={{ color: enabledCamera ? "#126d2b" : "#48494B" }}>
-                <GoDeviceCameraVideo
-                  className="p-0 m-0 flex-fill h4 flex-fill"
-                  onClick={() => onContinue()}
-                />
-            </IconContext.Provider>
-            } 
-           {/* {props.deleteable && ( */}
-            <IconContext.Provider value={{ color: "#48494B"}}>
-                <RiDeleteBin6Line className="p-0 m-0 h4 flex-fill" onClick={handleDeleteButtonClick}/>
-            </IconContext.Provider>
-            {/* )} */}
-           
-            </>
-          }
-         
+          <div
+            onClick={() => openChat(1)}
+            className="d-flex align-items-center py-3 gap-2"
+          >
+            {props.noEvent ? (
+              <h6 className="p-0 m-0 flex-fill fw-bold flex-fill">
+                No Events Found For This Day
+              </h6>
+            ) : (
+              <>
+                <h6 className="p-0 m-0 flex-fill fw-bold flex-fill">
+                  {props.instructorName}
+                </h6>
+                <h6 className="p-0 m-0 flex-fill fw-bold flex-fill">
+                  {props.start}{" "}
+                </h6>
+                <h6 className="p-0 m-0 flex-fill fw-bold flex-fill">
+                  {props.courseName}
+                </h6>
+                {props.instructorId && (
+                  <IconContext.Provider value={{ color: "#1677d2" }}>
+                    <BsFillChatFill
+                      className="p-0 m-0 flex-fill h4 flex-fill"
+                      data-bs-toggle="modal"
+                      data-bs-target="#exampleModal2"
+                    />
+                  </IconContext.Provider>
+                )}
+
+                {props.meetingLink && (
+                  <IconContext.Provider
+                    value={{ color: enabledCamera ? "#126d2b" : "#48494B" }}
+                  >
+                    <GoDeviceCameraVideo
+                      className="p-0 m-0 flex-fill h4 flex-fill"
+                      onClick={() =>
+                        navigation.push(`/instructor/video?${"eventname"}`)
+                      }
+                    />
+                  </IconContext.Provider>
+                )}
+                {/* {props.deleteable && ( */}
+                <IconContext.Provider value={{ color: "#48494B" }}>
+                  <RiDeleteBin6Line
+                    className="p-0 m-0 h4 flex-fill"
+                    onClick={handleDeleteButtonClick}
+                  />
+                </IconContext.Provider>
+                {/* )} */}
+              </>
+            )}
+          </div>
+        </div>
       </div>
-      </div> 
-    </div>
 
+      {/* CHAT MODAL NEEDS TO BE FIXED */}
+      <div className="d-flex justify-content-center align-items-center">
+        <div
+          className="modal fade"
+          id="exampleModal2"
+          tabIndex="-1"
+          aria-labelledby="exampleModal2Label"
+          aria-hidden="true"
+        >
+          <div className="modal-dialog modal-dialog-centered modal-lg">
+            <div className="modal-content p-2">
+              <div className="d-flex justify-content-between">
+                <h5 className="modal-title" id="exampleModal2Label"></h5>
+                <button
+                  type="button"
+                  className="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                ></button>
+              </div>
+              <div className="modal-body">
+                <div className=" p-3" style={{ minHeight: "400px" }}>
+                  {messages.map((item, index) => {
+                    let date = item.timestamp.seconds * 1000;
+                    return (
+                      <div
+                        key={index}
+                        className={`py-1 ${
+                          item?.user?.id == parent?.id ? "text-end" : ""
+                        }`}
+                      >
+                        <p className="p-0 m-0 fw-bold">{item.message}</p>
+                        <small className="p-0 m-0">
+                          {`${item?.user?.name}  ${moment(date).format(
+                            "d/MM/YY"
+                          )}`}{" "}
+                          {moment(date).format("hh:mm a")}
+                        </small>
+                      </div>
+                    );
+                  })}
+                </div>
 
-
-    {/* CHAT MODAL NEEDS TO BE FIXED */}
-     <div className="d-flex justify-content-center align-items-center">
-       <div
-         className="modal fade"
-         id="exampleModal2"
-         tabIndex="-1"
-         aria-labelledby="exampleModal2Label"
-         aria-hidden="true"
-       >
-       <div className="modal-dialog modal-dialog-centered modal-lg">
-         <div className="modal-content p-2">
-           <div className="d-flex justify-content-between">
-             <h5 className="modal-title" id="exampleModal2Label"></h5>
-             <button
-               type="button"
-               className="btn-close"
-               data-bs-dismiss="modal"
-               aria-label="Close"
-             ></button>
-           </div>
-           <div className="modal-body">
-             <div className=" p-3" style={{ minHeight: "400px" }}>
-               {messages.map((item, index) => {
-                 let date = item.timestamp.seconds * 1000;
-                 return (
-                   <div
-                     key={index}
-                     className={`py-1 ${
-                       item?.user?.id == parent?.id ? "text-end" : ""
-                     }`}
-                   >
-                     <p className="p-0 m-0 fw-bold">{item.message}</p>
-                     <small className="p-0 m-0">
-                       {`${item?.user?.name}  ${moment(date).format(
-                         "d/MM/YY"
-                       )}`}{" "}
-                       {moment(date).format("hh:mm a")}
-                     </small>
-                   </div>
-                 );
-               })}
-             </div>
-     
-             <div className=" d-flex align-items-center px-2 gap-2">
-               <input
-                 value={newMessage}
-                 onChange={handleTextChange}
-                 type="text"
-                 placeholde=""
-                 className="border  p-2 rounded flex-fill"
-               />{" "}
-               <BsFillSendFill
-                 onClick={() =>
-                   sendMessage({ type: "student" })
-                 }
-                 className="h3 p-0 m-0"
-               />
+                <div className=" d-flex align-items-center px-2 gap-2">
+                  <input
+                    value={newMessage}
+                    onChange={handleTextChange}
+                    type="text"
+                    placeholde=""
+                    className="border  p-2 rounded flex-fill"
+                  />{" "}
+                  <BsFillSendFill
+                    onClick={() => sendMessage({ type: "student" })}
+                    className="h3 p-0 m-0"
+                  />
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </>
-  )
-}
+    </>
+  );
+};
 export default InstructorSchedule;
