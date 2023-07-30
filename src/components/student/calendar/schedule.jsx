@@ -9,6 +9,7 @@ import moment from "moment";
 import FirebaseChat from "../../../hooks/firebase-chat";
 import axios from "axios";
 import { useSelector } from "react-redux";
+import { base_url } from "../../../api/client";
 const StudentSchedule = (props) => {
   const router = useRouter();
   const loggedInUser = useSelector((state) => state.user.userInfo);
@@ -19,7 +20,7 @@ const StudentSchedule = (props) => {
   const deleteSingleOccurrence = async (eventId, dateToCancel) => {
     try {
       const response = await axios.delete(
-        "http://34.227.65.157/event/delete-single-occurrence",
+        `${base_url}/event/delete-single-occurrence`,
         {
           data: {
             eventId: eventId,

@@ -8,7 +8,7 @@ import axios from "axios";
 import styles from "../../../styles/Home.module.css";
 import calendarStyles from "../../../styles/Calendar.module.css";
 import StudentSchedule from "./schedule";
-
+import { apiClient, base_url } from "../../../api/client";
 function StudentCalandar() {
   const [events, setEvents] = useState([]);
   const [bookedEvents, setBookedEvent] = useState([]);
@@ -28,7 +28,7 @@ function StudentCalandar() {
       try {
         const typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
         const response = await fetch(
-          "http://34.227.65.157/event/logged-user-events-iCal",
+          `${base_url}/event/logged-user-events-iCal`,
           {
             headers: {
               Authorization: `Bearer ${typ.accessToken}`,
@@ -65,15 +65,7 @@ function StudentCalandar() {
   useEffect(() => {
     const fetchEventData = async () => {
       try {
-        const typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
-        const response = await axios.get(
-          "http://34.227.65.157/event/logged-user-events",
-          {
-            headers: {
-              Authorization: `Bearer ${typ.accessToken}`,
-            },
-          }
-        );
+        const response = await apiClient.get("/event/logged-user-events");
         setBookedEvent(response.data);
       } catch (error) {
         console.error("Error fetching iCalendar data:", error);

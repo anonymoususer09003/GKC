@@ -6,7 +6,7 @@ import { BsCheck2Circle } from "react-icons/bs";
 import { useRouter } from "next/router";
 import { RiArrowGoBackLine } from "react-icons/ri";
 import axios from "axios";
-
+import { apiClient, base_url } from "../../../api/client";
 
 export default function RegisterStudent() {
   const navigation = useRouter();
@@ -14,7 +14,7 @@ export default function RegisterStudent() {
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
   const [userType, setUserType] = useState("");
-  
+
   const [email, setEmail] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -29,7 +29,17 @@ export default function RegisterStudent() {
   const [termsAgree, setTermsAgree] = useState(false);
   const [isInitialRender, setIsInitialRender] = useState(true);
 
-  let isValidForm = email && firstName && lastName && address1 && country && state && city && zipCode && password  && termsAgree;
+  let isValidForm =
+    email &&
+    firstName &&
+    lastName &&
+    address1 &&
+    country &&
+    state &&
+    city &&
+    zipCode &&
+    password &&
+    termsAgree;
 
   const onContinue = () => {
     window.localStorage.setItem("gkcAuth", JSON.stringify(true));
@@ -50,7 +60,7 @@ export default function RegisterStudent() {
     stored.timeZoneId = timezone;
     console.log(stored);
     window.localStorage.setItem("registrationForm", JSON.stringify(stored));
-    
+
     if (password == confirmPassword) {
       navigation.push("/auth/parentbankinfo");
     } else {
@@ -61,7 +71,7 @@ export default function RegisterStudent() {
   const getCountries = async () => {
     try {
       const response = await axios.get(
-        "http://34.227.65.157/public/location/get-countries"
+        `${base_url}/public/location/get-countries`
       );
       setCountries(response.data);
     } catch (error) {
@@ -71,7 +81,7 @@ export default function RegisterStudent() {
   const getStates = async () => {
     try {
       const response = await axios.get(
-        `http://34.227.65.157/public/location/get-states?countryName=${country}`
+        `${base_url}/public/location/get-states?countryName=${country}`
       );
       setStates(response.data);
     } catch (error) {
@@ -82,7 +92,7 @@ export default function RegisterStudent() {
   const getCities = async () => {
     try {
       const response = await axios.get(
-        `http://34.227.65.157/public/location/get-cities?countryName=${country}&stateName=${state}`
+        `${base_url}/public/location/get-cities?countryName=${country}&stateName=${state}`
       );
       setCities(response.data);
     } catch (error) {
@@ -96,7 +106,6 @@ export default function RegisterStudent() {
     setEmail(stored.email);
     setUserType(value);
     getCountries();
-
   }, []);
 
   useEffect(() => {
@@ -104,15 +113,16 @@ export default function RegisterStudent() {
       setIsInitialRender(false);
     } else {
       getStates();
+    }
+  }, [country]);
 
-    }}, [country]);
-
-    useEffect(() => {
-      if (isInitialRender) {
-        setIsInitialRender(false);
-      } else {
-        getCities();
-      }}, [state]);
+  useEffect(() => {
+    if (isInitialRender) {
+      setIsInitialRender(false);
+    } else {
+      getCities();
+    }
+  }, [state]);
   return (
     <>
       <Head>
@@ -186,13 +196,17 @@ export default function RegisterStudent() {
                   />
 
                   <div className="d-flex   flex-md-nowrap flex-wrap gap-2">
-                  <select
+                    <select
                       onChange={(e) => setCountry(e.target.value)}
                       className="w-100 p-2 rounded outline-0 border border_gray  mb-3 "
                     >
                       <option value="">Select Country</option>
                       {countries.map((v, i) => {
-                        return <option value={v.name} key={i}>{v.name}</option>;
+                        return (
+                          <option value={v.name} key={i}>
+                            {v.name}
+                          </option>
+                        );
                       })}
                     </select>
                     <select
@@ -201,22 +215,30 @@ export default function RegisterStudent() {
                     >
                       <option value="">Select State</option>
                       {states.map((v, i) => {
-                        return <option value={v.name} key={i}>{v.name}</option>;
+                        return (
+                          <option value={v.name} key={i}>
+                            {v.name}
+                          </option>
+                        );
                       })}
                     </select>
                   </div>
 
                   <div className="d-flex   flex-md-nowrap flex-wrap gap-2">
-                  <select
+                    <select
                       onChange={(e) => setCity(e.target.value)}
                       className="w-100 p-2 rounded outline-0 border border_gray  mb-3"
                     >
                       <option value="student">Select City</option>
                       {cities.map((v, i) => {
-                        return <option value={v.name} key={i}>{v.name}</option>;
+                        return (
+                          <option value={v.name} key={i}>
+                            {v.name}
+                          </option>
+                        );
                       })}
                     </select>
-                  <input
+                    <input
                       type="text"
                       className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
                       placeholder="Zip/Post Code"
@@ -252,7 +274,23 @@ export default function RegisterStudent() {
                       onChange={() => setTermsAgree(!termsAgree)}
                     />
                     <label className="form-check-label" for="flexCheckDefault">
-                      I agree to the <Link href="/terms-of-use" className="fw-bold no-underline hover:text_secondary text_secondary"> Terms of Use</Link> and <Link href="/privicy-policy" className="fw-bold no-underline hover:text_secondary text_secondary"> Privacy Policy </Link> of GKC
+                      I agree to the{" "}
+                      <Link
+                        href="/terms-of-use"
+                        className="fw-bold no-underline hover:text_secondary text_secondary"
+                      >
+                        {" "}
+                        Terms of Use
+                      </Link>{" "}
+                      and{" "}
+                      <Link
+                        href="/privicy-policy"
+                        className="fw-bold no-underline hover:text_secondary text_secondary"
+                      >
+                        {" "}
+                        Privacy Policy{" "}
+                      </Link>{" "}
+                      of GKC
                     </label>
                   </div>
                   <div className="d-flex flex-wrap gap-2 justify-content-between mt-3">

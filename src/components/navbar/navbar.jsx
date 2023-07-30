@@ -12,11 +12,15 @@ import { fetchUser } from "@/store/actions/userActions";
 
 const Navbar = ({ isLogin }) => {
   const [value, setValue] = useState(false);
+  const [role, setRole] = useState("student");
   const dispatch = useDispatch();
+  console.log("value", value);
 
   useEffect(() => {
     const stored = localStorage.getItem("gkcAuth");
+    let data = stored ? JSON.parse(stored) : "student";
     setValue(stored ? JSON.parse(stored) : false);
+    setRole(data?.role?.toLowerCase());
   }, []);
 
   /*useEffect(() => {
@@ -104,7 +108,7 @@ const Navbar = ({ isLogin }) => {
                       >
                         <li className="p-3">
                           <a
-                            href="/instructor/settingprofile"
+                            href={`/${role}/settingprofile`}
                             className="nav-link fw-bold"
                           >
                             Profile
@@ -120,31 +124,41 @@ const Navbar = ({ isLogin }) => {
                         </li>
                         <li className="p-3">
                           <a
-                            href="/student/paymentinfo"
+                            href={`/${role}/paymentinfo`}
                             className="nav-link fw-bold"
                           >
                             Payment Information
                           </a>
                         </li>
+                        {role === "student" && (
+                          <li className="p-3">
+                            <a
+                              href="/student/reviewinstructor"
+                              className="nav-link fw-bold"
+                            >
+                              Review Instructor
+                            </a>
+                          </li>
+                        )}
+
                         <li className="p-3">
                           <a
-                            href="/student/reviewinstructor"
+                            href={
+                              role === "student"
+                                ? `/${role}/reportinstructor`
+                                : role === "student"
+                                ? `/${role}/reportedstudentparents`
+                                : `/${role}/reportedinstructor`
+                            }
                             className="nav-link fw-bold"
                           >
-                            Review Instructor
+                            Report{" "}
+                            {role === "student" ? "Instructor" : "Students"}
                           </a>
                         </li>
                         <li className="p-3">
                           <a
-                            href="/student/reportinstructor"
-                            className="nav-link fw-bold"
-                          >
-                            Report Instructor
-                          </a>
-                        </li>
-                        <li className="p-3">
-                          <a
-                            href="/student/financialreport"
+                            href={`/${role}/financialreport`}
                             className="nav-link fw-bold"
                           >
                             Financial Report

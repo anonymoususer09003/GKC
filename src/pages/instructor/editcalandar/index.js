@@ -8,23 +8,19 @@ import { FiEdit } from "react-icons/fi";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { withRole } from "../../../utils/withAuthorization";
 import { isSameDay, format } from "date-fns";
-import axios from "axios";
+import { apiClient } from "../../../api/client";
 import { connect } from "react-redux";
 import { fetchUser } from "../../../store/actions/userActions";
-import calendarStyles from "../../../styles/Calendar.module.css"
+import calendarStyles from "../../../styles/Calendar.module.css";
 import InstructorCalendar from "@/components/instructor/calendar/instructor-calendar";
- 
 
 function EditCalandar({ userInfo, loading, error, fetchUser }) {
   const [value, onChange] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState();
   const [events, setEvents] = useState([
-
-// Add more events as needed
-]);
-const [unavailableDates, setUnavailableDates] = useState([
-
-]);
+    // Add more events as needed
+  ]);
+  const [unavailableDates, setUnavailableDates] = useState([]);
   const handleDateChange = (date) => {
     setSelectedDate(date);
     console.log(selectedDate);
@@ -36,20 +32,11 @@ const [unavailableDates, setUnavailableDates] = useState([
     console.log(convertedDate);
 
     try {
-      var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
-      const res = await axios.post(
-        "http://34.227.65.157/instructor/unavailable-day",
-        {
-          date: convertedDate,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${typ.accessToken}`,
-          },
-        }
-      );
+      const res = await apiClient.post("/instructor/unavailable-day", {
+        date: convertedDate,
+      });
       console.log(res);
-      fetchProfileData()
+      fetchProfileData();
       // setProfile(res.data);
       alert("success");
     } catch (error) {
@@ -58,115 +45,109 @@ const [unavailableDates, setUnavailableDates] = useState([
   };
 
   const fetchProfileData = async () => {
+    try {
+      const res = await apiClient.get(
+        `/instructor/schedule-and-unavailable-days-iCal?instructorId=${userInfo.id}`,
+        {}
+      );
+      console.log(res.data);
 
+      const calendarData = res.data;
 
+      const events = [];
+      const unavailableDays = [];
 
+      const lines = calendarData.split("\n");
 
-try {
-  var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
-  const res = await axios.get(`http://34.227.65.157/instructor/schedule-and-unavailable-days-iCal?instructorId=${userInfo.id}`, {
-  headers: {
-    Authorization: `Bearer ${typ.accessToken}`,
-  },
-});
-console.log(res.data);
+      let currentEvent = null;
+      let currentFreeBusy = null;
 
-const calendarData = res.data;
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i].trim();
 
-const events = [];
-const unavailableDays = [];
+        if (line.startsWith("BEGIN:VEVENT")) {
+          currentEvent = {};
+        } else if (line.startsWith("BEGIN:VFREEBUSY")) {
+          currentFreeBusy = {};
+        } else if (
+          line.startsWith("UID:") &&
+          (currentEvent || currentFreeBusy)
+        ) {
+          const uid = line.split(":")[1];
+          if (currentEvent) {
+            currentEvent.uid = uid;
+          } else if (currentFreeBusy) {
+            currentFreeBusy.uid = uid;
+          }
+        } else if (line.startsWith("DTSTART:") && currentEvent) {
+          const dtStart = line.split(":")[1];
+          const dateString = dtStart;
+          const year = parseInt(dateString.slice(0, 4));
+          const month = parseInt(dateString.slice(4, 6)) - 1; // Month is zero-based in JavaScript's Date object
+          const day = parseInt(dateString.slice(6, 8));
+          const date = new Date(year, month, day);
+          currentEvent.dtStart = date;
+        } else if (
+          line.startsWith("FREEBUSY;FBTYPE=BUSY:") &&
+          currentFreeBusy
+        ) {
+          const [start, end] = line.split(":")[1].split("/");
 
-const lines = calendarData.split('\n');
+          const dateString = start;
+          const year = parseInt(dateString.slice(0, 4));
+          const month = parseInt(dateString.slice(4, 6)) - 1; // Month is zero-based in JavaScript's Date object
+          const day = parseInt(dateString.slice(6, 8));
+          const date = new Date(year, month, day);
+          currentFreeBusy.start = date;
+          currentFreeBusy.end = end;
+        } else if (line.startsWith("END:VEVENT")) {
+          if (currentEvent) {
+            events.push(currentEvent);
+            currentEvent = null;
+          }
+        } else if (line.startsWith("END:VFREEBUSY")) {
+          if (currentFreeBusy) {
+            unavailableDays.push(currentFreeBusy);
+            currentFreeBusy = null;
+          }
+        }
+      }
 
-let currentEvent = null;
-let currentFreeBusy = null;
-
-for (let i = 0; i < lines.length; i++) {
-const line = lines[i].trim();
-
-if (line.startsWith('BEGIN:VEVENT')) {
-  currentEvent = {};
-} else if (line.startsWith('BEGIN:VFREEBUSY')) {
-  currentFreeBusy = {};
-} else if (line.startsWith('UID:') && (currentEvent || currentFreeBusy)) {
-  const uid = line.split(':')[1];
-  if (currentEvent) {
-    currentEvent.uid = uid;
-  } else if (currentFreeBusy) {
-    currentFreeBusy.uid = uid;
-  }
-} else if (line.startsWith('DTSTART:') && currentEvent) {
-  const dtStart = line.split(':')[1];
-  const dateString = dtStart;
-  const year = parseInt(dateString.slice(0, 4));
-  const month = parseInt(dateString.slice(4, 6)) - 1; // Month is zero-based in JavaScript's Date object
-  const day = parseInt(dateString.slice(6, 8));
-  const date = new Date(year, month, day);
-  currentEvent.dtStart =  date;
-
-} else if (line.startsWith('FREEBUSY;FBTYPE=BUSY:') && currentFreeBusy) {
-  const [start, end] = line.split(':')[1].split('/');
-
-  const dateString = start;
-  const year = parseInt(dateString.slice(0, 4));
-  const month = parseInt(dateString.slice(4, 6)) - 1; // Month is zero-based in JavaScript's Date object
-  const day = parseInt(dateString.slice(6, 8));
-  const date = new Date(year, month, day);
-  currentFreeBusy.start = date;
-  currentFreeBusy.end = end;
-} else if (line.startsWith('END:VEVENT')) {
-  if (currentEvent) {
-    events.push(currentEvent);
-    currentEvent = null;
-  }
-} else if (line.startsWith('END:VFREEBUSY')) {
-  if (currentFreeBusy) {
-    unavailableDays.push(currentFreeBusy);
-    currentFreeBusy = null;
-  }
-}
-}
-
-setUnavailableDates(unavailableDays)
-setEvents(events)
-console.log(events, unavailableDays)
-} catch (error) {
-console.error('Error fetching profile data:', error);
-}
-
-
-
-};
+      setUnavailableDates(unavailableDays);
+      setEvents(events);
+      console.log(events, unavailableDays);
+    } catch (error) {
+      console.error("Error fetching profile data:", error);
+    }
+  };
 
   useEffect(() => {
-
-   
-
-  
-
-fetchProfileData()
+    fetchProfileData();
   }, []);
 
   const tileContent = ({ date, view }) => {
-    if (view === 'month') {
-      const event = events.find((event) => event.dtStart.getTime() === date.getTime());
+    if (view === "month") {
+      const event = events.find(
+        (event) => event.dtStart.getTime() === date.getTime()
+      );
       if (event) {
-        return 'event-day';
+        return "event-day";
       }
     }
 
     return null;
   };
 
-  
   const tileDisabled = ({ date }) => {
-    return unavailableDates.some((disabledDay) => date.toDateString() === disabledDay.start.toDateString());
+    return unavailableDates.some(
+      (disabledDay) => date.toDateString() === disabledDay.start.toDateString()
+    );
   };
 
   useEffect(() => {
     fetchUser();
   }, [fetchUser]);
-  console.log(userInfo)
+  console.log(userInfo);
 
   // if (loading) {
   //   return <div>Loading...</div>;
@@ -278,13 +259,12 @@ fetchProfileData()
   );
 }
 
-
-
 const mapStateToProps = (state) => ({
   userInfo: state.user.userInfo,
   loading: state.user.loading,
   error: state.user.error,
 });
 
-export default withRole(connect(mapStateToProps, { fetchUser })(EditCalandar), ['Instructor']);
-
+export default withRole(connect(mapStateToProps, { fetchUser })(EditCalandar), [
+  "Instructor",
+]);

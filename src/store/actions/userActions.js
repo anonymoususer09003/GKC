@@ -1,5 +1,5 @@
 import axios from "axios";
-
+import { apiClient } from "../../api/client";
 export const fetchUserRequest = () => ({
   type: "FETCH_USER_REQUEST",
 });
@@ -18,15 +18,7 @@ export const fetchUser = () => {
   return async (dispatch) => {
     dispatch(fetchUserRequest());
     try {
-      var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
-      const res = await axios.get(
-        "http://34.227.65.157/user/logged-user-details",
-        {
-          headers: {
-            Authorization: `Bearer ${typ.accessToken}`,
-          },
-        }
-      );
+      const res = await apiClient.get("/user/logged-user-details");
       dispatch(fetchUserSuccess(res.data));
     } catch (error) {
       console.error(error);

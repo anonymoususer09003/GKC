@@ -32,14 +32,14 @@ function StudentMessaging() {
 
   console.log("my chat list", myChatList);
 
-  const loggedInUser = useSelector((state) => state.user.userInfo);
+  const loggedInUser = useSelector((state) => state.user?.userInfo);
   const student = {
     courseId: loggedInUser?.id,
     name: loggedInUser?.firstName,
     id: 2,
     parentId: 4,
   };
-  console.log("logged", loggedInUser);
+
   useEffect(() => {
     getMyChatList(loggedInUser?.id);
     setChatInfo({

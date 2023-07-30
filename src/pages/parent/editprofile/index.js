@@ -3,11 +3,11 @@ import Head from "next/head";
 import { ParentNavbar, Footer } from "./../../../components";
 import { BsCheck2Circle } from "react-icons/bs";
 import { MdEmail, MdDelete } from "react-icons/md";
-import { withRole } from '../../../utils/withAuthorization';
+import { withRole } from "../../../utils/withAuthorization";
 import { connect } from "react-redux";
 import { fetchUser } from "../../../store/actions/userActions";
 import { useRouter } from "next/router";
-import axios from "axios"
+import { apiClient } from "../../../api/client";
 
 function EditProfile({ userInfo, loading, error, fetchUser }) {
   const navigation = useRouter();
@@ -17,54 +17,42 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
 
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [address1, setAddress1] = useState("");
+  const [address2, setAddress2] = useState("");
+  const [selectedCountry, setSelectedCountry] = useState("");
+  const [selectedState, setSelectedState] = useState("");
+  const [selectedCity, setSelectedCity] = useState("");
+  const [zipCode, setZipCode] = useState("");
+  const [dependents, setDependents] = useState([]);
 
-  const [firstName, setFirstName] =useState('')
-  const [lastName, setLastName] =useState('')
-  const [address1, setAddress1] =useState('')
-  const [address2, setAddress2] =useState('')
-  const [selectedCountry, setSelectedCountry] =useState('')
-  const [selectedState, setSelectedState] =useState('')
-  const [selectedCity, setSelectedCity] =useState('')
-  const [zipCode, setZipCode] =useState('')
-  const [dependents, setDependents] = useState([])
-
-const handleSubmit =async () => {
-  try {
-    var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
-    const response = await axios.put(
-      "http://34.227.65.157/user/parent/update",
-      {
-          userId: userInfo.id,
-          firstName: firstName,
-          lastName: lastName,
-          email: userInfo.email,
-          address1: address1,
-          address2: address2,
-          country: selectedCountry,
-          state: selectedState,
-          city: selectedCity,
-          zipCode: zipCode,
-          dependentsId: dependents
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${typ.accessToken}`,
-      },
-      }
-    );
-    console.log(response);
-    navigation.push('/parent/settingprofile')
-    // setCountries(response.data);
-  } catch (error) {
-    console.error(error);
-  }
-}
+  const handleSubmit = async () => {
+    try {
+      const response = await apiClient.put("/user/parent/update", {
+        userId: userInfo.id,
+        firstName: firstName,
+        lastName: lastName,
+        email: userInfo.email,
+        address1: address1,
+        address2: address2,
+        country: selectedCountry,
+        state: selectedState,
+        city: selectedCity,
+        zipCode: zipCode,
+        dependentsId: dependents,
+      });
+      console.log(response);
+      navigation.push("/parent/settingprofile");
+      // setCountries(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const getCountries = async () => {
     try {
-      const response = await axios.get(
-        "http://34.227.65.157/public/location/get-countries"
-      );
+      const response = await apiClient.get("/public/location/get-countries");
       console.log(response.data);
       setCountries(response.data);
     } catch (error) {
@@ -74,8 +62,8 @@ const handleSubmit =async () => {
 
   const getStates = async () => {
     try {
-      const response = await axios.get(
-        `http://34.227.65.157/public/location/get-states?countryName=${selectedCountry}`
+      const response = await apiClient.get(
+        `/public/location/get-states?countryName=${selectedCountry}`
       );
       setStates(response.data);
     } catch (error) {
@@ -85,8 +73,8 @@ const handleSubmit =async () => {
 
   const getCities = async () => {
     try {
-      const response = await axios.get(
-        `http://34.227.65.157/public/location/get-cities?countryName=${selectedCountry}&stateName=${selectedState}`
+      const response = await apiClient.get(
+        `/public/location/get-cities?countryName=${selectedCountry}&stateName=${selectedState}`
       );
       setCities(response.data);
     } catch (error) {
@@ -97,7 +85,7 @@ const handleSubmit =async () => {
   useEffect(() => {
     fetchUser();
   }, [fetchUser]);
-  
+
   useEffect(() => {
     if (userInfo) {
       setFirstName(userInfo.firstName);
@@ -108,30 +96,29 @@ const handleSubmit =async () => {
       setSelectedState(userInfo.state);
       setSelectedCity(userInfo.city);
       setZipCode(userInfo.zipCode);
-      setDependents(userInfo.dependents)
+      setDependents(userInfo.dependents);
     }
   }, [userInfo]);
 
   useEffect(() => {
-      getCountries();
-      getStates();
-      getCities()
+    getCountries();
+    getStates();
+    getCities();
   }, []);
 
   useEffect(() => {
-    if(selectedCountry){
-    getStates();
+    if (selectedCountry) {
+      getStates();
     }
   }, [selectedCountry]);
-  
+
   useEffect(() => {
-    if(selectedCountry && selectedState){
-      getCities()
+    if (selectedCountry && selectedState) {
+      getCities();
     }
   }, [selectedState]);
 
-
-  console.log(userInfo)
+  console.log(userInfo);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -171,7 +158,7 @@ const handleSubmit =async () => {
                       className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
                       placeholder="First Name"
                       value={firstName}
-                      onChange={(e)=>setFirstName(e.target.value)}
+                      onChange={(e) => setFirstName(e.target.value)}
                     />
 
                     <input
@@ -179,7 +166,7 @@ const handleSubmit =async () => {
                       className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
                       placeholder="Last Name"
                       value={lastName}
-                      onChange={(e)=>setLastName(e.target.value)}
+                      onChange={(e) => setLastName(e.target.value)}
                     />
                   </div>
 
@@ -190,7 +177,7 @@ const handleSubmit =async () => {
                     className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
                     placeholder="1234, Smith Street"
                     value={address1}
-                      onChange={(e)=>setAddress1(e.target.value)}
+                    onChange={(e) => setAddress1(e.target.value)}
                   />
                   <p className="p-0 m-0 py-2 fw-bold">Address 2</p>
                   <input
@@ -198,30 +185,54 @@ const handleSubmit =async () => {
                     className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
                     placeholder="Apt. 2"
                     value={address2}
-                    onChange={(e)=>setAddress2(e.target.value)}
+                    onChange={(e) => setAddress2(e.target.value)}
                   />
 
                   <div className="d-flex align-items-center gap-3 py-2">
-                    <select className="w-25 flex-fill p-2 rounded outline-0 border border_gray " value={selectedCountry} onChange={(e)=>setSelectedCountry(e.target.value)}>
+                    <select
+                      className="w-25 flex-fill p-2 rounded outline-0 border border_gray "
+                      value={selectedCountry}
+                      onChange={(e) => setSelectedCountry(e.target.value)}
+                    >
                       <option>Select Country</option>
-                         {countries.map((v, i) => {
-                        return <option value={v.name} key={i}>{v.name}</option>;
+                      {countries.map((v, i) => {
+                        return (
+                          <option value={v.name} key={i}>
+                            {v.name}
+                          </option>
+                        );
                       })}
                     </select>
 
-                    <select className="w-25 flex-fill p-2 rounded outline-0 border border_gray " value={selectedState} onChange={(e)=>setSelectedState(e.target.value)}>
-                    <option>Select State</option>
-                         {states.map((v, i) => {
-                        return <option value={v.name} key={i}>{v.name}</option>;
+                    <select
+                      className="w-25 flex-fill p-2 rounded outline-0 border border_gray "
+                      value={selectedState}
+                      onChange={(e) => setSelectedState(e.target.value)}
+                    >
+                      <option>Select State</option>
+                      {states.map((v, i) => {
+                        return (
+                          <option value={v.name} key={i}>
+                            {v.name}
+                          </option>
+                        );
                       })}
                     </select>
                   </div>
 
                   <div className="d-flex align-items-center gap-3 py-2">
-                    <select className="w-25 flex-fill p-2 rounded outline-0 border border_gray " value={selectedCity} onChange={(e)=>setSelectedCity(e.target.value)}>
-                    <option>Select City</option>
-                         {cities.map((v, i) => {
-                        return <option value={v.name} key={i}>{v.name}</option>;
+                    <select
+                      className="w-25 flex-fill p-2 rounded outline-0 border border_gray "
+                      value={selectedCity}
+                      onChange={(e) => setSelectedCity(e.target.value)}
+                    >
+                      <option>Select City</option>
+                      {cities.map((v, i) => {
+                        return (
+                          <option value={v.name} key={i}>
+                            {v.name}
+                          </option>
+                        );
                       })}
                     </select>
 
@@ -230,7 +241,7 @@ const handleSubmit =async () => {
                       className="w-25 flex-fill p-2 rounded outline-0 border border_gray "
                       placeholder="Zip/State Code"
                       value={zipCode}
-                      onChange={(e)=> setZipCode(e.target.value)}
+                      onChange={(e) => setZipCode(e.target.value)}
                     />
                   </div>
 
@@ -239,10 +250,17 @@ const handleSubmit =async () => {
                   <div></div>
 
                   <div className="d-flex gap-2 justify-content-center py-3">
-                    <button className="px-4 btn btn-success text-light p-2 rounded fw-bold d-flex align-items-center justify-content-center gap-2" onClick={()=>handleSubmit()}>
+                    <button
+                      className="px-4 btn btn-success text-light p-2 rounded fw-bold d-flex align-items-center justify-content-center gap-2"
+                      onClick={() => handleSubmit()}
+                    >
                       <BsCheck2Circle className="h3 m-0 p-0" /> Save Profile
                     </button>
-                    <a href='/parent/settingprofile' className="px-4 btn btn-dark text-light p-2 rounded fw-bold d-flex align-items-center justify-content-center gap-2" onClick={()=>handleSubmit()}>
+                    <a
+                      href="/parent/settingprofile"
+                      className="px-4 btn btn-dark text-light p-2 rounded fw-bold d-flex align-items-center justify-content-center gap-2"
+                      onClick={() => handleSubmit()}
+                    >
                       Exit
                     </a>
                   </div>
@@ -254,16 +272,22 @@ const handleSubmit =async () => {
                 <div className="col px-4 border_primary">
                   <h4 className="fw-bold">Dependents:</h4>
                   <div className="p-4 w-50">
-                  {dependents.length == 0 ? 
-                  <div>
-                    <p className="fw-bold">You currently don't have any dependent</p>
-                  </div>
-                  :dependents.map((dep,ind)=>{
-                    return  <div className="d-flex justify-content-between gap-4 my-2">
-                      <p className="p-0 m-0">Name One</p>
-                      <MdDelete style={{ fontSize: "24px" }} />
-                    </div>
-                  })}
+                    {dependents.length == 0 ? (
+                      <div>
+                        <p className="fw-bold">
+                          You currently don't have any dependent
+                        </p>
+                      </div>
+                    ) : (
+                      dependents.map((dep, ind) => {
+                        return (
+                          <div className="d-flex justify-content-between gap-4 my-2">
+                            <p className="p-0 m-0">Name One</p>
+                            <MdDelete style={{ fontSize: "24px" }} />
+                          </div>
+                        );
+                      })
+                    )}
                   </div>
                 </div>
               </div>
@@ -277,11 +301,12 @@ const handleSubmit =async () => {
   );
 }
 
-
 const mapStateToProps = (state) => ({
   userInfo: state.user.userInfo,
   loading: state.user.loading,
   error: state.user.error,
 });
 
-export default withRole(connect(mapStateToProps, { fetchUser })(EditProfile), ['Parent']);
+export default withRole(connect(mapStateToProps, { fetchUser })(EditProfile), [
+  "Parent",
+]);

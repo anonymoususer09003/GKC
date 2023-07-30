@@ -5,68 +5,66 @@ import { MdEmail, MdLocationOn, MdArrowForwardIos } from "react-icons/md";
 import { BsCheck2Circle } from "react-icons/bs";
 import Image from "next/image";
 import { MultiSelect } from "react-multi-select-component";
-import {useRouter} from "next/router"
-import { withRole } from '../../../utils/withAuthorization';
+import { useRouter } from "next/router";
+import { withRole } from "../../../utils/withAuthorization";
 import { connect } from "react-redux";
 import { fetchUser } from "../../../store/actions/userActions";
-import axios from "axios"
+import { apiClient } from "../../../api/client";
 
- function EditProfile({ userInfo, loading, error, fetchUser }) {
-
+function EditProfile({ userInfo, loading, error, fetchUser }) {
   const navigation = useRouter();
- 
+
   const [selected, setSelected] = useState([]);
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [address1, setAddress1] = useState('');
-  const [address2, setAddress2] = useState('');
-  const [city, setCity] = useState('');
-  const [state, setState] = useState('');
-  const [country, setCountry] = useState('');
-  const [zipCode, setZipCode] = useState('');
-  const [bio, setBio] = useState('');
-  const [hourlyRate, setHourlyRate] = useState('');
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [address1, setAddress1] = useState("");
+  const [address2, setAddress2] = useState("");
+  const [city, setCity] = useState("");
+  const [state, setState] = useState("");
+  const [country, setCountry] = useState("");
+  const [zipCode, setZipCode] = useState("");
+  const [bio, setBio] = useState("");
+  const [hourlyRate, setHourlyRate] = useState("");
   const [deliveryModes, setDeliveryModes] = useState([]);
   const [acceptInterviewRequest, setAcceptInterviewRequest] = useState(false);
   const [grades, setGrades] = useState([]);
   const [proficiency, setProficiency] = useState([]);
-  
-  const [courses,   setCourses] = useState([]);
+
+  const [courses, setCourses] = useState([]);
   const [lang, setLang] = useState([]);
-  
-  
-  const [selectedCourses, setSelectedCourses] = useState([])
+
+  const [selectedCourses, setSelectedCourses] = useState([]);
   const [selectedLang, setSelectedLang] = useState([]);
 
   // const [hourlyRate, setHourlyRate] = useState('');
 
   const onContinue = () => {
-    navigation.push("/instructor/settingprofile")
-  }
+    navigation.push("/instructor/settingprofile");
+  };
 
   const handleLangSelectChange = (selected) => {
     setSelectedLang(
-      selected && selected.map((option) => ({
-        label: option.label,
-        value: option.value,
-        proficiencyId: {id: 1, name: 'Beginner'}
-      }))
-    )
+      selected &&
+        selected.map((option) => ({
+          label: option.label,
+          value: option.value,
+          proficiencyId: { id: 1, name: "Beginner" },
+        }))
+    );
   };
-
 
   const handleSelectChange = (selected) => {
     setSelectedCourses(
-      selected && selected.map((option) => ( {
-        label: option.label,
-        value: option.value,
-        proficiencies: [{value: 1, label: 'Beginner'}]
-      }))
+      selected &&
+        selected.map((option) => ({
+          label: option.label,
+          value: option.value,
+          proficiencies: [{ value: 1, label: "Beginner" }],
+        }))
     );
 
-    console.log(selectedCourses)
+    console.log(selectedCourses);
   };
-  
 
   const handleSelection = (selectedOptions, optionIndex) => {
     setSelectedCourses((prevData) => {
@@ -75,9 +73,8 @@ import axios from "axios"
       return newData;
     });
 
-    console.log(selectedCourses)
+    console.log(selectedCourses);
   };
-
 
   const handleCheckboxChange = (event) => {
     const itemId = parseInt(event.target.value);
@@ -88,7 +85,7 @@ import axios from "axios"
       return item;
     });
     setDeliveryModes(updatedItems);
-    console.log(deliveryModes)
+    console.log(deliveryModes);
   };
 
   const handleChangeGrade = (event) => {
@@ -102,114 +99,103 @@ import axios from "axios"
     setGrades(updatedItems);
   };
 
-  const onSubmit =async () => {
+  const onSubmit = async () => {
     var modes = [];
     deliveryModes.map((v) => {
-      if(v.checked){
+      if (v.checked) {
         modes.push(v.label);
       }
     });
 
-    var langs= [];
+    var langs = [];
     selectedLang.map((v) => {
       langs.push(v.value);
     });
 
     var course = [];
     selectedCourses.map((v) => {
-      course.push({courseId: v.value,  proficienciesId:  v.proficiencies.map(val=>{
-        return val.value
-       })   });
+      course.push({
+        courseId: v.value,
+        proficienciesId: v.proficiencies.map((val) => {
+          return val.value;
+        }),
+      });
     });
 
     var gradess = [];
     grades.map((v) => {
-      if(v.checked){
+      if (v.checked) {
         gradess.push(v.id);
       }
     });
 
-
-    console.log(course)
-    console.log(
-      {
-          userId: userInfo.id,
-          firstName: firstName,
-          lastName: lastName,
-          email: userInfo.email,
-          address1: address1,
-          address2: address2,
-          country: userInfo.country,
-          state: userInfo.state,
-          city: userInfo.city,
-          zipCode: userInfo.zipCode,
-          instructorBio: bio,
-          hourlyRate: hourlyRate,
-          acceptInterviewRequest: acceptInterviewRequest == 'Yes' ? true : false,
-          deliveryModes: modes,
-          gradesIdToTutor: gradess,
-          languagesIdPreference: langs,
-          courseToTeachAndProficiency: course,
-      },
-    )
+    console.log(course);
+    console.log({
+      userId: userInfo.id,
+      firstName: firstName,
+      lastName: lastName,
+      email: userInfo.email,
+      address1: address1,
+      address2: address2,
+      country: userInfo.country,
+      state: userInfo.state,
+      city: userInfo.city,
+      zipCode: userInfo.zipCode,
+      instructorBio: bio,
+      hourlyRate: hourlyRate,
+      acceptInterviewRequest: acceptInterviewRequest == "Yes" ? true : false,
+      deliveryModes: modes,
+      gradesIdToTutor: gradess,
+      languagesIdPreference: langs,
+      courseToTeachAndProficiency: course,
+    });
     try {
       var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
-      const response = await axios.put(
-        "http://34.227.65.157/user/instructor/update",
-        {
-          userId: userInfo.id,
-          firstName: firstName,
-          lastName: lastName,
-          email: userInfo.email,
-          address1: address1,
-          address2: address2,
-          country: userInfo.country,
-          state: userInfo.state,
-          city: userInfo.city,
-          zipCode: userInfo.zipCode,
-          instructorBio: bio,
-          hourlyRate: hourlyRate,
-          acceptInterviewRequest: acceptInterviewRequest == 'Yes' ? true : false,
-          deliveryModes: modes,
-          gradesIdToTutor: gradess,
-          languagesIdPreference: langs,
-          courseToTeachAndProficiency: course,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${typ.accessToken}`,
-        },
-        }
-      );
+      const response = await apiClient.put("/user/instructor/update", {
+        userId: userInfo.id,
+        firstName: firstName,
+        lastName: lastName,
+        email: userInfo.email,
+        address1: address1,
+        address2: address2,
+        country: userInfo.country,
+        state: userInfo.state,
+        city: userInfo.city,
+        zipCode: userInfo.zipCode,
+        instructorBio: bio,
+        hourlyRate: hourlyRate,
+        acceptInterviewRequest: acceptInterviewRequest == "Yes" ? true : false,
+        deliveryModes: modes,
+        gradesIdToTutor: gradess,
+        languagesIdPreference: langs,
+        courseToTeachAndProficiency: course,
+      });
       console.log(response);
-      navigation.push("/instructor/settingprofile")
+      navigation.push("/instructor/settingprofile");
     } catch (error) {
       console.error(error);
     }
-  }
+  };
   const getLang = async () => {
     try {
-      const response = await axios.get(
-        `http://34.227.65.157/public/register/get-all-languages`
+      const response = await apiClient.get(
+        `/public/register/get-all-languages`
       );
       var arr = [];
       response.data.map((v) => {
         arr.push({ value: v.id, label: v.name });
       });
 
-      console.log(response)
+      console.log(response);
       setLang(arr);
     } catch (error) {
       console.error(error);
     }
   };
 
-
   const getCourses = async () => {
     try {
-      const response = await axios.get(
-        `http://34.227.65.157/public/course/get-all-courses`
-      );
+      const response = await apiClient.get(`/public/course/get-all-courses`);
 
       var technologyList = [];
 
@@ -225,8 +211,8 @@ import axios from "axios"
 
   const getProficiency = async () => {
     try {
-      const response = await axios.get(
-        `http://34.227.65.157/public/course/get-all-proficiencies`
+      const response = await apiClient.get(
+        `/public/course/get-all-proficiencies`
       );
       var arr = [];
       response.data.map((v) => {
@@ -241,92 +227,100 @@ import axios from "axios"
   useEffect(() => {
     getLang();
     getCourses();
-    getProficiency()
+    getProficiency();
   }, []);
 
   useEffect(() => {
     fetchUser();
   }, [fetchUser]);
-  
 
   useEffect(() => {
     if (userInfo) {
       setHourlyRate(userInfo.hourlyRate);
       setBio(userInfo.instructorBio);
-      setAcceptInterviewRequest(userInfo.acceptInterviewRequest ? 'Yes' : 'No');
+      setAcceptInterviewRequest(userInfo.acceptInterviewRequest ? "Yes" : "No");
       let lanArr = [];
-      userInfo.languagePreference.forEach(v=>{
+      userInfo.languagePreference.forEach((v) => {
         lanArr.push({ value: v.id, label: v.name });
       });
-      
+
       setSelectedLang(lanArr);
 
       let delArr = [];
-      userInfo.deliveryModes.forEach(v=>{
+      userInfo.deliveryModes.forEach((v) => {
         delArr.push({ value: v.id, label: v.name, checked: false });
       });
       console.log(delArr);
 
       let courseArr = [];
-      userInfo?.coursesToTutorAndProficiencies.forEach(v=>{
-       let avalue = v.course.id
-       let alabel = v.course.name;
+      userInfo?.coursesToTutorAndProficiencies.forEach((v) => {
+        let avalue = v.course.id;
+        let alabel = v.course.name;
 
-       let prof = [];
-       v.proficiencies.forEach(val=>{
-        prof.push({value: val.id, label: val.name})
-       })
+        let prof = [];
+        v.proficiencies.forEach((val) => {
+          prof.push({ value: val.id, label: val.name });
+        });
 
         courseArr.push({ value: avalue, label: alabel, proficiencies: prof });
       });
       setSelectedCourses(courseArr);
-      console.log(courseArr)
-      setFirstName(userInfo.firstName)
-      setLastName(userInfo.lastName)
-      setAddress1(userInfo.address1)
-      setAddress2(userInfo.address2)
-      setCity(userInfo.city)
-      setState(userInfo.country)
-      setCountry(userInfo.country)
-      setZipCode(userInfo.zipCode)
+      console.log(courseArr);
+      setFirstName(userInfo.firstName);
+      setLastName(userInfo.lastName);
+      setAddress1(userInfo.address1);
+      setAddress2(userInfo.address2);
+      setCity(userInfo.city);
+      setState(userInfo.country);
+      setCountry(userInfo.country);
+      setZipCode(userInfo.zipCode);
 
-
-      let modes = [{checked: false, id  : 1,label: "In-Person"}, {checked  : false,   id :  2, label  : "Online"}]
+      let modes = [
+        { checked: false, id: 1, label: "In-Person" },
+        { checked: false, id: 2, label: "Online" },
+      ];
       let delMode = [];
-      userInfo.deliveryModes.forEach(v=>{
-        delMode.push({ checked: true, id  : v.id,label   :   v.name})
-      })
+      userInfo.deliveryModes.forEach((v) => {
+        delMode.push({ checked: true, id: v.id, label: v.name });
+      });
 
-      const newArray = modes.map(item => {
-        const matchingItem = delMode.find(elem => elem.id === item.id);
+      const newArray = modes.map((item) => {
+        const matchingItem = delMode.find((elem) => elem.id === item.id);
         if (matchingItem) {
           return matchingItem; // Replace the item from array2
         } else {
           return item; // Keep the item from array1
         }
       });
-      
+
       console.log(newArray);
 
       setDeliveryModes(newArray);
-    
 
-      let gradess = [{checked: false, id  : 1,label: "Elementary <10yrs"}, {checked  : false,   id :  2, label  : "Middle School <10yrs - 13yrs"}, {checked  : false,   id :  3, label  : "High School <14yrs - 16yrs"},{checked  : false,   id : 4, label  : "College & Beyond >18yrs"}]
+      let gradess = [
+        { checked: false, id: 1, label: "Elementary <10yrs" },
+        { checked: false, id: 2, label: "Middle School <10yrs - 13yrs" },
+        { checked: false, id: 3, label: "High School <14yrs - 16yrs" },
+        { checked: false, id: 4, label: "College & Beyond >18yrs" },
+      ];
       let selectGrades = [];
-      userInfo.gradesToTutor.forEach(v=>{
-        selectGrades.push({ checked: true, id: v.id,label   :   v.name + " " + v.description})
-      })
-      const newGradesArray = gradess.map(item => {
-        const matchingItem = selectGrades.find(elem => elem.id === item.id);
+      userInfo.gradesToTutor.forEach((v) => {
+        selectGrades.push({
+          checked: true,
+          id: v.id,
+          label: v.name + " " + v.description,
+        });
+      });
+      const newGradesArray = gradess.map((item) => {
+        const matchingItem = selectGrades.find((elem) => elem.id === item.id);
         if (matchingItem) {
           return matchingItem; // Replace the item from array2
         } else {
           return item; // Keep the item from array1
         }
       });
-      
-      setGrades(newGradesArray);
 
+      setGrades(newGradesArray);
     }
   }, [userInfo]);
 
@@ -347,7 +341,7 @@ import axios from "axios"
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <TutorNavbar isLogin={true} />
-      <main className="container-fluid" style={{color:'#48494B'}}>
+      <main className="container-fluid" style={{ color: "#48494B" }}>
         <div
           className="p-5 "
           style={{ minHeight: "90vh", maxWidth: "1700px", margin: "auto" }}
@@ -375,45 +369,85 @@ import axios from "axios"
                       {userInfo?.email}
                     </p>
                   </div>
-                  <input type="text" className="border-0 h4 p-1 border-bottom w-100 mb-1" value={firstName} onChange={(e)=> setFirstName(e.target.value)}/>
-                  <input type="text" className="border-0 h4 p-1 border-bottom w-100 mb-3"  value={lastName} onChange={(e)=> setLastName(e.target.value)}/>
-{/* 
+                  <input
+                    type="text"
+                    className="border-0 h4 p-1 border-bottom w-100 mb-1"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                  />
+                  <input
+                    type="text"
+                    className="border-0 h4 p-1 border-bottom w-100 mb-3"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                  />
+                  {/* 
                   <div className="d-flex gap-1 gap-2 pb-3 ">
                     <MdLocationOn className="h5 p-0 m-0" />
                   </div> */}
                   <label>Address</label>
-                  <input type="text" className="border-0 border-bottom w-100 mb-2" value={address1} onChange={(e)=> setAddress1(e.target.value)} />
-                  
+                  <input
+                    type="text"
+                    className="border-0 border-bottom w-100 mb-2"
+                    value={address1}
+                    onChange={(e) => setAddress1(e.target.value)}
+                  />
+
                   <label>City</label>
-                  <input type="text" className="border-0 border-bottom w-100 mb-2" value={city} onChange={(e)=> setCity(e.target.value)} />
-                  
+                  <input
+                    type="text"
+                    className="border-0 border-bottom w-100 mb-2"
+                    value={city}
+                    onChange={(e) => setCity(e.target.value)}
+                  />
+
                   <label>State</label>
-                  <input type="text" className="border-0 border-bottom w-100 mb-2" value={state} onChange={(e)=> setCity(e.target.value)} />
-                  
+                  <input
+                    type="text"
+                    className="border-0 border-bottom w-100 mb-2"
+                    value={state}
+                    onChange={(e) => setCity(e.target.value)}
+                  />
+
                   <label>Country</label>
-                  <input type="text" className="border-0 border-bottom w-100 mb-2" value={country} onChange={(e)=> setCity(e.target.value)} />
-                  
+                  <input
+                    type="text"
+                    className="border-0 border-bottom w-100 mb-2"
+                    value={country}
+                    onChange={(e) => setCity(e.target.value)}
+                  />
+
                   <label>Zip Code</label>
-                  <input type="text" className="border-0 border-bottom w-100 mb-2" value={zipCode} onChange={(e)=> setCity(e.target.value)} />
+                  <input
+                    type="text"
+                    className="border-0 border-bottom w-100 mb-2"
+                    value={zipCode}
+                    onChange={(e) => setCity(e.target.value)}
+                  />
                   <hr className="bg_secondary" />
                   <h4 className="p-0 m-0 py-2 fw-bold">Bio</h4>
                   <div>
-                  
-                    <textarea  className="border-0 border-bottom w-100" rows="8" value={bio} onChange={(e)=> setBio(e.target.value)}>
-               
-                    </textarea>
+                    <textarea
+                      className="border-0 border-bottom w-100"
+                      rows="8"
+                      value={bio}
+                      onChange={(e) => setBio(e.target.value)}
+                    ></textarea>
                   </div>
 
                   <div className="d-flex gap-2 justify-content-center py-3 pt-5">
-                    <button className="w-50 btn btn-success text-light p-2 rounded fw-bold d-flex align-items-center justify-content-center gap-2" onClick={()=> onSubmit()}>
+                    <button
+                      className="w-50 btn btn-success text-light p-2 rounded fw-bold d-flex align-items-center justify-content-center gap-2"
+                      onClick={() => onSubmit()}
+                    >
                       <BsCheck2Circle /> Save Profile
                     </button>
                   </div>
                   <div className="d-flex gap-2 justify-content-center">
-                    <a 
-                      href='/instructor/settingprofile' 
-                      className="w-50 btn btn-dark text-light p-2 rounded fw-bold d-flex align-items-center justify-content-center gap-2" 
-                      onClick={()=> onSubmit()}
+                    <a
+                      href="/instructor/settingprofile"
+                      className="w-50 btn btn-dark text-light p-2 rounded fw-bold d-flex align-items-center justify-content-center gap-2"
+                      onClick={() => onSubmit()}
                     >
                       Exit
                     </a>
@@ -427,8 +461,15 @@ import axios from "axios"
                   <div className="col-3">
                     <h5 className="fw-bold ">Hourly Rate</h5>
                     <h2 className="fw-bold">
-                    $<input type="text" value={hourlyRate} className="fw-bold border-0 border-bottom w-25" onChange={(e)=> setHourlyRate(e.target.value)} />       
-                                 /hr</h2>
+                      $
+                      <input
+                        type="text"
+                        value={hourlyRate}
+                        className="fw-bold border-0 border-bottom w-25"
+                        onChange={(e) => setHourlyRate(e.target.value)}
+                      />
+                      /hr
+                    </h2>
                   </div>
 
                   <div className="col-3 border-start px-4 border_primary">
@@ -452,23 +493,32 @@ import axios from "axios"
                         </div>
                       );
                     })}
-                  
                   </div>
 
                   <div className="col-5 border-start px-4 border_primary">
                     <h5 className="fw-bold m-0 p-0">
                       Groups you have expertise to teach:
                     </h5>
-                    {
-                      grades.map((v,i)=> {
-                        return  <div className="form-check pt-2" key={v.id}>
-                      <input className="form-check-input" type="checkbox"  id="flexCheckChecked" checked={v.checked} value={v.id} onChange={handleChangeGrade}/>
-                      <label className="form-check-label fw-bold" for="flexCheckChecked">
-                      {v.label}
-                      </label>
-                    </div>
-                      })
- }
+                    {grades.map((v, i) => {
+                      return (
+                        <div className="form-check pt-2" key={v.id}>
+                          <input
+                            className="form-check-input"
+                            type="checkbox"
+                            id="flexCheckChecked"
+                            checked={v.checked}
+                            value={v.id}
+                            onChange={handleChangeGrade}
+                          />
+                          <label
+                            className="form-check-label fw-bold"
+                            for="flexCheckChecked"
+                          >
+                            {v.label}
+                          </label>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
                 <div className="row">
@@ -529,18 +579,44 @@ import axios from "axios"
                       Accept Interview Request
                     </h5>
                     <div className="d-flex gap-4 py-2">
-                    <div className="form-check">
-                      <input className="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" checked={acceptInterviewRequest === 'No'} value='No' onChange={(e)=> setAcceptInterviewRequest(e.target.value)}/>
-                      <label className="form-check-label" for="flexRadioDefault1" >
-                      No
-                      </label>
-                    </div>
-                    <div className="form-check">
-                      <input className="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" checked={acceptInterviewRequest === 'Yes'}  value='Yes' onChange={(e)=> setAcceptInterviewRequest(e.target.value)}/>
-                      <label className="form-check-label" for="flexRadioDefault2">
-                      Yes
-                      </label>
-                    </div>
+                      <div className="form-check">
+                        <input
+                          className="form-check-input"
+                          type="radio"
+                          name="flexRadioDefault"
+                          id="flexRadioDefault1"
+                          checked={acceptInterviewRequest === "No"}
+                          value="No"
+                          onChange={(e) =>
+                            setAcceptInterviewRequest(e.target.value)
+                          }
+                        />
+                        <label
+                          className="form-check-label"
+                          for="flexRadioDefault1"
+                        >
+                          No
+                        </label>
+                      </div>
+                      <div className="form-check">
+                        <input
+                          className="form-check-input"
+                          type="radio"
+                          name="flexRadioDefault"
+                          id="flexRadioDefault2"
+                          checked={acceptInterviewRequest === "Yes"}
+                          value="Yes"
+                          onChange={(e) =>
+                            setAcceptInterviewRequest(e.target.value)
+                          }
+                        />
+                        <label
+                          className="form-check-label"
+                          for="flexRadioDefault2"
+                        >
+                          Yes
+                        </label>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -553,13 +629,13 @@ import axios from "axios"
                   </h4>
 
                   <MultiSelect
-                      options={lang}
-                      value={selectedLang}
-                      onChange={handleLangSelectChange}
-                      labelledBy={"Select Lang"}
-                      isCreatable={true}
-                      hasSelectAll={false}
-                    />
+                    options={lang}
+                    value={selectedLang}
+                    onChange={handleLangSelectChange}
+                    labelledBy={"Select Lang"}
+                    isCreatable={true}
+                    hasSelectAll={false}
+                  />
                 </div>
 
                 <div className="row m-0 p-0 w-100">
@@ -570,52 +646,61 @@ import axios from "axios"
                     <h4 className="fw-bold m-0 p-0">Proficiency</h4>
                   </div>
 
-                  
                   <div className="container">
                     <div className="row d-flex justify-content-center py-4">
-
-                    {
-                      selectedLang.map((v,ind)=>{
+                      {selectedLang.map((v, ind) => {
                         return (
                           <>
                             <div className="col-md-5 item py-2">
-                              <li className="fw-bold m-0 p-0 h5 fw-lighter">{v.label}</li>
+                              <li className="fw-bold m-0 p-0 h5 fw-lighter">
+                                {v.label}
+                              </li>
                             </div>
                             <div className="col-md-4 item py-2">
-                              <select className="w-100 p-2 rounded outline-0 border border_gray" value={v.proficiencyId.id} onChange={(e) => {
-                                const selectedProficiencyId = Number(e.target.value);
-                                const selectedProficiencyName = e.target.selectedOptions[0].label;
+                              <select
+                                className="w-100 p-2 rounded outline-0 border border_gray"
+                                value={v.proficiencyId.id}
+                                onChange={(e) => {
+                                  const selectedProficiencyId = Number(
+                                    e.target.value
+                                  );
+                                  const selectedProficiencyName =
+                                    e.target.selectedOptions[0].label;
 
-                                const updatedLangs = selectedLang.map((lang) => {
-                                  if (lang.value === v.value) {
-                                    return {
-                                      ...lang,
-                                      proficiencyId: { id: selectedProficiencyId, name: selectedProficiencyName },
-                                    };
-                                  }
-                                  return lang;
-                                });
+                                  const updatedLangs = selectedLang.map(
+                                    (lang) => {
+                                      if (lang.value === v.value) {
+                                        return {
+                                          ...lang,
+                                          proficiencyId: {
+                                            id: selectedProficiencyId,
+                                            name: selectedProficiencyName,
+                                          },
+                                        };
+                                      }
+                                      return lang;
+                                    }
+                                  );
 
-                                setSelectedLang(updatedLangs)
-                                // console.log(updatedLangs)
-                              }}>
+                                  setSelectedLang(updatedLangs);
+                                  // console.log(updatedLangs)
+                                }}
+                              >
                                 <option value={1}>Beginner</option>
                                 <option value={2}>Intermediate</option>
                                 <option value={3}>Semi-Expert</option>
                               </select>
                             </div>
-                        </>
-                      )})
-                    }
+                          </>
+                        );
+                      })}
                     </div>
                   </div>
-                  
                 </div>
               </div>
 
               <div className="shadow rounded-10 p-5 bg-white  my-4">
-
-              <div className="p-4 w-50 m-auto">
+                <div className="p-4 w-50 m-auto">
                   <h4 className="fw-bold m-0 p-0 pb-3 text-center">
                     Course List:
                   </h4>
@@ -638,28 +723,28 @@ import axios from "axios"
                       Proficiency of students you'd rather teach
                     </p>
                   </div>
-                  {
-                    selectedCourses.map((v,i)=>{
-                      return   <div className="row m-0 p-0 pt-4">
-                    <div className="col d-flex align-items-center gap-2 primary-list">
-                      <li className="fw-bold m-0 p-0 fw-lighter">{v.label}</li>
-                    </div>
-                    <div className="col ">
-                        <MultiSelect
-                        options={proficiency}
-                        value={v.proficiencies}
-                        onChange={(selectedOptions) =>
-                                 handleSelection(selectedOptions, i)
-                           }
-                        labelledBy={"Select Proficiency"}
-                        isCreatable={true}
-                      />
-            
-                    </div>
-                  </div>
-                    })
-                  }
-              
+                  {selectedCourses.map((v, i) => {
+                    return (
+                      <div className="row m-0 p-0 pt-4">
+                        <div className="col d-flex align-items-center gap-2 primary-list">
+                          <li className="fw-bold m-0 p-0 fw-lighter">
+                            {v.label}
+                          </li>
+                        </div>
+                        <div className="col ">
+                          <MultiSelect
+                            options={proficiency}
+                            value={v.proficiencies}
+                            onChange={(selectedOptions) =>
+                              handleSelection(selectedOptions, i)
+                            }
+                            labelledBy={"Select Proficiency"}
+                            isCreatable={true}
+                          />
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             </div>
@@ -678,4 +763,6 @@ const mapStateToProps = (state) => ({
   error: state.user.error,
 });
 
-export default withRole(connect(mapStateToProps, { fetchUser })(EditProfile), ['Instructor']);
+export default withRole(connect(mapStateToProps, { fetchUser })(EditProfile), [
+  "Instructor",
+]);

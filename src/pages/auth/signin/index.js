@@ -6,7 +6,7 @@ import { RiArrowGoBackLine } from "react-icons/ri";
 import { Footer } from "../../../components";
 import { useRouter } from "next/router";
 import axios from "axios";
-
+import { base_url } from "../../../api/client";
 export default function SignIn() {
   const navigation = useRouter();
   const [userType, setUserType] = useState("student");
@@ -15,20 +15,23 @@ export default function SignIn() {
 
   const onLogin = async () => {
     try {
-      const response = await axios.post(`http://34.227.65.157/auth/login`, {
+      const response = await axios.post(`${base_url}/auth/login`, {
         email: email,
         password: password,
       });
-      const res = await axios.get(
-        "http://34.227.65.157/user/logged-user-role",
-        {
-          headers: {
-            Authorization: `Bearer ${response.data.accessToken}`,
-          },
-        }
+      const res = await axios.get(`${base_url}/user/logged-user-role`, {
+        headers: {
+          Authorization: `Bearer ${response.data.accessToken}`,
+        },
+      });
+
+      window.localStorage.setItem(
+        "gkcAuth",
+        JSON.stringify({
+          accessToken: response.data.accessToken,
+          role: res.data,
+        })
       );
-      
-      window.localStorage.setItem("gkcAuth", JSON.stringify({accessToken: response.data.accessToken, role: res.data}));
       if (res.data === "Student") {
         navigation.push("/");
       }
@@ -46,7 +49,8 @@ export default function SignIn() {
   };
 
   function handleKeyPress(event) {
-    if (event.keyCode === 13) { // 13 is the keycode for the Enter key
+    if (event.keyCode === 13) {
+      // 13 is the keycode for the Enter key
       onLogin();
     }
   }
@@ -104,18 +108,14 @@ export default function SignIn() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     onKeyDown={handleKeyPress}
-
                   />
                   <input
                     type="password"
                     className="w-100 p-2 rounded outline-0 border border_gray mb-3"
                     placeholder="Password"
                     value={password}
-                    onChange={(e) => 
-                      setPassword(e.target.value)
-                    }
+                    onChange={(e) => setPassword(e.target.value)}
                     onKeyDown={handleKeyPress}
-
                   />
                   <button
                     className="w-100 btn_primary text-light p-2 rounded fw-bold mt-3"
