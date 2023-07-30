@@ -6,7 +6,8 @@ import { BsCheck2Circle } from "react-icons/bs";
 import { useRouter } from "next/router";
 import { RiArrowGoBackLine } from "react-icons/ri";
 import axios from "axios";
-import styles from "../../../styles/Home.module.css"
+import { base_url } from "../../../api/client";
+import styles from "../../../styles/Home.module.css";
 
 export default function RegisterInstructor() {
   const navigation = useRouter();
@@ -14,7 +15,7 @@ export default function RegisterInstructor() {
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
   const [userType, setUserType] = useState("");
-  
+
   const [email, setEmail] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -29,7 +30,17 @@ export default function RegisterInstructor() {
   const [termsAgree, setTermsAgree] = useState(false);
   const [isInitialRender, setIsInitialRender] = useState(true);
 
-  let isValidForm = email && firstName && lastName && address1 && country && state && city && zipCode && password  && termsAgree;
+  let isValidForm =
+    email &&
+    firstName &&
+    lastName &&
+    address1 &&
+    country &&
+    state &&
+    city &&
+    zipCode &&
+    password &&
+    termsAgree;
 
   const onContinue = () => {
     window.localStorage.setItem("gkcAuth", JSON.stringify(true));
@@ -50,7 +61,6 @@ export default function RegisterInstructor() {
     stored.savePaymentFutureUse = true;
     stored.timeZoneId = timezone;
 
-
     window.localStorage.setItem("registrationForm", JSON.stringify(stored));
     if (password == confirmPassword) {
       navigation.push("/auth/registrationmore");
@@ -62,7 +72,7 @@ export default function RegisterInstructor() {
   const getCountries = async () => {
     try {
       const response = await axios.get(
-        "http://34.227.65.157/public/location/get-countries"
+        `${base_url}/public/location/get-countries`
       );
       setCountries(response.data);
     } catch (error) {
@@ -72,7 +82,7 @@ export default function RegisterInstructor() {
   const getStates = async () => {
     try {
       const response = await axios.get(
-        `http://34.227.65.157/public/location/get-states?countryName=${country}`
+        `${base_url}/public/location/get-states?countryName=${country}`
       );
       setStates(response.data);
     } catch (error) {
@@ -83,7 +93,7 @@ export default function RegisterInstructor() {
   const getCities = async () => {
     try {
       const response = await axios.get(
-        `http://34.227.65.157/public/location/get-cities?countryName=${country}&stateName=${state}`
+        `${base_url}/public/location/get-cities?countryName=${country}&stateName=${state}`
       );
       setCities(response.data);
     } catch (error) {
@@ -97,7 +107,6 @@ export default function RegisterInstructor() {
     setEmail(stored?.email);
     setUserType(value);
     getCountries();
-
   }, []);
 
   useEffect(() => {
@@ -105,15 +114,16 @@ export default function RegisterInstructor() {
       setIsInitialRender(false);
     } else {
       getStates();
+    }
+  }, [country]);
 
-    }}, [country]);
-
-    useEffect(() => {
-      if (isInitialRender) {
-        setIsInitialRender(false);
-      } else {
-        getCities();
-      }}, [state]);
+  useEffect(() => {
+    if (isInitialRender) {
+      setIsInitialRender(false);
+    } else {
+      getCities();
+    }
+  }, [state]);
   return (
     <>
       <Head>
@@ -143,7 +153,9 @@ export default function RegisterInstructor() {
           <div className="col-12 col-lg-6 d-flex justify-content-center align-items-center ">
             <div className="w-100 w-md-75 p-5">
               <div>
-                <div className={`d-flex justify-content-between align-items-center mb-3 ${styles.intructorTitle}`}>
+                <div
+                  className={`d-flex justify-content-between align-items-center mb-3 ${styles.intructorTitle}`}
+                >
                   <h4 className="text-secondary fw-bold text-capitalize">
                     Instructor
                   </h4>
@@ -187,13 +199,17 @@ export default function RegisterInstructor() {
                   />
 
                   <div className="d-flex   flex-md-nowrap flex-wrap gap-2">
-                  <select
+                    <select
                       onChange={(e) => setCountry(e.target.value)}
                       className="w-100 p-2 rounded outline-0 border border_gray  mb-3 "
                     >
                       <option value="">Select Country</option>
                       {countries.map((v, i) => {
-                        return <option value={v.name} key={i}>{v.name}</option>;
+                        return (
+                          <option value={v.name} key={i}>
+                            {v.name}
+                          </option>
+                        );
                       })}
                     </select>
                     <select
@@ -202,22 +218,30 @@ export default function RegisterInstructor() {
                     >
                       <option value="">Select State</option>
                       {states.map((v, i) => {
-                        return <option value={v.name} key={i}>{v.name}</option>;
+                        return (
+                          <option value={v.name} key={i}>
+                            {v.name}
+                          </option>
+                        );
                       })}
                     </select>
                   </div>
 
                   <div className="d-flex   flex-md-nowrap flex-wrap gap-2">
-                  <select
+                    <select
                       onChange={(e) => setCity(e.target.value)}
                       className="w-100 p-2 rounded outline-0 border border_gray  mb-3"
                     >
                       <option value="student">Select City</option>
                       {cities.map((v, i) => {
-                        return <option value={v.name} key={i}>{v.name}</option>;
+                        return (
+                          <option value={v.name} key={i}>
+                            {v.name}
+                          </option>
+                        );
                       })}
                     </select>
-                  <input
+                    <input
                       type="text"
                       className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
                       placeholder="Zip/Post Code"
@@ -253,7 +277,23 @@ export default function RegisterInstructor() {
                       onChange={() => setTermsAgree(!termsAgree)}
                     />
                     <label className="form-check-label" for="flexCheckDefault">
-                      I agree to the <Link href="/terms-of-use" className="fw-bold no-underline hover:text_secondary text_secondary"> Terms of Use</Link> and <Link href="/privicy-policy" className="fw-bold no-underline hover:text_secondary text_secondary"> Privacy Policy </Link> of GKC
+                      I agree to the{" "}
+                      <Link
+                        href="/terms-of-use"
+                        className="fw-bold no-underline hover:text_secondary text_secondary"
+                      >
+                        {" "}
+                        Terms of Use
+                      </Link>{" "}
+                      and{" "}
+                      <Link
+                        href="/privicy-policy"
+                        className="fw-bold no-underline hover:text_secondary text_secondary"
+                      >
+                        {" "}
+                        Privacy Policy{" "}
+                      </Link>{" "}
+                      of GKC
                     </label>
                   </div>
                   <div className="d-flex flex-wrap gap-2 justify-content-between mt-3">

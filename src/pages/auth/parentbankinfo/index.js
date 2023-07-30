@@ -4,7 +4,7 @@ import { Navbar, Footer } from "../../../components";
 import { useRouter } from "next/router";
 import axios from "axios";
 import PaymentForm from "@/components/stripe/PaymentForm";
-
+import { base_url } from "../../../api/client";
 export default function StudentRegistrationCCInfo() {
   const navigation = useRouter();
   const [userType, setUserType] = useState(null);
@@ -20,31 +20,25 @@ export default function StudentRegistrationCCInfo() {
   const onRegister = async ({ getPayment }) => {
     console.log(userInfo);
     try {
-      const response = await axios.post(
-        `http://34.227.65.157/auth/register-parent`,
-        {
-          firstName: userInfo.firstName,
-          lastName: userInfo.lastName,
-          email: userInfo.email,
-          password: userInfo.password,
-          address1: userInfo.address1,
-          address2: userInfo.address2,
-          country: userInfo.country,
-          state: userInfo.state,
-          city: userInfo.city,
-          zipCode: userInfo.zipCode,
-          timeZoneId: userInfo.timeZoneId,
-          savePaymentFutureUse: true,
-        }
-      );
-      const res = await axios.get(
-        "http://34.227.65.157/user/logged-user-role",
-        {
-          headers: {
-            Authorization: `Bearer ${response.data.accessToken}`,
-          },
-        }
-      );
+      const response = await axios.post(`${base_url}/auth/register-parent`, {
+        firstName: userInfo.firstName,
+        lastName: userInfo.lastName,
+        email: userInfo.email,
+        password: userInfo.password,
+        address1: userInfo.address1,
+        address2: userInfo.address2,
+        country: userInfo.country,
+        state: userInfo.state,
+        city: userInfo.city,
+        zipCode: userInfo.zipCode,
+        timeZoneId: userInfo.timeZoneId,
+        savePaymentFutureUse: true,
+      });
+      const res = await axios.get(`${base_url}/user/logged-user-role`, {
+        headers: {
+          Authorization: `Bearer ${response.data.accessToken}`,
+        },
+      });
 
       window.localStorage.setItem(
         "gkcAuth",

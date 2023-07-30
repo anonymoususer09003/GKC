@@ -1,8 +1,8 @@
 import { apiClient } from "../../api/client";
 
-export default async ({ page, size }) => {
-  const response = await apiClient.get(
-    `/financial/logged-parent-report?page=${page}&size=${size}`
-  );
+export default async ({ filter }) => {
+  let url = `/financial/logged-parent-report`;
+  if (filter) url = url + filter;
+  const response = await apiClient.get(url);
   return response;
 };

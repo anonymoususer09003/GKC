@@ -6,56 +6,48 @@ import { RiArrowGoBackLine } from "react-icons/ri";
 import { Footer } from "../../../components";
 import { useRouter } from "next/router";
 import axios from "axios";
-
+import { base_url } from "../../../api/client";
 
 export default function SignIn() {
   const navigation = useRouter();
   const [userType, setUserType] = useState("student");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
- 
- 
- 
+
   useEffect(() => {
-  const onLogin = async () => {
-    try {
-      const response = await axios.post("http://34.227.65.157/auth/login", {
-        email: "nitsapath@gmail.com",
-        password: test123,
-      }, 
-      );
-      const accessToken = response.data.accessToken;
-      console.log(accessToken)
+    const onLogin = async () => {
+      try {
+        const response = await axios.post("http://34.227.65.157/auth/login", {
+          email: "nitsapath@gmail.com",
+          password: test123,
+        });
+        const accessToken = response.data.accessToken;
+        console.log(accessToken);
+      } catch (error) {
+        console.error(error);
+      }
+    };
 
-
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  onLogin();
-
-  })
+    onLogin();
+  });
 
   const onLogin = async () => {
     try {
-      const response = await axios.post("http://34.227.65.157/auth/login", {
+      const response = await axios.post(`${base_url}/auth/login`, {
         email: email,
         password: password,
-      }, 
-      );
+      });
       const accessToken = response.data.accessToken;
 
-
-      const res = await axios.get(
-        "http://34.227.65.157/user/logged-user-role",
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
+      const res = await axios.get(`${base_url}/user/logged-user-role`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      window.localStorage.setItem(
+        "gkcAuth",
+        JSON.stringify({ accessToken, role: res.data })
       );
-      window.localStorage.setItem("gkcAuth", JSON.stringify({accessToken, role: res.data}));
       if (res.data === "Student") {
         navigation.push("/");
       }
@@ -71,10 +63,10 @@ export default function SignIn() {
       console.error(error);
     }
   };
-  
-  
+
   function handleKeyPress(event) {
-    if (event.keyCode === 13) { // 13 is the keycode for the Enter key
+    if (event.keyCode === 13) {
+      // 13 is the keycode for the Enter key
       onLogin();
     }
   }
@@ -132,18 +124,14 @@ export default function SignIn() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     onKeyDown={handleKeyPress}
-
                   />
                   <input
                     type="password"
                     className="w-100 p-2 rounded outline-0 border border_gray mb-3"
                     placeholder="Password"
                     value={password}
-                    onChange={(e) => 
-                      setPassword(e.target.value)
-                    }
+                    onChange={(e) => setPassword(e.target.value)}
                     onKeyDown={handleKeyPress}
-
                   />
                   <button
                     className="w-100 btn_primary text-light p-2 rounded fw-bold mt-3"

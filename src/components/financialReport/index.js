@@ -8,30 +8,39 @@ import { useRouter } from "next/router";
 import InstructorFinancialReport from "@/services/FinancialReport/InstructorFinancialReport";
 import ParentFinancialReport from "@/services/FinancialReport/ParentFinancialReport";
 import StudentFinancialReport from "@/services/FinancialReport/StudentFinancialReport";
+import DownloadFinancialReport from "@/services/FinancialReport/DownloadFinancialReport";
 import styles from "../../styles/Home.module.css";
 import moment from "moment";
 
 function FinancialReport({ role }) {
   const navigation = useRouter();
-  const [page, setPage] = useState(0);
-  const [size, setSize] = useState(15);
   const [financialData, setFinancialData] = useState([]);
+  const [date, setDate] = useState({
+    start: null,
+    end: null,
+  });
+
   const onRequestRefund = () => {
     navigation.push("/parent/requestrefund");
   };
 
-  const fetchReports = async () => {
+  const fetchReports = async (applyFilter) => {
     try {
       let res = null;
+      let filter = null;
+      if (applyFilter)
+        filter = `?start=${moment(date.start).toISOString()}&end=${moment(
+          date.end
+        ).toISOString()}`;
       switch (role) {
         case "parent":
-          res = await ParentFinancialReport({ page, size });
+          res = await ParentFinancialReport({ filter });
           break;
         case "student":
-          res = await StudentFinancialReport({ page, size });
+          res = await StudentFinancialReport({ filter });
           break;
         default:
-          res = await InstructorFinancialReport({ page, size });
+          res = await InstructorFinancialReport({ filter });
       }
       setFinancialData(res.data);
       console.log("res", res);
@@ -39,9 +48,36 @@ function FinancialReport({ role }) {
       console.log("err", err);
     }
   };
+  const downloadReport = async () => {
+    try {
+      let filter = null;
+      if (date.start && date.end) {
+        filter = `?start=${moment(date.start).toISOString()}&end=${moment(
+          date.end
+        ).toISOString()}`;
+      }
+      let res = await DownloadFinancialReport({ filter });
+      console.log("download report ", res);
+    } catch (err) {
+      console.log("err", err);
+    }
+  };
+  const handleDateChange = (e) => {
+    setDate({ ...date, [e.target.name]: e.target.value });
+  };
+  const handleReset = () => {
+    setDate({
+      start: null,
+      end: null,
+    });
+    fetchReports();
+  };
   useEffect(() => {
     fetchReports();
   }, []);
+  useEffect(() => {
+    if (date.start && date.end) fetchReports(true);
+  }, [date]);
 
   return (
     <>
@@ -63,9 +99,12 @@ function FinancialReport({ role }) {
                     <div className=" d-flex align-items-center gap-3">
                       <p className="fw-bold m-0 p-0"> From </p>{" "}
                       <input
+                        value={date.start || new Date()}
                         id="startDate"
                         className="form-control"
                         type="date"
+                        onChange={(e) => handleDateChange(e)}
+                        name="start"
                       />
                     </div>
                   </div>
@@ -73,11 +112,17 @@ function FinancialReport({ role }) {
                     <div className=" d-flex align-items-center gap-3">
                       <p className="fw-bold m-0 p-0"> To </p>
                       <input
+                        value={date?.end || new Date()}
                         id="startDate"
                         className="form-control"
                         type="date"
+                        name="end"
+                        onChange={(e) => handleDateChange(e)}
                       />
-                      <FiRefreshCw style={{ fontSize: "35px" }} />{" "}
+                      <FiRefreshCw
+                        onClick={handleReset}
+                        style={{ fontSize: "35px" }}
+                      />{" "}
                     </div>
                   </div>
                 </div>
@@ -96,7 +141,7 @@ function FinancialReport({ role }) {
                       </th>{" "}
                       <th scope="col" style={{ minWidth: "150px" }}>
                         {" "}
-                        Tutor{" "}
+                        {role === "instructor" ? "Student" : "Tutor"}
                       </th>{" "}
                       {role === "parent" && (
                         <th scope="col" style={{ minWidth: "150px" }}>
@@ -135,7 +180,9 @@ function FinancialReport({ role }) {
                         </th>{" "}
                         <td className="fw-bold w-25">
                           {" "}
-                          {item?.instructor?.firstName}{" "}
+                          {role === "instructor"
+                            ? item?.studentName
+                            : item?.instructor?.firstName}{" "}
                         </td>{" "}
                         {role === "parent" && (
                           <td className="fw-bold w-25">
@@ -159,7 +206,10 @@ function FinancialReport({ role }) {
               </div>
             </div>{" "}
             <div className="d-flex gap-2 justify-content-end mt-3">
-              <button className="w-25 btn_primary text-light p-2 rounded fw-bold ">
+              <button
+                onClick={downloadReport}
+                className="w-25 btn_primary text-light p-2 rounded fw-bold "
+              >
                 Download{" "}
               </button>{" "}
             </div>{" "}

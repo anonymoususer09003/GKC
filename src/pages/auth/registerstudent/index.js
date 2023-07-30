@@ -6,10 +6,10 @@ import { BsCheck2Circle } from "react-icons/bs";
 import { useRouter } from "next/router";
 import { RiArrowGoBackLine } from "react-icons/ri";
 import axios from "axios";
-import styles from "../../../styles/Home.module.css"
-
+import styles from "../../../styles/Home.module.css";
+import { base_url } from "../../../api/client";
 export default function RegisterStudent() {
-  const router = useRouter()
+  const router = useRouter();
   const navigation = useRouter();
   const [countries, setCountries] = useState([]);
   const [states, setStates] = useState([]);
@@ -31,8 +31,8 @@ export default function RegisterStudent() {
   const [termsAgree, setTermsAgree] = useState(false);
   const [isInitialRender, setIsInitialRender] = useState(true);
 
-  let isValidForm = country && state && city && zipCode && password  && termsAgree;
-
+  let isValidForm =
+    country && state && city && zipCode && password && termsAgree;
 
   const onContinue = () => {
     window.localStorage.setItem("gkcAuth", JSON.stringify(true));
@@ -52,7 +52,7 @@ export default function RegisterStudent() {
     stored.state = state;
     stored.city = city;
     stored.zipCode = zipCode;
-    stored.whoPaysEmail =  email;
+    stored.whoPaysEmail = email;
     stored.savePaymentFutureUse = false;
     stored.timeZoneId = timezone;
 
@@ -67,7 +67,7 @@ export default function RegisterStudent() {
   const getCountries = async () => {
     try {
       const response = await axios.get(
-        "http://34.227.65.157/public/location/get-countries"
+        `${base_url}/public/location/get-countries`
       );
       setCountries(response.data);
     } catch (error) {
@@ -77,7 +77,7 @@ export default function RegisterStudent() {
   const getStates = async () => {
     try {
       const response = await axios.get(
-        `http://34.227.65.157/public/location/get-states?countryName=${country}`
+        `${base_url}/public/location/get-states?countryName=${country}`
       );
       setStates(response.data);
     } catch (error) {
@@ -88,7 +88,7 @@ export default function RegisterStudent() {
   const getCities = async () => {
     try {
       const response = await axios.get(
-        `http://34.227.65.157/public/location/get-cities?countryName=${country}&stateName=${state}`
+        `${base_url}/public/location/get-cities?countryName=${country}&stateName=${state}`
       );
       setCities(response.data);
     } catch (error) {
@@ -102,7 +102,6 @@ export default function RegisterStudent() {
     setEmail(stored.email);
     setUserType(value);
     getCountries();
-
   }, []);
 
   useEffect(() => {
@@ -110,19 +109,20 @@ export default function RegisterStudent() {
       setIsInitialRender(false);
     } else {
       getStates();
+    }
+  }, [country]);
 
-    }}, [country]);
+  useEffect(() => {
+    if (isInitialRender) {
+      setIsInitialRender(false);
+    } else {
+      getCities();
+    }
+  }, [state]);
 
-    useEffect(() => {
-      if (isInitialRender) {
-        setIsInitialRender(false);
-      } else {
-        getCities();
-      }}, [state]);
-
-      const handleBack = () => {
-        router.push("/auth/activatecode")
-      }
+  const handleBack = () => {
+    router.push("/auth/activatecode");
+  };
   return (
     <>
       <Head>
@@ -153,7 +153,9 @@ export default function RegisterStudent() {
           <div className="col-12 col-lg-6 d-flex justify-content-center align-items-center ">
             <div className="w-100 w-md-75 p-5">
               <div>
-                <div className={`d-flex justify-content-between align-items-center mb-3 ${styles.studentEmailWrapper}`}>
+                <div
+                  className={`d-flex justify-content-between align-items-center mb-3 ${styles.studentEmailWrapper}`}
+                >
                   <h4 className="text-secondary fw-bold text-capitalize">
                     Student
                   </h4>
@@ -206,22 +208,22 @@ export default function RegisterStudent() {
                       onChange={(e) => setLastname(e.target.value)}
                     />
                   </div>
-                    <input
-                      type="text"
-                      className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
-                      placeholder="Address 1"
-                      name="address1"
-                      value={address1}
-                      onChange={(e) => setAddress1(e.target.value)}
-                    />
-                    <input
-                      type="text"
-                      className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
-                      placeholder="Address 2"
-                      name="address2"
-                      value={address2}
-                      onChange={(e) => setAddress2(e.target.value)}
-                    />
+                  <input
+                    type="text"
+                    className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
+                    placeholder="Address 1"
+                    name="address1"
+                    value={address1}
+                    onChange={(e) => setAddress1(e.target.value)}
+                  />
+                  <input
+                    type="text"
+                    className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
+                    placeholder="Address 2"
+                    name="address2"
+                    value={address2}
+                    onChange={(e) => setAddress2(e.target.value)}
+                  />
                   <div className="d-flex   flex-md-nowrap flex-wrap gap-2">
                     <select
                       onChange={(e) => setCountry(e.target.value)}
@@ -229,7 +231,11 @@ export default function RegisterStudent() {
                     >
                       <option value="">Select Country</option>
                       {countries.map((v, i) => {
-                        return <option value={v.name} key={i}>{v.name}</option>;
+                        return (
+                          <option value={v.name} key={i}>
+                            {v.name}
+                          </option>
+                        );
                       })}
                     </select>
                     <select
@@ -238,7 +244,11 @@ export default function RegisterStudent() {
                     >
                       <option value="">Select State</option>
                       {states.map((v, i) => {
-                        return <option value={v.name} key={i}>{v.name}</option>;
+                        return (
+                          <option value={v.name} key={i}>
+                            {v.name}
+                          </option>
+                        );
                       })}
                     </select>
                   </div>
@@ -249,7 +259,11 @@ export default function RegisterStudent() {
                     >
                       <option value="student">Select City</option>
                       {cities.map((v, i) => {
-                        return <option value={v.name} key={i}>{v.name}</option>;
+                        return (
+                          <option value={v.name} key={i}>
+                            {v.name}
+                          </option>
+                        );
                       })}
                     </select>
                     <input
@@ -288,7 +302,23 @@ export default function RegisterStudent() {
                       onChange={() => setTermsAgree(!termsAgree)}
                     />
                     <label className="form-check-label" for="flexCheckDefault">
-                      I agree to the <Link href="/terms-of-use" className="fw-bold no-underline hover:text_secondary text_secondary"> Terms of Use</Link> and <Link href="/privicy-policy" className="fw-bold no-underline hover:text_secondary text_secondary"> Privacy Policy </Link> of GKC
+                      I agree to the{" "}
+                      <Link
+                        href="/terms-of-use"
+                        className="fw-bold no-underline hover:text_secondary text_secondary"
+                      >
+                        {" "}
+                        Terms of Use
+                      </Link>{" "}
+                      and{" "}
+                      <Link
+                        href="/privicy-policy"
+                        className="fw-bold no-underline hover:text_secondary text_secondary"
+                      >
+                        {" "}
+                        Privacy Policy{" "}
+                      </Link>{" "}
+                      of GKC
                     </label>
                   </div>
                   <div className="d-flex flex-wrap gap-2 justify-content-between align-items-center mt-3">

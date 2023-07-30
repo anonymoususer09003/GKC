@@ -5,7 +5,7 @@ import styles from "@/styles/Home.module.css";
 import { ParentNavbar, Footer, ParentTutorCard } from "../../components";
 const inter = Inter({ subsets: ["latin"] });
 import { withRole } from "../.././utils/withAuthorization";
-import axios from "axios";
+import { apiClient } from "../../api/client";
 import { parseISO, format } from "date-fns";
 
 function ParentLandingPage() {
@@ -28,14 +28,8 @@ function ParentLandingPage() {
 
   const search = async () => {
     try {
-      var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
-      const res = await axios.get(
-        `http://34.227.65.157/public/landing/filter?name=${name}&hourlyRate=${hourlyRate}&grades=${ageGroup}&courses=${selectedCourse}&spokenLanguage=${selectedLang}&deliveryModes=${mode}&page=0&size=10`,
-        {
-          headers: {
-            Authorization: `Bearer ${typ.accessToken}`,
-          },
-        }
+      const res = await apiClient.get(
+        `/public/landing/filter?name=${name}&hourlyRate=${hourlyRate}&grades=${ageGroup}&courses=${selectedCourse}&spokenLanguage=${selectedLang}&deliveryModes=${mode}&page=0&size=10`
       );
       setInsructors(res.data);
       console.log(res);
@@ -46,15 +40,7 @@ function ParentLandingPage() {
 
   const getInstructors = async () => {
     try {
-      var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
-      const res = await axios.get(
-        "http://34.227.65.157/public/landing/filter?page=0&size=10",
-        {
-          headers: {
-            Authorization: `Bearer ${typ.accessToken}`,
-          },
-        }
-      );
+      const res = await apiClient.get("/public/landing/filter?page=0&size=10");
       setInsructors(res.data);
       console.log(res.data);
     } catch (error) {
@@ -64,9 +50,7 @@ function ParentLandingPage() {
 
   const getCourses = async () => {
     try {
-      const response = await axios.get(
-        `http://34.227.65.157/public/course/with-instructors`
-      );
+      const response = await apiClient.get(`/public/course/with-instructors`);
       var technologyList = [];
 
       response.data.forEach((v) => {
@@ -80,8 +64,8 @@ function ParentLandingPage() {
 
   const getProficiency = async () => {
     try {
-      const response = await axios.get(
-        `http://34.227.65.157/public/course/get-all-proficiencies`
+      const response = await apiClient.get(
+        `/public/course/get-all-proficiencies`
       );
       var arr = [];
       response.data.map((v) => {
@@ -94,9 +78,7 @@ function ParentLandingPage() {
   };
   const getLang = async () => {
     try {
-      const response = await axios.get(
-        `http://34.227.65.157/public/language/with-instructors`
-      );
+      const response = await apiClient.get(`/public/language/with-instructors`);
       var arr = [];
       response.data.map((v) => {
         arr.push({ value: v.id, label: v.name });

@@ -6,7 +6,7 @@ import { BiMessageAlt } from "react-icons/bi";
 import { FaFileVideo } from "react-icons/fa";
 import StarRatings from "react-star-ratings";
 import { useRouter } from "next/router";
-import axios from "axios";
+import { apiClient } from "../../api/client";
 const Tutorcard = ({ data }) => {
   const navigation = useRouter();
   const [userData, setUserData] = useState(null);
@@ -25,16 +25,9 @@ const Tutorcard = ({ data }) => {
   };
 
   const handleOpenModal2 = async (id) => {
-    alert(id);
     try {
-      var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
-      const res = await axios.get(
-        `http://34.227.65.157/review/instructors/${id}?page=0&size=10`,
-        {
-          headers: {
-            Authorization: `Bearer ${typ.accessToken}`,
-          },
-        }
+      const res = await apiClient.get(
+        `/review/instructors/${id}?page=0&size=10`
       );
       setReviews(res.data);
     } catch (error) {
@@ -351,7 +344,7 @@ const Tutorcard = ({ data }) => {
                                 <div className="mb-2">
                                   <StarRatings
                                     starRatedColor="#cc9338"
-                                    rating={4.2}
+                                    rating={v?.totalRatings}
                                     starDimension="20px"
                                     starSpacing="0px"
                                   />
