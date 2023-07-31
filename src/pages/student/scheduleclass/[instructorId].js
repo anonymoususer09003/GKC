@@ -6,14 +6,15 @@ import { BsFillSendFill } from "react-icons/bs";
 import { withRole } from "../../../utils/withAuthorization";
 import { useRouter } from "next/router";
 import { connect } from "react-redux";
-import { fetchUser } from "../../../store/actions/userActions";
 import calendarStyles from "../../../styles/Calendar.module.css";
 import axios from "axios";
 import { GlobalInstructor } from "@/pages";
 import InstructorScheduleUnavailableDays from "@/services/Instructors/InstructorScheduleUnavailableDays";
 import styles from "../../../styles/Home.module.css";
+import { RRule } from 'rrule';
+import { fetchUser } from "../../../store/actions/userActions";
 
-function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
+function StudentScheduleClass({   }) {
   const router = useRouter();
   const { instructorId } = router.query;
 
@@ -44,6 +45,8 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
   const [courseId, setCourseId] = useState(null);
   const [classFrequency, setClassFrequency] = useState("");
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [unavailableDates, setUnavailableDates] = useState([]);
+  const [isLoading, setIsloading] = useState(true)
 
   const handleContinue = async () => {
     const data = {
@@ -51,7 +54,7 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
       durationInHours: courseDuration,
       classFrequency: classFrequency,
       courseId: courseId,
-      studentId: userInfo.id,
+    //  studentId: userInfo.id,
       instructorId: instructorId,
       eventInPerson: selectedMode == "In-Person" ? true : false,
     };
@@ -78,16 +81,15 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
       console.log(response);
       setInstructorCourses(coursesArray);
     } catch (error) {
-      console.error(error);
+      console.log(error);
     }
   };
 
-  console.log("instructor data", instructorData);
   //Fetch user details from redux
   useEffect(() => {
     fetchUser();
     setInstId(instructorId);
-  }, [fetchUser]);
+  }, []);
 
   //get Instructor Data
 
@@ -114,22 +116,75 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
     }
   }, []);
 
-  useEffect(() => {
-    const getInstructorIcal = async (instructorId) => {
-      try {
-        var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
+    useEffect(() => {
+      const getInstructorIcal = async () => {
+        try {
+          var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
+  
+          const response = await axios.get(
+            `http://34.227.65.157/instructor/schedule-and-unavailable-days-iCal?instructorId=22`,
+            {
+              headers: {
+                Authorization: `Bearer ${typ.accessToken}`,
+              },
+            }
+            
+          );
+          console.log(response.data, "ical data");
+        
+        // Access the iCal data directly from the response data property
+        const iCalText = response.data;
+        // Split the iCal data into separate VCALENDAR components
+        const vcalendarComponents = iCalText.split('BEGIN:VCALENDAR').filter(Boolean);
+        const rrRuleData = [];
+        vcalendarComponents.forEach((vcalendarComponent) => {
+          const veventStart = vcalendarComponent.indexOf('BEGIN:VEVENT');
+          const veventEnd = vcalendarComponent.indexOf('END:VEVENT', veventStart) + 10; 
+          const veventData = vcalendarComponent.substring(veventStart, veventEnd);
+          
+          const rrRuleStart = veventData.indexOf('RRULE:');
+          const rrRuleEnd = veventData.indexOf('\r\n', rrRuleStart);
+          const rrRule = veventData.substring(rrRuleStart, rrRuleEnd);
+          rrRuleData.push(rrRule);
+        });
+        // Parse 
+        const events = rrRuleData.map((rrRule) => RRule.fromString(rrRule));
+        // Extract the unavailable dates
+        const unavailableDates = [];
 
-        // Extract VFREEBUSY data
-        const freeBusyComponent = iCalendarData.match(
-          /BEGIN:VFREEBUSY(.|\n)*END:VFREEBUSY/
-        );
-        console.log(response, "Icaaaal");
-      } catch (error) {
-        console.log(error);
+        events.forEach((event) => {
+          event.all().forEach((date) => {
+            unavailableDates.push(date);
+          });
+        });
+        setUnavailableDates(unavailableDates);
+        setIsloading(false);
+        } catch (error) {
+          console.log(error);
+        }
+      };
+  
+      getInstructorIcal();
+    }, []);
+
+
+    //apply styles for unavailableDate
+    const tileClassName = ({ date, view }) => {
+      if (view === 'month') {
+        const dateString = date.toDateString();
+        if (unavailableDates.some((unavailableDate) => unavailableDate.toDateString() === dateString)) {
+          return {
+            backgroundColor: 'gray',
+            color: "black",
+          }
+        }
       }
+      return null;
     };
-    if (instructorId) getInstructorIcal(instructorId);
-  }, [instructorId]);
+    const tileDisabled = ({ date }) =>
+    unavailableDates.some(
+      (unavailableDate) => unavailableDate.toDateString() === date.toDateString()
+    );
 
   const handleDateChange = (clickedDate) => {
     /*const dateObj = new Date(clickedDate);
@@ -172,35 +227,21 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
     setCourseId(event.target.value);
   };
 
-  /*
-  {
-    "classDto": {
-     -- "start": "2000-01-01 23:59",
-      +"durationInHours": 0, 
-      +"classFrequency": "ONETIME or DAILY or WEEKLY or BIWEEKLY or MONTHLY",
-      + "courseId": 0,
-      +"studentId": 0,
-      +"whoPaysId": 0,
-      +"instructorId": 0,
-      +"eventInPerson": true
-    },
-    "stripeResponseDTO": {
-      "paymentIntentId": "string",
-      "paymentStatus": "string"
-    }
-  }
-  */
-  if (loading) {
+  
+
+  /*if (loading) {
     return ( <div>
       Loading...
       </div>
     )
   }
-
+*/
+/*
   if (error) {
     return (<div>Error:{error}</div>);
   }
-  console.log("selected date", selectedDate);
+  */
+
   return (
     <>
       <Head>
@@ -210,14 +251,22 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Navbar isLogin={true} />
+         {isLoading && (
+             <div className="d-flex justify-content-center">
+
+             <div className="spinner-border text-primary" role="status">
+                <span className="sr-only">Loading...</span>
+             </div>
+           </div>
+      )}
       <main className="container-fluid">
         <div className="row" style={{ minHeight: "90vh" }}>
           <div className="col-12 col-lg-6 pt-5">
             <Calendar
-              //value={date}
-              onChange={handleDateChange}
-              value={selectedDate}
-              className={calendarStyles.reactCalendar}
+               value={selectedDate} 
+               onChange={handleDateChange}
+               tileClassName={tileClassName} 
+               tileDisabled={tileDisabled}
             />
           </div>
           <div className="col-12 col-lg-6 pt-5">
@@ -409,7 +458,9 @@ const mapStateToProps = (state) => ({
   error: state.user.error,
 });
 
-export default withRole(
+/*export default withRole(
   connect(mapStateToProps, { fetchUser })(StudentScheduleClass),
   ["Student"]
 );
+*/
+export default withRole(StudentScheduleClass,["Student"])

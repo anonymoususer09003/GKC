@@ -8,12 +8,14 @@ import { useRouter } from "next/router";
 import moment from "moment";
 import FirebaseChat from "../../../hooks/firebase-chat";
 import axios from "axios";
+import { useSelector } from "react-redux";
 
 const StudentSchedule = (props) => {
   const navigation = useRouter();
   const { sendMessage, messages, setChatInfo, setNewMessage, newMessage } =
     FirebaseChat();
   const [enabledCamera, setEnabledCamera] = useState(false);
+  const loggedInUser = useSelector((state) => state.user.userInfo);
 
   const deleteSingleOccurrence = async (eventId, dateToCancel) => {
     try {
@@ -29,7 +31,7 @@ const StudentSchedule = (props) => {
 
       console.log("Event deletion successful:", response.data);
     } catch (error) {
-      console.error("Error deleting event:", error);
+      console.log("Error deleting event:", error);
     }
   };
 

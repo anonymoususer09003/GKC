@@ -8,6 +8,9 @@ import axios from "axios";
 import calendarStyles from "../../../styles/Calendar.module.css"
 import styles from "../../../styles/Home.module.css"
 import ParentSchedule from "./schedule";
+import { apiClient, base_url } from "../../../api/client";
+import { fetchUser } from "@/store/actions/userActions";
+import { useDispatch } from 'react-redux';
 
 function ParentCalendar() {
   const [events, setEvents] = useState([]);
@@ -21,7 +24,14 @@ function ParentCalendar() {
   const [deleteable, setDeleteable] = useState(false);
   const [noEvent, setNoEvent] = useState(false);
   const [eventId, setEventId] = useState(null)
+  
 
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchUser());
+  }, [dispatch]);
+  
   //iCal data fetching
   useEffect(() => {
         const fetchICalendarData = async () => {
@@ -54,7 +64,7 @@ function ParentCalendar() {
             });
             setEvents(events);
           } catch (error) {
-            console.error('Error fetching iCalendar data:', error);
+            console.log('Error fetching iCalendar data:', error);
           }
         };
     fetchICalendarData();
@@ -76,7 +86,7 @@ function ParentCalendar() {
         setBookedEvent(response.data);
         console.log(response.data);
       } catch (error) {
-        console.error('Error fetching iCalendar data:', error);
+        console.log('Error fetching iCalendar data:', error);
       }
     };
     fetchEventData();
@@ -99,7 +109,7 @@ function ParentCalendar() {
   
       if (matchedBookedEvent) {
         setInstructorName(matchedBookedEvent.instructorName);
-        setEventTime(matchedBookedEvent.start);
+        setEventTime(matchedBookedEvent.start.split(" ")[1]);
         setDeleteable(matchedBookedEvent.deleteable);
         setCourseId(matchedBookedEvent.courseId);
         //HERE WILL BE THE MEETING LINK

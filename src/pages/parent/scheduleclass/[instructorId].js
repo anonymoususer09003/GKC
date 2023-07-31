@@ -1,21 +1,212 @@
 import React, { useEffect, useState } from "react";
-import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import { ParentNavbar, Footer } from "../../../components";
 import Calendar from "react-calendar";
 import { useRouter } from "next/router";
 import { withRole } from "../../../utils/withAuthorization";
+import axios from "axios";
+import { fetchUser } from "@/store/actions/userActions";
+import { RRule } from 'rrule';
+import calendarStyles from "../../../styles/Calendar.module.css";
+import styles from "../../../styles/Home.module.css";
+import { connect } from "react-redux";
 
-function ParentScheduleClass() {
+function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
   const navigation = useRouter();
   const [value, onChange] = useState(new Date());
   const router = useRouter();
-  const { eventId } = router.query;
+  const { instructorId } = router.query;
+  const [instructorData, setInstructorData] = useState({});
+  const [instructorCourses, setInstructorCourses] = useState([]);
+  const [selectedMode, setSelectedMode] = useState("");
+  const [courseDuration, setCourseDuration] = useState(null);
+  const [courseId, setCourseId] = useState(null);
+  const [classFrequency, setClassFrequency] = useState("");
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [unavailableDates, setUnavailableDates] = useState([]);
+  const [isLoading, setIsloading] = useState(false)
+  const [availableTime, setAvailableTime] = useState([]);
+  const [unavailableTimes, setUnavailableTimes] = useState([]);
+  const [time, setTime] = useState();
 
-  console.log("event id", eventId);
-  const onContinue = () => {
-    navigation.push("/parent/paychildscheduleclass");
+  useEffect(() => {
+    fetchUser();
+  }, []);
+ 
+    //Get Courses
+    const getCourses = async () => {
+      try {
+        const response = await axios.get(
+          `http://34.227.65.157/public/course/with-instructors`
+        );
+  
+        var coursesArray = [];
+  
+        response.data.map((v) => {
+          coursesArray.push({ value: v.id, label: v.name });
+        });
+        console.log(response);
+        setInstructorCourses(coursesArray);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    useEffect(() => {
+      getCourses();
+    }, []);
+
+
+    useEffect(() => {
+      const getInstructorIcal = async () => {
+        try {
+          var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
+  
+          const response = await axios.get(
+            `http://34.227.65.157/instructor/schedule-and-unavailable-days-iCal?instructorId=22`,
+            {
+              headers: {
+                Authorization: `Bearer ${typ.accessToken}`,
+              },
+            }
+            
+          );
+          console.log(response.data, "ical data");
+        
+        // Access the iCal data directly from the response data property
+        const iCalText = response.data;
+        // Split the iCal data into separate VCALENDAR components
+        const vcalendarComponents = iCalText.split('BEGIN:VCALENDAR').filter(Boolean);
+        const rrRuleData = [];
+        vcalendarComponents.forEach((vcalendarComponent) => {
+          const veventStart = vcalendarComponent.indexOf('BEGIN:VEVENT');
+          const veventEnd = vcalendarComponent.indexOf('END:VEVENT', veventStart) + 10; 
+          const veventData = vcalendarComponent.substring(veventStart, veventEnd);
+          
+          const rrRuleStart = veventData.indexOf('RRULE:');
+          const rrRuleEnd = veventData.indexOf('\r\n', rrRuleStart);
+          const rrRule = veventData.substring(rrRuleStart, rrRuleEnd);
+          rrRuleData.push(rrRule);
+        });
+        // Parse 
+        const events = rrRuleData.map((rrRule) => RRule.fromString(rrRule));
+        // Extract the unavailable dates
+        const unavailableDates = [];
+
+        events.forEach((event) => {
+          event.all().forEach((date) => {
+            unavailableDates.push(date);
+  
+          });
+        });
+        setUnavailableDates(unavailableDates);
+
+        setIsloading(false);
+        } catch (error) {
+          console.log(error);
+        }
+      };
+  
+      getInstructorIcal();
+    }, []);
+   
+    //apply styles for unavailableDate
+    const tileClassName = ({ date, view }) => {
+      if (view === 'month') {
+        const dateString = date.toDateString();
+        if (unavailableDates.some((unavailableDate) => unavailableDate.toDateString() === dateString)) {
+          return {
+            backgroundColor: 'gray',
+            color: "black",
+          }
+        }
+      }
+      return null;
+    };
+    const tileDisabled = ({ date }) =>
+    unavailableDates.some(
+      (unavailableDate) => unavailableDate.toDateString() === date.toDateString()
+    );
+   
+
+   
+
+  useEffect(() => {
+    const getInstructorData = async () => {
+      try {
+        var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
+        const response = await axios.get(
+          `http://34.227.65.157/instructor/details-for-scheduling?instructorId=22`,
+          {
+            headers: {
+              Authorization: `Bearer ${typ.accessToken}`,
+            },
+          }
+        );
+        setInstructorData(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+      getInstructorData();
+  }, []);
+
+
+  const handleDateChange = (clickedDate) => {
+    const dateObj = new Date(clickedDate);
+    const year = dateObj.getFullYear();
+    const month = String(dateObj.getMonth() + 1).padStart(2, "0");
+    const day = String(dateObj.getDate()).padStart(2, "0");
+    const hours = String(dateObj.getHours()).padStart(2, "0");
+    const minutes = String(dateObj.getMinutes()).padStart(2, "0");
+    const formattedDateStr = `${year}-${month}-${day} ${hours}:${minutes}`;
+
+    setSelectedDate(formattedDateStr);
   };
+  
+  
+  //Get Modes
+  //eventInPerson
+  const handleModeChange = (event) => {
+    setSelectedMode(event.target.value);
+  };
+  //Get course duration
+  const handleDuration = (e) => {
+    setCourseDuration(e.target.value);
+  };
+
+  const handleCourseId = (event) => {
+    setCourseId(event.target.value);
+  };
+
+
+    const onContinue = () => {
+      const data = {
+        start: selectedDate,
+        durationInHours: courseDuration,
+        classFrequency: classFrequency,
+        courseId: courseId,
+        studentId: userInfo.id,
+        instructorId: instructorId,
+        eventInPerson: selectedMode == "In-Person" ? true : false,
+      };
+      navigation.push({
+        pathname: "/parent/coursepay",
+        query: data,
+    });
+    };
+  
+   if (loading) {
+      return ( <div>
+        Loading...
+        </div>
+      )
+    }
+/*
+    if (error) {
+      return (<div>Error:{error}</div>);
+    }
+    */
+
   return (
     <>
       <Head>
@@ -25,6 +216,15 @@ function ParentScheduleClass() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <ParentNavbar isLogin={true} />
+      {isLoading && (
+             <div className="d-flex justify-content-center">
+
+             <div className="spinner-border text-primary" role="status">
+                <span className="sr-only">Loading...</span>
+             </div>
+           </div>
+      )}
+ 
       <main className="container-fluid">
         <div className="row" style={{ minHeight: "90vh" }}>
           <div className="col-12 col-lg-6 pt-5">
@@ -227,6 +427,4 @@ export default withRole(
   connect(mapStateToProps, { fetchUser })(ParentScheduleClass),
   ["Parent"]
 );
-
-
 
