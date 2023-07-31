@@ -21,11 +21,6 @@ function ReviewInstructor() {
 
   //const { id, firstName} = loggedInUser;
 
-  useEffect(() => {
-    dispatch(fetchUser());
-    // console.log(id, "iddddd")
-  }, [dispatch]);
-
   return (
     <>
       <Navbar isLogin={true} /> <Review role="student" />

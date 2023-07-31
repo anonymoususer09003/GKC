@@ -82,12 +82,12 @@ const Tutorcard = ({ data }) => {
               <div className="mb-2">
                 <StarRatings
                   starRatedColor="#cc9338"
-                  rating={4.2}
+                  rating={data?.averageRating || 0}
                   starDimension="20px"
                   starSpacing="0px"
                 />
               </div>
-              <p className="m-0 p-0">Stars 4.2/5</p>
+              <p className="m-0 p-0">Stars {data?.averageRating || 0}/5</p>
             </div>
             <button
               className="m-0 p-0 bg_secondary border-0 text-white p-2 rounded d-flex align-items-center gap-2"
@@ -196,12 +196,14 @@ const Tutorcard = ({ data }) => {
                           <div className="mb-2">
                             <StarRatings
                               starRatedColor="#cc9338"
-                              rating={4.2}
+                              rating={data?.averageRating || 0}
                               starDimension="20px"
                               starSpacing="0px"
                             />
                           </div>
-                          <p className="m-0 p-0">Stars 4.2/5</p>
+                          <p className="m-0 p-0">
+                            Stars {data?.averageRating || 0}/5
+                          </p>
                         </div>
                         <button className="m-0 p-0 bg_secondary border-0 text-white p-2 rounded d-flex align-items-center gap-2">
                           <BiMessageAlt style={{ fontSize: "22px" }} />
@@ -310,12 +312,14 @@ const Tutorcard = ({ data }) => {
                           <div className="mb-2">
                             <StarRatings
                               starRatedColor="#cc9338"
-                              rating={4.2}
+                              rating={data?.averageRating || 0}
                               starDimension="20px"
                               starSpacing="0px"
                             />
                           </div>
-                          <p className="m-0 p-0">Stars 4.2/5</p>
+                          <p className="m-0 p-0">
+                            Stars {data?.averageRating || 0}/5
+                          </p>
                         </div>
                       </div>
                     </div>

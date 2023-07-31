@@ -1,20 +1,34 @@
-import React from "react";
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
+
 import { useRouter } from "next/router";
 import StarRatings from "react-star-ratings";
 import styles from "../../styles/Home.module.css";
 import PostReview from "@/services/Review/PostReview";
+import GetInstructorByStudent from "@/services/Review/GetInstructorByStudent";
+import GetInstructorForParents from "@/services/Review/GetInstructorForParents";
 import { useDispatch, useSelector } from "react-redux";
 export default function Review({ role }) {
   const loggedInUser = useSelector((state) => state.user.userInfo);
   const [showActivation, setShowActivation] = useState(false);
-  const instructors = ["John Doe", "Jone Rich", "Katy Long"];
+  const [selectedInstructor, setSelectedInstructor] = useState(null);
+  const [selectedCourse, setSelectedCourse] = useState(null);
+  const [instructors, setInstructors] = useState([]);
   const [rating1, setRating1] = useState(0);
   const [rating2, setRating2] = useState(0);
   const [rating3, setRating3] = useState(0);
   const [comment, setComment] = useState("");
   const navigation = useRouter();
-  console.log("loggedin user", loggedInUser);
+  function removeDuplicates(arr, key) {
+    const uniqueKeys = new Set();
+    return arr.filter((obj) => {
+      const value = obj[key];
+      if (!uniqueKeys.has(value)) {
+        uniqueKeys.add(value);
+        return true;
+      }
+      return false;
+    });
+  }
   const onSubmit = async () => {
     try {
       let body = {
@@ -23,19 +37,48 @@ export default function Review({ role }) {
         ratingForTeachingSkills: rating2,
         ratingForSchedule: rating3,
         reviewerId: loggedInUser?.id,
-        instructorId: loggedInUser?.id,
-        courseId: 0,
+        instructorId: selectedInstructor?.id,
+        courseId: selectedCourse,
       };
       let res = await PostReview(body);
       setComment("");
       setRating1(0);
       setRating2(0);
       setRating3(0);
+      setSelectedInstructor(null);
+      setSelectedCourse(null);
       alert("Review has been submitted successfully");
     } catch (err) {
       console.log("err", err);
     }
   };
+  const getReviewInstructors = async () => {
+    try {
+      let res = null;
+      if (role === "parent") {
+        let instructors = [];
+        res = await GetInstructorForParents();
+        res?.data?.studentAndInstructorList?.map((item) => {
+          instructors = [...instructors, ...item?.instructorList];
+        });
+
+        const uniqueArray = removeDuplicates(instructors, "id");
+        setInstructors(uniqueArray);
+      } else {
+        res = await GetInstructorByStudent();
+        setInstructors(res.data);
+      }
+    } catch (err) {
+      console.log("err", err);
+    }
+  };
+
+  useEffect(() => {
+    getReviewInstructors();
+  }, []);
+
+  let isDisabled = !selectedCourse || !selectedInstructor;
+  console.log("isdisabled", isDisabled);
   return (
     <main className="container-fluid">
       <div
@@ -45,11 +88,18 @@ export default function Review({ role }) {
         <div className={`row ${styles.rowWrapper}`}>
           <div className="col-4">
             <h5 className="py-3"> Your Instructors </h5>{" "}
-            <ul className="p-0 m-0" style={{ listStyle: "none" }}>
-              <li className="p-0 m-0 fw-bold bg-light p-3 my-2 rounded ">
-                John Doe{" "}
-              </li>{" "}
-            </ul>{" "}
+            {instructors.map((item, key) => (
+              <ul
+                onClick={() => setSelectedInstructor(item)}
+                key={key}
+                className="p-0 m-0"
+                style={{ listStyle: "none" }}
+              >
+                <li className="p-0 m-0 fw-bold bg-light p-3 my-2 rounded ">
+                  {item?.firstName + " " + item?.lastName}
+                </li>{" "}
+              </ul>
+            ))}
           </div>{" "}
           <div className="col col-8">
             <div className="container">
@@ -62,9 +112,21 @@ export default function Review({ role }) {
                       aria-label="Default select example"
                     >
                       {/* <option selected>Select course</option> */}{" "}
-                      <option value="1"> Course 1 </option>{" "}
-                      <option value="2"> Course 2 </option>{" "}
-                      <option value="3"> Course 3 </option>{" "}
+                      {selectedInstructor?.coursesToTutorAndProficiencies?.map(
+                        (item, index) => {
+                          return (
+                            <option
+                              key={index}
+                              value={item?.course?.id}
+                              onChange={(e) =>
+                                setSelectedCourse(e.target.value)
+                              }
+                            >
+                              {item?.course?.name}{" "}
+                            </option>
+                          );
+                        }
+                      )}
                     </select>{" "}
                   </div>{" "}
                 </div>{" "}
@@ -145,8 +207,11 @@ export default function Review({ role }) {
             ></textarea>{" "}
             <div className="mt-3 text-end">
               <button
+                disabled={isDisabled}
                 onSubmit={onSubmit}
-                className={`${styles.btn_primary} py-2 px-4 fw-bold text-white rounded text-end`}
+                className={` py-2 px-4 fw-bold text-white rounded text-end  ${
+                  isDisabled ? "btn_disabled" : "btn_primary"
+                }`}
                 type="submit"
               >
                 Submit{" "}
