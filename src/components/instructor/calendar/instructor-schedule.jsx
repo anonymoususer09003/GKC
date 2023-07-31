@@ -30,7 +30,7 @@ const InstructorSchedule = (props) => {
 
       console.log("Event deletion successful:", response.data);
     } catch (error) {
-      console.error("Error deleting event:", error);
+      console.log("Error deleting event:", error);
     }
   };
 

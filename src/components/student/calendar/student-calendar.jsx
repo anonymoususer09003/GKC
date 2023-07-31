@@ -9,6 +9,10 @@ import styles from "../../../styles/Home.module.css";
 import calendarStyles from "../../../styles/Calendar.module.css";
 import StudentSchedule from "./schedule";
 import { apiClient, base_url } from "../../../api/client";
+import { fetchUser } from "@/store/actions/userActions";
+import { useDispatch } from 'react-redux';
+
+
 function StudentCalandar() {
   const [events, setEvents] = useState([]);
   const [bookedEvents, setBookedEvent] = useState([]);
@@ -21,7 +25,13 @@ function StudentCalandar() {
   const [deleteable, setDeleteable] = useState(false);
   const [noEvent, setNoEvent] = useState(false);
   const [eventId, setEventId] = useState(null);
+  
 
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchUser());
+  }, [dispatch]);
   //iCal data fetching
   useEffect(() => {
     const fetchICalendarData = async () => {
@@ -55,7 +65,7 @@ function StudentCalandar() {
         });
         setEvents(events);
       } catch (error) {
-        console.error("Error fetching iCalendar data:", error);
+        console.log("Error fetching iCalendar data:");
       }
     };
     fetchICalendarData();
@@ -68,7 +78,7 @@ function StudentCalandar() {
         const response = await apiClient.get("/event/logged-user-events");
         setBookedEvent(response.data);
       } catch (error) {
-        console.error("Error fetching iCalendar data:", error);
+        console.log("Error fetching iCalendar data:", error);
       }
     };
     fetchEventData();
@@ -98,7 +108,7 @@ function StudentCalandar() {
       if (matchedBookedEvent) {
         console.log("matchedBook event", matchedBookedEvent);
         setInstructorName(matchedBookedEvent.instructorName);
-        setEventTime(matchedBookedEvent.start);
+        setEventTime(matchedBookedEvent.start.split(" ")[1]);
         setDeleteable(matchedBookedEvent.deleteable);
         setCourseName(matchedBookedEvent.courseName);
         //HERE WILL BE THE MEETING LINK
@@ -159,57 +169,4 @@ function StudentCalandar() {
 
 export default withRole(StudentCalandar, ["Student"]);
 
-/*
-const getEvents = async () => {
-  try {
-    var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
-    const res = await axios.get("http://34.227.65.157/instructor/events-iCal?instructorId=44", {
-    headers: {
-      Authorization: `Bearer ${typ.accessToken}`,
-    },
-  });
-  console.log(res.data);
-  // setProfile(res.data);
-  } catch (error) {
-    console.error('Error fetching profile data:', error);
-  }
-};
 
-  const loogeduserdata = async () => {
-    try {
-      var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
-      const res = await axios.get("http://34.227.65.157/user/logged-user-details", {
-      headers: {
-        Authorization: `Bearer ${typ.accessToken}`,
-      },
-    });
-    console.log(res.data);
-    // setProfile(res.data);
-    } catch (error) {
-      console.error('Error fetching profile data:', error);
-    }
-  };
-
-
-
-  const getUnavailableDays = async () => {
-    try {
-      var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
-      const res = await axios.post(
-        "http://34.227.65.157/instructor/unavailable-day",
-        {
-          date: "2000-12-31",
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${typ.accessToken}`,
-          },
-        }
-      );
-      console.log(res);
-      // setProfile(res.data);
-    } catch (error) {
-      console.error("Error fetching profile data:", error);
-    }
-  };
- */

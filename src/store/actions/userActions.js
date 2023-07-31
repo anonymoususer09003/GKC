@@ -1,5 +1,5 @@
 import axios from "axios";
-import { apiClient } from "../../api/client";
+import { apiClient, base_url } from "../../api/client";
 export const fetchUserRequest = () => ({
   type: "FETCH_USER_REQUEST",
 });

@@ -10,6 +10,8 @@ import FirebaseChat from "../../../hooks/firebase-chat";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { base_url } from "../../../api/client";
+
+
 const StudentSchedule = (props) => {
   const navigation = useRouter();
   const loggedInUser = useSelector((state) => state.user.userInfo);
@@ -31,7 +33,7 @@ const StudentSchedule = (props) => {
 
       console.log("Event deletion successful:", response.data);
     } catch (error) {
-      console.error("Error deleting event:", error);
+      console.log("Error deleting event:", error);
     }
   };
 
@@ -78,8 +80,7 @@ const StudentSchedule = (props) => {
   const handleTextChange = (e) => {
     setNewMessage(e.target.value);
   };
-  console.log("props,", props);
-  console.log("loggedin", loggedInUser);
+  
   return (
     <>
       <div className="col-12 col-lg-6">

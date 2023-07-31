@@ -2,7 +2,7 @@ import axios from "axios";
 export const base_url = "http://34.227.65.157";
 // Create an instance of Axios with a base URL
 const apiClient = axios.create({
-  baseURL: base_url,
+  baseURL: "http://34.227.65.157",
 });
 
 // Add a request interceptor

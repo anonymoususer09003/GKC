@@ -14,14 +14,15 @@ import axios from "axios";
 import { parseISO, format } from "date-fns";
 import styles from "../../../styles/Home.module.css";
 import { useDispatch, useSelector } from "react-redux";
-import { connect } from "react-redux";
 import { fetchUser } from "@/store/actions/userActions";
 import InstructorSchedule from "./instructor-schedule";
 import calendarStyles from "../../../styles/Calendar.module.css";
 import { base_url, apiClient } from "../../../api/client";
+
+
+
 function InstructorCalendar() {
   const navigation = useRouter();
-  const loggedInUser = useSelector((state) => state.user.userInfo);
 
   const { sendMessage, messages, setChatInfo, setNewMessage, newMessage } =
     FirebaseChat();
@@ -31,7 +32,6 @@ function InstructorCalendar() {
   const [unavailableDates, setUnavailableDates] = useState([]);
   const [eventTime, setEventTime] = useState("");
   const [eventId, setEventId] = useState(null);
-  const dispatch = useDispatch();
   const [meetingLink, setMeetingLink] = useState(null);
   const [deleteable, setDeleteable] = useState(false);
   const [noEvent, setNoEvent] = useState(false);
@@ -40,6 +40,16 @@ function InstructorCalendar() {
   const [singleIcalEvent, setSingleIcalEvent] = useState({});
   const [studentId, setStudentId] = useState("");
 
+ 
+   
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchUser());
+  }, [dispatch]); 
+  
+  const loggedInUser = useSelector((state) => state.user.userInfo);
+  
   const onContinue = () => {
     navigation.push("/instructor/video");
   };
@@ -78,7 +88,7 @@ function InstructorCalendar() {
         });
         setEvents(events);
       } catch (error) {
-        console.error("Error fetching iCalendar data:", error);
+        console.log("Error fetching iCalendar data:", error);
       }
     };
     fetchICalendarData();
@@ -95,7 +105,7 @@ function InstructorCalendar() {
         setBookedEvent(response.data);
         console.log("events", response.data);
       } catch (error) {
-        console.error("Error fetching iCalendar data:", error);
+        console.log("Error fetching iCalendar data:", error);
       }
     };
     fetchEventData();
@@ -127,7 +137,7 @@ function InstructorCalendar() {
       );
       if (matchedBookedEvent) {
         setStudent(matchedBookedEvent.studentName);
-        setEventTime(matchedBookedEvent.start);
+        setEventTime(matchedBookedEvent.start.start.split(" ")[1]);
         setDeleteable(matchedBookedEvent.deleteable);
         //HERE WILL BE THE MEETING LINK
         setMeetingLink("meetinglink");
