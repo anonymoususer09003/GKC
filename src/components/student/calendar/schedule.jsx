@@ -12,12 +12,14 @@ import { useSelector } from "react-redux";
 import { base_url } from "../../../api/client";
 
 
+
 const StudentSchedule = (props) => {
   const navigation = useRouter();
   const loggedInUser = useSelector((state) => state.user.userInfo);
   const { sendMessage, messages, setChatInfo, setNewMessage, newMessage } =
     FirebaseChat();
   const [enabledCamera, setEnabledCamera] = useState(false);
+
 
   const deleteSingleOccurrence = async (eventId, dateToCancel) => {
     try {

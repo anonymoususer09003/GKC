@@ -25,13 +25,22 @@ function StudentCalandar() {
   const [deleteable, setDeleteable] = useState(false);
   const [noEvent, setNoEvent] = useState(false);
   const [eventId, setEventId] = useState(null);
-  
+  const [isLoading, setIsLoading] = useState(true);
+
 
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(fetchUser());
+    dispatch(fetchUser())
+      .then(() => {
+        setIsLoading(false); // Data fetched successfully, set loading to false
+      })
+      .catch((error) => {
+        setIsLoading(false); // Data fetching failed, set loading to false
+        console.error(error);
+      });
   }, [dispatch]);
+
   //iCal data fetching
   useEffect(() => {
     const fetchICalendarData = async () => {
@@ -143,6 +152,12 @@ function StudentCalandar() {
     <>
       <Navbar isLogin={true} />
       <main className="container">
+        {isLoading && (
+          <div className="d-flex justify-content-center">
+          <div className="spinner-border" role="status">
+          </div>
+        </div>
+        )}
         <div className={`row ${styles.calendarWrapper}`}>
           <div className="col-12 col-lg-6 pt-5 react-calendar-text-red">
             <Calendar

@@ -7,14 +7,12 @@ import { FcCalendar } from "react-icons/fc";
 import onSignOut from "@/utils/signOut";
 import LogoutTimer from "../common/signOutTimer";
 import { useDispatch, useSelector } from "react-redux";
-import { Dispatch } from "redux";
-import { fetchUser } from "@/store/actions/userActions";
+
 
 const Navbar = ({ isLogin }) => {
   const [value, setValue] = useState(false);
   const [role, setRole] = useState("student");
   const dispatch = useDispatch();
-  console.log("value", value);
 
   useEffect(() => {
     const stored = localStorage.getItem("gkcAuth");
@@ -23,10 +21,6 @@ const Navbar = ({ isLogin }) => {
     setRole(data?.role?.toLowerCase());
   }, []);
 
-  /*useEffect(() => {
-    dispatch(fetchUser());
-  }, [dispatch])
-  */
 
   return (
     <>
