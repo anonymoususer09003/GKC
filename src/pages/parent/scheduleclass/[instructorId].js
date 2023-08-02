@@ -11,6 +11,7 @@ import calendarStyles from "../../../styles/Calendar.module.css";
 import styles from "../../../styles/Home.module.css";
 import { connect } from "react-redux";
 import { apiClient } from "@/api/client";
+import { duration } from "moment";
 
 function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
   const navigation = useRouter();
@@ -20,15 +21,16 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
   const [instructorData, setInstructorData] = useState({});
   const [instructorCourses, setInstructorCourses] = useState([]);
   const [selectedMode, setSelectedMode] = useState("");
-  const [courseDuration, setCourseDuration] = useState(null);
   const [courseId, setCourseId] = useState(null);
   const [classFrequency, setClassFrequency] = useState("");
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [unavailableDates, setUnavailableDates] = useState([]);
   const [isLoading, setIsloading] = useState(false)
   const [availableTime, setAvailableTime] = useState([]);
-  //const [unavailableTimes, setUnavailableTimes] = useState([]);
+  const [selectedSlots, setSelectedSlots] = useState([]);
   const [time, setTime] = useState();
+  const [duration, setDuration] = useState(0);
+
 
   useEffect(() => {
     fetchUser();
@@ -210,10 +212,48 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
   };
 
 
+const handleSlotClick = (slot) => {
+  setSelectedSlots((prevSelectedSlots) => {
+    const isSlotSelected = prevSelectedSlots.some(
+      (selectedSlot) =>
+        selectedSlot.start.getTime() === slot.start.getTime() &&
+        selectedSlot.end.getTime() === slot.end.getTime()
+    );
+
+    if (isSlotSelected) {
+      setDuration((prevDuration) => prevDuration - 1);
+
+      const updatedSelectedSlots = prevSelectedSlots.filter(
+        (selectedSlot) =>
+          selectedSlot.start.getTime() !== slot.start.getTime() ||
+          selectedSlot.end.getTime() !== slot.end.getTime()
+      );
+
+      setTime(updatedSelectedSlots.length > 0 ? updatedSelectedSlots[0] : null);
+
+      return updatedSelectedSlots;
+    } else {
+      setDuration((prevDuration) => prevDuration + 1);
+
+      if (!time) {
+        const date = new Date(slot.start)
+        const formattedDateStr = date.toISOString().slice(0, 16).replace('T', ' ');
+
+        setTime(formattedDateStr);
+
+      }
+
+      return [...prevSelectedSlots, slot];
+    }
+  });
+
+};
+
+
     const onContinue = () => {
       const data = {
-        start: selectedDate,
-        durationInHours: courseDuration,
+        start: time,
+        durationInHours: duration,
         classFrequency: classFrequency,
         courseId: courseId,
         studentId: userInfo.id,
@@ -226,18 +266,6 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
     });
     };
   
-   /*if (loading) {
-      return ( <div>
-        Loading...
-        </div>
-      )
-    }
-    */
-/*
-    if (error) {
-      return (<div>Error:{error}</div>);
-    }
-    */
 
   return (
     <>
@@ -273,39 +301,36 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
             <p className="fw-bold text-center text-white">I</p>
             <div className="shadow rounded py-5">
               <div
-                className="d-flex flex-sm-nowrap flex-wrap justify-content-between gap-4 px-5"
+                className="d-flex flex-sm-nowrap flex-wrap justify-content-between gap-4 px-3"
                 style={{ minHeight: "400px" }}
               >
                 <div className="w-100 ">
                   <p className="p-0 m-0 fw-bold pb-2">Select time</p>
-                  <ul>
-                     {availableTime.map((slot, index) => (
-                       <li 
-                       key={index} 
-                       className={`m-0 px-3 py-1 fw-bold ${
-                        time == slot && "bg-secondary text-white"
-                      }`}
-                      onClick={() => {
-                        setTime(slot);
-                      }}
-                       >
-                         {`${slot.start.toLocaleTimeString()} - ${slot.end.toLocaleTimeString()}`}
-                       </li>
-                     ))}
-                   </ul>
+               <ul>
+                 {availableTime.map((slot, index) => (
+                   <li
+                     key={index}
+                     className={`m-03 py-1 fw-bold list-unstyled ${
+                       selectedSlots.some(
+                         (selectedSlot) =>
+                           selectedSlot.start.getTime() === slot.start.getTime() &&
+                           selectedSlot.end.getTime() === slot.end.getTime()
+                       )
+                         ? "bg-secondary text-white"
+                         : ""
+                     }`}
+                     onClick={() => handleSlotClick(slot)}
+                   >
+                     {`${slot.start.toLocaleTimeString()} - ${slot.end.toLocaleTimeString()}`}
+                   </li>
+                 ))}
+               </ul>
                 </div>
                 <div className=" w-100">
                   <p className="p-0 m-0 fw-bold text-center py-2">
                     Your information
                   </p>
-                  <p className="p-0 m-0 fw-bold py-2">
-                    Course duration in Hours
-                  </p>
-                  <input
-                    onChange={handleDuration}
-                    type="number"
-                    className={`p-2 rounded outline-0 border border_gray w-100 ${styles.landingInputs}`}
-                  />
+            
                   <div className="py-1">
                     <div className="form-check">
                       <input
