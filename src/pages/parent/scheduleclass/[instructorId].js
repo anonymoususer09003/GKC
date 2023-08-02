@@ -11,11 +11,9 @@ import calendarStyles from "../../../styles/Calendar.module.css";
 import styles from "../../../styles/Home.module.css";
 import { connect } from "react-redux";
 import { apiClient } from "@/api/client";
-import { duration } from "moment";
+import { useDispatch } from 'react-redux';
 
 function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
-  const navigation = useRouter();
-  const [value, onChange] = useState(new Date());
   const router = useRouter();
   const { instructorId } = router.query;
   const [instructorData, setInstructorData] = useState({});
@@ -25,17 +23,13 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
   const [classFrequency, setClassFrequency] = useState("");
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [unavailableDates, setUnavailableDates] = useState([]);
-  const [isLoading, setIsloading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const [availableTime, setAvailableTime] = useState([]);
   const [selectedSlots, setSelectedSlots] = useState([]);
   const [time, setTime] = useState();
   const [duration, setDuration] = useState(0);
 
 
-  useEffect(() => {
-    fetchUser();
-  }, []);
- 
     //Get Courses
     const getCourses = async () => {
       try {
@@ -57,7 +51,9 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
     useEffect(() => {
       getCourses();
     }, []);
-
+    useEffect(() => {
+      fetchUser()
+     },[])
 
     useEffect(() => {
       const getInstructorIcal = async () => {
@@ -73,9 +69,7 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
             }
             
           );
-          //console.log(response.data, "ical data");
         
-        // Access the iCal data directly from the response data property
         const iCalText = response.data;
         // Split the iCal data into separate VCALENDAR components
         const vcalendarComponents = iCalText.split('BEGIN:VCALENDAR').filter(Boolean);
@@ -103,7 +97,7 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
         });
         setUnavailableDates(unavailableDates);
 
-        setIsloading(false);
+        setIsLoading(false);
         } catch (error) {
           console.log(error);
         }
@@ -260,7 +254,7 @@ const handleSlotClick = (slot) => {
         instructorId: instructorId,
         eventInPerson: selectedMode == "In-Person" ? true : false,
       };
-      navigation.push({
+      router.push({
         pathname: "/parent/coursepay",
         query: data,
     });
