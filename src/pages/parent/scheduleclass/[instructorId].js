@@ -10,6 +10,7 @@ import { RRule } from 'rrule';
 import calendarStyles from "../../../styles/Calendar.module.css";
 import styles from "../../../styles/Home.module.css";
 import { connect } from "react-redux";
+import { apiClient } from "@/api/client";
 
 function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
   const navigation = useRouter();
@@ -26,7 +27,7 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
   const [unavailableDates, setUnavailableDates] = useState([]);
   const [isLoading, setIsloading] = useState(false)
   const [availableTime, setAvailableTime] = useState([]);
-  const [unavailableTimes, setUnavailableTimes] = useState([]);
+  //const [unavailableTimes, setUnavailableTimes] = useState([]);
   const [time, setTime] = useState();
 
   useEffect(() => {
@@ -70,7 +71,7 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
             }
             
           );
-          console.log(response.data, "ical data");
+          //console.log(response.data, "ical data");
         
         // Access the iCal data directly from the response data property
         const iCalText = response.data;
@@ -149,20 +150,50 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
     };
       getInstructorData();
   }, []);
+  
 
 
-  const handleDateChange = (clickedDate) => {
+
+  const handleDateChange = async (clickedDate) => {
     const dateObj = new Date(clickedDate);
     const year = dateObj.getFullYear();
     const month = String(dateObj.getMonth() + 1).padStart(2, "0");
     const day = String(dateObj.getDate()).padStart(2, "0");
     const hours = String(dateObj.getHours()).padStart(2, "0");
     const minutes = String(dateObj.getMinutes()).padStart(2, "0");
-    const formattedDateStr = `${year}-${month}-${day} ${hours}:${minutes}`;
-
-    setSelectedDate(formattedDateStr);
-  };
+    const formattedDateStr = `${year}-${month}-${day}`;
   
+    setSelectedDate(formattedDateStr);
+  
+    try {
+      const response = await apiClient.get(
+        `/instructor/available-time-slots-from-date?instructorId=22&date=${formattedDateStr}`
+      );
+  
+      const timeSlots = response.data.map((slot) => ({
+        start: new Date(slot.start),
+        end: new Date(slot.end),
+      }));
+  
+      const isOnTheHour = (date) => date.getMinutes() === 0;
+  
+      // Create one-hour intervals for each time slot
+      const formattedTimeSlots = [];
+      timeSlots.forEach((slot) => {
+        if (isOnTheHour(slot.start)) {
+          formattedTimeSlots.push({
+            start: new Date(slot.start),
+            end: new Date(slot.start.getTime() + 60 * 60 * 1000),
+          });
+        }
+      });
+  
+      setAvailableTime(formattedTimeSlots);
+      console.log(formattedTimeSlots, "formatted time slots");
+    } catch (error) {
+      console.log(error);
+    }
+  };
   
   //Get Modes
   //eventInPerson
@@ -195,12 +226,13 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
     });
     };
   
-   if (loading) {
+   /*if (loading) {
       return ( <div>
         Loading...
         </div>
       )
     }
+    */
 /*
     if (error) {
       return (<div>Error:{error}</div>);
@@ -232,8 +264,8 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
             <Calendar 
               onChange={handleDateChange} 
               value={selectedDate} 
-              tileClassName={tileClassName} 
-              tileDisabled={tileDisabled}            
+             // tileClassName={tileClassName} 
+              //tileDisabled={tileDisabled}            
 
             />
           </div>
@@ -246,23 +278,13 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
               >
                 <div className="w-100 ">
                   <p className="p-0 m-0 fw-bold pb-2">Select time</p>
-                  <div className="border rounded">
-                     {availableTime.map((v, i) => {
-                         return (
-                           <p
-                             className={`m-0 px-3 py-1 fw-bold ${
-                               time == v && "bg-secondary text-white"
-                             }`}
-                             key={i}
-                             onClick={() => {
-                               setTime(v);
-                             }}
-                           >
-                             {v}
-                           </p>
-                         );
-                       })}
-                  </div>
+                  <ul>
+                     {availableTime.map((slot, index) => (
+                       <li key={index}>
+                         {`${slot.start.toLocaleTimeString()} - ${slot.end.toLocaleTimeString()}`}
+                       </li>
+                     ))}
+                   </ul>
                 </div>
                 <div className=" w-100">
                   <p className="p-0 m-0 fw-bold text-center py-2">
