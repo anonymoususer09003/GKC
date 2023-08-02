@@ -10,29 +10,26 @@ import { RRule } from 'rrule';
 import calendarStyles from "../../../styles/Calendar.module.css";
 import styles from "../../../styles/Home.module.css";
 import { connect } from "react-redux";
+import { apiClient } from "@/api/client";
+import { useDispatch } from 'react-redux';
 
 function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
-  const navigation = useRouter();
-  const [value, onChange] = useState(new Date());
   const router = useRouter();
   const { instructorId } = router.query;
   const [instructorData, setInstructorData] = useState({});
   const [instructorCourses, setInstructorCourses] = useState([]);
   const [selectedMode, setSelectedMode] = useState("");
-  const [courseDuration, setCourseDuration] = useState(null);
   const [courseId, setCourseId] = useState(null);
   const [classFrequency, setClassFrequency] = useState("");
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [unavailableDates, setUnavailableDates] = useState([]);
-  const [isLoading, setIsloading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const [availableTime, setAvailableTime] = useState([]);
-  const [unavailableTimes, setUnavailableTimes] = useState([]);
+  const [selectedSlots, setSelectedSlots] = useState([]);
   const [time, setTime] = useState();
+  const [duration, setDuration] = useState(0);
 
-  useEffect(() => {
-    fetchUser();
-  }, []);
- 
+
     //Get Courses
     const getCourses = async () => {
       try {
@@ -54,7 +51,9 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
     useEffect(() => {
       getCourses();
     }, []);
-
+    useEffect(() => {
+      fetchUser()
+     },[])
 
     useEffect(() => {
       const getInstructorIcal = async () => {
@@ -70,9 +69,7 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
             }
             
           );
-          console.log(response.data, "ical data");
         
-        // Access the iCal data directly from the response data property
         const iCalText = response.data;
         // Split the iCal data into separate VCALENDAR components
         const vcalendarComponents = iCalText.split('BEGIN:VCALENDAR').filter(Boolean);
@@ -100,7 +97,7 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
         });
         setUnavailableDates(unavailableDates);
 
-        setIsloading(false);
+        setIsLoading(false);
         } catch (error) {
           console.log(error);
         }
@@ -149,20 +146,50 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
     };
       getInstructorData();
   }, []);
+  
 
 
-  const handleDateChange = (clickedDate) => {
+
+  const handleDateChange = async (clickedDate) => {
     const dateObj = new Date(clickedDate);
     const year = dateObj.getFullYear();
     const month = String(dateObj.getMonth() + 1).padStart(2, "0");
     const day = String(dateObj.getDate()).padStart(2, "0");
     const hours = String(dateObj.getHours()).padStart(2, "0");
     const minutes = String(dateObj.getMinutes()).padStart(2, "0");
-    const formattedDateStr = `${year}-${month}-${day} ${hours}:${minutes}`;
-
-    setSelectedDate(formattedDateStr);
-  };
+    const formattedDateStr = `${year}-${month}-${day}`;
   
+    setSelectedDate(formattedDateStr);
+  
+    try {
+      const response = await apiClient.get(
+        `/instructor/available-time-slots-from-date?instructorId=22&date=${formattedDateStr}`
+      );
+  
+      const timeSlots = response.data.map((slot) => ({
+        start: new Date(slot.start),
+        end: new Date(slot.end),
+      }));
+  
+      const isOnTheHour = (date) => date.getMinutes() === 0;
+  
+      // Create one-hour intervals for each time slot
+      const formattedTimeSlots = [];
+      timeSlots.forEach((slot) => {
+        if (isOnTheHour(slot.start)) {
+          formattedTimeSlots.push({
+            start: new Date(slot.start),
+            end: new Date(slot.start.getTime() + 60 * 60 * 1000),
+          });
+        }
+      });
+  
+      setAvailableTime(formattedTimeSlots);
+      console.log(formattedTimeSlots, "formatted time slots");
+    } catch (error) {
+      console.log(error);
+    }
+  };
   
   //Get Modes
   //eventInPerson
@@ -179,33 +206,60 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
   };
 
 
+const handleSlotClick = (slot) => {
+  setSelectedSlots((prevSelectedSlots) => {
+    const isSlotSelected = prevSelectedSlots.some(
+      (selectedSlot) =>
+        selectedSlot.start.getTime() === slot.start.getTime() &&
+        selectedSlot.end.getTime() === slot.end.getTime()
+    );
+
+    if (isSlotSelected) {
+      setDuration((prevDuration) => prevDuration - 1);
+
+      const updatedSelectedSlots = prevSelectedSlots.filter(
+        (selectedSlot) =>
+          selectedSlot.start.getTime() !== slot.start.getTime() ||
+          selectedSlot.end.getTime() !== slot.end.getTime()
+      );
+
+      setTime(updatedSelectedSlots.length > 0 ? updatedSelectedSlots[0] : null);
+
+      return updatedSelectedSlots;
+    } else {
+      setDuration((prevDuration) => prevDuration + 1);
+
+      if (!time) {
+        const date = new Date(slot.start)
+        const formattedDateStr = date.toISOString().slice(0, 16).replace('T', ' ');
+
+        setTime(formattedDateStr);
+
+      }
+
+      return [...prevSelectedSlots, slot];
+    }
+  });
+
+};
+
+
     const onContinue = () => {
       const data = {
-        start: selectedDate,
-        durationInHours: courseDuration,
+        start: time,
+        durationInHours: duration,
         classFrequency: classFrequency,
         courseId: courseId,
         studentId: userInfo.id,
         instructorId: instructorId,
         eventInPerson: selectedMode == "In-Person" ? true : false,
       };
-      navigation.push({
+      router.push({
         pathname: "/parent/coursepay",
         query: data,
     });
     };
   
-   if (loading) {
-      return ( <div>
-        Loading...
-        </div>
-      )
-    }
-/*
-    if (error) {
-      return (<div>Error:{error}</div>);
-    }
-    */
 
   return (
     <>
@@ -232,8 +286,8 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
             <Calendar 
               onChange={handleDateChange} 
               value={selectedDate} 
-              tileClassName={tileClassName} 
-              tileDisabled={tileDisabled}            
+             // tileClassName={tileClassName} 
+              //tileDisabled={tileDisabled}            
 
             />
           </div>
@@ -241,41 +295,36 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
             <p className="fw-bold text-center text-white">I</p>
             <div className="shadow rounded py-5">
               <div
-                className="d-flex flex-sm-nowrap flex-wrap justify-content-between gap-4 px-5"
+                className="d-flex flex-sm-nowrap flex-wrap justify-content-between gap-4 px-3"
                 style={{ minHeight: "400px" }}
               >
                 <div className="w-100 ">
                   <p className="p-0 m-0 fw-bold pb-2">Select time</p>
-                  <div className="border rounded">
-                     {availableTime.map((v, i) => {
-                         return (
-                           <p
-                             className={`m-0 px-3 py-1 fw-bold ${
-                               time == v && "bg-secondary text-white"
-                             }`}
-                             key={i}
-                             onClick={() => {
-                               setTime(v);
-                             }}
-                           >
-                             {v}
-                           </p>
-                         );
-                       })}
-                  </div>
+               <ul>
+                 {availableTime.map((slot, index) => (
+                   <li
+                     key={index}
+                     className={`m-03 py-1 fw-bold list-unstyled ${
+                       selectedSlots.some(
+                         (selectedSlot) =>
+                           selectedSlot.start.getTime() === slot.start.getTime() &&
+                           selectedSlot.end.getTime() === slot.end.getTime()
+                       )
+                         ? "bg-secondary text-white"
+                         : ""
+                     }`}
+                     onClick={() => handleSlotClick(slot)}
+                   >
+                     {`${slot.start.toLocaleTimeString()} - ${slot.end.toLocaleTimeString()}`}
+                   </li>
+                 ))}
+               </ul>
                 </div>
                 <div className=" w-100">
                   <p className="p-0 m-0 fw-bold text-center py-2">
                     Your information
                   </p>
-                  <p className="p-0 m-0 fw-bold py-2">
-                    Course duration in Hours
-                  </p>
-                  <input
-                    onChange={handleDuration}
-                    type="number"
-                    className={`p-2 rounded outline-0 border border_gray w-100 ${styles.landingInputs}`}
-                  />
+            
                   <div className="py-1">
                     <div className="form-check">
                       <input
