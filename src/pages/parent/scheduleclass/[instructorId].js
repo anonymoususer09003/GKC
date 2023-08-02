@@ -280,7 +280,15 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
                   <p className="p-0 m-0 fw-bold pb-2">Select time</p>
                   <ul>
                      {availableTime.map((slot, index) => (
-                       <li key={index}>
+                       <li 
+                       key={index} 
+                       className={`m-0 px-3 py-1 fw-bold ${
+                        time == slot && "bg-secondary text-white"
+                      }`}
+                      onClick={() => {
+                        setTime(slot);
+                      }}
+                       >
                          {`${slot.start.toLocaleTimeString()} - ${slot.end.toLocaleTimeString()}`}
                        </li>
                      ))}
