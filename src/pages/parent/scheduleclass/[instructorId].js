@@ -56,46 +56,15 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
      },[])
 
     useEffect(() => {
-      const getInstructorIcal = async () => {
+      const getUnavailableDate = async () => {
         try {
-          var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
-  
-          const response = await axios.get(
-            `http://34.227.65.157/instructor/schedule-and-unavailable-days-iCal?instructorId=22`,
-            {
-              headers: {
-                Authorization: `Bearer ${typ.accessToken}`,
-              },
-            }
-            
+          
+          const response = await apiClient.get(
+            `/instructor/unavailable-days-in-UTC-TimeZone?instructorId=22`
           );
         
-        const iCalText = response.data;
-        // Split the iCal data into separate VCALENDAR components
-        const vcalendarComponents = iCalText.split('BEGIN:VCALENDAR').filter(Boolean);
-        const rrRuleData = [];
-        vcalendarComponents.forEach((vcalendarComponent) => {
-          const veventStart = vcalendarComponent.indexOf('BEGIN:VEVENT');
-          const veventEnd = vcalendarComponent.indexOf('END:VEVENT', veventStart) + 10; 
-          const veventData = vcalendarComponent.substring(veventStart, veventEnd);
-          
-          const rrRuleStart = veventData.indexOf('RRULE:');
-          const rrRuleEnd = veventData.indexOf('\r\n', rrRuleStart);
-          const rrRule = veventData.substring(rrRuleStart, rrRuleEnd);
-          rrRuleData.push(rrRule);
-        });
-        // Parse 
-        const events = rrRuleData.map((rrRule) => RRule.fromString(rrRule));
-        // Extract the unavailable dates
-        const unavailableDates = [];
-
-        events.forEach((event) => {
-          event.all().forEach((date) => {
-            unavailableDates.push(date);
-  
-          });
-        });
-        setUnavailableDates(unavailableDates);
+          console.log(response.data)
+         setUnavailableDates(response.data);
 
         setIsLoading(false);
         } catch (error) {
@@ -103,27 +72,33 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
         }
       };
   
-      getInstructorIcal();
+      getUnavailableDate();
     }, []);
    
+    const isDateUnavailable = (date) => {
+      return unavailableDates.some((unavailableDate) => {
+        const startDate = new Date(unavailableDate.start);
+        const endDate = new Date(unavailableDate.end);
+        return date >= startDate && date <= endDate;
+      });
+    };
+  
+    const tileDisabled = ({ date }) => {
+      return isDateUnavailable(date);
+    };
+  
     //apply styles for unavailableDate
     const tileClassName = ({ date, view }) => {
       if (view === 'month') {
-        const dateString = date.toDateString();
-        if (unavailableDates.some((unavailableDate) => unavailableDate.toDateString() === dateString)) {
+        if (isDateUnavailable(date)) {
           return {
             backgroundColor: 'gray',
-            color: "black",
-          }
+            color: 'black',
+          };
         }
       }
       return null;
     };
-    const tileDisabled = ({ date }) =>
-    unavailableDates.some(
-      (unavailableDate) => unavailableDate.toDateString() === date.toDateString()
-    );
-   
 
    
 
@@ -286,8 +261,8 @@ const handleSlotClick = (slot) => {
             <Calendar 
               onChange={handleDateChange} 
               value={selectedDate} 
-             // tileClassName={tileClassName} 
-              //tileDisabled={tileDisabled}            
+              tileClassName={tileClassName} 
+              tileDisabled={tileDisabled}            
 
             />
           </div>
