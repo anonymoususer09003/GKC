@@ -1,172 +1,106 @@
-import React, { useState, useEffect } from "react";
 import Head from "next/head";
-import { Navbar, TutorNavbar, Footer } from "./../../../components";
+import { useState, useEffect, useRef } from "react";
+import { Navbar,  Footer } from "./../../../components";
 import Calendar from "react-calendar";
-import { BsFillChatFill, BsFillSendFill } from "react-icons/bs";
-import { GoDeviceCameraVideo } from "react-icons/go";
-import { FiEdit } from "react-icons/fi";
-import { RiDeleteBin6Line } from "react-icons/ri";
 import { withRole } from "../../../utils/withAuthorization";
-import { isSameDay, format } from "date-fns";
 import { apiClient } from "../../../api/client";
 import { connect } from "react-redux";
 import { fetchUser } from "../../../store/actions/userActions";
 import calendarStyles from "../../../styles/Calendar.module.css";
-import InstructorCalendar from "@/components/instructor/calendar/instructor-calendar";
+import { TutorNavbar } from "./../../../components";
+import { useRouter } from "next/router";
+
 
 function EditCalandar({ userInfo, loading, error, fetchUser }) {
   const [value, onChange] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState();
-  const [events, setEvents] = useState([
-    // Add more events as needed
-  ]);
-  const [unavailableDates, setUnavailableDates] = useState([]);
-  const handleDateChange = (date) => {
-    setSelectedDate(date);
-    console.log(selectedDate);
+  const router = useRouter();
+  const formRef = useRef(null)
+  const [available, setAvailable] = useState(true)
+  const [filledData, setFilledData] = useState(false);
+  const [selectedDays, setSelectedDays] = useState([]);
+  const [startTime, setStartTime] = useState("2000-12-31 06:00");
+  const [endTime, setEndTime] = useState("2000-12-31 08:00")
+
+
+  //calendar
+  const handleDateChange = (clickedDate) => {
+    const year = clickedDate.toISOString().slice(0, 4);
+    const month = clickedDate.toISOString().slice(5, 7);
+    const day = (parseInt(clickedDate.toISOString().slice(8, 10)) + 1)
+      .toString()
+      .padStart(2, "0");
+    const modifiedClickedDate = `${year}-${month}-${day}`;
+    setSelectedDate(modifiedClickedDate);
+    console.log(modifiedClickedDate);
   };
 
-  const getUnavailableDays = async () => {
-    const dateToConvert = new Date(selectedDate);
-    const convertedDate = format(dateToConvert, "yyyy-MM-dd");
-    console.log(convertedDate);
 
-    try {
-      const res = await apiClient.post("/instructor/unavailable-day", {
-        date: convertedDate,
-      });
-      console.log(res);
-      fetchProfileData();
-      // setProfile(res.data);
-      alert("success");
-    } catch (error) {
-      console.error("Error fetching profile data:", error);
-    }
-  };
-
-  const fetchProfileData = async () => {
-    try {
-      const res = await apiClient.get(
-        `/instructor/schedule-and-unavailable-days-iCal?instructorId=${userInfo.id}`,
-        {}
-      );
-      console.log(res.data);
-
-      const calendarData = res.data;
-
-      const events = [];
-      const unavailableDays = [];
-
-      const lines = calendarData.split("\n");
-
-      let currentEvent = null;
-      let currentFreeBusy = null;
-
-      for (let i = 0; i < lines.length; i++) {
-        const line = lines[i].trim();
-
-        if (line.startsWith("BEGIN:VEVENT")) {
-          currentEvent = {};
-        } else if (line.startsWith("BEGIN:VFREEBUSY")) {
-          currentFreeBusy = {};
-        } else if (
-          line.startsWith("UID:") &&
-          (currentEvent || currentFreeBusy)
-        ) {
-          const uid = line.split(":")[1];
-          if (currentEvent) {
-            currentEvent.uid = uid;
-          } else if (currentFreeBusy) {
-            currentFreeBusy.uid = uid;
-          }
-        } else if (line.startsWith("DTSTART:") && currentEvent) {
-          const dtStart = line.split(":")[1];
-          const dateString = dtStart;
-          const year = parseInt(dateString.slice(0, 4));
-          const month = parseInt(dateString.slice(4, 6)) - 1; // Month is zero-based in JavaScript's Date object
-          const day = parseInt(dateString.slice(6, 8));
-          const date = new Date(year, month, day);
-          currentEvent.dtStart = date;
-        } else if (
-          line.startsWith("FREEBUSY;FBTYPE=BUSY:") &&
-          currentFreeBusy
-        ) {
-          const [start, end] = line.split(":")[1].split("/");
-
-          const dateString = start;
-          const year = parseInt(dateString.slice(0, 4));
-          const month = parseInt(dateString.slice(4, 6)) - 1; // Month is zero-based in JavaScript's Date object
-          const day = parseInt(dateString.slice(6, 8));
-          const date = new Date(year, month, day);
-          currentFreeBusy.start = date;
-          currentFreeBusy.end = end;
-        } else if (line.startsWith("END:VEVENT")) {
-          if (currentEvent) {
-            events.push(currentEvent);
-            currentEvent = null;
-          }
-        } else if (line.startsWith("END:VFREEBUSY")) {
-          if (currentFreeBusy) {
-            unavailableDays.push(currentFreeBusy);
-            currentFreeBusy = null;
-          }
-        }
+  //days click
+  const handleDayClick = (day) => {
+    setSelectedDays((prevSelectedDays) => {
+      if (prevSelectedDays.includes(day)) {
+        return prevSelectedDays.filter((selectedDay) => selectedDay !== day);
+      } else {
+        return [...prevSelectedDays, day];
       }
-
-      setUnavailableDates(unavailableDays);
-      setEvents(events);
-      console.log(events, unavailableDays);
-    } catch (error) {
-      console.error("Error fetching profile data:", error);
-    }
+    });
   };
+  //start time
+  const handleStartTime = (e) => {
+    setStartTime(e.target.value);
+  }
+ 
+  //end time
 
-  useEffect(() => {
-    fetchProfileData();
-  }, []);
+  const handleEndTime = (e) => {
+    setEndTime(e.target.value);
+  } 
 
-  const tileContent = ({ date, view }) => {
-    if (view === "month") {
-      const event = events.find(
-        (event) => event.dtStart.getTime() === date.getTime()
-      );
-      if (event) {
-        return "event-day";
-      }
-    }
 
-    return null;
-  };
+ const setUnAvialablaDates = async () => {
+  try {
+    const response = await apiClient.post(
+      "/instructor/unavailable-day" ,
+      {date: selectedDate}
+    )
 
-  const tileDisabled = ({ date }) => {
-    return unavailableDates.some(
-      (disabledDay) => date.toDateString() === disabledDay.start.toDateString()
-    );
-  };
+  }catch(error) {
+    console.log(error)
+  }
+  router.push("/instructor")
+ }
+
+
+ const submitHandler = async () => {
+  const dayOfTheWeek =  selectedDays.join(', ');
+  console.log(dayOfTheWeek); 
+  setFilledData(true);
+  try {
+    let res = await apiClient.post("/instructor/week-schedule", {
+      startTime: startTime,
+      endTime: endTime,
+      available: available,
+      dayOfTheWeek: dayOfTheWeek,
+      instructorId: userInfo.id
+    })
+    setFilledData(true);
+
+  }
+  catch(error) {
+    console.log(error);
+  }
+ }
 
   useEffect(() => {
     fetchUser();
   }, [fetchUser]);
-  console.log(userInfo);
 
-  // if (loading) {
-  //   return <div>Loading...</div>;
-  // }
-
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
 
   return (
     <>
-      <Head>
-        <title> Instructor Landing Page </title>{" "}
-        <meta name="description" content="Generated by create next app" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>{" "}
-      <InstructorCalendar />
-      {/*<main className="container-fluid">
+     <TutorNavbar isLogin={true} role="instructor" />
+      <main className="container-fluid">
         <div style={{ height: "90vh" }}>
           <div className="row p-5">
             <div className="col-12 col-lg-6 ">
@@ -178,83 +112,96 @@ function EditCalandar({ userInfo, loading, error, fetchUser }) {
                 <Calendar
                   onChange={handleDateChange}
                   value={selectedDate}
-                  calendarType="US"
-                  tileDisabled={tileDisabled}
-                  tileClassName={tileContent}
-                  className={calendarStyles.reactCalendar}
-                />{" "}
-                <p>{selectedDate.toDateString()}</p>{" "}
-              </div>{" "}
-            <div className="col-12 col-lg-6 ">
-              <p className="text-center">
-                Let us know the days of the week you are available and your
-                schedule{" "}
-              </p>{" "}
-              <table width="100%" role="grid" style={{ tableLayout: "fixed" }}>
-                <tbody>
-                  <tr>
-                    <td roll="gridcell"> Mon </td>{" "}
-                    <td roll="gridcell"> Tue </td>{" "}
-                    <td roll="gridcell"> Wed </td>{" "}
-                    <td roll="gridcell"> Thur </td>{" "}
-                    <td roll="gridcell"> Fri </td>{" "}
-                    <td roll="gridcell"> Sat </td>{" "}
-                    <td roll="gridcell"> Sun </td>{" "}
-                  </tr>{" "}
-                </tbody>
-              </table>
-              <div className="row w-75 py-3 ">
-                <div className="col-4">
-                  <p className="fw-bold"> Available: </p>{" "}
-                </div>{" "}
-                <div className="col-8">
-                  <input
-                    className="form-check-input"
-                    type="checkbox"
-                    id="check1"
-                    name="option1"
-                    value="something"
-                    checked
-                  />
-                </div>{" "}
-              </div>
-              <div className="row w-75 py-2 ">
-                <div className="col-4">
-                  <p className="fw-bold"> Available: </p>{" "}
-                </div>{" "}
-                <div className="col-8">
-                  <div className="row pb-2">
-                    <p className="col fw-bold"> From </p>{" "}
-                    <select className="w-100 p-2 rounded outline-0 border border_gray   col">
-                      <option> 06: 00 am </option> <option> Student </option>{" "}
-                      <option> Student </option>{" "}
-                    </select>{" "}
-                  </div>
-                  <div className="row pb-2">
-                    <p className="col fw-bold"> To </p>{" "}
-                    <select className="w-100 p-2 rounded outline-0 border border_gray  col">
-                      <option> 06: 00 pm </option> <option> Student </option>{" "}
-                      <option> Student </option>{" "}
-                    </select>{" "}
-                  </div>{" "}
-                </div>{" "}
-              </div>{" "}
+                  //selectRange={true}
+                />
             </div>{" "}
-          </div>{" "}
+            <div className="col-12 col-lg-6 ">
+
+            <form
+              ref={formRef}
+            > 
+                <p className="text-center">
+                  Let us know the days of the week you are available and your
+                  schedule
+                </p>
+                <ul className="w-100" style={{display: "flex", justifyContent: "space-between", listStyle: "none"}}>
+                    <li onClick={() => handleDayClick('MONDAY')} style={{ background: selectedDays.includes('MONDAY') ? 'gray' : 'none', color: selectedDays.includes('MONDAY') ? 'white' : 'black' }}>Mon</li>
+                    <li onClick={() => handleDayClick('TUESDAY')} style={{ background: selectedDays.includes('TUESDAY') ? 'gray' : 'none', color: selectedDays.includes('TUESDAY') ? 'white' : 'black' }}>Tue</li>
+                    <li onClick={() => handleDayClick('WEDNESDAY')} style={{ background: selectedDays.includes('WEDNESDAY') ? 'gray' : 'none', color: selectedDays.includes('WEDNESDAY') ? 'white' : 'black' }}>Wed</li>
+                    <li onClick={() => handleDayClick('THURSDAY')} style={{ background: selectedDays.includes('THURSDAY') ? 'gray' : 'none', color: selectedDays.includes('THURSDAY') ? 'white' : 'black' }}>Thur</li>
+                    <li onClick={() => handleDayClick('FRIDAY')} style={{ background: selectedDays.includes('FRIDAY') ? 'gray' : 'none', color: selectedDays.includes('FRIDAY') ? 'white' : 'black' }}>Fri</li>
+                    <li onClick={() => handleDayClick('SATURDAY')} style={{ background: selectedDays.includes('SATURDAY') ? 'gray' : 'none', color: selectedDays.includes('SATURDAY') ? 'white' : 'black' }}>Sat</li>
+                    <li onClick={() => handleDayClick('SUNDAY')} style={{ background: selectedDays.includes('SUNDAY') ? 'gray' : 'none', color: selectedDays.includes('SUNDAY') ? 'white' : 'black' }}>Sun</li>
+                  </ul>
+                <div className="row w-75 py-3 ">
+                  <div className="col-4">
+                    <p className="fw-bold"> Available: </p>{" "}
+                  </div>{" "}
+                  <div className="col-8">
+                    <label name="available"
+                     >
+                      <input
+                        className="form-check-input"
+                        type="checkbox"
+                        value={true}
+                        checked
+                        onChange={() => setAvailable(true)}
+                      />
+                    </label>
+                  </div>
+                </div>
+                <div className="row w-75 py-2 ">
+                  <div className="col-4">
+                    <p className="fw-bold"> Available: </p>
+                  </div>
+                    <div className="col-8">
+                       <div className="row pb-2">
+                         <p className="col fw-bold"> From </p>{" "}
+                         <select
+                           className="w-100 p-2 rounded outline-0 border border_gray col"
+                           onChange={handleStartTime}
+                           >
+                           <option value="06:00"> 06: 00 am </option> 
+                         </select>
+                       </div>
+                       <div className="row pb-2">
+                        <p className="col fw-bold"> To </p>{" "}
+                         <select 
+                         className="w-100 p-2 rounded outline-0 border border_gray col"
+                         onChange={handleEndTime}
+
+                         >
+                         <option value="08:00"> 08: 00 pm </option> 
+                      </select>
+                    </div>
+                  </div>
+                </div>
+            </form>
+            </div>
+
+            </div>
+          </div>
           <div className=" mt-3 d-flex justify-content-center flex-column align-items-center gap-2">
-            <button
+          <button
               className={`w-25 text-light p-2 rounded fw-bold  bg-gray-300 ${
                 selectedDate ? "btn_primary" : "btn_disabled "
               }`}
               disabled={!selectedDate}
-              onClick={() => getUnavailableDays()}
+              onClick={() => setUnAvialablaDates()}
             >
-              Save{" "}
-            </button>{" "}
-          </div>{" "}
-        </div>{" "}
-      </main>{" "}
-      <Footer /> */}
+              Save Unavailable Dates
+            </button>
+            <button
+              className={`w-25 text-light p-2 rounded fw-bold  bg-gray-300 ${
+                filledData ? "btn_primary" : "btn_disabled "
+              }`}
+              onClick={submitHandler}
+            >
+              Save Availability
+            </button>
+          </div>
+      </main>
+      <Footer /> 
     </>
   );
 }

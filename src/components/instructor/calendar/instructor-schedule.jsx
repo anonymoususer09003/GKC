@@ -127,14 +127,14 @@ const InstructorSchedule = (props) => {
                     />
                   </IconContext.Provider>
                 )}
-                {/* {props.deleteable && ( */}
+                 {props.deleteable && ( 
                 <IconContext.Provider value={{ color: "#48494B" }}>
                   <RiDeleteBin6Line
                     className="p-0 m-0 h4 flex-fill"
                     onClick={handleDeleteButtonClick}
                   />
                 </IconContext.Provider>
-                {/* )} */}
+                 )}
               </>
             )}
           </div>
