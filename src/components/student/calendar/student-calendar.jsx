@@ -33,10 +33,10 @@ function StudentCalandar() {
   useEffect(() => {
     dispatch(fetchUser())
       .then(() => {
-        setIsLoading(false); // Data fetched successfully, set loading to false
+        setIsLoading(false);
       })
       .catch((error) => {
-        setIsLoading(false); // Data fetching failed, set loading to false
+        setIsLoading(false); 
         console.error(error);
       });
   }, [dispatch]);

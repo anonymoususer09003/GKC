@@ -180,6 +180,7 @@ function InstructorCalendar() {
               <Calendar
                 onClickDay={handleCalendarClick}
                 className={calendarStyles.reactCalendar}
+                defaultValue={new Date()}
               />
             </div>
             <InstructorSchedule
