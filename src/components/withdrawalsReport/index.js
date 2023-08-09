@@ -2,7 +2,7 @@ import { apiClient } from '@/api/client';
 import { useEffect, useState } from 'react';
 import WithdrawDropdown from './Dropdown';
 import ValueInput from './valueInput';
-import "tailwindcss/tailwind.css";
+import 'tailwindcss/tailwind.css';
 
 const withdrawalsrReport = [
   {
@@ -40,7 +40,7 @@ export default function Withdrawals() {
   const getAllwithdrawals = async () => {
     let url = `/financial/logged-instructor-withdrawals`;
     try {
-      const response = await apiClient.post(url);
+      const response = await apiClient.get(url);
       setWithdrawals(response.data);
     } catch (error) {
       console.log(error);
