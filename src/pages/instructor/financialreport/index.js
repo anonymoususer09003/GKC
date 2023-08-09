@@ -65,9 +65,6 @@ function InstructorFinancialReport() {
       {activeTab === 'revenue' ? (
         <FinancialReport role="instructor" />
       ) : (
-        // <main className="container-fluid">
-        //   <div className="container"></div>
-        // </main>
         <Withdrawals />
       )}
       <Footer />

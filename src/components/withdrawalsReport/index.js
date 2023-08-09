@@ -2,6 +2,7 @@ import { apiClient } from '@/api/client';
 import { useEffect, useState } from 'react';
 import WithdrawDropdown from './Dropdown';
 import ValueInput from './valueInput';
+import "tailwindcss/tailwind.css";
 
 const withdrawalsrReport = [
   {
@@ -68,7 +69,7 @@ export default function Withdrawals() {
     }
   };
 
-  const downloadWtihDrawalsReport = async () => {
+  const downloadWithDrawalsReport = async () => {
     let url = `/financial/logged-instructor-withdrawals-pdf-report`;
     try {
       const response = await apiClient.post(url);
@@ -187,7 +188,7 @@ export default function Withdrawals() {
         <div className="absolute right-10 -bottom-12">
           <button
             type="button"
-            onClick={downloadWtihDrawalsReport}
+            onClick={downloadWithDrawalsReport}
             className="block rounded-md  bg-[#f48342] px-3 py-2 text-center text-sm font-semibold text-black shadow-sm  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           >
             Download

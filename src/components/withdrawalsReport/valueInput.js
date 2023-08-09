@@ -1,5 +1,3 @@
-import { useEffect } from 'react';
-
 export default function ValueInput({ paymentMethod, setTransferAmount }) {
   return (
     <div>
