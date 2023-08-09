@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 /* :root {
     --max-width: 1100px;
     --border-radius: 12px;
@@ -57,62 +61,179 @@ a {
 
 */
 
-* {
-    box-sizing: border-box;
-    padding: 0;
-    margin: 0;
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
-select,
-input {
-    outline: 0;
-    min-width: 200px;
+/* Firefox */
+input[type='number'] {
+  -moz-appearance: textfield;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+.event-day {
+  color: white;
+  background-color: green;
+}
+
+select {
+  outline: 0;
+  min-width: 200px;
+  -webkit-appearance: none;
+  /* WebKit-based browsers */
+  -moz-appearance: none;
+  /* Mozilla-based browsers */
+  appearance: none;
+  /* Standard */
 }
 
 .btn_primary {
-    background-color: #f48343;
-    border: 0
+  background-color: #f48343;
+  border: 0;
+}
+
+.btn_secondary {
+  background-color: #67bdf0;
+  border: 0;
+}
+
+.btn_disabled {
+  background-color: #9b9b9e;
+  border: 0;
 }
 
 .bg_primary {
-    background-color: #f48343;
+  background-color: #f48343;
 }
 
 .bg_secondary {
-    background-color: #67bdf0;
+  background-color: #67bdf0;
 }
 
 .bg_gray {
-    background-color: #5f6368;
+  background-color: #5f6368;
 }
 
 .text_primary {
-    color: #f48343;
+  color: #f48343;
 }
 
 .text_secondary {
-    color: #67bdf0;
+  color: #67bdf0;
 }
 
 .text_gray {
-    color: #c9c9c9;
+  color: #c9c9c9;
 }
 
 .border_primary {
-    border-color: #f48343;
+  border-color: #f48343 !important;
 }
 
 .border_secondary {
-    border-color: #67bdf0;
+  border-color: #67bdf0 !important;
 }
 
 .border_gray {
-    border-color: #c9c9c9;
+  border-color: #c9c9c9;
+}
+
+.rounded-10 {
+  border-radius: 20px;
+}
+
+.primary-list {
+  list-style: none;
+}
+
+.primary-list li::before {
+  content: '\2022';
+  color: #f48343;
+  font-weight: bold;
+  display: inline-block;
+  width: 0.8em;
+  margin-left: -1em;
+  font-size: 20px;
 }
 
 input::placeholder {
-    /* Chrome, Firefox, Opera, Safari 10.1+ */
-    color: #c9c9c9;
-    opacity: 1;
-    /* Firefox */
+  /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: #c9c9c9;
+  opacity: 1;
+  /* Firefox */
+}
+
+input[type='checkbox']:checked {
+  background-color: #000 !important;
+}
+
+input[type='radio']:checked {
+  background-color: #f48343 !important;
+}
+
+input[type='radio'] {
+  border: 2px solid #f48343 !important;
+}
+
+input[type='text']:focus {
+  outline: 0 !important;
+}
+
+/* React Calandar Custom CSS */
+
+.react-calendar {
+  width: 100% !important;
+  max-width: 1000px !important;
+  padding: 15px 0 !important;
+}
+
+.react-calendar__tile {
+  font-size: 22px !important;
+  padding: 35px 0 !important;
+}
+
+.react-calendar__month-view__weekdays__weekday {
+  font-size: 22px !important;
+  padding: 30px 0 !important;
+}
+
+abbr {
+  text-decoration: none !important;
+}
+
+.react-calendar__navigation {
+  font-size: 30px !important;
+}
+
+dropdown:hover dropdown-menu {
+  display: block;
+  margin-top: 0;
+}
+
+.jitsi-container {
+  height: 100% !important;
+  width: 100% !important;
+}
+
+@media only screen and (max-width: 700px) {
+  body {
+    overflow-x: hidden;
+  }
+  .w-md-100 {
+    width: 100% !important;
+  }
+  /*  input {
+        width: 100%;
+      }
+      */
+  select {
+    width: 100%;
+  }
 }
