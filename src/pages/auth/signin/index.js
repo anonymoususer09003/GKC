@@ -14,22 +14,22 @@ export default function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  useEffect(() => {
-    const onLogin = async () => {
-      try {
-        const response = await axios.post("http://34.227.65.157/auth/login", {
-          email: "nitsapath@gmail.com",
-          password: test123,
-        });
-        const accessToken = response.data.accessToken;
-        console.log(accessToken);
-      } catch (error) {
-        console.error(error);
-      }
-    };
+  // useEffect(() => {
+  //   const onLogin = async () => {
+  //     try {
+  //       const response = await axios.post("http://34.227.65.157/auth/login", {
+  //         email: "nitsapath@gmail.com",
+  //         password: test123,
+  //       });
+  //       const accessToken = response.data.accessToken;
+  //       console.log(accessToken);
+  //     } catch (error) {
+  //       console.error(error);
+  //     }
+  //   };
 
-    onLogin();
-  });
+  //   onLogin();
+  // });
 
   const onLogin = async () => {
     try {

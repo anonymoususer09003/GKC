@@ -6,16 +6,8 @@ import firebaseChatHook from "../../../hooks/firebase-chat";
 import moment from "moment";
 import { withRole } from "../../../utils/withAuthorization";
 import { useSelector } from "react-redux";
-const instructor = {
-  name: "Nouman",
-  id: 1,
-};
-
-const parent = {
-  courseId: 1,
-  name: "John",
-  id: 4,
-};
+import { fetchUser } from "@/store/actions/userActions";
+import { useDispatch } from "react-redux";
 
 function StudentMessaging() {
   const {
@@ -28,34 +20,28 @@ function StudentMessaging() {
     setNewMessage,
     newMessage,
     setChatInfo,
+    setMessages,
   } = firebaseChatHook();
 
-  console.log("my chat list", myChatList);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(fetchUser());
+  }, [dispatch]);
 
   const loggedInUser = useSelector((state) => state.user?.userInfo);
-  const student = {
-    courseId: loggedInUser?.id,
-    name: loggedInUser?.firstName,
-    id: 2,
-    parentId: 4,
-  };
 
   useEffect(() => {
-    getMyChatList(loggedInUser?.id);
-    setChatInfo({
-      sender: {
-        ...student,
-      },
-      receiver_user: {
-        ...instructor,
-      },
-      course_id: activeChat,
-    });
-  }, []);
+    if (loggedInUser) {
+      console.log("loggedinuser", loggedInUser);
+      getMyChatList(loggedInUser?.id || 51);
+    }
+  }, [loggedInUser]);
 
   const handleTextChange = (e) => {
     setNewMessage(e.target.value);
   };
+  console.log("myChatList--", myChatList);
+  console.log("active chat", activeChat);
 
   return (
     <>
@@ -73,19 +59,32 @@ function StudentMessaging() {
 
         <div className="row" style={{ minHeight: "90vh" }}>
           <div className="col-12 col-lg-3">
-            <ul className="p-0 m-0" style={{ listStyle: "none" }}>
+            <ul
+              className="p-0 m-0"
+              style={{ listStyle: "none", cursor: "pointer" }}
+            >
               {myChatList?.map((item, index) => {
+                let otherUserId = item.chatInfo.participants.filter(
+                  (id) => id != loggedInUser?.id
+                );
+                let user = item.chatInfo.userData[otherUserId[0]];
+
                 return (
                   <li
                     onClick={() => {
-                      item?.chatId != activeChat
-                        ? setActiveChat(item.chatId)
-                        : null;
+                      if (item?.chatId != activeChat) {
+                        setActiveChat(item.chatId);
+                        let filterchat = myChatList?.filter(
+                          (chat) => chat.chatId === item.chatId
+                        );
+
+                        setMessages(filterchat[0]?.messages);
+                      }
                     }}
                     key={index}
                     className="p-0 m-0 fw-bold bg-light p-3 my-3 rounded "
                   >
-                    {item?.receiver?.name}
+                    {user?.name}
                   </li>
                 );
               })}
@@ -98,13 +97,13 @@ function StudentMessaging() {
               style={{ height: "600px" }}
             >
               <div className=" p-3" style={{ minHeight: "400px" }}>
-                {messages.map((item, index) => {
+                {messages?.map((item, index) => {
                   let date = item.timestamp.seconds * 1000;
                   return (
                     <div
                       key={index}
                       className={`py-1 ${
-                        item?.user?.id == parent?.id ? "text-end" : ""
+                        item?.user?.id == loggedInUser?.id ? "text-end" : ""
                       }`}
                     >
                       <p className="p-0 m-0 fw-bold">{item.message}</p>
@@ -127,7 +126,7 @@ function StudentMessaging() {
                   className="border  p-2 rounded flex-fill"
                 />{" "}
                 <BsFillSendFill
-                  onClick={() => sendMessage({ type: "student" })}
+                  onClick={() => sendMessage({ chatId: parseInt(activeChat) })}
                   className="h3 p-0 m-0"
                 />
               </div>

@@ -19,16 +19,20 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
   const [parent2, setParent2] = useState("");
   const [courses, setCourses] = useState([]);
   const [lang, setLang] = useState([]);
-
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [address1, setAddress1] = useState("");
+  const [address2, setAddress2] = useState("");
+  const [selectedCountry, setSelectedCountry] = useState("");
+  const [selectedState, setSelectedState] = useState("");
+  const [selectedCity, setSelectedCity] = useState("");
+  const [zipCode, setZipCode] = useState("");
   const [selectedCourses, setSelectedCourses] = useState([]);
+  const [dependents, setDependents] = useState([]);
   const [selectedLang, setSelectedLang] = useState([]);
 
   let isValidForm =
-    selectedCourses.length > 0 &&
-    selectedLang.length > 0 &&
-    grade &&
-    parent1 &&
-    parent2;
+    selectedCourses.length > 0 && selectedLang.length > 0 && grade;
 
   const navigation = useRouter();
   // const onSaveProfile = () => {
@@ -46,7 +50,6 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
       aa.push({ courseId: v.value, proficiencyId: v.proficiencyId.id });
     });
     try {
-      var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
       const response = await apiClient.put("/user/student/update", {
         userId: userInfo.id,
         email: userInfo.email,
@@ -67,7 +70,7 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
         courseOfInterestAndProficiency: aa,
         languagePreferencesId: ln,
       });
-      // console.log(response);
+      console.log(response);
       // setCountries(response.data);
       navigation.push("/student/settingprofile");
     } catch (error) {
@@ -403,7 +406,7 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
                             <div className="col-md-4 item">
                               <select
                                 className="w-100 p-2 rounded outline-0 border border_gray"
-                                value={v.proficiencyId.id}
+                                value={v?.proficiencyId?.id}
                                 onChange={(e) => {
                                   const selectedProficiencyId = Number(
                                     e.target.value

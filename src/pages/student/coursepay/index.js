@@ -7,11 +7,11 @@ import { withRole } from "../../../utils/withAuthorization";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUser } from "@/store/actions/userActions";
-
+import SendEmailToParents from "@/services/StudentScheduler/SendEmailToParents";
 function StudentRegistrationCCPay() {
   const navigation = useRouter();
   const dispatch = useDispatch();
-  console.log("navigation query", navigation.query);
+
   const {
     start,
     durationInHours,
@@ -22,7 +22,7 @@ function StudentRegistrationCCPay() {
     eventInPerson,
   } = navigation.query;
 
-  const [whoPaysId, setWhoPaysId] = useState(studentId);
+  const [whoPaysId, setWhoPaysId] = useState("Select");
   const [savePaymentFutureUse, setSavePaymentFutureUse] = useState(false);
   const [confirmPayment, setConfirmPayment] = useState(false);
   const [isCardValid, setIsCardValid] = useState(false);
@@ -30,7 +30,7 @@ function StudentRegistrationCCPay() {
   const [paymentStatus, setPaymentStatus] = useState("");
 
   const [nameCard, setNameCard] = useState("");
-
+  console.log("log", userInfo);
   useEffect(() => {
     dispatch(fetchUser());
   }, [dispatch]);
@@ -42,13 +42,13 @@ function StudentRegistrationCCPay() {
         `http://34.227.65.157/event/create-class-saved-payment-method`,
         {
           start: start,
-          durationInHours: durationInHours,
+          durationInHours: parseInt(durationInHours),
           classFrequency: classFrequency,
-          courseId: courseId,
-          studentId: studentId,
-          whoPaysId: studentId,
-          instructorId: instructorId,
-          eventInPerson: eventInPerson,
+          courseId: parseInt(courseId),
+          studentId: parseInt(studentId),
+          whoPaysId: parseInt(whoPaysId),
+          instructorId: parseInt(instructorId),
+          eventInPerson: JSON.parse(eventInPerson),
         },
         {
           headers: {
@@ -56,6 +56,23 @@ function StudentRegistrationCCPay() {
           },
         }
       );
+    } catch (error) {
+      console.error("Error fetching profile data:", error);
+    }
+  };
+
+  const sendEmailToWhoPays = async () => {
+    try {
+      const res = await SendEmailToParents({
+        start: start,
+        durationInHours: parseInt(durationInHours),
+        classFrequency: classFrequency,
+        courseId: parseInt(courseId),
+        studentId: parseInt(studentId),
+        whoPaysId: parseInt(whoPaysId),
+        instructorId: parseInt(instructorId),
+        eventInPerson: JSON.parse(eventInPerson),
+      });
     } catch (error) {
       console.error("Error fetching profile data:", error);
     }
@@ -73,7 +90,7 @@ function StudentRegistrationCCPay() {
             classFrequency: classFrequency,
             courseId: parseInt(courseId),
             studentId: parseInt(studentId),
-            whoPaysId: parseInt(whoPaysId),
+            whoPaysId: parseInt(studentId),
             instructorId: parseInt(instructorId),
             eventInPerson: JSON.parse(eventInPerson),
           },
@@ -112,6 +129,7 @@ function StudentRegistrationCCPay() {
     //   scheduleNoSaved();
     // }
   };
+  console.log("who payds", whoPaysId);
 
   return (
     <>
@@ -159,11 +177,15 @@ function StudentRegistrationCCPay() {
                     onChange={(e) => setWhoPaysId(e.target.value)}
                   >
                     <option>Select</option>
-                    {userInfo?.emailParent1 && (
-                      <option value="1">{userInfo?.emailParent1}</option>
+                    {userInfo?.parents?.length > 0 && (
+                      <option value={userInfo?.parents[0]?.id}>
+                        {userInfo?.parents[0]?.email}
+                      </option>
                     )}
-                    {userInfo?.emailParent2 && (
-                      <option value="2">{userInfo?.emailParent2}</option>
+                    {userInfo?.parents?.length > 1 && (
+                      <option value={userInfo?.parents[1]?.email}>
+                        {userInfo?.parents[1]?.email}
+                      </option>
                     )}
                   </select>
                 </div>
@@ -203,10 +225,24 @@ function StudentRegistrationCCPay() {
                 <div className="d-flex gap-2 justify-content-center mt-3">
                   <button
                     className={`w-50 btn_primary text-light p-2 rounded fw-bold bg-gray-300 ${
-                      !nameCard || !isCardValid ? "btn_disabled" : "btn_primary"
+                      whoPaysId === "Select"
+                        ? "btn_disabled"
+                        : !nameCard || !isCardValid
+                        ? "btn_disabled"
+                        : "btn_primary"
                     }`}
-                    disabled={!nameCard || !isCardValid}
-                    onClick={() => setConfirmPayment(true)}
+                    // disabled={
+                    //   whoPaysId === "Select"
+                    //     ? true
+                    //     : !nameCard || !isCardValid
+                    //     ? true
+                    //     : false
+                    // }
+                    onClick={() => {
+                      whoPaysId === "Select"
+                        ? setConfirmPayment(true)
+                        : sendEmailToWhoPays();
+                    }}
                   >
                     Pay
                   </button>

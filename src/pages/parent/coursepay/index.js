@@ -7,6 +7,7 @@ import { withRole } from "../../../utils/withAuthorization";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUser } from "@/store/actions/userActions";
+import moment from "moment";
 
 function StudentRegistrationCCPay() {
   const navigation = useRouter();
@@ -41,8 +42,9 @@ function StudentRegistrationCCPay() {
       const res = await axios.post(
         `http://34.227.65.157/event/create-class-saved-payment-method`,
         {
-          start: start,
-          durationInHours: durationInHours,
+          start: start || "2023-11-11 23:59",
+          durationInHours:
+            parseInt(durationInHours) === 0 ? parseInt(durationInHours) : 1,
           classFrequency: classFrequency,
           courseId: courseId,
           studentId: studentId,
@@ -68,12 +70,14 @@ function StudentRegistrationCCPay() {
         `http://34.227.65.157/event/create-class-no-saved-payment-method`,
         {
           classDto: {
-            start: start,
-            durationInHours: parseInt(durationInHours),
+            start: start || "2023-11-11 23:59",
+            durationInHours: parseInt(
+              durationInHours === 0 ? 1 : durationInHours
+            ),
             classFrequency: classFrequency,
-            courseId: parseInt(courseId),
+            courseId: parseInt(courseId || 0),
             studentId: parseInt(studentId),
-            whoPaysId: parseInt(whoPaysId),
+            whoPaysId: parseInt(whoPaysId ? whoPaysId : 0),
             instructorId: parseInt(instructorId),
             eventInPerson: JSON.parse(eventInPerson),
           },
@@ -88,6 +92,8 @@ function StudentRegistrationCCPay() {
           },
         }
       );
+
+      navigation.push("/parent/calandar");
     } catch (error) {
       console.error("Error fetching profile data:", error);
     }
@@ -98,10 +104,11 @@ function StudentRegistrationCCPay() {
     // Do something with the value in the parent component
   };
   const handlePaymentRequest = (data) => {
-    console.log("data", data);
     if (data.status === "succeeded") {
       // scheduleSaved();
-      scheduleNoSaved(data);
+      let payload = { ...data };
+      payload.status = "Succeeded";
+      scheduleNoSaved(payload);
     } else {
       alert("Payment Failed");
     }
@@ -148,11 +155,6 @@ function StudentRegistrationCCPay() {
                     <p className="p-0 m-0 fw-bold">{durationInHours}</p>
                   </div>
                 </div>
-                <h5 className="text-dark fw-bold">
-                  Who pays for this tutoring?
-                </h5>
-
-            
 
                 <h5 className="text-dark fw-bold">Use saved Credit Card?</h5>
 
@@ -168,7 +170,13 @@ function StudentRegistrationCCPay() {
                   onValueReceived={handleValueReceived}
                   onPay={confirmPayment}
                   userInfo={userInfo}
-                  data={{ instructorId, durationInHours, whoPaysId }}
+                  data={{
+                    instructorId: parseInt(instructorId),
+                    durationInHours: parseInt(
+                      durationInHours == 0 ? 1 : durationInHours
+                    ),
+                    whoPaysId,
+                  }}
                   onPaymentRequest={handlePaymentRequest}
                   oneTimePayment={true}
                   savePaymentFutureUse={savePaymentFutureUse}
@@ -186,6 +194,7 @@ function StudentRegistrationCCPay() {
                     Save the payment information for future use
                   </label>
                 </div>
+                {console.log("iscard vlid", isCardValid)}
                 <div className="d-flex gap-2 justify-content-center mt-3">
                   <button
                     className={`w-50 btn_primary text-light p-2 rounded fw-bold bg-gray-300 ${

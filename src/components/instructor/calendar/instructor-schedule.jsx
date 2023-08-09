@@ -8,9 +8,10 @@ import { useRouter } from "next/router";
 import moment from "moment";
 import FirebaseChat from "../../../hooks/firebase-chat";
 import axios from "axios";
-
+import { useSelector } from "react-redux";
 const InstructorSchedule = (props) => {
   const router = useRouter();
+  const loggedInUser = useSelector((state) => state.user.userInfo);
   const navigation = useRouter();
   const { sendMessage, messages, setChatInfo, setNewMessage, newMessage } =
     FirebaseChat();
@@ -45,8 +46,8 @@ const InstructorSchedule = (props) => {
   //MESSAGES ALSO PROBABLY NEEDS TO BE CHECKED --- MESSAGE
 
   const instructor = {
-    name: "Nouman",
-    id: 1,
+    name: loggedInUser?.firstName,
+    id: loggedInUser?.id,
   };
 
   const student = {
@@ -73,7 +74,7 @@ const InstructorSchedule = (props) => {
       course_id: chatId,
     });
   };
-
+  console.log("logged in user,", loggedInUser);
   const handleTextChange = (e) => {
     setNewMessage(e.target.value);
   };
@@ -97,7 +98,7 @@ const InstructorSchedule = (props) => {
             ) : (
               <>
                 <h6 className="p-0 m-0 flex-fill fw-bold flex-fill">
-                  {props.instructorName}
+                  {props.studentName}
                 </h6>
                 <h6 className="p-0 m-0 flex-fill fw-bold flex-fill">
                   {props.start}{" "}
@@ -105,7 +106,7 @@ const InstructorSchedule = (props) => {
                 <h6 className="p-0 m-0 flex-fill fw-bold flex-fill">
                   {props.courseName}
                 </h6>
-                {props.instructorId && (
+                {loggedInUser?.id && (
                   <IconContext.Provider value={{ color: "#1677d2" }}>
                     <BsFillChatFill
                       className="p-0 m-0 flex-fill h4 flex-fill"
@@ -122,19 +123,21 @@ const InstructorSchedule = (props) => {
                     <GoDeviceCameraVideo
                       className="p-0 m-0 flex-fill h4 flex-fill"
                       onClick={() =>
-                        navigation.push(`/instructor/video?${"eventname"}`)
+                        navigation.push(
+                          `/instructor/video?${props?.courseName}`
+                        )
                       }
                     />
                   </IconContext.Provider>
                 )}
-                 {props.deleteable && ( 
-                <IconContext.Provider value={{ color: "#48494B" }}>
-                  <RiDeleteBin6Line
-                    className="p-0 m-0 h4 flex-fill"
-                    onClick={handleDeleteButtonClick}
-                  />
-                </IconContext.Provider>
-                 )}
+                {props.deleteable && (
+                  <IconContext.Provider value={{ color: "#48494B" }}>
+                    <RiDeleteBin6Line
+                      className="p-0 m-0 h4 flex-fill"
+                      onClick={handleDeleteButtonClick}
+                    />
+                  </IconContext.Provider>
+                )}
               </>
             )}
           </div>
@@ -193,7 +196,9 @@ const InstructorSchedule = (props) => {
                     className="border  p-2 rounded flex-fill"
                   />{" "}
                   <BsFillSendFill
-                    onClick={() => sendMessage({ type: "student" })}
+                    onClick={() =>
+                      sendMessage({ type: "instructor", chatId: props.eventId })
+                    }
                     className="h3 p-0 m-0"
                   />
                 </div>

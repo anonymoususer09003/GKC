@@ -4,8 +4,10 @@ import { TutorNavbar, Footer } from "../../../components";
 import { BsFillSendFill } from "react-icons/bs";
 import firebaseChatHook from "../../../hooks/firebase-chat";
 import moment from "moment";
-import { withRole } from '../../../utils/withAuthorization';
-
+import { withRole } from "../../../utils/withAuthorization";
+import { useSelector } from "react-redux";
+import { fetchUser } from "@/store/actions/userActions";
+import { useDispatch } from "react-redux";
 function InstructorMessaging() {
   const {
     sendMessage,
@@ -17,32 +19,21 @@ function InstructorMessaging() {
     setNewMessage,
     newMessage,
     setChatInfo,
+    setMessages,
   } = firebaseChatHook();
-
-  const instructor = {
-    name: "Nouman",
-    id: 1,
-  };
-
-  const student = {
-    courseId: 1,
-    name: "John",
-    id: 2,
-    parentId: 4,
-  };
+  const loggedInUser = useSelector((state) => state.user?.userInfo);
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    getMyChatList(instructor.id);
-    setChatInfo({
-      sender: {
-        ...instructor,
-      },
-      receiver_user: {
-        ...student,
-      },
-      course_id: activeChat,
-    });
-  }, []);
+    dispatch(fetchUser());
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (loggedInUser) {
+      console.log("loggedinuser", loggedInUser);
+      getMyChatList(loggedInUser?.id || 51);
+    }
+  }, [loggedInUser]);
 
   const handleTextChange = (e) => {
     setNewMessage(e.target.value);
@@ -66,12 +57,21 @@ function InstructorMessaging() {
           <div className="col-12 col-lg-3">
             <ul className="p-0 m-0" style={{ listStyle: "none" }}>
               {myChatList?.map((item, index) => {
+                let otherUserId = item.chatInfo.participants.filter(
+                  (id) => id != loggedInUser?.id
+                );
+                let user = item.chatInfo.userData[otherUserId[0]];
                 return (
                   <li
                     onClick={() => {
-                      item?.chatId != activeChat
-                        ? setActiveChat(item.chatId)
-                        : null;
+                      if (item?.chatId != activeChat) {
+                        setActiveChat(item.chatId);
+                        let filterchat = myChatList?.filter(
+                          (chat) => chat.chatId === item.chatId
+                        );
+
+                        setMessages(filterchat[0]?.messages);
+                      }
                     }}
                     key={index}
                     className="p-0 m-0 fw-bold bg-light p-3 my-3 rounded "
@@ -95,7 +95,7 @@ function InstructorMessaging() {
                     <div
                       key={index}
                       className={`py-1 ${
-                        item?.user?.id == instructor?.id ? "text-end" : ""
+                        item?.user?.id == loggedInUser?.id ? "text-end" : ""
                       }`}
                     >
                       <p className="p-0 m-0 fw-bold">{item.message}</p>
@@ -119,7 +119,7 @@ function InstructorMessaging() {
                   className="border  p-2 rounded flex-fill"
                 />{" "}
                 <BsFillSendFill
-                  onClick={() => sendMessage({ type: "instructor" })}
+                  onClick={() => sendMessage({ chatId: parseInt(activeChat) })}
                   className="h3 p-0 m-0"
                 />
               </div>
@@ -132,4 +132,4 @@ function InstructorMessaging() {
   );
 }
 
-export default withRole(InstructorMessaging, ['Instructor']);
+export default withRole(InstructorMessaging, ["Instructor"]);

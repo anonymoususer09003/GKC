@@ -8,24 +8,26 @@ import { connect } from "react-redux";
 import calendarStyles from "../../../styles/Calendar.module.css";
 import axios from "axios";
 import styles from "../../../styles/Home.module.css";
-import { RRule } from 'rrule';
+import { RRule } from "rrule";
 import { fetchUser } from "../../../store/actions/userActions";
 import { apiClient } from "@/api/client";
-import { useDispatch } from 'react-redux';
+import { useDispatch } from "react-redux";
 
 function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
   const router = useRouter();
   const { instructorId } = router.query;
+
+  console.log("router query", router.query);
   const [instructorCourses, setInstructorCourses] = useState([]);
   const [selectedMode, setSelectedMode] = useState("");
   const [instId, setInstId] = useState(instructorId);
-  const [instructorData, setInstructorData] = useState({});
+  const [instructorData, setInstructorData] = useState();
   const [courseDuration, setCourseDuration] = useState(null);
   const [courseId, setCourseId] = useState(null);
   const [classFrequency, setClassFrequency] = useState("");
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [unavailableDates, setUnavailableDates] = useState([]);
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(true);
   const [availableTime, setAvailableTime] = useState([]);
   const [selectedSlots, setSelectedSlots] = useState([]);
   const [time, setTime] = useState();
@@ -33,9 +35,9 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
 
   const dispatch = useDispatch();
 
- useEffect(() => {
-  fetchUser()
- },[])
+  useEffect(() => {
+    fetchUser();
+  }, []);
 
   //Get Courses
   const getCourses = async () => {
@@ -59,7 +61,7 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
   //Fetch user details from redux
   useEffect(() => {
     setInstId(instructorId);
-  }, []);
+  }, [instructorId]);
 
   //get Instructor Data
 
@@ -69,7 +71,7 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
         var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
 
         const response = await axios.get(
-          `http://34.227.65.157/instructor/details-for-scheduling?instructorId=${instId}`,
+          `http://34.227.65.157/instructor/details-for-scheduling?instructorId=${instructorId}`,
           {
             headers: {
               Authorization: `Bearer ${typ.accessToken}`,
@@ -81,71 +83,66 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
         console.log(error);
       }
     };
-    if (instructorId) {
-      getInstructorData();
-    }
-  }, []);
+    if (instructorId) getInstructorData(instructorId);
+  }, [instructorId]);
 
   useEffect(() => {
-      const getUnavailableDate = async () => {
-        try {
-          
-          const response = await apiClient.get(
-            `/instructor/unavailable-days-in-UTC-TimeZone?instructorId=22`
-          );
-        
-          console.log(response.data)
-         setUnavailableDates(response.data);
+    const getUnavailableDate = async () => {
+      try {
+        const response = await apiClient.get(
+          `/instructor/unavailable-days-in-UTC-TimeZone?instructorId=22`
+        );
+
+        console.log(response.data);
+        setUnavailableDates(response.data);
 
         setIsLoading(false);
-        } catch (error) {
-          console.log(error);
-        }
-      };
-  
-      getUnavailableDate();
-    }, []);
-
-
-const isDateUnavailable = (date) => {
-      return unavailableDates.some((unavailableDate) => {
-        const startDate = new Date(unavailableDate.start);
-        const endDate = new Date(unavailableDate.end);
-        return date >= startDate && date <= endDate;
-      });
-    };
-  
-    const tileDisabled = ({ date }) => {
-      return isDateUnavailable(date);
-    };
-  
-    //apply styles for unavailableDate
-    const tileClassName = ({ date, view }) => {
-      if (view === 'month') {
-        if (isDateUnavailable(date)) {
-          return {
-            backgroundColor: 'gray',
-            color: 'black',
-          };
-        }
+      } catch (error) {
+        console.log(error);
       }
-      return null;
     };
 
+    getUnavailableDate();
+  }, []);
 
-    const handleModeChange = (event) => {
-      setSelectedMode(event.target.value);
-    };
-    //Get course duration
-    const handleDuration = (e) => {
-      setCourseDuration(e.target.value);
-    };
-  
-    const handleCourseId = (event) => {
-      setCourseId(event.target.value);
-    };
+  const isDateUnavailable = (date) => {
+    return unavailableDates.some((unavailableDate) => {
+      const startDate = new Date(unavailableDate.start);
+      const endDate = new Date(unavailableDate.end);
+      return date >= startDate && date <= endDate;
+    });
+  };
 
- const handleDateChange = async (clickedDate) => {
+  const tileDisabled = ({ date }) => {
+    return isDateUnavailable(date);
+  };
+
+  //apply styles for unavailableDate
+  const tileClassName = ({ date, view }) => {
+    if (view === "month") {
+      if (isDateUnavailable(date)) {
+        return {
+          backgroundColor: "gray",
+          color: "black",
+        };
+      }
+    }
+    return null;
+  };
+
+  const handleModeChange = (event) => {
+    setSelectedMode(event.target.value);
+  };
+  //Get course duration
+  const handleDuration = (e) => {
+    setCourseDuration(e.target.value);
+  };
+
+  const handleCourseId = (event) => {
+    setCourseId(event.target.value);
+  };
+
+  const handleDateChange = async (clickedDate) => {
     const dateObj = new Date(clickedDate);
     const year = dateObj.getFullYear();
     const month = String(dateObj.getMonth() + 1).padStart(2, "0");
@@ -153,21 +150,21 @@ const isDateUnavailable = (date) => {
     const hours = String(dateObj.getHours()).padStart(2, "0");
     const minutes = String(dateObj.getMinutes()).padStart(2, "0");
     const formattedDateStr = `${year}-${month}-${day}`;
-  
+
     setSelectedDate(formattedDateStr);
-  
+
     try {
       const response = await apiClient.get(
         `/instructor/available-time-slots-from-date?instructorId=22&date=${formattedDateStr}`
       );
-  
+
       const timeSlots = response.data.map((slot) => ({
         start: new Date(slot.start),
         end: new Date(slot.end),
       }));
-  
+
       const isOnTheHour = (date) => date.getMinutes() === 0;
-  
+
       // Create one-hour intervals for each time slot
       const formattedTimeSlots = [];
       timeSlots.forEach((slot) => {
@@ -178,7 +175,7 @@ const isDateUnavailable = (date) => {
           });
         }
       });
-  
+
       setAvailableTime(formattedTimeSlots);
       console.log(formattedTimeSlots, "formatted time slots");
     } catch (error) {
@@ -190,8 +187,6 @@ const isDateUnavailable = (date) => {
     getCourses();
   }, []);
 
-
-  
   const handleSlotClick = (slot) => {
     setSelectedSlots((prevSelectedSlots) => {
       const isSlotSelected = prevSelectedSlots.some(
@@ -199,52 +194,56 @@ const isDateUnavailable = (date) => {
           selectedSlot.start.getTime() === slot.start.getTime() &&
           selectedSlot.end.getTime() === slot.end.getTime()
       );
-  
+
       if (isSlotSelected) {
         setDuration((prevDuration) => prevDuration - 1);
-  
+
         const updatedSelectedSlots = prevSelectedSlots.filter(
           (selectedSlot) =>
             selectedSlot.start.getTime() !== slot.start.getTime() ||
             selectedSlot.end.getTime() !== slot.end.getTime()
         );
-  
-        setTime(updatedSelectedSlots.length > 0 ? updatedSelectedSlots[0] : null);
-  
+
+        setTime(
+          updatedSelectedSlots.length > 0 ? updatedSelectedSlots[0] : null
+        );
+
         return updatedSelectedSlots;
       } else {
         setDuration((prevDuration) => prevDuration + 1);
-  
+
         if (!time) {
-          const date = new Date(slot.start)
-          const formattedDateStr = date.toISOString().slice(0, 16).replace('T', ' ');
-  
+          const date = new Date(slot.start);
+          const formattedDateStr = date
+            .toISOString()
+            .slice(0, 16)
+            .replace("T", " ");
+
           setTime(formattedDateStr);
-  
         }
-  
+
         return [...prevSelectedSlots, slot];
       }
     });
-  
   };
-  
-  
-      const handleContinue = () => {
-        const data = {
-          start: time,
-          durationInHours: duration,
-          classFrequency: classFrequency,
-          courseId: courseId,
-          studentId: userInfo.id,
-          instructorId: instructorId,
-          eventInPerson: selectedMode == "In-Person" ? true : false,
-        };
-        router.push({
-          pathname: "/parent/coursepay",
-          query: data,
-      });
-      };
+
+  const handleContinue = () => {
+    const data = {
+      start: time,
+      durationInHours: duration,
+      classFrequency: classFrequency,
+      courseId: courseId,
+      studentId: userInfo.id,
+      instructorId: instructorId,
+      eventInPerson: selectedMode == "In-Person" ? true : false,
+    };
+
+    console.log("class frequency", classFrequency);
+    router.push({
+      pathname: "/student/coursepay",
+      query: data,
+    });
+  };
 
   return (
     <>
@@ -255,20 +254,19 @@ const isDateUnavailable = (date) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Navbar isLogin={true} />
-         {isLoading && (
-             <div className="d-flex justify-content-center">
-             <div className="spinner-border text-primary" role="status">
-             </div>
-           </div>
+      {isLoading && (
+        <div className="d-flex justify-content-center">
+          <div className="spinner-border text-primary" role="status"></div>
+        </div>
       )}
       <main className="container-fluid">
         <div className="row" style={{ minHeight: "90vh" }}>
           <div className="col-12 col-lg-6 pt-5">
             <Calendar
-               value={selectedDate} 
-               onChange={handleDateChange}
-               tileClassName={tileClassName} 
-               tileDisabled={tileDisabled}
+              value={selectedDate}
+              onChange={handleDateChange}
+              tileClassName={tileClassName}
+              tileDisabled={tileDisabled}
             />
           </div>
           <div className="col-12 col-lg-6 pt-5">
@@ -281,24 +279,25 @@ const isDateUnavailable = (date) => {
                 <div className="w-100 ">
                   <p className="p-0 m-0 fw-bold pb-2">Select time</p>
                   <ul>
-                 {availableTime.map((slot, index) => (
-                   <li
-                     key={index}
-                     className={`m-03 py-1 fw-bold list-unstyled ${
-                       selectedSlots.some(
-                         (selectedSlot) =>
-                           selectedSlot.start.getTime() === slot.start.getTime() &&
-                           selectedSlot.end.getTime() === slot.end.getTime()
-                       )
-                         ? "bg-secondary text-white"
-                         : ""
-                     }`}
-                     onClick={() => handleSlotClick(slot)}
-                   >
-                     {`${slot.start.toLocaleTimeString()} - ${slot.end.toLocaleTimeString()}`}
-                   </li>
-                 ))}
-               </ul>
+                    {availableTime.map((slot, index) => (
+                      <li
+                        key={index}
+                        className={`m-03 py-1 fw-bold list-unstyled ${
+                          selectedSlots.some(
+                            (selectedSlot) =>
+                              selectedSlot.start.getTime() ===
+                                slot.start.getTime() &&
+                              selectedSlot.end.getTime() === slot.end.getTime()
+                          )
+                            ? "bg-secondary text-white"
+                            : ""
+                        }`}
+                        onClick={() => handleSlotClick(slot)}
+                      >
+                        {`${slot.start.toLocaleTimeString()} - ${slot.end.toLocaleTimeString()}`}
+                      </li>
+                    ))}
+                  </ul>
                 </div>
                 <div className=" w-100">
                   <p className="p-0 m-0 fw-bold text-center py-2">
@@ -431,9 +430,9 @@ const isDateUnavailable = (date) => {
               <div className="d-flex gap-2 justify-content-center pt-5">
                 <button
                   className={`w-25 text-light p-2 rounded fw-bold  ${
-                    !classFrequency ? "btn_disabled" : "btn_primary"
+                    !classFrequency || !time ? "btn_disabled" : "btn_primary"
                   }`}
-                  disabled={!classFrequency ? true : false}
+                  disabled={!classFrequency || !time ? true : false}
                   onClick={() => handleContinue()}
                 >
                   Schedule
@@ -458,4 +457,3 @@ export default withRole(
   connect(mapStateToProps, { fetchUser })(StudentScheduleClass),
   ["Student"]
 );
-

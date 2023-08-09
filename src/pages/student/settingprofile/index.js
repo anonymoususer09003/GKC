@@ -58,13 +58,17 @@ function SettingProfle({ userInfo, loading, error, fetchUser }) {
                   <p className="p-0 m-0 py-2 fw-bold">Parent1/guardian1</p>
                   <div className="d-flex gap-1 align-items-center gap-2 pb-3 ">
                     <MdEmail className="h5 p-0 m-0" />
-                    {userInfo?.emailParent1}
+                    {userInfo?.parents.length > 0
+                      ? userInfo?.parents[0]?.email
+                      : 0}
                   </div>
                   <p className="p-0 m-0 py-2 fw-bold">Parent2/guardian2</p>
 
                   <div className="d-flex gap-1 align-items-center gap-2 pb-3 ">
                     <MdEmail className="h5 p-0 m-0" />
-                    {userInfo?.emailParent2}
+                    {userInfo?.parents.length > 1
+                      ? userInfo?.parents[1]?.email
+                      : 0}
                   </div>
                   <hr className="bg_secondary" />
 

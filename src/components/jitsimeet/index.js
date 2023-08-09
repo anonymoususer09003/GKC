@@ -1,6 +1,8 @@
 import { useEffect, useRef } from "react";
 import { JaaSMeeting } from "@jitsi/react-sdk";
+import { useSelector } from "react-redux";
 const JitsiMeetComponent = ({ user, roomName }) => {
+  const loggedInUser = useSelector((state) => state.user.userInfo);
   return (
     <main className="container-fluid jitsi-container ">
       <div
@@ -26,7 +28,7 @@ const JitsiMeetComponent = ({ user, roomName }) => {
               SHOW_BRAND_WATERMARK: false,
             }}
             userInfo={{
-              displayName: user?.name,
+              displayName: loggedInUser?.firstName || "",
             }}
             onApiReady={(externalApi) => {
               // here you can attach custom event listeners to the Jitsi Meet External API

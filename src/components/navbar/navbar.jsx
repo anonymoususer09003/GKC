@@ -8,7 +8,6 @@ import onSignOut from "@/utils/signOut";
 import LogoutTimer from "../common/signOutTimer";
 import { useDispatch, useSelector } from "react-redux";
 
-
 const Navbar = ({ isLogin }) => {
   const [value, setValue] = useState(false);
   const [role, setRole] = useState("student");
@@ -20,7 +19,6 @@ const Navbar = ({ isLogin }) => {
     setValue(stored ? JSON.parse(stored) : false);
     setRole(data?.role?.toLowerCase());
   }, []);
-
 
   return (
     <>
@@ -52,7 +50,7 @@ const Navbar = ({ isLogin }) => {
               {value && (
                 <>
                   <li className="nav-item">
-                    <a className="nav-link" href="/student/calandar">
+                    <a className="nav-link" href={`/${role}/calandar`}>
                       <FcCalendar style={{ fontSize: "30px" }} />
                     </a>
                   </li>

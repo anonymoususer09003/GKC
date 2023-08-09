@@ -10,8 +10,7 @@ import calendarStyles from "../../../styles/Calendar.module.css";
 import StudentSchedule from "./schedule";
 import { apiClient, base_url } from "../../../api/client";
 import { fetchUser } from "@/store/actions/userActions";
-import { useDispatch } from 'react-redux';
-
+import { useDispatch } from "react-redux";
 
 function StudentCalandar() {
   const [events, setEvents] = useState([]);
@@ -26,7 +25,8 @@ function StudentCalandar() {
   const [noEvent, setNoEvent] = useState(false);
   const [eventId, setEventId] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-
+  const [parentsId, setParentId] = useState(null);
+  const [studentDetail, setStudentDetail] = useState(null);
 
   const dispatch = useDispatch();
 
@@ -36,7 +36,7 @@ function StudentCalandar() {
         setIsLoading(false);
       })
       .catch((error) => {
-        setIsLoading(false); 
+        setIsLoading(false);
         console.error(error);
       });
   }, [dispatch]);
@@ -116,6 +116,11 @@ function StudentCalandar() {
 
       if (matchedBookedEvent) {
         console.log("matchedBook event", matchedBookedEvent);
+        setStudentDetail({
+          name: matchedBookedEvent?.studentName,
+          id: matchedBookedEvent?.studentId,
+        });
+        setParentId(matchedBookedEvent?.parentsId);
         setInstructorName(matchedBookedEvent.instructorName);
         setEventTime(matchedBookedEvent.start.split(" ")[1]);
         setDeleteable(matchedBookedEvent.deleteable);
@@ -127,6 +132,8 @@ function StudentCalandar() {
         setEventId(matchedBookedEvent.id);
       } else {
         // Clear the states when a matching booked event is not found
+        setStudentDetail(null);
+        setParentId(null);
         setNoEvent(true);
         setInstructorName("");
         setEventTime("");
@@ -154,9 +161,8 @@ function StudentCalandar() {
       <main className="container">
         {isLoading && (
           <div className="d-flex justify-content-center">
-          <div className="spinner-border" role="status">
+            <div className="spinner-border" role="status"></div>
           </div>
-        </div>
         )}
         <div className={`row ${styles.calendarWrapper}`}>
           <div className="col-12 col-lg-6 pt-5 react-calendar-text-red">
@@ -183,5 +189,3 @@ function StudentCalandar() {
 }
 
 export default withRole(StudentCalandar, ["Student"]);
-
-

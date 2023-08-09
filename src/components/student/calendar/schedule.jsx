@@ -11,15 +11,12 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import { base_url } from "../../../api/client";
 
-
-
 const StudentSchedule = (props) => {
   const navigation = useRouter();
   const loggedInUser = useSelector((state) => state.user.userInfo);
   const { sendMessage, messages, setChatInfo, setNewMessage, newMessage } =
     FirebaseChat();
   const [enabledCamera, setEnabledCamera] = useState(false);
-
 
   const deleteSingleOccurrence = async (eventId, dateToCancel) => {
     try {
@@ -32,8 +29,6 @@ const StudentSchedule = (props) => {
           },
         }
       );
-
-      console.log("Event deletion successful:", response.data);
     } catch (error) {
       console.log("Error deleting event:", error);
     }
@@ -58,15 +53,10 @@ const StudentSchedule = (props) => {
     courseId: props?.eventId,
     name: loggedInUser?.firstName,
     id: loggedInUser?.id,
-    parentId: 0 || loggedInUser?.parents,
+    parentId: props?.studentParents || 0,
   };
 
-  const parent = {
-    courseId: 1,
-    name: "John",
-    id: 4,
-  };
-
+  console.log("loggesinduser", loggedInUser);
   const openChat = (chatId) => {
     setChatInfo({
       sender: {
@@ -75,14 +65,14 @@ const StudentSchedule = (props) => {
       receiver_user: {
         ...instructor,
       },
-      course_id: chatId,
+      chatId,
     });
   };
 
   const handleTextChange = (e) => {
     setNewMessage(e.target.value);
   };
-  
+  console.log("props", props);
   return (
     <>
       <div className="col-12 col-lg-6">
@@ -92,7 +82,7 @@ const StudentSchedule = (props) => {
           style={{ minHeight: "400px" }}
         >
           <div
-            onClick={() => openChat(1)}
+            onClick={() => openChat(props?.eventId)}
             className="d-flex align-items-center py-3 gap-2"
           >
             {props.noEvent ? (
@@ -122,7 +112,7 @@ const StudentSchedule = (props) => {
                   <GoDeviceCameraVideo
                     className="p-0 m-0 flex-fill h4 flex-fill"
                     onClick={() =>
-                      navigation.push(`/student/video?${"eventname"}`)
+                      navigation.push(`/student/video?${props?.courseName}`)
                     }
                   />
                 )}
@@ -166,7 +156,7 @@ const StudentSchedule = (props) => {
                       <div
                         key={index}
                         className={`py-1 ${
-                          item?.user?.id == parent?.id ? "text-end" : ""
+                          item?.user?.id == student?.id ? "text-end" : ""
                         }`}
                       >
                         <p className="p-0 m-0 fw-bold">{item.message}</p>
@@ -190,7 +180,9 @@ const StudentSchedule = (props) => {
                     className="border  p-2 rounded flex-fill"
                   />{" "}
                   <BsFillSendFill
-                    onClick={() => sendMessage({ type: "student" })}
+                    onClick={() =>
+                      sendMessage({ type: "student", chatId: props.eventId })
+                    }
                     className="h3 p-0 m-0"
                   />
                 </div>

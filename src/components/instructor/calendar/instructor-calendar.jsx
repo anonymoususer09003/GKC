@@ -19,8 +19,6 @@ import InstructorSchedule from "./instructor-schedule";
 import calendarStyles from "../../../styles/Calendar.module.css";
 import { base_url, apiClient } from "../../../api/client";
 
-
-
 function InstructorCalendar() {
   const navigation = useRouter();
 
@@ -39,17 +37,19 @@ function InstructorCalendar() {
   const [courseName, setCourseName] = useState("");
   const [singleIcalEvent, setSingleIcalEvent] = useState({});
   const [studentId, setStudentId] = useState("");
+  const [studentDetail, setStudentDetail] = useState(null);
+  const [parentsId, setParentId] = useState(null);
+  const [courseId, setCourseId] = useState("");
+  const [instructorName, setInstructorName] = useState("");
 
- 
-   
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(fetchUser());
-  }, [dispatch]); 
-  
+  }, [dispatch]);
+
   const loggedInUser = useSelector((state) => state.user.userInfo);
-  
+
   const onContinue = () => {
     navigation.push("/instructor/video");
   };
@@ -136,24 +136,38 @@ function InstructorCalendar() {
         (singleBooked) => singleBooked.id == selectedIcalEvent["EVENT-ID"]
       );
       if (matchedBookedEvent) {
+        console.log("matched book event", matchedBookedEvent);
+        setStudentDetail({
+          name: matchedBookedEvent?.studentName,
+          id: matchedBookedEvent?.studentId,
+        });
+        setInstructorName(matchedBookedEvent.instructorName);
         setStudent(matchedBookedEvent.studentName);
-        setEventTime(matchedBookedEvent.start.start.split(" ")[1]);
+        setEventTime(matchedBookedEvent.start.split(" ")[1]);
         setDeleteable(matchedBookedEvent.deleteable);
         //HERE WILL BE THE MEETING LINK
         setMeetingLink("meetinglink");
+        setCourseId(matchedBookedEvent.courseId);
         setNoEvent(false);
         setEventId(matchedBookedEvent.id);
         setCourseName(matchedBookedEvent.courseName);
         setStudentId(matchedBookedEvent.studentId);
+        setParentId(matchedBookedEvent?.parentsId);
       } else {
         // Clear the states when a matching booked event is not found
         setNoEvent(true);
         setEventTime("");
+        setInstructorName("");
         setDeleteable(false);
         setMeetingLink("");
         setStudentId("");
+        setParentId(null);
+        setCourseId("");
       }
     } else {
+      setStudentDetail(null);
+      setCourseId("");
+      setParentId(null);
       // Clear the states when a matching iCal event is not found
       setNoEvent(true);
       setSingleIcalEvent(null);
@@ -161,6 +175,7 @@ function InstructorCalendar() {
       setDeleteable(false);
       setMeetingLink("");
       setStudentId("");
+      setCourseId("");
     }
   };
 
@@ -184,6 +199,10 @@ function InstructorCalendar() {
               />
             </div>
             <InstructorSchedule
+              studentDetail={studentDetail}
+              studentParents={parentsId}
+              instructorName={instructorName}
+              courseId={courseId}
               studentName={student}
               start={eventTime}
               courseName={courseName}
