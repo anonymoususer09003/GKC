@@ -84,8 +84,8 @@ export default function Withdrawals() {
   }, []);
 
   return (
-    <div className="px-20 sm:px-6 lg:px-16">
-      <div className="border relative p-6 my-16 rounded-3xl ">
+    <div className="px-20 h-screen sm:px-6 lg:px-16">
+      <div className="border relative p-10 mt-8 rounded-3xl ">
         <div className="flex space-x-20 mt-4 justify-center items-center mx-auto">
           <p className="text-lg font-medium text-gray-700">
             Amount available for withdrawal
@@ -94,7 +94,7 @@ export default function Withdrawals() {
             $100
           </h1>
         </div>
-        <div className="flex mt-4 space-x-5 justify-center items-center">
+        <div className="sm:flex mt-4 space-x-5 justify-center items-center">
           <WithdrawDropdown setPaymentMethod={setPaymentMethod} />
           <div>
             <ValueInput
