@@ -1,6 +1,7 @@
 import { Navbar, Footer } from '../../components';
 
-export default function ContactUs() {
+export default function ContactUs({role}) {
+  const handleMessageSubmission = () => {};
   return (
     <>
       <Navbar isLogin={true} />
@@ -19,6 +20,7 @@ export default function ContactUs() {
           <div className="d-grid d-md-flex justify-content-lg-between">
             <p className="opacity-50 mt-2 ms-3">0/500 (min. 100 characters)</p>
             <button
+              onClick={handleMessageSubmission}
               className={`btn_primary mt-3  py-2 px-4 fw-bold text-white rounded text-decoration-none`}
             >
               Send
