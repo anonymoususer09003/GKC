@@ -156,6 +156,14 @@ const Navbar = ({ isLogin }) => {
                             Financial Report
                           </a>
                         </li>
+                        <li className="p-3">
+                          <a
+                            href={`/${role}/contactus`}
+                            className="nav-link fw-bold"
+                          >
+                            Contact us
+                          </a>
+                        </li>
                       </ul>
                     </div>
                   </ul>
