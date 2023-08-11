@@ -174,7 +174,7 @@ export default function Withdrawals() {
         </div>
         <div
           className={`${
-            withdrawals.length > 0 ? 'tw-block' : 'tw-block'
+            withdrawals.length > 0 ? 'tw-block' : 'tw-hidden'
           } tw-absolute tw-right-10 tw--bottom-12`}
         >
           <button
