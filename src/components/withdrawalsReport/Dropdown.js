@@ -7,12 +7,18 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
 }
 
-export default function WithdrawDropdown({ setPaymentMethod }) {
+export default function WithdrawDropdown({
+  setPaymentMethod,
+  availableBalance,
+}) {
   const [selectedOption, setSelectedOption] = useState('Select one');
   return (
     <Menu as="div" className="tw-relative tw-inline-block tw-text-left">
       <div>
-        <Menu.Button className="tw-inline-flex tw-w-full tw-justify-center tw-gap-x-1.5 tw-rounded-md tw-bg-white tw-px-3 tw-py-2 tw-text-sm tw-font-semibold tw-text-gray-900 tw-shadow-sm tw-ring-1 tw-ring-inset tw-ring-gray-300 hover:tw-bg-gray-50">
+        <Menu.Button
+          disabled={availableBalance <= 0 ? true : false}
+          className="tw-inline-flex tw-w-full tw-justify-center tw-gap-x-1.5 tw-rounded-md tw-bg-white tw-px-3 tw-py-2 tw-text-sm tw-font-semibold tw-text-gray-900 tw-shadow-sm tw-ring-1 tw-ring-inset tw-ring-gray-300 hover:tw-bg-gray-50"
+        >
           {selectedOption}
           <ChevronDownIcon
             className="tw--mr-1 tw-h-5 tw-w-5 tw-text-gray-400"
@@ -20,7 +26,6 @@ export default function WithdrawDropdown({ setPaymentMethod }) {
           />
         </Menu.Button>
       </div>
-
       <Transition
         as={Fragment}
         enter="tw-transition tw-ease-out tw-duration-100"

@@ -45,6 +45,7 @@
         "redux-thunk": "^2.4.2",
         "rrule": "^2.7.2",
         "stripe": "^12.8.0",
+        "stylus": "^0.59.0",
         "uuid": "^9.0.0"
     },
     "devDependencies": {

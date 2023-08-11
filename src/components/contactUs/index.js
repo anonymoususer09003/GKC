@@ -8,7 +8,7 @@ export default function ContactUs() {
   const handleMessageSubmission = async () => {
     try {
       let url = '/contactus/save-contact-us-from-logged-customer';
-      const response = await apiClient.post(url, message);
+      const response = await apiClient.post(url, { message });
       setMessage('');
     } catch (error) {
       console.log(error);
@@ -23,6 +23,7 @@ export default function ContactUs() {
           <h2 className="text-center">Contact us</h2>
           <div className="mt-5">
             <textarea
+              value={message}
               placeholder="Send us a message"
               name="message"
               id="message"
