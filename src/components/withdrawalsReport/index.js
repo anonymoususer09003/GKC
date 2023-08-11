@@ -35,7 +35,7 @@ export default function Withdrawals() {
   const [withdrawals, setWithdrawals] = useState();
   const [availableBalance, setavailableBalance] = useState();
   const [paymentMethod, setPaymentMethod] = useState('');
-  const [transferAmount, setTransferAmount] = useState();
+  const [transferAmount, setTransferAmount] = useState(0);
 
   const getAllwithdrawals = async () => {
     let url = `/financial/logged-instructor-withdrawals`;
@@ -84,17 +84,17 @@ export default function Withdrawals() {
   }, []);
 
   return (
-    <div className="px-20 h-screen sm:px-6 lg:px-16">
-      <div className="border relative p-10 mt-8 rounded-3xl ">
-        <div className="flex space-x-20 mt-4 justify-center items-center mx-auto">
-          <p className="text-lg font-medium text-gray-700">
+    <div className="tw-px-20 tw-h-screen sm:tw-px-6 lg:tw-px-16">
+      <div className="tw-border tw-relative tw-p-10 tw-mt-8 tw-rounded-3xl ">
+        <div className="tw-flex tw-space-x-20 tw-mt-4 tw-justify-center tw-items-center tw-mx-auto">
+          <p className="tw-text-lg tw-font-medium tw-text-gray-700">
             Amount available for withdrawal
           </p>
-          <h1 className="text-base font-semibold leading-6 text-gray-900">
+          <h1 className="tw-text-base tw-font-semibold tw-leading-6 tw-text-gray-900">
             $100
           </h1>
         </div>
-        <div className="sm:flex mt-4 space-x-5 justify-center items-center">
+        <div className="sm:tw-flex tw-mt-4 tw-space-x-5 tw-justify-center tw-items-center">
           <WithdrawDropdown setPaymentMethod={setPaymentMethod} />
           <div>
             <ValueInput
@@ -102,80 +102,80 @@ export default function Withdrawals() {
               setTransferAmount={setTransferAmount}
             />
           </div>
-          <div className="">
+          <div>
             <button
               disabled={transferAmount > 0 ? false : true}
               type="button"
               onClick={confirmTransfer}
-              className="block rounded-md  bg-[#f48342] px-3 py-2 text-center text-sm font-semibold text-black shadow-sm  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              className="tw-block tw-rounded-md  tw-bg-[#f48342] tw-px-3 tw-py-2 tw-text-center tw-text-sm tw-font-semibold tw-text-black tw-shadow-sm  focus-visible:tw-outline focus-visible:tw-outline-2 focus-visible:tw-outline-offset-2 focus-visible:tw-outline-indigo-600"
             >
               Transfer
             </button>
           </div>
         </div>
-        <div className="mt-8 flow-root">
-          <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-            <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-              <table className="min-w-full divide-y divide-gray-300">
+        <div className="tw-mt-8 tw-flow-root">
+          <div className="tw--mx-4 tw--my-2 tw-overflow-x-auto sm:tw--mx-6 lg:tw--mx-8">
+            <div className="tw-inline-block tw-min-w-full tw-py-2 tw-align-middle sm:tw-px-6 lg:tw-px-8">
+              <table className="tw-min-w-full tw-divide-y tw-divide-gray-300">
                 <thead>
                   <tr>
                     <th
                       scope="col"
-                      className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-3"
+                      className="tw-py-3.5 tw-pl-4 tw-pr-3 tw-text-left tw-text-sm tw-font-semibold tw-text-gray-900 sm:tw-pl-3"
                     >
                       Date
                     </th>
                     <th
                       scope="col"
-                      className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                      className="tw-px-3 tw-py-3.5 tw-text-left tw-text-sm tw-font-semibold tw-text-gray-900"
                     >
                       Withdrawal
                     </th>
                     <th
                       scope="col"
-                      className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                      className="tw-px-3 tw-py-3.5 tw-text-left tw-text-sm tw-font-semibold tw-text-gray-900"
                     >
                       Transfer fee
                     </th>
                     <th
                       scope="col"
-                      className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                      className="tw-px-3 tw-py-3.5 tw-text-left tw-text-sm tw-font-semibold tw-text-gray-900"
                     >
                       Received Payment
                     </th>
                     <th
                       scope="col"
-                      className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                      className="tw-px-3 tw-py-3.5 tw-text-left tw-text-sm tw-font-semibold tw-text-gray-900"
                     >
                       Available after transfer
                     </th>
                     <th
                       scope="col"
-                      className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                      className="tw-px-3 tw-py-3.5 tw-text-left tw-text-sm tw-font-semibold tw-text-gray-900"
                     >
                       Status
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white">
+                <tbody className="tw-bg-white">
                   {withdrawalsrReport.map((withdrawal) => (
-                    <tr key={withdrawal.status} className="even:bg-gray-50">
-                      <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-3">
+                    <tr key={withdrawal.status} className="even:tw-bg-gray-50">
+                      <td className="tw-whitespace-nowrap tw-py-4 tw-pl-4 tw-pr-3 tw-text-sm tw-font-medium tw-text-gray-900 sm:tw-pl-3">
                         {withdrawal.date}
                       </td>
-                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                      <td className="tw-whitespace-nowrap tw-px-3 tw-py-4 tw-text-sm tw-text-gray-500">
                         {withdrawal.withdrawal}
                       </td>
-                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                      <td className="tw-whitespace-nowrap tw-px-3 tw-py-4 tw-text-sm tw-text-gray-500">
                         {withdrawal.transferFee}
                       </td>
-                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                      <td className="tw-whitespace-nowrap tw-px-3 tw-py-4 tw-text-sm tw-text-gray-500">
                         {withdrawal.receivedPayment}
                       </td>
-                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                      <td className="tw-whitespace-nowrap tw-px-3 tw-py-4 tw-text-sm tw-text-gray-500">
                         {withdrawal.availableAfterTransfer}
                       </td>
-                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                      <td className="tw-whitespace-nowrap tw-px-3 tw-py-4 tw-text-sm tw-text-gray-500">
                         {withdrawal.status}
                       </td>
                     </tr>
@@ -185,11 +185,11 @@ export default function Withdrawals() {
             </div>
           </div>
         </div>
-        <div className="absolute right-10 -bottom-12">
+        <div className="tw-absolute tw-right-10 tw--bottom-12">
           <button
             type="button"
             onClick={downloadWithDrawalsReport}
-            className="block rounded-md  bg-[#f48342] px-3 py-2 text-center text-sm font-semibold text-black shadow-sm  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+            className="tw-block tw-rounded-md tw-bg-[#f48342] tw-px-3 tw-py-2 tw-text-center tw-text-sm tw-font-semibold tw-text-black tw-shadow-sm  focus-visible:tw-outline focus-visible:tw-outline-2 focus-visible:tw-outline-offset-2 focus-visible:tw-outline-indigo-600"
           >
             Download
           </button>

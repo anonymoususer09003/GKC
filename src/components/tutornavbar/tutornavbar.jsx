@@ -100,6 +100,9 @@ const TutorNavbar = ({ isLogin }) => {
                           <li className="p-3">
                             <a href="/instructor/financialreport" className="nav-link">Financial Report</a>
                           </li>
+                          <li className="p-3">
+                            <a href="/instructor/contactus" className="nav-link">Contact Us</a>
+                          </li>
                         </ul>
                       </div>
                     </ul>                 

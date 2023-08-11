@@ -10,12 +10,12 @@ function classNames(...classes) {
 export default function WithdrawDropdown({ setPaymentMethod }) {
   const [selectedOption, setSelectedOption] = useState('Select one');
   return (
-    <Menu as="div" className="relative inline-block text-left">
+    <Menu as="div" className="tw-relative tw-inline-block tw-text-left">
       <div>
-        <Menu.Button className="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+        <Menu.Button className="tw-inline-flex tw-w-full tw-justify-center tw-gap-x-1.5 tw-rounded-md tw-bg-white tw-px-3 tw-py-2 tw-text-sm tw-font-semibold tw-text-gray-900 tw-shadow-sm tw-ring-1 tw-ring-inset tw-ring-gray-300 hover:tw-bg-gray-50">
           {selectedOption}
           <ChevronDownIcon
-            className="-mr-1 h-5 w-5 text-gray-400"
+            className="tw--mr-1 tw-h-5 tw-w-5 tw-text-gray-400"
             aria-hidden="true"
           />
         </Menu.Button>
@@ -23,15 +23,15 @@ export default function WithdrawDropdown({ setPaymentMethod }) {
 
       <Transition
         as={Fragment}
-        enter="transition ease-out duration-100"
-        enterFrom="transform opacity-0 scale-95"
-        enterTo="transform opacity-100 scale-100"
-        leave="transition ease-in duration-75"
-        leaveFrom="transform opacity-100 scale-100"
-        leaveTo="transform opacity-0 scale-95"
+        enter="tw-transition tw-ease-out tw-duration-100"
+        enterFrom="tw-transform tw-opacity-0 tw-scale-95"
+        enterTo="tw-transform tw-opacity-100 tw-scale-100"
+        leave="tw-transition tw-ease-in tw-duration-75"
+        leaveFrom="tw-transform tw-opacity-100 tw-scale-100"
+        leaveTo="tw-transform tw-opacity-0 tw-scale-95"
       >
-        <Menu.Items className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-          <div className="py-1">
+        <Menu.Items className="tw-absolute tw-right-0 tw-z-10 tw-mt-2 tw-w-56 tw-origin-top-right tw-rounded-md tw-bg-white tw-shadow-lg tw-ring-1 tw-ring-black tw-ring-opacity-5 focus:tw-outline-none">
+          <div className="tw-py-1">
             <Menu.Item>
               {({ active }) => (
                 <a
@@ -41,8 +41,10 @@ export default function WithdrawDropdown({ setPaymentMethod }) {
                     setSelectedOption('PayPal');
                   }}
                   className={classNames(
-                    active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                    'block px-4 py-2 text-sm'
+                    active
+                      ? 'tw-bg-gray-100 tw-text-gray-900'
+                      : 'tw-text-gray-700',
+                    'tw-block tw-px-4 tw-py-2 tw-text-sm'
                   )}
                 >
                   PayPal
@@ -54,11 +56,14 @@ export default function WithdrawDropdown({ setPaymentMethod }) {
                 <a
                   href="#"
                   onClick={() => {
-                    setPaymentMethod('Payoneer'), setSelectedOption('Payoneer');
+                    setPaymentMethod('Payoneer');
+                    setSelectedOption('Payoneer');
                   }}
                   className={classNames(
-                    active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                    'block px-4 py-2 text-sm'
+                    active
+                      ? 'tw-bg-gray-100 tw-text-gray-900'
+                      : 'tw-text-gray-700',
+                    'tw-block tw-px-4 tw-py-2 tw-text-sm'
                   )}
                 >
                   Payoneer

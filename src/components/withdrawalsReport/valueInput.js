@@ -1,10 +1,9 @@
-
 export default function ValueInput({ paymentMethod, setTransferAmount }) {
   return (
     <div>
-      <div className="relative rounded-md shadow-sm">
-        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-          <span className="text-gray-500 sm:text-sm">$</span>
+      <div className="tw-relative tw-rounded-md tw-shadow-sm">
+        <div className="tw-pointer-events-none tw-absolute tw-inset-y-0 tw-left-0 tw-flex tw-items-center tw-pl-3">
+          <span className="tw-text-gray-500 sm:tw-text-sm">$</span>
         </div>
         <input
           type="text"
@@ -12,7 +11,7 @@ export default function ValueInput({ paymentMethod, setTransferAmount }) {
           disabled={paymentMethod ? false : true}
           onChange={(e) => setTransferAmount(e.target.value)}
           id="price"
-          className="block w-32 rounded-md border-0 py-1.5 pl-7 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+          className="tw-block tw-w-32 tw-rounded-md tw-border-0 tw-py-1.5 tw-pl-7 tw-text-gray-900 tw-ring-1 tw-ring-inset tw-ring-gray-300 placeholder:tw-text-gray-400 focus:tw-ring-2 focus:tw-ring-inset focus:tw-ring-indigo-600 sm:tw-text-sm tw-leading-6"
           placeholder="0.00"
           aria-describedby="price-currency"
         />
