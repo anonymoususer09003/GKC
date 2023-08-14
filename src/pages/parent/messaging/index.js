@@ -77,7 +77,7 @@ function ParentMessaging() {
                     key={index}
                     className="p-0 m-0 fw-bold bg-light p-3 my-3 rounded "
                   >
-                    {item?.receiver?.name}
+                    {user?.name}
                   </li>
                 );
               })}
@@ -102,7 +102,7 @@ function ParentMessaging() {
                       <p className="p-0 m-0 fw-bold">{item.message}</p>
                       <small className="p-0 m-0">
                         {`${item?.user?.name}  ${moment(date).format(
-                          "d/MM/YY"
+                          "DD/MM/YY"
                         )}`}{" "}
                         {moment(date).format("hh:mm a")}
                       </small>

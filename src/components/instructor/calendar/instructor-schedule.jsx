@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import styles from "../../../styles/Home.module.css";
 import { BsFillChatFill, BsFillSendFill } from "react-icons/bs";
 import { IconContext } from "react-icons";
@@ -9,14 +9,27 @@ import moment from "moment";
 import FirebaseChat from "../../../hooks/firebase-chat";
 import axios from "axios";
 import { useSelector } from "react-redux";
+import GetUserByid from "@/services/user/GetUserByid";
 const InstructorSchedule = (props) => {
   const router = useRouter();
   const loggedInUser = useSelector((state) => state.user.userInfo);
   const navigation = useRouter();
-  const { sendMessage, messages, setChatInfo, setNewMessage, newMessage } =
-    FirebaseChat();
-  const [enabledCamera, setEnabledCamera] = useState(false);
+  const {
+    sendMessage,
+    messages,
+    setChatInfo,
+    setNewMessage,
+    newMessage,
+    setMessages,
+  } = FirebaseChat();
+  const [student, setStudent] = useState();
+  const [chat, setChat] = useState([]);
 
+  const [enabledCamera, setEnabledCamera] = useState(false);
+  console.log("props", props);
+  useEffect(() => {
+    setChat([...chat, messages]);
+  }, [messages]);
   const deleteSingleOccurrence = async (eventId, dateToCancel) => {
     try {
       const response = await axios.delete(
@@ -50,35 +63,52 @@ const InstructorSchedule = (props) => {
     id: loggedInUser?.id,
   };
 
-  const student = {
-    courseId: 1,
-    name: "John",
-    id: 2,
-    parentId: 4,
+  // const student = {
+  //   courseId: 1,
+  //   name: "John",
+  //   id: 2,
+  //   parentId: 4,
+  // };
+  const getParticipantsDetail = async (id) => {
+    try {
+      const res = await GetUserByid(id);
+      setStudent({
+        courseId: props?.eventId,
+        name: res.data?.fullName,
+        id: res.data?.userId,
+        parentId: res.data?.parents?.length > 0 ? res.data.parents[0]?.id : "",
+      });
+      console.log("res------", res.data);
+    } catch (err) {
+      console.log("err", err);
+    }
   };
+  console.log("student", student);
+  useEffect(() => {
+    getParticipantsDetail(props?.studentId);
+  }, [props?.eventId]);
 
-  const parent = {
-    courseId: 1,
-    name: "John",
-    id: 4,
-  };
-
-  const openChat = (chatId) => {
-    setChatInfo({
-      sender: {
-        ...student,
-      },
-      receiver_user: {
-        ...instructor,
-      },
-      course_id: chatId,
-    });
-  };
+  const openChat = useCallback(
+    (chatId) => {
+      setChatInfo({
+        sender: {
+          ...student,
+        },
+        receiver_user: {
+          ...instructor,
+        },
+        chatId,
+      });
+    },
+    [student, loggedInUser]
+  );
   console.log("logged in user,", loggedInUser);
   const handleTextChange = (e) => {
     setNewMessage(e.target.value);
   };
 
+  console.log("message", messages);
+  console.log("props", props.eventId);
   return (
     <>
       <div className="col-12 col-lg-6">
@@ -87,66 +117,69 @@ const InstructorSchedule = (props) => {
           className={`shadow p-5 bg-white rounded ${styles.scheduleBox}`}
           style={{ minHeight: "400px" }}
         >
-          <div
-            onClick={() => openChat(1)}
-            className="d-flex align-items-center py-3 gap-2"
-          >
-            {props.noEvent ? (
-              <h6 className="p-0 m-0 flex-fill fw-bold flex-fill">
-                No Events Found For This Day
-              </h6>
-            ) : (
-              <>
+          {props.eventId && (
+            <div
+              onClick={() => openChat(props?.eventId, student)}
+              className="d-flex align-items-center py-3 gap-2"
+            >
+              {props.noEvent ? (
                 <h6 className="p-0 m-0 flex-fill fw-bold flex-fill">
-                  {props.studentName}
+                  No Events Found For This Day
                 </h6>
-                <h6 className="p-0 m-0 flex-fill fw-bold flex-fill">
-                  {props.start}{" "}
-                </h6>
-                <h6 className="p-0 m-0 flex-fill fw-bold flex-fill">
-                  {props.courseName}
-                </h6>
-                {loggedInUser?.id && (
-                  <IconContext.Provider value={{ color: "#1677d2" }}>
-                    <BsFillChatFill
-                      className="p-0 m-0 flex-fill h4 flex-fill"
-                      data-bs-toggle="modal"
-                      data-bs-target="#exampleModal2"
-                    />
-                  </IconContext.Provider>
-                )}
+              ) : (
+                <>
+                  <h6 className="p-0 m-0 flex-fill fw-bold flex-fill">
+                    {props.studentName}
+                  </h6>
+                  <h6 className="p-0 m-0 flex-fill fw-bold flex-fill">
+                    {props.start}{" "}
+                  </h6>
+                  <h6 className="p-0 m-0 flex-fill fw-bold flex-fill">
+                    {props.courseName}
+                  </h6>
+                  {loggedInUser?.id && (
+                    <IconContext.Provider value={{ color: "#1677d2" }}>
+                      <BsFillChatFill
+                        className="p-0 m-0 flex-fill h4 flex-fill"
+                        data-bs-toggle="modal"
+                        data-bs-target="#exampleModal2"
+                      />
+                    </IconContext.Provider>
+                  )}
 
-                {props.meetingLink && (
-                  <IconContext.Provider
-                    value={{ color: enabledCamera ? "#126d2b" : "#48494B" }}
-                  >
-                    <GoDeviceCameraVideo
-                      className="p-0 m-0 flex-fill h4 flex-fill"
-                      onClick={() =>
-                        navigation.push(
-                          `/instructor/video?${props?.courseName}`
-                        )
-                      }
-                    />
-                  </IconContext.Provider>
-                )}
-                {props.deleteable && (
-                  <IconContext.Provider value={{ color: "#48494B" }}>
-                    <RiDeleteBin6Line
-                      className="p-0 m-0 h4 flex-fill"
-                      onClick={handleDeleteButtonClick}
-                    />
-                  </IconContext.Provider>
-                )}
-              </>
-            )}
-          </div>
+                  {props.meetingLink && (
+                    <IconContext.Provider
+                      value={{ color: enabledCamera ? "#126d2b" : "#48494B" }}
+                    >
+                      <GoDeviceCameraVideo
+                        className="p-0 m-0 flex-fill h4 flex-fill"
+                        onClick={() =>
+                          navigation.push(
+                            `/instructor/video?${props?.courseName}`
+                          )
+                        }
+                      />
+                    </IconContext.Provider>
+                  )}
+                  {props.deleteable && (
+                    <IconContext.Provider value={{ color: "#48494B" }}>
+                      <RiDeleteBin6Line
+                        className="p-0 m-0 h4 flex-fill"
+                        onClick={handleDeleteButtonClick}
+                      />
+                    </IconContext.Provider>
+                  )}
+                </>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
       {/* CHAT MODAL NEEDS TO BE FIXED */}
       <div className="d-flex justify-content-center align-items-center">
         <div
+          // onClick={() => setMessages([])}
           className="modal fade"
           id="exampleModal2"
           tabIndex="-1"
@@ -158,6 +191,9 @@ const InstructorSchedule = (props) => {
               <div className="d-flex justify-content-between">
                 <h5 className="modal-title" id="exampleModal2Label"></h5>
                 <button
+                  onClick={() => {
+                    setMessages([]);
+                  }}
                   type="button"
                   className="btn-close"
                   data-bs-dismiss="modal"

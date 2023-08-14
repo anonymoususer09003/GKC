@@ -73,7 +73,7 @@ const Navbar = ({ isLogin }) => {
                     <a
                       className={`nav-link ${styles.homeLink}`}
                       aria-current="page"
-                      href="/student/messaging"
+                      href={`/${role}/messaging`}
                     >
                       Message
                     </a>

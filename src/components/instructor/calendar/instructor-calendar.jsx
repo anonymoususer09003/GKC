@@ -149,7 +149,7 @@ function InstructorCalendar() {
         setMeetingLink("meetinglink");
         setCourseId(matchedBookedEvent.courseId);
         setNoEvent(false);
-        setEventId(matchedBookedEvent.id);
+        setEventId(49 || matchedBookedEvent.id);
         setCourseName(matchedBookedEvent.courseName);
         setStudentId(matchedBookedEvent.studentId);
         setParentId(matchedBookedEvent?.parentsId);
@@ -178,7 +178,7 @@ function InstructorCalendar() {
       setCourseId("");
     }
   };
-
+  console.log("event id", eventId);
   return (
     <>
       <Navbar isLogin={true} role="instructor" />

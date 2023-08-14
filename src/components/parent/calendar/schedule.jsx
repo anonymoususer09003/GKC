@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styles from "../../../styles/Home.module.css";
 import { BsFillChatFill, BsFillSendFill } from "react-icons/bs";
 import { IconContext } from "react-icons";
@@ -9,15 +9,22 @@ import moment from "moment";
 import FirebaseChat from "../../../hooks/firebase-chat";
 import axios from "axios";
 import { useSelector } from "react-redux";
+import GetUserByid from "@/services/user/GetUserByid";
 
 const StudentSchedule = (props) => {
   console.log("props---", props);
   const navigation = useRouter();
-  const { sendMessage, messages, setChatInfo, setNewMessage, newMessage } =
-    FirebaseChat();
+  const {
+    sendMessage,
+    messages,
+    setChatInfo,
+    setNewMessage,
+    newMessage,
+    setMessages,
+  } = FirebaseChat();
   const [enabledCamera, setEnabledCamera] = useState(false);
   const loggedInUser = useSelector((state) => state.user.userInfo);
-
+  const [parent, setParent] = useState();
   const deleteSingleOccurrence = async (eventId, dateToCancel) => {
     try {
       const response = await axios.delete(
@@ -50,23 +57,38 @@ const StudentSchedule = (props) => {
     id: props?.instructorId,
   };
 
-  const student = {
-    courseId: props?.courseId,
-    name: props?.studentDetail?.name,
-    id: props?.studentDetail?.id,
-    parentId: loggedInUser?.id,
+  const getParticipantsDetail = async (id) => {
+    try {
+      const res = await GetUserByid(id);
+      setParent({
+        courseId: props?.eventId,
+        name: loggedInUser?.firstName,
+        id: loggedInUser?.id,
+        parentId: loggedInUser?.id,
+      });
+      console.log("res------", res.data);
+    } catch (err) {
+      console.log("err", err);
+    }
   };
-
-  const parent = {
-    courseId: props?.courseId,
-    name: loggedInUser?.firstName,
-    id: loggedInUser?.id,
-  };
+  console.log("parent", props);
+  useEffect(() => {
+    getParticipantsDetail(props?.studentDetail?.id);
+  }, [props?.eventId]);
 
   const openChat = (chatId) => {
+    console.log("0000", {
+      sender: {
+        ...parent,
+      },
+      receiver_user: {
+        ...instructor,
+      },
+      chatId,
+    });
     setChatInfo({
       sender: {
-        ...student,
+        ...parent,
       },
       receiver_user: {
         ...instructor,
@@ -156,6 +178,9 @@ const StudentSchedule = (props) => {
               <div className="d-flex justify-content-between">
                 <h5 className="modal-title" id="exampleModal2Label"></h5>
                 <button
+                  onClick={() => {
+                    setMessages([]);
+                  }}
                   type="button"
                   className="btn-close"
                   data-bs-dismiss="modal"
@@ -176,7 +201,7 @@ const StudentSchedule = (props) => {
                         <p className="p-0 m-0 fw-bold">{item.message}</p>
                         <small className="p-0 m-0">
                           {`${item?.user?.name}  ${moment(date).format(
-                            "d/MM/YY"
+                            "DD/MM/YY"
                           )}`}{" "}
                           {moment(date).format("hh:mm a")}
                         </small>
