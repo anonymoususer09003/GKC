@@ -92,7 +92,7 @@ const TutorNavbar = ({ isLogin }) => {
                             <a href="/auth/changepassword" className="nav-link">Change Password</a>
                           </li>
                           <li className="p-3">
-                            <a href="/instructor/bankinfo" className="nav-link">Bank Information</a>
+                            <a href="/instructor/paymentinfo" className="nav-link">Payment Information</a>
                           </li>
                           <li className="p-3">
                             <a href="/instructor/reportedstudentparents" className="nav-link">Report Student/Parent</a>

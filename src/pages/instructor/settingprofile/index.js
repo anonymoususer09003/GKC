@@ -1,31 +1,31 @@
-import React, { useState, useEffect } from "react";
-import Head from "next/head";
-import { Navbar, TutorNavbar, Footer } from "../../../components";
-import { MdEmail, MdLocationOn, MdArrowForwardIos } from "react-icons/md";
-import { FiEdit } from "react-icons/fi";
-import Image from "next/image";
-import { useRouter } from "next/router";
-import { withRole } from "../../../utils/withAuthorization";
-import { connect } from "react-redux";
-import { fetchUser } from "../../../store/actions/userActions";
-import styles from "../../../styles/Home.module.css";
+import React, { useState, useEffect } from 'react';
+import Head from 'next/head';
+import { Navbar, TutorNavbar, Footer } from '../../../components';
+import { MdEmail, MdLocationOn, MdArrowForwardIos } from 'react-icons/md';
+import { FiEdit } from 'react-icons/fi';
+import Image from 'next/image';
+import { useRouter } from 'next/router';
+import { withRole } from '../../../utils/withAuthorization';
+import { connect } from 'react-redux';
+import { fetchUser } from '../../../store/actions/userActions';
+import styles from '../../../styles/Home.module.css';
 
 function SettingProfile({ userInfo, loading, error, fetchUser }) {
   const navigation = useRouter();
-  console.log(userInfo)
+  // console.log(userInfo);
   const onContinue = () => {
-    navigation.push("/instructor/editprofile");
+    navigation.push('/instructor/editprofile');
   };
 
   const onEditProfile = () => {
-    navigation.push("/student/editprofile");
+    navigation.push('/student/editprofile');
   };
 
   useEffect(() => {
     fetchUser();
   }, [fetchUser]);
 
-  console.log(userInfo?.coursesToTutorAndProficiencies);
+  console.log(["courserser", userInfo?.coursesToTutorAndProficiencies]);
 
   // if (loading) {
   //   return <div>Loading...</div>;
@@ -46,15 +46,22 @@ function SettingProfile({ userInfo, loading, error, fetchUser }) {
       <main className="container-fluid">
         <div
           className={`p-5 ${styles.instructorProfile}`}
-          style={{ minHeight: "90vh", maxWidth: "1700px", margin: "auto", color: "#48494B" }}
+          style={{
+            minHeight: '90vh',
+            maxWidth: '1700px',
+            margin: 'auto',
+            color: '#48494B',
+          }}
         >
           <div className="row">
-            <div className={`col-12 col-md-4 position-relative ${styles.cardShadow}`}>
+            <div
+              className={`col-12 col-md-4 position-relative ${styles.cardShadow}`}
+            >
               <div className="shadow rounded-10 bg-white py-4">
                 <div className={`px-4 ${styles.instructorCards}`}>
                   <div
                     className="bg_primary rounded-circle position-absolute d-flex justify-content-center align-items-center"
-                    style={{ top: "-40px", width: "105px", height: "105px" }}
+                    style={{ top: '-40px', width: '105px', height: '105px' }}
                   >
                     <Image
                       src="/assets/student-preview.png"
@@ -67,7 +74,7 @@ function SettingProfile({ userInfo, loading, error, fetchUser }) {
                   </div>
                   <div className="d-flex justify-content-end">
                     <p className=" bg_secondary text-white p-2 rounded d-flex align-items-center gap-2 fw-bold">
-                      <MdEmail style={{ fontSize: "20px" }} />
+                      <MdEmail style={{ fontSize: '20px' }} />
                       {userInfo?.email}
                     </p>
                   </div>
@@ -78,7 +85,8 @@ function SettingProfile({ userInfo, loading, error, fetchUser }) {
                   <div className="d-flex gap-1 gap-2 pb-3 ">
                     <MdLocationOn className="h5 p-0 m-0" />
                     <small>
-                      {userInfo?.address1}, {userInfo?.city}, {userInfo?.zipCode} <br />
+                      {userInfo?.address1}, {userInfo?.city},{' '}
+                      {userInfo?.zipCode} <br />
                       {userInfo?.state}, {userInfo?.country}
                     </small>
                   </div>
@@ -98,7 +106,9 @@ function SettingProfile({ userInfo, loading, error, fetchUser }) {
               </div>
             </div>
             <div className="col-12 col-md-8">
-              <div className={`shadow rounded-10 p-5 bg-white ${styles.instructorCards}`}>
+              <div
+                className={`shadow rounded-10 p-5 bg-white ${styles.instructorCards}`}
+              >
                 <div className="row">
                   <div className="col-12 col-md-3">
                     <h5 className="fw-bold ">Hourly Rate</h5>
@@ -148,14 +158,16 @@ function SettingProfile({ userInfo, loading, error, fetchUser }) {
                     </h5>
                     <ul className="m-0 px-3 py-2 primary-list">
                       <li className="fw-bold m-0 p-0">
-                        {userInfo?.acceptInterviewRequest ? "Yes" : "No"}
+                        {userInfo?.acceptInterviewRequest ? 'Yes' : 'No'}
                       </li>
                     </ul>
                   </div>
                 </div>
               </div>
 
-              <div className={`shadow rounded-10 p-5 bg-white my-4 ${styles.instructorCards}`}>
+              <div
+                className={`shadow rounded-10 p-5 bg-white my-4 ${styles.instructorCards}`}
+              >
                 <div className="row m-0 p-0 ">
                   <div className="col ">
                     <h4 className="fw-bold m-0 p-0">Course/s you teach</h4>
@@ -165,30 +177,29 @@ function SettingProfile({ userInfo, loading, error, fetchUser }) {
                       Proficiency of students you'd rather teach
                     </h4>
                   </div>
-                  {
-                    userInfo?.coursesToTutorAndProficiencies.map((v,i)=>{
-                      console.log(v)
-                      return   <div className="row m-0 p-0 py-2 pt-4" key={i}>
-                    <div className="col d-flex align-items-center gap-2 primary-list">
-                      <li className="fw-bold m-0 p-0 fw-lighter">{v.course.name}</li>
-                    </div>
-                    <div className="col ">
-                      <ul className="m-0 d-flex flex-wrap gap-4 primary-list">
-                      {
-                        v.proficiencies.map(val=>{
-                          console.log(val)
-                          return   <li className="fw-bold m-0 p-0" key={val.id}>{val.name}</li>
-                        })
-                      }
-                      
-                      </ul>
-                    </div>
-                  </div>
-                    })
-                  }
-                
-
-          
+                  {userInfo?.coursesToTutorAndProficiencies.map((v, i) => {
+                    return (
+                      <div className="row m-0 p-0 py-2 pt-4" key={i}>
+                        <div className="col d-flex align-items-center gap-2 primary-list">
+                          <li className="fw-bold m-0 p-0 fw-lighter">
+                            {v.course.name}
+                          </li>
+                        </div>
+                        <div className="col ">
+                          <ul className="m-0 d-flex flex-wrap gap-4 primary-list">
+                            {v.proficiencies.map((val) => {
+                              console.log(val);
+                              return (
+                                <li className="fw-bold m-0 p-0" key={val.id}>
+                                  {val.name}
+                                </li>
+                              );
+                            })}
+                          </ul>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             </div>
@@ -209,5 +220,5 @@ const mapStateToProps = (state) => ({
 
 export default withRole(
   connect(mapStateToProps, { fetchUser })(SettingProfile),
-  ["Instructor"]
+  ['Instructor']
 );
