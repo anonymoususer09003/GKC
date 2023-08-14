@@ -1,20 +1,21 @@
-import axios from "axios";
-export const base_url = "http://34.227.65.157";
+import axios from 'axios';
+export const base_url = 'http://34.227.65.157';
 // Create an instance of Axios with a base URL
 const apiClient = axios.create({
-  baseURL: "http://34.227.65.157",
+  baseURL: 'http://34.227.65.157',
 });
 
 // Add a request interceptor
+
 apiClient.interceptors.request.use(
   async function (config) {
-    const token = window.localStorage.getItem("gkcAuth");
-    console.log("token", token);
+    const token = window.localStorage.getItem('gkcAuth');
+    console.log('token', token);
     if (token) {
       switch (config.url) {
         default:
           config.headers.Authorization =
-            "Bearer " + JSON.parse(token)?.accessToken;
+            'Bearer ' + JSON.parse(token)?.accessToken;
       }
     }
     // Modify the request config before sending the request

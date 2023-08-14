@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
-import Head from "next/head";
-import { Navbar, Footer } from "../../../components";
-import { useRouter } from "next/router";
-import { RiArrowGoBackLine } from "react-icons/ri";
-import Link from "next/link";
-import axios from "axios"
+import React, { useState, useEffect } from 'react';
+import Head from 'next/head';
+import { Navbar, Footer } from '../../../components';
+import { useRouter } from 'next/router';
+import { RiArrowGoBackLine } from 'react-icons/ri';
+import Link from 'next/link';
+import axios from 'axios';
 
 export default function RegistrationGrade() {
   const navigation = useRouter();
@@ -15,28 +15,30 @@ export default function RegistrationGrade() {
   const [grade4, setGrade4] = useState(null);
 
   const onContinue = () => {
-    var stored = JSON.parse(window.localStorage.getItem("registrationForm"));
+    var stored = JSON.parse(window.localStorage.getItem('registrationForm'));
     let gradess = [];
     // console.log([grade1, grade2, grade3, grade4]);
     [grade1, grade2, grade3, grade4].forEach((v) => {
-      if(v !== null){
-        gradess.push(Number(v))
+      if (v !== null) {
+        gradess.push(Number(v));
       }
-    })
+    });
     stored.gradesIdToTutor = gradess;
-    window.localStorage.setItem("registrationForm", JSON.stringify(stored));
-    navigation.push("/auth/proficiencytoteach");
+    window.localStorage.setItem('registrationForm', JSON.stringify(stored));
+    navigation.push('/auth/proficiencytoteach');
   };
 
-  const getGrades = async() => {
+  const getGrades = async () => {
     try {
-    const response = await axios.get(`http://34.227.65.157/public/register/get-all-grades`);
-    setGrades(response.data);
-    console.log(response.data)
-  } catch (error) {
-    console.error(error);
-  }
-  }
+      const response = await axios.get(
+        `http://34.227.65.157/public/register/get-all-grades`
+      );
+      setGrades(response.data);
+      console.log(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
   useEffect(() => {
     getGrades();
   }, []);
@@ -63,58 +65,58 @@ export default function RegistrationGrade() {
 
           <div
             className=" d-flex flex-wrap justify-content-center m-auto gap-4 py-5"
-            style={{ maxWidth: "700px" }}
+            style={{ maxWidth: '700px' }}
           >
             <div
               style={{
                 backgroundImage: 'url("/assets/5_plus.png")',
-                backgroundRepeat: "no-repeat",
-                backgroundSize: "100% 100%",
-                width: "240px",
-                height: "240px",
-                position: "relative",
-                borderRadius: "10px",
+                backgroundRepeat: 'no-repeat',
+                backgroundSize: '100% 100%',
+                width: '240px',
+                height: '240px',
+                position: 'relative',
+                borderRadius: '10px',
               }}
               id="box1"
             >
               <input
                 value="1"
                 className="form-check-input position-absolute"
-                style={{ top: "5px", right: "5px" }}
+                style={{ top: '5px', right: '5px' }}
                 type="checkbox"
-                onChange={(e) => setGrade1( grade1 == 1 ? null: 1)}
+                onChange={(e) => setGrade1(grade1 == 1 ? null : 1)}
               />
-              <div className="position-absolute bottom-0 p-2 bg-light w-100 bg-opacity-50 fw-bold">
-                <small className="text-secondary">
-                Elementary &#40;&#60;10yrs&#41;
+              <div className="position-absolute bottom-0 p-2 bg-light w-100 bg-opacity-75 fw-bold">
+                <small className="text-dark">
+                  Elementary &#40;&#60;10yrs&#41;
                 </small>
               </div>
             </div>
             <div
               style={{
                 backgroundImage: 'url("/assets/10_plus.png")',
-                backgroundRepeat: "no-repeat",
-                backgroundSize: "100% 100%",
-                width: "240px",
-                height: "240px",
-                position: "relative",
-                borderRadius: "10px",
+                backgroundRepeat: 'no-repeat',
+                backgroundSize: '100% 100%',
+                width: '240px',
+                height: '240px',
+                position: 'relative',
+                borderRadius: '10px',
               }}
             >
               <input
                 value={2}
                 className="form-check-input position-absolute"
-                style={{ top: "5px", right: "5px" }}
+                style={{ top: '5px', right: '5px' }}
                 type="checkbox"
                 // name="flexRadioDefault"
                 // id="flexRadioDefault1"
                 // checked={grade == 2}
-                onChange={(e) => setGrade2( grade2 ==2 ? null: 2)}
+                onChange={(e) => setGrade2(grade2 == 2 ? null : 2)}
               />
 
-              <div className="position-absolute bottom-0 p-2 bg-light w-100 bg-opacity-50 fw-bold">
-                <small className="text-secondary">
-                Middle School &#40;&#60;10yrs - 13yrs&#41;
+              <div className="position-absolute bottom-0 p-2 bg-light w-100 bg-opacity-75 fw-bold">
+                <small className="text-dark">
+                  Middle School &#40;&#60;10yrs - 13yrs&#41;
                 </small>
               </div>
             </div>
@@ -122,29 +124,28 @@ export default function RegistrationGrade() {
             <div
               style={{
                 backgroundImage: 'url("/assets/14_plus.png")',
-                backgroundRepeat: "no-repeat",
-                backgroundSize: "100% 100%",
-                width: "240px",
-                height: "240px",
-                position: "relative",
-                borderRadius: "10px",
+                backgroundRepeat: 'no-repeat',
+                backgroundSize: '100% 100%',
+                width: '240px',
+                height: '240px',
+                position: 'relative',
+                borderRadius: '10px',
               }}
             >
               <input
                 value="3"
                 className="form-check-input position-absolute"
-                style={{ top: "5px", right: "5px" }}
+                style={{ top: '5px', right: '5px' }}
                 type="checkbox"
                 // name="flexRadioDefault"
                 // id="flexRadioDefault1"
                 // checked={grade == 3}
-                onChange={(e) => setGrade3(grade3 == 3 ? null: 3)}
-
+                onChange={(e) => setGrade3(grade3 == 3 ? null : 3)}
               />
 
-              <div className="position-absolute bottom-0 p-2 bg-light w-100 bg-opacity-50 fw-bold">
-                <small className="text-secondary">
-                High School &#40;&#60;14yrs - 16yrs&#41;
+              <div className="position-absolute bottom-0 p-2 bg-light w-100 bg-opacity-75 fw-bold">
+                <small className="text-dark">
+                  High School &#40;&#60;14yrs - 16yrs&#41;
                 </small>
               </div>
             </div>
@@ -152,28 +153,27 @@ export default function RegistrationGrade() {
             <div
               style={{
                 backgroundImage: 'url("/assets/18_plus.png")',
-                backgroundRepeat: "no-repeat",
-                backgroundSize: "100% 100%",
-                width: "240px",
-                height: "240px",
-                position: "relative",
-                borderRadius: "10px",
+                backgroundRepeat: 'no-repeat',
+                backgroundSize: '100% 100%',
+                width: '240px',
+                height: '240px',
+                position: 'relative',
+                borderRadius: '10px',
               }}
             >
               <input
                 value="4"
                 className="form-check-input position-absolute"
-                style={{ top: "5px", right: "5px" }}
+                style={{ top: '5px', right: '5px' }}
                 type="checkbox"
                 // name="flexRadioDefault"
                 // id="flexRadioDefault1"
                 // checked={grade == 4}
-                onChange={(e) => setGrade4(grade4 == 4 ? null: 4)}
-
+                onChange={(e) => setGrade4(grade4 == 4 ? null : 4)}
               />
 
-              <div className="position-absolute bottom-0 p-2 bg-light w-100 bg-opacity-50 fw-bold">
-                <small className="text-secondary">
+              <div className="position-absolute bottom-0 p-2 bg-light w-100 bg-opacity-75 fw-bold">
+                <small className="text-dark">
                   College & Beyond &#40;&gt;18yrs&#41;
                 </small>
               </div>
@@ -182,9 +182,11 @@ export default function RegistrationGrade() {
           <div className="d-flex gap-2 justify-content-center mt-3">
             <button
               className={`text-light p-2 px-5 rounded fw-bold  bg-gray-300 ${
-                !grade1 && !grade2 && !grade3 && !grade4  ? "btn_disabled" : "btn_primary"
+                !grade1 && !grade2 && !grade3 && !grade4
+                  ? 'btn_disabled'
+                  : 'btn_primary'
               }`}
-              disabled={ !grade1 && !grade2 && !grade3 && !grade4 ? true :false}
+              disabled={!grade1 && !grade2 && !grade3 && !grade4 ? true : false}
               onClick={onContinue}
             >
               Continue

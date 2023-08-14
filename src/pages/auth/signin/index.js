@@ -33,6 +33,7 @@ export default function SignIn() {
 
   const onLogin = async () => {
     try {
+      console.log(email, password)
       const response = await axios.post(`${base_url}/auth/login`, {
         email: email,
         password: password,

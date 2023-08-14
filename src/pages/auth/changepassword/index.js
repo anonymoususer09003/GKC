@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import Head from "next/head";
-import Image from "next/image";
 import Link from "next/link";
 import { Footer, Navbar } from "../../../components";
 import { RiArrowGoBackLine } from "react-icons/ri";

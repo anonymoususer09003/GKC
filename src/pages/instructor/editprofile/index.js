@@ -1,30 +1,30 @@
-import React, { useState, useEffect } from "react";
-import Head from "next/head";
-import { Navbar, TutorNavbar, Footer } from "../../../components";
-import { MdEmail, MdLocationOn, MdArrowForwardIos } from "react-icons/md";
-import { BsCheck2Circle } from "react-icons/bs";
-import Image from "next/image";
-import { MultiSelect } from "react-multi-select-component";
-import { useRouter } from "next/router";
-import { withRole } from "../../../utils/withAuthorization";
-import { connect } from "react-redux";
-import { fetchUser } from "../../../store/actions/userActions";
-import { apiClient } from "../../../api/client";
+import React, { useState, useEffect } from 'react';
+import Head from 'next/head';
+import { Navbar, TutorNavbar, Footer } from '../../../components';
+import { MdEmail, MdLocationOn, MdArrowForwardIos } from 'react-icons/md';
+import { BsCheck2Circle } from 'react-icons/bs';
+import Image from 'next/image';
+import { MultiSelect } from 'react-multi-select-component';
+import { useRouter } from 'next/router';
+import { withRole } from '../../../utils/withAuthorization';
+import { connect } from 'react-redux';
+import { fetchUser } from '../../../store/actions/userActions';
+import { apiClient } from '../../../api/client';
 
 function EditProfile({ userInfo, loading, error, fetchUser }) {
   const navigation = useRouter();
 
   const [selected, setSelected] = useState([]);
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [address1, setAddress1] = useState("");
-  const [address2, setAddress2] = useState("");
-  const [city, setCity] = useState("");
-  const [state, setState] = useState("");
-  const [country, setCountry] = useState("");
-  const [zipCode, setZipCode] = useState("");
-  const [bio, setBio] = useState("");
-  const [hourlyRate, setHourlyRate] = useState("");
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [address1, setAddress1] = useState('');
+  const [address2, setAddress2] = useState('');
+  const [city, setCity] = useState('');
+  const [state, setState] = useState('');
+  const [country, setCountry] = useState('');
+  const [zipCode, setZipCode] = useState('');
+  const [bio, setBio] = useState('');
+  const [hourlyRate, setHourlyRate] = useState('');
   const [deliveryModes, setDeliveryModes] = useState([]);
   const [acceptInterviewRequest, setAcceptInterviewRequest] = useState(false);
   const [grades, setGrades] = useState([]);
@@ -39,7 +39,7 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
   // const [hourlyRate, setHourlyRate] = useState('');
 
   const onContinue = () => {
-    navigation.push("/instructor/settingprofile");
+    navigation.push('/instructor/settingprofile');
   };
 
   const handleLangSelectChange = (selected) => {
@@ -48,32 +48,28 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
         selected.map((option) => ({
           label: option.label,
           value: option.value,
-          proficiencyId: { id: 1, name: "Beginner" },
+          proficiencyId: { id: 1, name: 'Beginner' },
         }))
     );
   };
 
-  const handleSelectChange = (selected) => {
+  const handleSelectCourseChange = (selected) => {
     setSelectedCourses(
       selected &&
         selected.map((option) => ({
           label: option.label,
           value: option.value,
-          proficiencies: [{ value: 1, label: "Beginner" }],
+          proficiencies: [{ value: 1, label: 'Beginner' }],
         }))
     );
-
-    console.log(selectedCourses);
   };
 
-  const handleSelection = (selectedOptions, optionIndex) => {
+  const handleProficiencySelection = (selectedOptions, optionIndex) => {
     setSelectedCourses((prevData) => {
       const newData = [...prevData];
       newData[optionIndex].proficiencies = selectedOptions;
       return newData;
     });
-
-    console.log(selectedCourses);
   };
 
   const handleCheckboxChange = (event) => {
@@ -113,6 +109,7 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
     });
 
     var course = [];
+    console.log('selectedCourses', selectedCourses);
     selectedCourses.map((v) => {
       course.push({
         courseId: v.value,
@@ -129,7 +126,6 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
       }
     });
 
-    console.log(course);
     console.log({
       userId: userInfo.id,
       firstName: firstName,
@@ -143,15 +139,15 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
       zipCode: userInfo.zipCode,
       instructorBio: bio,
       hourlyRate: hourlyRate,
-      acceptInterviewRequest: acceptInterviewRequest == "Yes" ? true : false,
+      acceptInterviewRequest: acceptInterviewRequest == 'Yes' ? true : false,
       deliveryModes: modes,
       gradesIdToTutor: gradess,
       languagesIdPreference: langs,
       courseToTeachAndProficiency: course,
     });
     try {
-      var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
-      const response = await apiClient.put("/user/instructor/update", {
+      var typ = JSON.parse(window.localStorage.getItem('gkcAuth'));
+      const response = await apiClient.put('/user/instructor/update', {
         userId: userInfo.id,
         firstName: firstName,
         lastName: lastName,
@@ -164,14 +160,14 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
         zipCode: userInfo.zipCode,
         instructorBio: bio,
         hourlyRate: hourlyRate,
-        acceptInterviewRequest: acceptInterviewRequest == "Yes" ? true : false,
+        acceptInterviewRequest: acceptInterviewRequest == 'Yes' ? true : false,
         deliveryModes: modes,
         gradesIdToTutor: gradess,
         languagesIdPreference: langs,
         courseToTeachAndProficiency: course,
       });
-      console.log(response);
-      navigation.push("/instructor/settingprofile");
+      {}
+      navigation.push('/instructor/settingprofile');
     } catch (error) {
       console.error(error);
     }
@@ -202,7 +198,6 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
       response.data.map((v) => {
         technologyList.push({ value: v.id, label: v.name });
       });
-      console.log(technologyList);
       setCourses(technologyList);
     } catch (error) {
       console.error(error);
@@ -238,7 +233,7 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
     if (userInfo) {
       setHourlyRate(userInfo.hourlyRate);
       setBio(userInfo.instructorBio);
-      setAcceptInterviewRequest(userInfo.acceptInterviewRequest ? "Yes" : "No");
+      setAcceptInterviewRequest(userInfo.acceptInterviewRequest ? 'Yes' : 'No');
       let lanArr = [];
       userInfo.languagePreference.forEach((v) => {
         lanArr.push({ value: v.id, label: v.name });
@@ -251,21 +246,31 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
         delArr.push({ value: v.id, label: v.name, checked: false });
       });
       console.log(delArr);
-
+      
+      
+      const uniqueCourseIds = new Set();
+      // Filter and add unique objects to the result array
+      const uniqueCourseList = userInfo.coursesToTutorAndProficiencies.filter(
+        (object) => {
+          if (!uniqueCourseIds.has(object.course.id)) {
+            uniqueCourseIds.add(object.course.id);
+            return true;
+          }
+          return false;
+        }
+      );
       let courseArr = [];
-      userInfo?.coursesToTutorAndProficiencies.forEach((v) => {
+      uniqueCourseList.forEach((v) => {
         let avalue = v.course.id;
         let alabel = v.course.name;
-
         let prof = [];
         v.proficiencies.forEach((val) => {
           prof.push({ value: val.id, label: val.name });
         });
-
         courseArr.push({ value: avalue, label: alabel, proficiencies: prof });
       });
+
       setSelectedCourses(courseArr);
-      console.log(courseArr);
       setFirstName(userInfo.firstName);
       setLastName(userInfo.lastName);
       setAddress1(userInfo.address1);
@@ -276,8 +281,8 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
       setZipCode(userInfo.zipCode);
 
       let modes = [
-        { checked: false, id: 1, label: "In-Person" },
-        { checked: false, id: 2, label: "Online" },
+        { checked: false, id: 1, label: 'In-Person' },
+        { checked: false, id: 2, label: 'Online' },
       ];
       let delMode = [];
       userInfo.deliveryModes.forEach((v) => {
@@ -298,17 +303,17 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
       setDeliveryModes(newArray);
 
       let gradess = [
-        { checked: false, id: 1, label: "Elementary <10yrs" },
-        { checked: false, id: 2, label: "Middle School <10yrs - 13yrs" },
-        { checked: false, id: 3, label: "High School <14yrs - 16yrs" },
-        { checked: false, id: 4, label: "College & Beyond >18yrs" },
+        { checked: false, id: 1, label: 'Elementary <10yrs' },
+        { checked: false, id: 2, label: 'Middle School <10yrs - 13yrs' },
+        { checked: false, id: 3, label: 'High School <14yrs - 16yrs' },
+        { checked: false, id: 4, label: 'College & Beyond >18yrs' },
       ];
       let selectGrades = [];
       userInfo.gradesToTutor.forEach((v) => {
         selectGrades.push({
           checked: true,
           id: v.id,
-          label: v.name + " " + v.description,
+          label: v.name + ' ' + v.description,
         });
       });
       const newGradesArray = gradess.map((item) => {
@@ -341,10 +346,10 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <TutorNavbar isLogin={true} />
-      <main className="container-fluid" style={{ color: "#48494B" }}>
+      <main className="container-fluid" style={{ color: '#48494B' }}>
         <div
           className="p-5 "
-          style={{ minHeight: "90vh", maxWidth: "1700px", margin: "auto" }}
+          style={{ minHeight: '90vh', maxWidth: '1700px', margin: 'auto' }}
         >
           <div className="row">
             <div className="col-12 col-md-4 position-relative">
@@ -352,7 +357,7 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
                 <div className="px-4 ">
                   <div
                     className="bg_primary rounded-circle position-absolute d-flex justify-content-center align-items-center"
-                    style={{ top: "-40px", width: "105px", height: "105px" }}
+                    style={{ top: '-40px', width: '105px', height: '105px' }}
                   >
                     <Image
                       src="/assets/student-preview.png"
@@ -365,7 +370,7 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
                   </div>
                   <div className="d-flex justify-content-end">
                     <p className=" bg_secondary text-white p-2 rounded d-flex align-items-center gap-2 fw-bold">
-                      <MdEmail style={{ fontSize: "20px" }} />
+                      <MdEmail style={{ fontSize: '20px' }} />
                       {userInfo?.email}
                     </p>
                   </div>
@@ -521,7 +526,7 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
                     })}
                   </div>
                 </div>
-                <div className="row">
+                <>
                   {/* <div className="col pt-5">
                     <h5 className="fw-bold m-0 p-0">
                       Spoken Language Preference:
@@ -574,129 +579,75 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
                   </div>
                   </div> */}
 
-                  <div className="col pt-5">
-                    <h5 className="fw-bold m-0 p-0">
-                      Accept Interview Request
-                    </h5>
-                    <div className="d-flex gap-4 py-2">
-                      <div className="form-check">
-                        <input
-                          className="form-check-input"
-                          type="radio"
-                          name="flexRadioDefault"
-                          id="flexRadioDefault1"
-                          checked={acceptInterviewRequest === "No"}
-                          value="No"
-                          onChange={(e) =>
-                            setAcceptInterviewRequest(e.target.value)
-                          }
-                        />
-                        <label
-                          className="form-check-label"
-                          for="flexRadioDefault1"
-                        >
-                          No
-                        </label>
-                      </div>
-                      <div className="form-check">
-                        <input
-                          className="form-check-input"
-                          type="radio"
-                          name="flexRadioDefault"
-                          id="flexRadioDefault2"
-                          checked={acceptInterviewRequest === "Yes"}
-                          value="Yes"
-                          onChange={(e) =>
-                            setAcceptInterviewRequest(e.target.value)
-                          }
-                        />
-                        <label
-                          className="form-check-label"
-                          for="flexRadioDefault2"
-                        >
-                          Yes
-                        </label>
+                  <div className="d-flex gap-5 w-100 align-items-center pt-5">
+                    <div className="w-50">
+                      <h4 className="fw-bold">Spoken Language Preference</h4>
+
+                      <MultiSelect
+                        options={lang}
+                        value={selectedLang}
+                        onChange={handleLangSelectChange}
+                        labelledBy={'Select Lang'}
+                        isCreatable={true}
+                        hasSelectAll={false}
+                      />
+                    </div>
+                    <div className="w-50">
+                      <h5 className="fw-bold">Accept Interview Request</h5>
+                      <div className="d-flex gap-4 py-2">
+                        <div className="form-check">
+                          <input
+                            className="form-check-input"
+                            type="radio"
+                            name="flexRadioDefault"
+                            id="flexRadioDefault1"
+                            checked={acceptInterviewRequest === 'No'}
+                            value="No"
+                            onChange={(e) =>
+                              setAcceptInterviewRequest(e.target.value)
+                            }
+                          />
+                          <label
+                            className="form-check-label"
+                            for="flexRadioDefault1"
+                          >
+                            No
+                          </label>
+                        </div>
+                        <div className="form-check">
+                          <input
+                            className="form-check-input"
+                            type="radio"
+                            name="flexRadioDefault"
+                            id="flexRadioDefault2"
+                            checked={acceptInterviewRequest === 'Yes'}
+                            value="Yes"
+                            onChange={(e) =>
+                              setAcceptInterviewRequest(e.target.value)
+                            }
+                          />
+                          <label
+                            className="form-check-label"
+                            for="flexRadioDefault2"
+                          >
+                            Yes
+                          </label>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              </div>
-
-              <div className="shadow rounded-10 pt-2 pb-5 bg-white my-4">
-                <div className="p-4 w-50 m-auto">
-                  <h4 className="fw-bold m-0 p-0 pb-3 text-center">
-                    Languages List
-                  </h4>
-
-                  <MultiSelect
-                    options={lang}
-                    value={selectedLang}
-                    onChange={handleLangSelectChange}
-                    labelledBy={"Select Lang"}
-                    isCreatable={true}
-                    hasSelectAll={false}
-                  />
-                </div>
-
-                <div className="row m-0 p-0 w-100">
-                  <div className="col d-flex justify-content-center">
-                    <h4 className="fw-bold m-0 p-0">Langs</h4>
+                  <div className="row d-flex py-4">
+                    {selectedLang.map((v, ind) => {
+                      return (
+                        <>
+                          <div className="ms-3 d-flex primary-list py-1">
+                            <li className="fw-bold h7 fw-lighter">{v.label}</li>
+                          </div>
+                        </>
+                      );
+                    })}
                   </div>
-                  <div className="col d-flex justify-content-start">
-                    <h4 className="fw-bold m-0 p-0">Proficiency</h4>
-                  </div>
-
-                  <div className="container">
-                    <div className="row d-flex justify-content-center py-4">
-                      {selectedLang.map((v, ind) => {
-                        return (
-                          <>
-                            <div className="col-md-5 item py-2">
-                              <li className="fw-bold m-0 p-0 h5 fw-lighter">
-                                {v.label}
-                              </li>
-                            </div>
-                            <div className="col-md-4 item py-2">
-                              <select
-                                className="w-100 p-2 rounded outline-0 border border_gray"
-                                value={v.proficiencyId.id}
-                                onChange={(e) => {
-                                  const selectedProficiencyId = Number(
-                                    e.target.value
-                                  );
-                                  const selectedProficiencyName =
-                                    e.target.selectedOptions[0].label;
-
-                                  const updatedLangs = selectedLang.map(
-                                    (lang) => {
-                                      if (lang.value === v.value) {
-                                        return {
-                                          ...lang,
-                                          proficiencyId: {
-                                            id: selectedProficiencyId,
-                                            name: selectedProficiencyName,
-                                          },
-                                        };
-                                      }
-                                      return lang;
-                                    }
-                                  );
-
-                                  setSelectedLang(updatedLangs);
-                                  // console.log(updatedLangs)
-                                }}
-                              >
-                                <option value={1}>Beginner</option>
-                                <option value={2}>Intermediate</option>
-                                <option value={3}>Semi-Expert</option>
-                              </select>
-                            </div>
-                          </>
-                        );
-                      })}
-                    </div>
-                  </div>
-                </div>
+                </>
               </div>
 
               <div className="shadow rounded-10 p-5 bg-white  my-4">
@@ -708,8 +659,8 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
                   <MultiSelect
                     options={courses}
                     value={selectedCourses}
-                    onChange={handleSelectChange}
-                    labelledBy={"Select Course"}
+                    onChange={handleSelectCourseChange}
+                    labelledBy={'Select Course'}
                     isCreatable={true}
                   />
                 </div>
@@ -736,9 +687,9 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
                             options={proficiency}
                             value={v.proficiencies}
                             onChange={(selectedOptions) =>
-                              handleSelection(selectedOptions, i)
+                              handleProficiencySelection(selectedOptions, i)
                             }
-                            labelledBy={"Select Proficiency"}
+                            labelledBy={'Select Proficiency'}
                             isCreatable={true}
                           />
                         </div>
@@ -764,5 +715,5 @@ const mapStateToProps = (state) => ({
 });
 
 export default withRole(connect(mapStateToProps, { fetchUser })(EditProfile), [
-  "Instructor",
+  'Instructor',
 ]);

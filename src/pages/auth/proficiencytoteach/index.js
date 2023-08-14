@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from "react";
-import Head from "next/head";
-import { Navbar, Footer } from "../../../components";
-import { BsCheck2Circle } from "react-icons/bs";
-import { useRouter } from "next/router";
-import axios from "axios";
-import { MultiSelect } from "react-multi-select-component";
-import Select from "react-select";
-import styles from "../../../styles/Home.module.css";
+import React, { useState, useEffect } from 'react';
+import Head from 'next/head';
+import { Navbar, Footer } from '../../../components';
+import { BsCheck2Circle } from 'react-icons/bs';
+import { useRouter } from 'next/router';
+import axios from 'axios';
+import { MultiSelect } from 'react-multi-select-component';
+import Select from 'react-select';
+import styles from '../../../styles/Home.module.css';
 
 export default function StudentRegistrationCourse() {
   const navigation = useRouter();
@@ -17,19 +17,19 @@ export default function StudentRegistrationCourse() {
   const [lang, setLang] = useState([]);
   const [proficiency, setProficiency] = useState([]);
 
-
   const handleSelectChange = (selected) => {
     setSelected(
-      selected && selected.map((option) => ({
-        label: option.label,
-        value: option.value,
-        proficienciesId: []
-      }))
+      selected &&
+        selected.map((option) => ({
+          label: option.label,
+          value: option.value,
+          proficienciesId: [],
+        }))
     );
   };
 
   const onContinue = () => {
-    var stored = JSON.parse(window.localStorage.getItem("registrationForm"));
+    var stored = JSON.parse(window.localStorage.getItem('registrationForm'));
     var languageId = [];
     var courseWithId = [];
     selectedLang.map((v) => {
@@ -39,22 +39,22 @@ export default function StudentRegistrationCourse() {
     selected.map((v) => {
       courseWithId.push({
         courseId: v.value,
-        proficienciesId: v.proficienciesId.map(val=>{
-         return val.value
+        proficienciesId: v.proficienciesId.map((val) => {
+          return val.value;
         }),
       });
     });
 
     stored.courseToTeachAndProficiency = courseWithId;
     stored.languagesIdPreference = languageId;
-    window.localStorage.setItem("registrationForm", JSON.stringify(stored));
-    navigation.push("/auth/instructorbankinfo");
+    window.localStorage.setItem('registrationForm', JSON.stringify(stored));
+    navigation.push('/auth/instructorbankinfo');
   };
 
   const getCourses = async () => {
     try {
       const response = await axios.get(
-        `http://34.227.65.157/public/course/with-instructors`
+        `http://34.227.65.157/public/course/get-all-courses`
       );
 
       var technologyList = [];
@@ -72,7 +72,7 @@ export default function StudentRegistrationCourse() {
     try {
       const response = await axios.get(
         `http://34.227.65.157/public/register/get-all-languages`
-              );
+      );
       var arr = [];
       response.data.map((v) => {
         arr.push({ value: v.id, label: v.name });
@@ -92,6 +92,14 @@ export default function StudentRegistrationCourse() {
       response.data.map((v) => {
         arr.push({ value: v.id, label: v.name });
       });
+      arr.sort((a, b) => {
+        const proficiencyOrder = {
+          Beginner: 0,
+          Intermediate: 1,
+          'Semi-expert': 2,
+        };
+        return proficiencyOrder[a.label] - proficiencyOrder[b.label];
+      });
       setProficiency(arr);
     } catch (error) {
       console.error(error);
@@ -104,8 +112,6 @@ export default function StudentRegistrationCourse() {
     getProficiency();
   }, []);
 
-
-
   const handleSelection = (selectedOptions, optionIndex) => {
     setSelected((prevData) => {
       const newData = [...prevData];
@@ -113,7 +119,7 @@ export default function StudentRegistrationCourse() {
       return newData;
     });
 
-    console.log(selected)
+    console.log(selected);
   };
 
   return (
@@ -131,9 +137,9 @@ export default function StudentRegistrationCourse() {
             className="col-12 col-lg-5 position-relative d-none d-lg-block"
             style={{
               backgroundImage: 'url("/assets/register_group.png")',
-              height: "100vh",
-              backgroundRepeat: "no-repeat",
-              backgroundSize: "100% 100%",
+              height: '100vh',
+              backgroundRepeat: 'no-repeat',
+              backgroundSize: '100% 100%',
             }}
           ></div>
           <div className="col-12 col-lg-7 d-flex justify-content-center align-items-center ">
@@ -145,16 +151,16 @@ export default function StudentRegistrationCourse() {
 
                 <div className="py-4">
                   <div className={`w-50 mb-3 ${styles.courseDropdowns}`}>
-                     <Select
-                       isMulti
-                       options={courses}
-                       value={selected}
-                       onChange={handleSelectChange}
-                   />
+                    <Select
+                      isMulti
+                      options={courses}
+                      value={selected}
+                      onChange={handleSelectChange}
+                    />
                   </div>
                   <div className="d-flex flex-wrap gap-2">
                     {selected.length < 1 ? (
-                      <div style={{ padding: "20px 0" }}>
+                      <div style={{ padding: '20px 0' }}>
                         <h5 className="text-dark fw-bold">
                           No Course Selected Yet.
                         </h5>
@@ -163,7 +169,7 @@ export default function StudentRegistrationCourse() {
                       selected.map((v) => {
                         return (
                           <p className="bg_secondary text-white p-2 rounded d-flex align-items-center gap-2 fw-bold">
-                            <BsCheck2Circle style={{ fontSize: "22px" }} />
+                            <BsCheck2Circle style={{ fontSize: '22px' }} />
                             {v.label}
                           </p>
                         );
@@ -172,28 +178,31 @@ export default function StudentRegistrationCourse() {
                   </div>
                 </div>
 
-                <h4 className="text-dark fw-bold pb-2">Proficiency</h4>
+                <h4 className="text-dark fw-bold pb-2">
+                  What proficiency do you teach?
+                </h4>
 
                 {selected.length < 1 ? (
-                  <div style={{ padding: "50px 0" }}>
+                  <div style={{ padding: '50px 0' }}>
                     <h5 className="text-dark fw-bold">
                       No Course Selected Yet.
-                    </h5> 
+                    </h5>
                   </div>
                 ) : (
-                  selected.map((v,index) => {
+                  selected.map((v, index) => {
                     return (
-                      <div className="d-flex  flex-wrap align-items-center gap-2 ">
-                        <p>{v.label}</p>
-
-                        <div className="w-50 mb-3">
+                      <div className="d-flex align-items-center gap-2 ">
+                        <div style={{ width: '120px' }}>
+                          <p>{v.label}</p>
+                        </div>
+                        <div className="w-25 mb-3">
                           <MultiSelect
                             options={proficiency}
                             value={v.proficienciesId}
                             onChange={(selectedOptions) =>
-                                 handleSelection(selectedOptions, index)
-                           }
-                            labelledBy={"Select Proficiency"}
+                              handleSelection(selectedOptions, index)
+                            }
+                            labelledBy={'Select Proficiency'}
                             isCreatable={true}
                           />
                         </div>
@@ -210,10 +219,11 @@ export default function StudentRegistrationCourse() {
                   <div className="py-2">
                     <div className={`w-50 mb-3 ${styles.courseDropdowns}`}>
                       <MultiSelect
+                        hasSelectAll={false}
                         options={lang}
                         value={selectedLang}
                         onChange={setSelectedLang}
-                        labelledBy={"Select Language"}
+                        labelledBy={'Select Language'}
                         isCreatable={true}
                       />
                     </div>
@@ -222,8 +232,14 @@ export default function StudentRegistrationCourse() {
                   <div className="d-flex gap-2 justify-content-between mt-3">
                     <button
                       // className="w-25 btn_primary text-light p-2 rounded fw-bold "
-                      className={`w-50 btn_primary text-light p-2 rounded fw-bold ${selected.length === 0 || selectedLang.length === 0 ? 'btn_disabled' : 'btn_primary'}`}
-                       disabled={selected.length === 0 || selectedLang.length === 0 }
+                      className={`w-50 btn_primary text-light p-2 rounded fw-bold ${
+                        selected.length === 0 || selectedLang.length === 0
+                          ? 'btn_disabled'
+                          : 'btn_primary'
+                      }`}
+                      disabled={
+                        selected.length === 0 || selectedLang.length === 0
+                      }
                       onClick={onContinue}
                     >
                       Continue
