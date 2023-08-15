@@ -1,12 +1,12 @@
-import React, { useState } from "react";
-import Image from "next/image";
-import Link from "next/link";
-import { BsCheck2Circle, BsFillCameraVideoFill } from "react-icons/bs";
-import { BiMessageAlt } from "react-icons/bi";
-import { FaFileVideo } from "react-icons/fa";
-import StarRatings from "react-star-ratings";
-import { useRouter } from "next/router";
-import { apiClient } from "../../api/client";
+import React, { useState } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { BsCheck2Circle, BsFillCameraVideoFill } from 'react-icons/bs';
+import { BiMessageAlt } from 'react-icons/bi';
+import { FaFileVideo } from 'react-icons/fa';
+import StarRatings from 'react-star-ratings';
+import { useRouter } from 'next/router';
+import { apiClient } from '../../api/client';
 const Tutorcard = ({ data }) => {
   const navigation = useRouter();
   const [userData, setUserData] = useState(null);
@@ -14,7 +14,7 @@ const Tutorcard = ({ data }) => {
   const [showModal, setShowModal] = useState(false);
   const [showModal2, setShowModal2] = useState(false);
 
-  console.log("data", data);
+  console.log('data', data);
 
   const handleOpenModal = () => {
     setShowModal(true);
@@ -31,7 +31,7 @@ const Tutorcard = ({ data }) => {
       );
       setReviews(res.data);
     } catch (error) {
-      console.error("Error fetching profile data:", error);
+      console.error('Error fetching profile data:', error);
     }
     setShowModal2(true);
   };
@@ -53,12 +53,13 @@ const Tutorcard = ({ data }) => {
             className="rounded-circle bg-light"
           />
         </div>
-
-        <div className="d-flex justify-conntent-between align-items-end">
-          <div>
-            <FaFileVideo style={{ fontSize: "40px", color: "#006600" }} />
+        {data.video && (
+          <div className="d-flex justify-conntent-between align-items-end">
+            <div>
+              <FaFileVideo style={{ fontSize: '40px', color: '#006600' }} />
+            </div>
           </div>
-        </div>
+        )}
         <div>
           <div className="d-flex gap-2 flex-wrap align-items-center justify-content-between flex-1">
             <b
@@ -66,7 +67,7 @@ const Tutorcard = ({ data }) => {
               data-bs-toggle="modal"
               data-bs-target="#exampleModal"
             >
-              {data?.firstName + " " + data?.lastName}
+              {data?.firstName + ' ' + data?.lastName}
             </b>
             <div
               className="d-flex align-items-center gap-2"
@@ -89,7 +90,7 @@ const Tutorcard = ({ data }) => {
               // data-bs-target="#exampleModal1"
               onClick={() => handleOpenModal2(data?.id)}
             >
-              <BiMessageAlt style={{ fontSize: "22px" }} />
+              <BiMessageAlt style={{ fontSize: '22px' }} />
               Reviews
             </button>
 
@@ -129,7 +130,7 @@ const Tutorcard = ({ data }) => {
               {data?.coursesToTutorAndProficiencies.map((v, i) => {
                 return (
                   <li className="bg_secondary text-white p-2 rounded d-flex align-items-center gap-2">
-                    <BsCheck2Circle style={{ fontSize: "22px" }} />
+                    <BsCheck2Circle style={{ fontSize: '22px' }} />
                     {v.course.name}
                   </li>
                 );
@@ -184,7 +185,7 @@ const Tutorcard = ({ data }) => {
                     <div className="flex-1 w-100">
                       <div className="d-flex flex-wrap justify-content-between align-items-center gap-2 ">
                         <h5 className="m-0 p-0">
-                          {data?.firstName + " " + data?.lastName}
+                          {data?.firstName + ' ' + data?.lastName}
                         </h5>
                         <div className="d-flex align-items-center gap-2">
                           <div className="mb-2">
@@ -198,7 +199,7 @@ const Tutorcard = ({ data }) => {
                           <p className="m-0 p-0">Stars 4.2/5</p>
                         </div>
                         <button className="m-0 p-0 bg_secondary border-0 text-white p-2 rounded d-flex align-items-center gap-2">
-                          <BiMessageAlt style={{ fontSize: "22px" }} />
+                          <BiMessageAlt style={{ fontSize: '22px' }} />
                           Reviews
                         </button>
                         <h5 className="m-0 p-0 fw-bold">
@@ -208,7 +209,7 @@ const Tutorcard = ({ data }) => {
                       <div className="d-flex gap-4  pt-2">
                         <div>
                           <FaFileVideo
-                            style={{ fontSize: "40px", color: "#006600" }}
+                            style={{ fontSize: '40px', color: '#006600' }}
                           />
                         </div>
                         <h5 className="m-0 pt-2">Call to action title</h5>
@@ -223,7 +224,7 @@ const Tutorcard = ({ data }) => {
                       {data?.coursesToTutorAndProficiencies.map((v, i) => {
                         return (
                           <li className="bg_secondary text-white p-2 rounded d-flex align-items-center gap-2">
-                            <BsCheck2Circle style={{ fontSize: "22px" }} />
+                            <BsCheck2Circle style={{ fontSize: '22px' }} />
                             {v.course.name}
                           </li>
                         );
@@ -298,7 +299,7 @@ const Tutorcard = ({ data }) => {
                     <div className="flex-1 w-100">
                       <div className="d-flex gap-3 align-items-center ">
                         <b className="m-0 p-0">
-                          {data?.firstName + " " + data?.lastName}
+                          {data?.firstName + ' ' + data?.lastName}
                         </b>
                         <div className="d-flex align-items-center gap-2">
                           <div className="mb-2">
@@ -337,7 +338,7 @@ const Tutorcard = ({ data }) => {
                             <div className="d-flex align-items-center justify-content-between flex-1">
                               <b className="m-0 p-0">
                                 {v?.reviewer?.firstName +
-                                  " " +
+                                  ' ' +
                                   v?.reviewer?.lastName}
                               </b>
                               <div className="d-flex align-items-center gap-2">

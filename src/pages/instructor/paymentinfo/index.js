@@ -9,6 +9,14 @@ function BankInfo() {
   const navigation = useRouter();
   const [showPayoneerInput, setShowPayoneerInput] = useState(false);
   const [showPayPalInput, setShowPayPalInput] = useState(false);
+  const [popupVisible, setPopupVisible] = useState(false);
+
+  const handleUpdateClick = () => {
+    setPopupVisible(true);
+    setTimeout(() => {
+      setPopupVisible(false);
+    }, 3000);
+  };
 
   return (
     <>
@@ -19,51 +27,6 @@ function BankInfo() {
         <link rel="icon" href="/favicon.ico" />
       </Head>{' '}
       <TutorNavbar isLogin={true} />{' '}
-      {/* <main className="container-fluid d-flex flex-column justify-content-between min-vh-100">
-        <div className="d-flex justify-content-center align-items-center p-5">
-          <div className="col-12 col-lg-7">
-            <div>
-              <div>
-                <h4 className="text-dark fw-bold pb-2 text-center mt-5 mb-5">Tell us where to deposit your payments</h4>{" "}
-                <select className="w-100 p-2 rounded outline-0 border border_gray  mb-3 ">
-                  <option> Checking </option> <option> Saving </option>{" "}
-                </select>{" "}
-                <input
-                  type="text"
-                  className="w-100 p-2 rounded outline-0 border border_gray   my-2"
-                  placeholder="Name on Credit Card"
-                />
-                <input
-                  type="text"
-                  className="w-100 p-2 rounded outline-0 border border_gray   my-2"
-                  placeholder="Credit Card Number"
-                />
-                <div className="d-flex gap-2 my-2">
-                  <input
-                    type="text"
-                    className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
-                    placeholder="CVV"
-                  />
-                  <input
-                    type="text"
-                    className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
-                    placeholder="Expiration Date"
-                  />
-                </div>
-                <div className="d-flex gap-2 justify-content-center mt-3">
-                  <button
-                    className="w-50 btn_primary text-light p-2 rounded fw-bold "
-                    onClick={() => navigation.push("/")}
-                  >
-                    Update{" "}
-                  </button>{" "}
-                </div>
-              </div>{" "}
-            </div>{" "}
-          </div>{" "}
-        </div>
-        <Footer />
-      </main> */}
       <div className="w-100">
         <h4
           style={{ marginTop: '120px' }}
@@ -110,14 +73,31 @@ function BankInfo() {
           )}
           <div className="">
             <button
-              style={{ marginTop: '80px', backgroundColor: '#f48342' }}
+              onClick={handleUpdateClick}
+              style={{
+                marginTop: '80px',
+                width: '500px',
+                backgroundColor: '#f48342',
+              }}
               className="text-light p-2 w-100 rounded fw-bold  bg-gray-300"
             >
-              Continue
+              Update
             </button>
-            <Link href="/" className="text-decoration-none">
-              <p className="text-secondary mt-4 fw-bold">I'll do this later.</p>
-            </Link>
+            {popupVisible && (
+              <div
+                style={{
+                  position: 'fixed',
+                  top: '50%',
+                  left: '50%',
+                  transform: 'translate(-50%, -50%)',
+                  padding: '55px',
+                  backgroundColor: 'white',
+                  boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.2)',
+                }}
+              >
+                Your payment info has been updated successfully.
+              </div>
+            )}
           </div>
         </div>
       </div>

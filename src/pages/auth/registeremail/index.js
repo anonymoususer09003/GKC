@@ -1,36 +1,53 @@
-import React, { useState } from "react";
-import Head from "next/head";
-import Image from "next/image";
-import Link from "next/link";
-import { Footer } from "../../../components";
-import { RiArrowGoBackLine } from "react-icons/ri";
-import { useRouter } from "next/router";
-import axios from "axios";
+import React, { useState } from 'react';
+import Head from 'next/head';
+import Image from 'next/image';
+import Link from 'next/link';
+import { Footer } from '../../../components';
+import { RiArrowGoBackLine } from 'react-icons/ri';
+import { useRouter } from 'next/router';
+import { base_url } from '@/api/client';
+import axios from 'axios';
 
 export default function Home() {
   const navigation = useRouter();
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState('');
+  const [emailExists, setEmailExists] = useState(false);
 
-  const isEmailValid = ((/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)))
-  const handleSubmit = async () => {
-    
+  const isEmailValid = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(
+    email
+  );
+
+  const checkIfEmailExists = async () => {
     try {
-      const response = await axios.get(`http://34.227.65.157/auth/code?email=${email}`);
-      console.log(response)
-        if (email) {
-          window.localStorage.setItem(
-            "registrationForm",
-            JSON.stringify({
-              email,
-            })
-          );
-          navigation.push("/auth/activatecode");
-        }
-
+      const res = await axios.get(`${base_url}/user/exists/${email}`);
+      if (res.data !== true) {
+        handleSubmit();
+      } else {
+        setEmailExists(true);
+      }
     } catch (error) {
       console.error(error);
     }
-  
+  };
+
+  const handleSubmit = async () => {
+    try {
+      const response = await axios.get(
+        `http://34.227.65.157/auth/code?email=${email}`
+      );
+      console.log(response);
+      if (email) {
+        window.localStorage.setItem(
+          'registrationForm',
+          JSON.stringify({
+            email,
+          })
+        );
+        navigation.push('/auth/activatecode');
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
   return (
     <>
@@ -50,7 +67,7 @@ export default function Home() {
         </Link>
         <div className="row">
           <div className="col-12 col-lg-6 d-flex justify-content-center align-items-center ">
-            <div style={{ maxWidth: "380px", width: "100%" }}>
+            <div style={{ maxWidth: '380px', width: '100%' }}>
               <div className="d-flex justify-content-center mb-5">
                 <Image
                   src="https://gkc-images.s3.amazonaws.com/logo.png"
@@ -70,17 +87,24 @@ export default function Home() {
                 <div>
                   <input
                     type="text"
-                    className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
+                    className="w-100 p-2 rounded outline-0 border border_gray"
                     placeholder="Your Email"
                     name="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                   />
+                  {emailExists && (
+                    <p className="text-center fw-bold tw-text-red-500">
+                      Email already exists
+                    </p>
+                  )}
 
                   <button
-                    className={`w-100 text-light p-2 rounded fw-bold mt-3 bg-gray-300 ${!isEmailValid ? 'btn_disabled' : 'btn_primary'}`}
+                    className={`w-100 text-light p-2 rounded fw-bold mt-3 bg-gray-300 ${
+                      !isEmailValid ? 'btn_disabled' : 'btn_primary'
+                    }`}
                     disabled={!isEmailValid}
-                    onClick={() => handleSubmit()}
+                    onClick={() => checkIfEmailExists()}
                   >
                     Continue
                   </button>
@@ -98,12 +122,12 @@ export default function Home() {
             className="col-12 col-lg-6 position-relative d-none d-md-block"
             style={{
               backgroundImage: 'url("/assets/auth_2.png")',
-              height: "100vh",
-              backgroundRepeat: "no-repeat",
-              backgroundSize: "100% 100%",
+              height: '100vh',
+              backgroundRepeat: 'no-repeat',
+              backgroundSize: '100% 100%',
             }}
           >
-            <div style={{ position: "absolute", right: "0%", bottom: "7%" }}>
+            <div style={{ position: 'absolute', right: '0%', bottom: '7%' }}>
               <Image
                 src="https://gkc-images.s3.amazonaws.com/auth_girl_1.png"
                 alt="Vercel Logo"

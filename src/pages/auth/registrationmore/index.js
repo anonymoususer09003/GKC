@@ -6,12 +6,25 @@ import { BsCheck2Circle } from 'react-icons/bs';
 import { useRouter } from 'next/router';
 import { RiArrowGoBackLine } from 'react-icons/ri';
 import axios from 'axios';
+import { useSelector, useDispatch } from 'react-redux';
+import { saveVideo } from '@/store/actions/filesActions';
+
 export default function InstructorRegistrationMore() {
   const navigation = useRouter();
   const [hourlyRate, setHourlyRate] = useState(null);
   const [instructorBio, setInstructorBio] = useState('');
   const [acceptInterview, setAcceptInterview] = useState(false);
   const [deliveryModes, setDeliveryModes] = useState([]);
+  const [videoFile, setVideoFile] = useState();
+  const dispatch = useDispatch();
+
+  const handleVideoUpload = (e) => {
+    const selectedFile = e.target.files[0];
+    const file = new FormData();
+    file.append('file', selectedFile);
+    setVideoFile(file);
+    dispatch(saveVideo(file));
+  };
 
   const onContinue = () => {
     window.localStorage.setItem('gkcAuth', JSON.stringify(true));
@@ -116,8 +129,9 @@ export default function InstructorRegistrationMore() {
 
                 <input
                   type="file"
+                  accept="video/*"
+                  onChange={(e) => handleVideoUpload(e)}
                   className="w-100 p-1 rounded outline-0 border border_gray   mb-3"
-                  // placeholder="First Name"
                 />
                 <div className="d-flex gap-2 my-2 align-items-center">
                   <p className="fw-bold w-25 p-0 m-0">Hourly Rate:</p>

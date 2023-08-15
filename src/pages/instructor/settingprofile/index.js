@@ -12,7 +12,6 @@ import styles from '../../../styles/Home.module.css';
 
 function SettingProfile({ userInfo, loading, error, fetchUser }) {
   const navigation = useRouter();
-  // console.log(userInfo);
   const onContinue = () => {
     navigation.push('/instructor/editprofile');
   };
@@ -25,11 +24,7 @@ function SettingProfile({ userInfo, loading, error, fetchUser }) {
     fetchUser();
   }, [fetchUser]);
 
-  console.log(["courserser", userInfo?.coursesToTutorAndProficiencies]);
-
-  // if (loading) {
-  //   return <div>Loading...</div>;
-  // }
+  console.log("imageLink", userInfo?.instructorPhoto);
 
   if (error) {
     return <div>Error: {error}</div>;
@@ -64,7 +59,7 @@ function SettingProfile({ userInfo, loading, error, fetchUser }) {
                     style={{ top: '-40px', width: '105px', height: '105px' }}
                   >
                     <Image
-                      src="/assets/student-preview.png"
+                      src={userInfo?.instructorPhoto}
                       alt="profile image"
                       width={100}
                       height={100}
