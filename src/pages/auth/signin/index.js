@@ -1,18 +1,20 @@
-import React, { useEffect, useState } from "react";
-import Head from "next/head";
-import Image from "next/image";
-import Link from "next/link";
-import { RiArrowGoBackLine } from "react-icons/ri";
-import { Footer } from "../../../components";
-import { useRouter } from "next/router";
-import axios from "axios";
-import { base_url } from "../../../api/client";
+import React, { useEffect, useState } from 'react';
+import Head from 'next/head';
+import Image from 'next/image';
+import Link from 'next/link';
+import { RiArrowGoBackLine } from 'react-icons/ri';
+import { Footer } from '../../../components';
+import { useRouter } from 'next/router';
+import axios from 'axios';
+import { base_url } from '../../../api/client';
 
 export default function SignIn() {
   const navigation = useRouter();
-  const [userType, setUserType] = useState("student");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [userType, setUserType] = useState('student');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [isWrongPassword, setIsWrongPassword] = useState(false);
+  const [isWrongEmail, setIsWrongEmail] = useState(false);
 
   // useEffect(() => {
   //   const onLogin = async () => {
@@ -33,7 +35,7 @@ export default function SignIn() {
 
   const onLogin = async () => {
     try {
-      console.log(email, password)
+      console.log(email, password);
       const response = await axios.post(`${base_url}/auth/login`, {
         email: email,
         password: password,
@@ -46,22 +48,32 @@ export default function SignIn() {
         },
       });
       window.localStorage.setItem(
-        "gkcAuth",
+        'gkcAuth',
         JSON.stringify({ accessToken, role: res.data })
       );
-      if (res.data === "Student") {
-        navigation.push("/");
+      if (res.data === 'Student') {
+        navigation.push('/');
       }
 
-      if (res.data === "Instructor") {
-        navigation.push("/instructor");
+      if (res.data === 'Instructor') {
+        navigation.push('/instructor');
       }
 
-      if (res.data === "Parent") {
-        navigation.push("/parent");
+      if (res.data === 'Parent') {
+        navigation.push('/parent');
       }
     } catch (error) {
-      console.error(error);
+      if (
+        error.response.data.message ===
+        'This user does not exist. Create an account to get started'
+      ) {
+        setIsWrongEmail(true);
+        setIsWrongPassword(false);
+      }
+      if (error.response.data.message === 'The password is incorrect.') {
+        setIsWrongPassword(true);
+        setIsWrongEmail(false);
+      }
     }
   };
 
@@ -102,7 +114,7 @@ export default function SignIn() {
                   unoptimized
                 />
               </div>
-              <div>
+              <div className="w-100">
                 <div className="d-flex justify-content-between mb-3">
                   <h4 className="text-secondary fw-bold">Sign In</h4>
                   <Link
@@ -112,28 +124,44 @@ export default function SignIn() {
                     <p className="fw-bold text_secondary">Forgot Password?</p>
                   </Link>
                 </div>
-                <div>
+                <div className="w-100">
                   {/* <select onChange={(e)=> setUserType(e.target.value) } className="w-100 p-2 rounded outline-0 border border_gray text_gray mb-3 ">
                     <option value="student">Student</option>
                     <option value="parent">Parent</option>
                     <option value="instructor">Instructor</option>
                   </select> */}
-                  <input
-                    type="text"
-                    className="w-100 p-2 rounded outline-0 border border_gray mb-3"
-                    placeholder="Your Email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    onKeyDown={handleKeyPress}
-                  />
-                  <input
-                    type="password"
-                    className="w-100 p-2 rounded outline-0 border border_gray mb-3"
-                    placeholder="Password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    onKeyDown={handleKeyPress}
-                  />
+                  <div className="mb-3">
+                    <input
+                      type="text"
+                      className="w-100 p-2 rounded outline-0 border border_gray"
+                      placeholder="Your Email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      onKeyDown={handleKeyPress}
+                    />
+
+                    {isWrongEmail && (
+                      <p className="text-center fw-bold tw-text-red-500">
+                        Incorrect email Address
+                      </p>
+                    )}
+                  </div>
+                  <div>
+                    <input
+                      type="password"
+                      className="w-100 p-2 rounded outline-0 border border_gray mb-3"
+                      placeholder="Password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      onKeyDown={handleKeyPress}
+                    />
+
+                    {isWrongPassword && (
+                      <p className="text-center w-100 fw-bold tw-text-red-500">
+                        Incorrect password
+                      </p>
+                    )}
+                  </div>
                   <button
                     className="w-100 btn_primary text-light p-2 rounded fw-bold mt-3"
                     onClick={onLogin}
@@ -155,12 +183,12 @@ export default function SignIn() {
             className="col-12 col-lg-6 position-relative d-none d-md-block"
             style={{
               backgroundImage: 'url("/assets/auth_2.png")',
-              height: "90vh",
-              backgroundRepeat: "no-repeat",
-              backgroundSize: "100% 100%",
+              height: '90vh',
+              backgroundRepeat: 'no-repeat',
+              backgroundSize: '100% 100%',
             }}
           >
-            <div style={{ position: "absolute", right: "0%", bottom: "7%" }}>
+            <div style={{ position: 'absolute', right: '0%', bottom: '7%' }}>
               <Image
                 src="https://gkc-images.s3.amazonaws.com/auth_girl_1.png"
                 alt="Vercel Logo"

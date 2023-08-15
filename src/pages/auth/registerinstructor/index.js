@@ -1,34 +1,47 @@
-import React, { useState, useEffect } from "react";
-import Head from "next/head";
-import Link from "next/link";
-import { Navbar, Footer } from "../../../components";
-import { BsCheck2Circle } from "react-icons/bs";
-import { useRouter } from "next/router";
-import { RiArrowGoBackLine } from "react-icons/ri";
-import axios from "axios";
-import { base_url } from "../../../api/client";
-import styles from "../../../styles/Home.module.css";
+import React, { useState, useEffect } from 'react';
+import Head from 'next/head';
+import Link from 'next/link';
+import { Navbar, Footer } from '../../../components';
+import { BsCheck2Circle } from 'react-icons/bs';
+import { useRouter } from 'next/router';
+import { RiArrowGoBackLine } from 'react-icons/ri';
+import axios from 'axios';
+import { base_url } from '../../../api/client';
+import styles from '../../../styles/Home.module.css';
+import { BsPersonCircle } from 'react-icons/bs';
+import { useSelector, useDispatch } from 'react-redux';
+import { saveImage } from '@/store/actions/filesActions';
 
 export default function RegisterInstructor() {
   const navigation = useRouter();
   const [countries, setCountries] = useState([]);
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
-  const [userType, setUserType] = useState("");
-
-  const [email, setEmail] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [address1, setAddress1] = useState("");
-  const [address2, setAddress2] = useState("");
-  const [country, setCountry] = useState("");
-  const [state, setState] = useState("");
-  const [city, setCity] = useState("");
-  const [zipCode, setZipCode] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [userType, setUserType] = useState('');
+  const [email, setEmail] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [address1, setAddress1] = useState('');
+  const [address2, setAddress2] = useState('');
+  const [country, setCountry] = useState('');
+  const [state, setState] = useState('');
+  const [city, setCity] = useState('');
+  const [zipCode, setZipCode] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [termsAgree, setTermsAgree] = useState(false);
   const [isInitialRender, setIsInitialRender] = useState(true);
+  const [image, setImage] = useState();
+  const [imageFile, setImageFile] = useState();
+  const dispatch = useDispatch();
+
+  const handleImageUpload = (e) => {
+    const selectedFile = e.target.files[0];
+    const file = new FormData();
+    file.append('file', selectedFile);
+    setImageFile(file);
+    dispatch(saveImage(file));
+  };
 
   let isValidForm =
     email &&
@@ -43,11 +56,11 @@ export default function RegisterInstructor() {
     termsAgree;
 
   const onContinue = () => {
-    window.localStorage.setItem("gkcAuth", JSON.stringify(true));
-    var stored = JSON.parse(window.localStorage.getItem("registrationForm"));
+    window.localStorage.setItem('gkcAuth', JSON.stringify(true));
+    var stored = JSON.parse(window.localStorage.getItem('registrationForm'));
     let timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-    console.log(stored);
+    console.log('stor', stored);
     stored.email = email;
     stored.firstName = firstName;
     stored.lastName = lastName;
@@ -61,11 +74,11 @@ export default function RegisterInstructor() {
     stored.savePaymentFutureUse = true;
     stored.timeZoneId = timezone;
 
-    window.localStorage.setItem("registrationForm", JSON.stringify(stored));
+    window.localStorage.setItem('registrationForm', JSON.stringify(stored));
     if (password == confirmPassword) {
-      navigation.push("/auth/registrationmore");
+      navigation.push('/auth/registrationmore');
     } else {
-      alert("password not matched");
+      alert('password not matched');
     }
   };
 
@@ -102,8 +115,8 @@ export default function RegisterInstructor() {
   };
 
   useEffect(() => {
-    const value = JSON.parse(window.localStorage.getItem("userType"));
-    var stored = JSON.parse(window.localStorage.getItem("registrationForm"));
+    const value = JSON.parse(window.localStorage.getItem('userType'));
+    var stored = JSON.parse(window.localStorage.getItem('registrationForm'));
     setEmail(stored?.email);
     setUserType(value);
     getCountries();
@@ -142,17 +155,56 @@ export default function RegisterInstructor() {
         </Link>
         <div className="row">
           <div
-            className="col-12 col-lg-6 position-relative  d-none d-md-block "
+            className="col-12 tw-my-auto col-lg-6 position-relative d-none d-md-block "
             style={{
               backgroundImage: 'url("/assets/register_group.png")',
-              height: "100vh",
-              backgroundRepeat: "no-repeat",
-              backgroundSize: "100% 100%",
+              height: '110vh',
+              backgroundRepeat: 'no-repeat',
+              backgroundSize: '100% 100%',
             }}
           ></div>
           <div className="col-12 col-lg-6 d-flex justify-content-center align-items-center ">
             <div className="w-100 w-md-75 p-5">
               <div>
+                <div className="d-flex flex-column w-75 justify-content-center align-items-center mb-5">
+                  {image ? (
+                    <img
+                      src={image}
+                      style={{
+                        width: '140px',
+                        height: '140px',
+                        borderRadius: '50%',
+                      }}
+                      className="tw-object-fit-cover"
+                    />
+                  ) : (
+                    <BsPersonCircle
+                      style={{
+                        width: '140px',
+                        height: '140px',
+                        borderRadius: '50%',
+                      }}
+                    />
+                  )}
+                  <label
+                    for="files"
+                    style={{ width: '120px', backgroundColor: '#f48342' }}
+                    className="mx-auto p-2 mt-2 tw-rounded-lg text-center"
+                  >
+                    Upload image
+                  </label>
+                  <input
+                    accept="image/*"
+                    className="mt-3"
+                    id="files"
+                    style={{ display: 'none' }}
+                    type="file"
+                    onChange={(e) => {
+                      handleImageUpload(e);
+                      setImage(URL.createObjectURL(e.target.files[0]));
+                    }}
+                  />
+                </div>
                 <div
                   className={`d-flex justify-content-between align-items-center mb-3 ${styles.intructorTitle}`}
                 >
@@ -160,7 +212,7 @@ export default function RegisterInstructor() {
                     Instructor
                   </h4>
                   <p className="bg_secondary text-white p-2 rounded d-flex align-items-center gap-2 fw-bold">
-                    <BsCheck2Circle style={{ fontSize: "22px" }} />
+                    <BsCheck2Circle style={{ fontSize: '22px' }} />
                     {email}
                   </p>
                 </div>
@@ -277,29 +329,29 @@ export default function RegisterInstructor() {
                       onChange={() => setTermsAgree(!termsAgree)}
                     />
                     <label className="form-check-label" for="flexCheckDefault">
-                      I agree to the{" "}
+                      I agree to the{' '}
                       <Link
                         href="/terms-of-use"
                         className="fw-bold no-underline hover:text_secondary text_secondary"
                       >
-                        {" "}
+                        {' '}
                         Terms of Use
-                      </Link>{" "}
-                      and{" "}
+                      </Link>{' '}
+                      and{' '}
                       <Link
                         href="/privicy-policy"
                         className="fw-bold no-underline hover:text_secondary text_secondary"
                       >
-                        {" "}
-                        Privacy Policy{" "}
-                      </Link>{" "}
+                        {' '}
+                        Privacy Policy{' '}
+                      </Link>{' '}
                       of GKC
                     </label>
                   </div>
                   <div className="d-flex flex-wrap gap-2 justify-content-between mt-3">
                     <button
                       className={`w-50 text-light p-2 rounded fw-bold  bg-gray-300 ${
-                        isValidForm ? "btn_primary" : "btn_disabled"
+                        isValidForm ? 'btn_primary' : 'btn_disabled'
                       }`}
                       disabled={!isValidForm}
                       onClick={onContinue}

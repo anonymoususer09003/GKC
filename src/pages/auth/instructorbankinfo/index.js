@@ -1,30 +1,23 @@
-import React, { useState, useEffect } from "react";
-import Head from "next/head";
-import { TutorNavbar, Footer } from "../../../components";
-import { useRouter } from "next/router";
-import { RiArrowGoBackLine } from "react-icons/ri";
-import Link from "next/link";
-import axios from "axios";
-import { base_url } from "../../../api/client";
+import React, { useState, useEffect } from 'react';
+import Head from 'next/head';
+import { TutorNavbar, Footer } from '../../../components';
+import { useRouter } from 'next/router';
+import { RiArrowGoBackLine } from 'react-icons/ri';
+import Link from 'next/link';
+import axios from 'axios';
+import { base_url } from '../../../api/client';
+import { useSelector } from 'react-redux';
 export default function ParentRegistrationCCInfo() {
   const navigation = useRouter();
+  const [showPayoneerInput, setShowPayoneerInput] = useState(false);
+  const [showPayPalInput, setShowPayPalInput] = useState(false);
   const [userType, setUserType] = useState(null);
   const [userInfo, setUserInfo] = useState(null);
 
-  const [bankAccountType, setBankAccountType] = useState("checking");
-  const [bankName, setBankName] = useState("");
-  const [bankAccountNumber, setBankAccountNumber] = useState("");
-  const [confirmBankAccountNumber, setConfirmBankAccountNumber] = useState("");
-  const [bankRoutingNumber, setBankRoutingNumber] = useState("");
-  const [confirmBankRoutingNumber, setConfirmBankRoutingNumber] = useState("");
-  let isValid =
-    bankName !== "" &&
-    bankAccountNumber !== "" &&
-    confirmBankAccountNumber !== "" &&
-    bankAccountNumber == confirmBankAccountNumber &&
-    bankRoutingNumber !== "" &&
-    confirmBankRoutingNumber !== "" &&
-    bankRoutingNumber == confirmBankRoutingNumber;
+  const files = useSelector((state) => state.files);
+  const imageFile = files.image;
+  const videoFile = files.video;
+
   const onContinue = async () => {
     try {
       const response = await axios.post(
@@ -48,10 +41,6 @@ export default function ParentRegistrationCCInfo() {
           gradesIdToTutor: userInfo.gradesIdToTutor,
           languagesIdPreference: userInfo.languagesIdPreference,
           courseToTeachAndProficiency: userInfo.courseToTeachAndProficiency,
-          bankAccountType: bankAccountType,
-          bankName: bankName,
-          bankAccountNumber: bankAccountNumber,
-          bankRoutingNumber: bankRoutingNumber,
         }
       );
 
@@ -60,28 +49,56 @@ export default function ParentRegistrationCCInfo() {
           Authorization: `Bearer ${response.data.accessToken}`,
         },
       });
+
+      const uploadImageResponse = await axios.post(
+        `${base_url}/aws/upload-instructor-photo`,
+        imageFile,
+        {
+          headers: {
+            accept: '*/*',
+            Authorization: `Bearer ${response.data.accessToken}`,
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
+
+      // const uploadVideoResponse = await axios.post(
+      //   `${base_url}/aws/upload-instructor-video`,
+      //   videoFile,
+      //   {
+      //     headers: {
+      //       accept: '*/*',
+      //       Authorization: `Bearer ${response.data.accessToken}`,
+      //       'Content-Type': 'multipart/form-data',
+      //     },
+      //   }
+      // );
+
       console.log(res.data);
       window.localStorage.setItem(
-        "gkcAuth",
+        'gkcAuth',
         JSON.stringify({
           accessToken: response.data.accessToken,
           role: res.data,
         })
       );
-      window.localStorage.removeItem("registrationForm");
-      window.localStorage.removeItem("userType");
-      navigation.push("/instructor");
+      window.localStorage.removeItem('registrationForm');
+      window.localStorage.removeItem('userType');
+      navigation.push('/instructor');
     } catch (error) {
       console.error(error);
     }
   };
 
-  useEffect(() => {
-    var stored = JSON.parse(window.localStorage.getItem("registrationForm"));
-    var typ = JSON.parse(window.localStorage.getItem("userType"));
+  useEffect(async () => {
+    let stored = await JSON.parse(
+      window.localStorage.getItem('registrationForm')
+    );
+    let typ = JSON.parse(window.localStorage.getItem('userType'));
     setUserInfo(stored);
     setUserType(typ);
   }, []);
+
   return (
     <>
       <Head>
@@ -98,100 +115,74 @@ export default function ParentRegistrationCCInfo() {
           <RiArrowGoBackLine />
           <p className="fw-bold m-0 p-0 ">Back to home</p>
         </Link>
-        <div className="row">
-          <div
-            className="col-12 col-lg-5 position-relative"
-            style={{
-              backgroundImage: 'url("/assets/register_group.png")',
-              height: "100vh",
-              backgroundRepeat: "no-repeat",
-              backgroundSize: "100% 100%",
-            }}
-          ></div>
-          <div className="col-12 col-lg-7 d-flex justify-content-center align-items-center ">
-            <div className="w-75 p-5">
-              <div>
-                <h4 className="text-dark fw-bold pb-2">
-                  Tell us where to deposit your payments.
-                </h4>
-                <select
-                  className="w-100 p-2 rounded outline-0 border border_gray  "
-                  value={bankAccountType}
-                  onChange={(e) => setBankAccountType(e.target.value)}
-                >
-                  <option value="checking">Checking</option>
-                  <option value="saving">Saving</option>
-                </select>
-                <input
-                  type="text"
-                  className="w-100 p-2 rounded outline-0 border border_gray   mt-3"
-                  placeholder="Bank Name"
-                  value={bankName}
-                  onChange={(e) => setBankName(e.target.value)}
-                />
-
-                <div className="d-flex gap-2 my-3">
-                  <input
-                    type="text"
-                    className="w-100 p-2 rounded outline-0 border border_gray  "
-                    placeholder="Account Number"
-                    value={bankAccountNumber}
-                    onChange={(e) => setBankAccountNumber(e.target.value)}
-                  />
-                  <input
-                    type="text"
-                    className="w-100 p-2 rounded outline-0 border border_gray  "
-                    placeholder="Confirm Account Number"
-                    value={confirmBankAccountNumber}
-                    onChange={(e) =>
-                      setConfirmBankAccountNumber(e.target.value)
-                    }
-                  />
-                </div>
-                <div className="d-flex gap-2 my-2">
-                  <input
-                    type="text"
-                    className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
-                    placeholder="Routing Number"
-                    value={bankRoutingNumber}
-                    onChange={(e) => setBankRoutingNumber(e.target.value)}
-                  />
-                  <input
-                    type="text"
-                    className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
-                    placeholder="Confirm Routing Number"
-                    value={confirmBankRoutingNumber}
-                    onChange={(e) =>
-                      setConfirmBankRoutingNumber(e.target.value)
-                    }
-                  />
-                </div>
-                <div className="d-flex gap-2 justify-content-center mt-3">
-                  <button
-                    className={`w-50 text-light p-2 rounded fw-bold  bg-gray-300 ${
-                      isValid ? "btn_primary" : " btn_disabled"
-                    }`}
-                    disabled={!isValid}
-                    onClick={onContinue}
-                  >
-                    Continue
-                  </button>
-                </div>
-                <div className="d-flex gap-2 justify-content-center  mt-3">
-                  <button
-                    className={`w-50 text-light p-2 rounded fw-bold  bg-gray-300 
-                        btn_secondary
-                      `}
-                    onClick={onContinue}
-                  >
-                    I will do this later
-                  </button>
-                </div>
-              </div>
+        <div style={{ height: '80vh' }}>
+          <h4
+            style={{ marginTop: '120px' }}
+            className="text-dark fw-bold pb-2 text-center"
+          >
+            Tell us where to deposit your payments
+          </h4>
+          <div className="d-flex mt-5 justify-content-center align-items-center flex-column">
+            <div className="d-flex align-items-center gap-5 justify-content-center">
+              <p style={{ width: '100px' }} className="fw-bold">
+                Payoneer
+              </p>
+              <button
+                onClick={() => setShowPayoneerInput(!showPayoneerInput)}
+                style={{ backgroundColor: '#f48342' }}
+                className="py-2 px-4 fw-bold text-white rounded"
+              >
+                Setup
+              </button>
+            </div>
+            {showPayoneerInput && (
+              <input
+                placeholder="Enter Payoneer info"
+                className="mt-3 fw-bold border-2 border-dark p-1"
+              ></input>
+            )}
+            <div className="mt-5 d-flex gap-5 align-items-center justify-content-center">
+              <p style={{ width: '100px' }} className="fw-bold">
+                PayPal
+              </p>
+              <button
+                onClick={() => setShowPayPalInput(!showPayPalInput)}
+                style={{ backgroundColor: '#f48342' }}
+                className="py-2 px-4 fw-bold text-white rounded"
+              >
+                Setup
+              </button>
+            </div>
+            {showPayPalInput && (
+              <input
+                placeholder="Enter PayPal info"
+                className="mt-3 fw-bold border-2 border-dark p-1"
+              ></input>
+            )}
+            <div className="text-center">
+              <button
+                style={{
+                  marginTop: '80px',
+                  width: '500px',
+                  backgroundColor: '#f48342',
+                }}
+                onClick={() => {
+                  onContinue();
+                }}
+                className="text-light tw-mb-4 p-2 w-100 rounded fw-bold  bg-gray-300"
+              >
+                Continue
+              </button>
+              <Link
+                className="text-decoration-none tw-mt-4 tw-text-gray-500 tw-text-lg"
+                href="/instructor"
+                onClick={onContinue}
+              >
+                I will do this later
+              </Link>
             </div>
           </div>
         </div>
-
         <Footer />
       </main>
     </>
