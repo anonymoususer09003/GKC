@@ -17,9 +17,20 @@ export default function InstructorRegistrationMore() {
   const [deliveryModes, setDeliveryModes] = useState([]);
   const [videoFile, setVideoFile] = useState();
   const dispatch = useDispatch();
+  const [isVideoTooLarge, setIsVideoTooLarge] = useState(false);
 
   const handleVideoUpload = (e) => {
     const selectedFile = e.target.files[0];
+
+    const selectedFileSizeInBytes = selectedFile.size;
+    const fileSizeInKB = selectedFileSizeInBytes / 1024; // Convert to KB
+    const fileSizeInMB = selectedFileSizeInBytes / (1024 * 1024); // Convert to MB
+
+    // if (fileSizeInKB > 0) {
+    //   setIsVideoTooLarge(true);
+    //   return;
+    // }
+    
     const file = new FormData();
     file.append('file', selectedFile);
     setVideoFile(file);

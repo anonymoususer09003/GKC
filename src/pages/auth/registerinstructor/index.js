@@ -34,9 +34,17 @@ export default function RegisterInstructor() {
   const [image, setImage] = useState();
   const [imageFile, setImageFile] = useState();
   const dispatch = useDispatch();
+  const [isImageTooLarge, setIsImageTooLarge] = useState(false);
 
   const handleImageUpload = (e) => {
     const selectedFile = e.target.files[0];
+    const selectedFileSizeInBytes = selectedFile.size;
+    const fileSizeInKB = selectedFileSizeInBytes / 1024; // Convert to KB
+    const fileSizeInMB = selectedFileSizeInBytes / (1024 * 1024); // Convert to MB
+    // if (fileSizeInMB > 1) {
+    //   setIsImageTooLarge(true);
+    //   return;
+    // }
     const file = new FormData();
     file.append('file', selectedFile);
     setImageFile(file);

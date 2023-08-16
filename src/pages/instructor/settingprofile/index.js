@@ -65,13 +65,12 @@ function SettingProfile({ userInfo, loading, error, fetchUser }) {
                     className="bg_primary rounded-circle position-absolute d-flex justify-content-center align-items-center"
                     style={{ top: '-40px', width: '105px', height: '105px' }}
                   >
-                    <img
+                    <Image
                       src={userInfo?.instructorPhoto}
                       // unoptimized={true}
                       alt="profile image"
                       width={100}
                       height={100}
-                      priority="true"
                       className="rounded-circle bg-light"
                     />
                     
