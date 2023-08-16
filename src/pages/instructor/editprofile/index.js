@@ -36,6 +36,7 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
   const [selectedCourses, setSelectedCourses] = useState([]);
   const [selectedLang, setSelectedLang] = useState([]);
   const fileInputRef = useRef(null);
+  const videoFileInputRef = useRef(null);
 
   const onContinue = () => {
     navigation.push('/instructor/settingprofile');
@@ -421,43 +422,60 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
             <div className="col-12 col-md-4 position-relative">
               <div className="shadow rounded-10 bg-white py-4">
                 <div className="px-4">
-                  <div
-                    className="bg_primary rounded-circle position-absolute d-flex justify-content-center align-items-center"
-                    style={{ top: '-40px', width: '105px', height: '105px' }}
-                  >
-                    <Image
-                      src={image}
-                      alt=""
-                      width={100}
-                      height={100}
-                      priority
-                      className="rounded-circle bg-light"
-                    />
+                  <div className="tw-flex mb-5 tw-relative tw-justify-end tw-gap-3 tw-items-center">
+                    <div className="tw-absolute tw-left-0 tw-bottom-0">
+                      <Image
+                        src={image}
+                        alt=""
+                        width={100}
+                        height={100}
+                        priority
+                        className="rounded-circle bg-primary tw-w-[105px] tw-h-[105px]  bg-light"
+                      />
+                      <div className="tw-absolute tw-bottom-2 tw-right-4">
+                        <AiOutlineEdit
+                          onClick={() => {
+                            fileInputRef.current.click();
+                          }}
+                          className="tw-cursor-pointer tw-w-5 tw-h-5"
+                        />
+                        <input
+                          ref={fileInputRef}
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => {
+                            handleImageUpload(e);
+                            setImage(URL.createObjectURL(e.target.files[0]));
+                          }}
+                          style={{ display: 'none' }}
+                        />
+                      </div>
+                    </div>
+                    <div className="tw-flex tw-gap-2 tw-flex-col tw-items-end">
+                      <p className="bg_secondary m-0 text-white p-1 rounded fw-bold">
+                        <MdEmail style={{ fontSize: '20px' }} />
+                        {userInfo?.email}
+                      </p>
+                      <div className='tw-mx-auto'>
+                        <button
+                          onClick={() => {
+                            videoFileInputRef.current.click();
+                          }}
+                          className="btn_primary p-1 tw-w-32 fw-bold text-white rounded text-decoration-none"
+                        >
+                          Upload video
+                        </button>
+                        <input
+                          ref={videoFileInputRef}
+                          type="file"
+                          accept="video/*"
+                          onChange={(e) => handleVideoUpload(e)}
+                          style={{ display: 'none' }}
+                        />
+                      </div>
+                    </div>
                   </div>
-                  <div className="tw-absolute tw-top-[3%] tw-left-[24%]">
-                    <AiOutlineEdit
-                      onClick={() => {
-                        fileInputRef.current.click();
-                      }}
-                      className="tw-cursor-pointer"
-                    />
-                    <input
-                      ref={fileInputRef}
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) => {
-                        handleImageUpload(e);
-                        setImage(URL.createObjectURL(e.target.files[0]));
-                      }}
-                      style={{ display: 'none' }}
-                    />
-                  </div>
-                  <div className="d-flex justify-content-end">
-                    <p className=" bg_secondary text-white p-2 rounded d-flex align-items-center gap-2 fw-bold">
-                      <MdEmail style={{ fontSize: '20px' }} />
-                      {userInfo?.email}
-                    </p>
-                  </div>
+
                   <input
                     type="text"
                     className="border-0 h4 p-1 border-bottom w-100 mb-1"
