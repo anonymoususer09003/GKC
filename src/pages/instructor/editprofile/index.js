@@ -37,6 +37,8 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
   const [selectedLang, setSelectedLang] = useState([]);
   const fileInputRef = useRef(null);
   const videoFileInputRef = useRef(null);
+  const [isImageTooLarge, setIsImageTooLarge] = useState(false);
+  const [isVideoTooLarge, setIsVideoTooLarge] = useState(false);
 
   const onContinue = () => {
     navigation.push('/instructor/settingprofile');
@@ -362,6 +364,16 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
 
   const handleImageUpload = async (e) => {
     const selectedFile = e.target.files[0];
+
+    const selectedFileSizeInBytes = selectedFile.size;
+    const fileSizeInKB = selectedFileSizeInBytes / 1024; // Convert to KB
+    const fileSizeInMB = selectedFileSizeInBytes / (1024 * 1024); // Convert to MB
+
+    // if (fileSizeInKB > 0) {
+    //   setIsImageTooLarge(true);
+    //   return;
+    // }
+
     const file = new FormData();
     file.append('file', selectedFile);
     try {
@@ -382,6 +394,16 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
 
   const handleVideoUpload = async (e) => {
     const selectedFile = e.target.files[0];
+
+    const selectedFileSizeInBytes = selectedFile.size;
+    const fileSizeInKB = selectedFileSizeInBytes / 1024; // Convert to KB
+    const fileSizeInMB = selectedFileSizeInBytes / (1024 * 1024); // Convert to MB
+
+    // if (fileSizeInKB > 0) {
+    //   setIsVideoTooLarge(true);
+    //   return;
+    // }
+
     const file = new FormData();
     file.append('file', selectedFile);
     try {
@@ -456,7 +478,7 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
                         <MdEmail style={{ fontSize: '20px' }} />
                         {userInfo?.email}
                       </p>
-                      <div className='tw-mx-auto'>
+                      <div className="tw-mx-auto">
                         <button
                           onClick={() => {
                             videoFileInputRef.current.click();
