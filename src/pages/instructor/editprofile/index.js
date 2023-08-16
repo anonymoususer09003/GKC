@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Head from 'next/head';
 import { Navbar, TutorNavbar, Footer } from '../../../components';
 import { MdEmail, MdLocationOn, MdArrowForwardIos } from 'react-icons/md';
@@ -10,6 +10,8 @@ import { withRole } from '../../../utils/withAuthorization';
 import { connect } from 'react-redux';
 import { fetchUser } from '../../../store/actions/userActions';
 import { apiClient } from '../../../api/client';
+import { AiOutlineEdit } from 'react-icons/ai';
+import { useDispatch } from 'react-redux';
 
 function EditProfile({ userInfo, loading, error, fetchUser }) {
   const navigation = useRouter();
@@ -29,14 +31,11 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
   const [acceptInterviewRequest, setAcceptInterviewRequest] = useState(false);
   const [grades, setGrades] = useState([]);
   const [proficiency, setProficiency] = useState([]);
-
   const [courses, setCourses] = useState([]);
   const [lang, setLang] = useState([]);
-
   const [selectedCourses, setSelectedCourses] = useState([]);
   const [selectedLang, setSelectedLang] = useState([]);
-
-  // const [hourlyRate, setHourlyRate] = useState('');
+  const fileInputRef = useRef(null);
 
   const onContinue = () => {
     navigation.push('/instructor/settingprofile');
@@ -64,13 +63,33 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
     );
   };
 
+  const proficiencyOrder = {
+    Beginner: 1,
+    Intermediate: 2,
+    'Semi-expert': 3,
+  };
+
+  // useEffect(()=>{
+  //   console.log("see", selectedCourses[0].proficiencies);
+  // },[selectedCourses])
+
   const handleProficiencySelection = (selectedOptions, optionIndex) => {
     setSelectedCourses((prevData) => {
       const newData = [...prevData];
-      newData[optionIndex].proficiencies = selectedOptions;
+      newData[optionIndex].proficiencies = selectedOptions.sort(
+        (a, b) => proficiencyOrder[a] - proficiencyOrder[b]
+      );
       return newData;
     });
   };
+
+  // const handleProficiencySelection = (selectedOptions, optionIndex) => {
+  //   setSelectedCourses((prevData) => {
+  //     const newData = [...prevData];
+  //     newData[optionIndex].proficiencies = selectedOptions;
+  //     return newData;
+  //   });
+  // };
 
   const handleCheckboxChange = (event) => {
     const itemId = parseInt(event.target.value);
@@ -166,7 +185,8 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
         languagesIdPreference: langs,
         courseToTeachAndProficiency: course,
       });
-      {}
+      {
+      }
       navigation.push('/instructor/settingprofile');
     } catch (error) {
       console.error(error);
@@ -213,6 +233,14 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
       response.data.map((v) => {
         arr.push({ value: v.id, label: v.name });
       });
+      arr.sort((a, b) => {
+        const proficiencyOrder = {
+          Beginner: 0,
+          Intermediate: 1,
+          'Semi-expert': 2,
+        };
+        return proficiencyOrder[a.label] - proficiencyOrder[b.label];
+      });
       setProficiency(arr);
     } catch (error) {
       console.error(error);
@@ -228,6 +256,8 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
   useEffect(() => {
     fetchUser();
   }, [fetchUser]);
+
+  const [image, setImage] = useState();
 
   useEffect(() => {
     if (userInfo) {
@@ -246,8 +276,7 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
         delArr.push({ value: v.id, label: v.name, checked: false });
       });
       console.log(delArr);
-      
-      
+
       const uniqueCourseIds = new Set();
       // Filter and add unique objects to the result array
       const uniqueCourseList = userInfo.coursesToTutorAndProficiencies.filter(
@@ -279,6 +308,7 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
       setState(userInfo.country);
       setCountry(userInfo.country);
       setZipCode(userInfo.zipCode);
+      setImage(userInfo.instructorPhoto);
 
       let modes = [
         { checked: false, id: 1, label: 'In-Person' },
@@ -329,9 +359,45 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
     }
   }, [userInfo]);
 
-  // if (loading) {
-  //   return <div>Loading...</div>;
-  // }
+  const handleImageUpload = async (e) => {
+    const selectedFile = e.target.files[0];
+    const file = new FormData();
+    file.append('file', selectedFile);
+    try {
+      const response = await apiClient.post(
+        '/aws/upload-instructor-photo',
+        file,
+        {
+          headers: {
+            accept: '*/*',
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
+    } catch (error) {
+      console.log(error.response);
+    }
+  };
+
+  const handleVideoUpload = async (e) => {
+    const selectedFile = e.target.files[0];
+    const file = new FormData();
+    file.append('file', selectedFile);
+    try {
+      const response = await apiClient.post(
+        '/aws/upload-instructor-video',
+        file,
+        {
+          headers: {
+            accept: '*/*',
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
+    } catch (error) {
+      console.log(error.response);
+    }
+  };
 
   if (error) {
     return <div>Error: {error}</div>;
@@ -354,18 +420,36 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
           <div className="row">
             <div className="col-12 col-md-4 position-relative">
               <div className="shadow rounded-10 bg-white py-4">
-                <div className="px-4 ">
+                <div className="px-4">
                   <div
                     className="bg_primary rounded-circle position-absolute d-flex justify-content-center align-items-center"
                     style={{ top: '-40px', width: '105px', height: '105px' }}
                   >
                     <Image
-                      src="/assets/student-preview.png"
+                      src={image}
                       alt=""
                       width={100}
                       height={100}
                       priority
                       className="rounded-circle bg-light"
+                    />
+                  </div>
+                  <div className="tw-absolute tw-top-[3%] tw-left-[24%]">
+                    <AiOutlineEdit
+                      onClick={() => {
+                        fileInputRef.current.click();
+                      }}
+                      className="tw-cursor-pointer"
+                    />
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => {
+                        handleImageUpload(e);
+                        setImage(URL.createObjectURL(e.target.files[0]));
+                      }}
+                      style={{ display: 'none' }}
                     />
                   </div>
                   <div className="d-flex justify-content-end">

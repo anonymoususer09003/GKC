@@ -62,17 +62,17 @@ export default function ParentRegistrationCCInfo() {
         }
       );
 
-      // const uploadVideoResponse = await axios.post(
-      //   `${base_url}/aws/upload-instructor-video`,
-      //   videoFile,
-      //   {
-      //     headers: {
-      //       accept: '*/*',
-      //       Authorization: `Bearer ${response.data.accessToken}`,
-      //       'Content-Type': 'multipart/form-data',
-      //     },
-      //   }
-      // );
+      const uploadVideoResponse = await axios.post(
+        `${base_url}/aws/upload-instructor-video`,
+        videoFile,
+        {
+          headers: {
+            accept: '*/*',
+            Authorization: `Bearer ${response.data.accessToken}`,
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
 
       console.log(res.data);
       window.localStorage.setItem(
