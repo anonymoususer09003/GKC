@@ -8,6 +8,7 @@ import { useRouter } from 'next/router';
 import { withRole } from '../../../utils/withAuthorization';
 import { connect } from 'react-redux';
 import { fetchUser } from '../../../store/actions/userActions';
+
 import styles from '../../../styles/Home.module.css';
 
 function SettingProfile({ userInfo, loading, error, fetchUser }) {
@@ -24,7 +25,13 @@ function SettingProfile({ userInfo, loading, error, fetchUser }) {
     fetchUser();
   }, [fetchUser]);
 
-  console.log("imageLink", userInfo?.instructorPhoto);
+  useEffect(() => {
+   console.log("object",userInfo?.coursesToTutorAndProficiencies ); 
+  }, [userInfo?.instructorPhoto]);
+
+  useEffect(() => {
+    console.log('imageLink', userInfo?.instructorPhoto);
+  }, [userInfo?.instructorPhoto]);
 
   if (error) {
     return <div>Error: {error}</div>;
@@ -58,14 +65,16 @@ function SettingProfile({ userInfo, loading, error, fetchUser }) {
                     className="bg_primary rounded-circle position-absolute d-flex justify-content-center align-items-center"
                     style={{ top: '-40px', width: '105px', height: '105px' }}
                   >
-                    <Image
+                    <img
                       src={userInfo?.instructorPhoto}
+                      // unoptimized={true}
                       alt="profile image"
                       width={100}
                       height={100}
-                      priority
+                      priority="true"
                       className="rounded-circle bg-light"
                     />
+                    
                   </div>
                   <div className="d-flex justify-content-end">
                     <p className=" bg_secondary text-white p-2 rounded d-flex align-items-center gap-2 fw-bold">

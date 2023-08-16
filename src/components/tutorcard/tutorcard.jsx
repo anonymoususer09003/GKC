@@ -53,7 +53,7 @@ const Tutorcard = ({ data }) => {
             className="rounded-circle bg-light"
           />
         </div>
-        {data.video && (
+        {data?.video && (
           <div className="d-flex justify-conntent-between align-items-end">
             <div>
               <FaFileVideo style={{ fontSize: '40px', color: '#006600' }} />
