@@ -56,7 +56,9 @@ const Tutorcard = ({ data }) => {
         {data?.video && (
           <div className="d-flex justify-conntent-between align-items-end">
             <div>
-              <FaFileVideo style={{ fontSize: '40px', color: '#006600' }} />
+              <a href={data.video} target="_blank" rel="noopener noreferrer">
+                <FaFileVideo style={{ fontSize: '40px', color: '#006600' }} />
+              </a>
             </div>
           </div>
         )}
