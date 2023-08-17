@@ -25,9 +25,6 @@ function SettingProfile({ userInfo, loading, error, fetchUser }) {
     fetchUser();
   }, [fetchUser]);
 
-  useEffect(() => {
-   console.log("object",userInfo?.coursesToTutorAndProficiencies ); 
-  }, [userInfo?.instructorPhoto]);
 
   useEffect(() => {
     console.log('imageLink', userInfo?.instructorPhoto);
@@ -67,7 +64,7 @@ function SettingProfile({ userInfo, loading, error, fetchUser }) {
                   >
                     <Image
                       src={userInfo?.instructorPhoto}
-                      // unoptimized={true}
+                      unoptimized={true}
                       alt="profile image"
                       width={100}
                       height={100}
@@ -96,7 +93,6 @@ function SettingProfile({ userInfo, loading, error, fetchUser }) {
                   <hr className="bg_secondary" />
                   <h4 className="p-0 m-0 py-2 fw-bold">Bio</h4>
                   <div>{userInfo?.instructorBio} </div>
-
                   <div className="d-flex gap-2 justify-content-center py-3 pt-5">
                     <button
                       className="w-50 btn_primary text-light p-2 rounded fw-bold d-flex align-items-center justify-content-center gap-2"
