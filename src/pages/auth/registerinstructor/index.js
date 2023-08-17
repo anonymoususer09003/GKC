@@ -40,11 +40,12 @@ export default function RegisterInstructor() {
     const selectedFile = e.target.files[0];
     const selectedFileSizeInBytes = selectedFile.size;
     const fileSizeInKB = selectedFileSizeInBytes / 1024; // Convert to KB
-    const fileSizeInMB = selectedFileSizeInBytes / (1024 * 1024); // Convert to MB
-    // if (fileSizeInMB > 1) {
-    //   setIsImageTooLarge(true);
-    //   return;
-    // }
+    if (fileSizeInKB > 500) {
+      setIsImageTooLarge(true);
+      return;
+    } else {
+      setIsImageTooLarge(false);
+    }
     const file = new FormData();
     file.append('file', selectedFile);
     setImageFile(file);
@@ -212,6 +213,11 @@ export default function RegisterInstructor() {
                       setImage(URL.createObjectURL(e.target.files[0]));
                     }}
                   />
+                  {isImageTooLarge && (
+                    <p className="tw-text-center tw-text-[15px] tw-w-full tw-text-red-500 tw-font-sm">
+                      Max allowed size is 500KB
+                    </p>
+                  )}
                 </div>
                 <div
                   className={`d-flex justify-content-between align-items-center mb-3 ${styles.intructorTitle}`}

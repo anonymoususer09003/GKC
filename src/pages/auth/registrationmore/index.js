@@ -23,14 +23,15 @@ export default function InstructorRegistrationMore() {
     const selectedFile = e.target.files[0];
 
     const selectedFileSizeInBytes = selectedFile.size;
-    const fileSizeInKB = selectedFileSizeInBytes / 1024; // Convert to KB
     const fileSizeInMB = selectedFileSizeInBytes / (1024 * 1024); // Convert to MB
 
-    // if (fileSizeInKB > 0) {
-    //   setIsVideoTooLarge(true);
-    //   return;
-    // }
-    
+    if (fileSizeInMB > 5) {
+      setIsVideoTooLarge(true);
+      return;
+    } else {
+      setIsVideoTooLarge(false);
+    }
+
     const file = new FormData();
     file.append('file', selectedFile);
     setVideoFile(file);
@@ -142,9 +143,14 @@ export default function InstructorRegistrationMore() {
                   type="file"
                   accept="video/*"
                   onChange={(e) => handleVideoUpload(e)}
-                  className="w-100 p-1 rounded outline-0 border border_gray   mb-3"
+                  className="w-100 p-1 rounded outline-0 border border_gray"
                 />
-                <div className="d-flex gap-2 my-2 align-items-center">
+                {isVideoTooLarge && (
+                  <p className="tw-text-center tw-w-full tw-text-red-500 tw-font-sm">
+                    Max allowed size is 5 MB
+                  </p>
+                )}
+                <div className="d-flex mt-4 gap-2 my-2 align-items-center">
                   <p className="fw-bold w-25 p-0 m-0">Hourly Rate:</p>
                   <div className="w-100 d-flex  align-items-center gap-4">
                     <input

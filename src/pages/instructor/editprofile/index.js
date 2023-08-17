@@ -11,7 +11,6 @@ import { connect } from 'react-redux';
 import { fetchUser } from '../../../store/actions/userActions';
 import { apiClient } from '../../../api/client';
 import { AiOutlineEdit } from 'react-icons/ai';
-import { useDispatch } from 'react-redux';
 
 function EditProfile({ userInfo, loading, error, fetchUser }) {
   const navigation = useRouter();
@@ -366,13 +365,14 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
     const selectedFile = e.target.files[0];
 
     const selectedFileSizeInBytes = selectedFile.size;
-    const fileSizeInKB = selectedFileSizeInBytes / 1024; // Convert to KB
-    const fileSizeInMB = selectedFileSizeInBytes / (1024 * 1024); // Convert to MB
+    const fileSizeInKB = selectedFileSizeInBytes / 1024;
 
-    // if (fileSizeInKB > 0) {
-    //   setIsImageTooLarge(true);
-    //   return;
-    // }
+    if (fileSizeInKB > 500) {
+      setIsImageTooLarge(true);
+      return;
+    } else {
+      setIsImageTooLarge(false);
+    }
 
     const file = new FormData();
     file.append('file', selectedFile);
@@ -396,14 +396,14 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
     const selectedFile = e.target.files[0];
 
     const selectedFileSizeInBytes = selectedFile.size;
-    const fileSizeInKB = selectedFileSizeInBytes / 1024; // Convert to KB
-    const fileSizeInMB = selectedFileSizeInBytes / (1024 * 1024); // Convert to MB
+    const fileSizeInMB = selectedFileSizeInBytes / (1024 * 1024);
 
-    // if (fileSizeInKB > 0) {
-    //   setIsVideoTooLarge(true);
-    //   return;
-    // }
-
+    if (fileSizeInMB > 5) {
+      setIsVideoTooLarge(true);
+      return;
+    } else {
+      setIsVideoTooLarge(false);
+    }
     const file = new FormData();
     file.append('file', selectedFile);
     try {
@@ -445,16 +445,16 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
               <div className="shadow rounded-10 bg-white py-4">
                 <div className="px-4">
                   <div className="tw-flex mb-5 tw-relative tw-justify-end tw-gap-3 tw-items-center">
-                    <div className="tw-absolute tw-left-0 tw-bottom-0">
+                    <div className="tw-absolute tw-h-full tw-left-0 tw-bottom-12">
                       <Image
-                        src={image}
+                        src={userInfo?.instructorPhoto}
                         alt=""
                         width={100}
                         height={100}
                         priority
                         className="rounded-circle bg-primary tw-w-[105px] tw-h-[105px]  bg-light"
                       />
-                      <div className="tw-absolute tw-bottom-2 tw-right-4">
+                      <div className="tw-absolute tw--bottom-7 tw-left-[40%]">
                         <AiOutlineEdit
                           onClick={() => {
                             fileInputRef.current.click();
@@ -467,11 +467,16 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
                           accept="image/*"
                           onChange={(e) => {
                             handleImageUpload(e);
-                            setImage(URL.createObjectURL(e.target.files[0]));
+                            // setImage(URL.createObjectURL(e.target.files[0]));
                           }}
                           style={{ display: 'none' }}
                         />
                       </div>
+                      {isImageTooLarge && (
+                        <p className="tw-text-center tw-text-[15px] tw-w-full tw-text-red-500 tw-font-sm">
+                          Max allowed size is 500KB
+                        </p>
+                      )}
                     </div>
                     <div className="tw-flex tw-gap-2 tw-flex-col tw-items-end">
                       <p className="bg_secondary m-0 text-white p-1 rounded fw-bold">
@@ -483,10 +488,11 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
                           onClick={() => {
                             videoFileInputRef.current.click();
                           }}
-                          className="btn_primary p-1 tw-w-32 fw-bold text-white rounded text-decoration-none"
+                          className="btn_primary mx-auto p-1 tw-w-32 fw-bold text-white rounded text-decoration-none"
                         >
                           Upload video
                         </button>
+
                         <input
                           ref={videoFileInputRef}
                           type="file"
@@ -495,6 +501,11 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
                           style={{ display: 'none' }}
                         />
                       </div>
+                      {isVideoTooLarge && (
+                        <p className="tw-text-center tw-w-full tw-text-red-500 tw-font-sm">
+                          Max allowed size is 5 MB
+                        </p>
+                      )}
                     </div>
                   </div>
 
