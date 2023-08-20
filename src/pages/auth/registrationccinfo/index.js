@@ -1,18 +1,19 @@
-import React, { useState, useEffect } from "react";
-import Head from "next/head";
-import { Navbar, Footer } from "../../../components";
-import { useRouter } from "next/router";
-import axios from "axios";
-import PaymentForm from "@/components/stripe/PaymentForm";
-import { base_url } from "../../../api/client";
+import React, { useState, useEffect } from 'react';
+import Head from 'next/head';
+import { Navbar, Footer } from '../../../components';
+import { useRouter } from 'next/router';
+import axios from 'axios';
+import PaymentForm from '@/components/stripe/PaymentForm';
+import { base_url } from '../../../api/client';
 export default function StudentRegistrationCCInfo() {
   const navigation = useRouter();
   const [userType, setUserType] = useState(null);
   const [userInfo, setUserInfo] = useState(null);
   const [confirmPayment, setConfirmPayment] = useState(false);
   const [parents, setParents] = useState([]);
-  const [selectedParent, setSelectedParent] = useState("");
-  const [savePaymentFutureUse, setSavePaymentFutureUse] = useState(false);
+  const [selectedParent, setSelectedParent] = useState('');
+  const [nameCard, setNameCard] = useState('');
+  const [cardFormValid, setCardFormValid] = useState(false);
 
   const onRegister = async ({ getPayment }) => {
     try {
@@ -29,7 +30,7 @@ export default function StudentRegistrationCCInfo() {
         zipCode: userInfo.zipCode,
         savePaymentFutureUse: false,
         emailParent1: userInfo.emailParent1,
-        emailParent2: "",
+        emailParent2: '',
         whoPaysEmail: selectedParent || userInfo.emailParent || userInfo.email,
         gradeId: userInfo.gradeId,
         courseOfInterestAndProficiency: userInfo.courseOfInterestAndProficiency,
@@ -41,32 +42,37 @@ export default function StudentRegistrationCCInfo() {
           Authorization: `Bearer ${response.data.accessToken}`,
         },
       });
-      if (getPayment && selectedParent == "") {
-        setConfirmPayment(true);
+      if (res && response) {
         window.localStorage.setItem(
-          "gkcAuth",
+          'gkcAuth',
           JSON.stringify({
             accessToken: response.data.accessToken,
             role: res.data,
           })
         );
-        window.localStorage.removeItem("registrationForm");
-        window.localStorage.removeItem("userType");
-        navigation.push("/");
+      }
+      if (getPayment && selectedParent == '') {
+        setConfirmPayment(true);
+        window.localStorage.removeItem('registrationForm');
+        window.localStorage.removeItem('userType');
+        navigation.push('/');
       } else {
-        window.localStorage.removeItem("registrationForm");
-        window.localStorage.removeItem("userType");
-        navigation.push("/");
+        window.localStorage.removeItem('registrationForm');
+        window.localStorage.removeItem('userType');
+        navigation.push('/');
       }
     } catch (error) {
       console.error(error);
     }
   };
-
+  const handleValueReceived = (value) => {
+    setNameCard(value.name);
+    // Do something with the value in the parent component
+  };
   useEffect(() => {
-    var stored = JSON.parse(window.localStorage.getItem("registrationForm"));
-    console.log("storeed", stored);
-    var typ = JSON.parse(window.localStorage.getItem("userType"));
+    var stored = JSON.parse(window.localStorage.getItem('registrationForm'));
+    console.log('storeed', stored);
+    var typ = JSON.parse(window.localStorage.getItem('userType'));
     setUserInfo(stored);
     setUserType(typ);
 
@@ -80,9 +86,9 @@ export default function StudentRegistrationCCInfo() {
     setParents(arr);
   }, []);
   const handlePaymentRequest = (status) => {
-    window.localStorage.removeItem("registrationForm");
-    window.localStorage.removeItem("userType");
-    navigation.push("/");
+    window.localStorage.removeItem('registrationForm');
+    window.localStorage.removeItem('userType');
+    navigation.push('/');
   };
   return (
     <>
@@ -99,9 +105,9 @@ export default function StudentRegistrationCCInfo() {
             className="col-12 col-lg-5 position-relative  d-none d-lg-block"
             style={{
               backgroundImage: 'url("/assets/register_group.png")',
-              height: "100vh",
-              backgroundRepeat: "no-repeat",
-              backgroundSize: "100% 100%",
+              height: '100vh',
+              backgroundRepeat: 'no-repeat',
+              backgroundSize: '100% 100%',
             }}
           ></div>
           <div className="col-12 col-lg-7 d-flex justify-content-center align-items-center ">
@@ -114,7 +120,7 @@ export default function StudentRegistrationCCInfo() {
                     className="w-25 p-2 rounded outline-0 border border_gray  mb-3 "
                     onChange={(e) =>
                       setSelectedParent(
-                        e.target.value == "Select" ? "" : e.target.value
+                        e.target.value == 'Select' ? '' : e.target.value
                       )
                     }
                     value={selectedParent}
@@ -123,43 +129,33 @@ export default function StudentRegistrationCCInfo() {
                     {parents.map((v, i) => {
                       return (
                         <option value={v} key={i}>
-                          {" "}
+                          {' '}
                           {v}
                         </option>
                       );
                     })}
                   </select>
                   <h4 className="text-dark fw-bold p-0 m-0 text-center">
-                    {" "}
-                    OR{" "}
+                    {' '}
+                    OR{' '}
                   </h4>
                 </div>
-
                 <PaymentForm
-                  onValueReceived={() => {}}
-                  title={"Add credit card information"}
+                  onValueReceived={handleValueReceived}
+                  title={'Add credit card information'}
                   onPay={confirmPayment}
                   userInfo={userInfo}
                   onPaymentRequest={handlePaymentRequest}
-                  disabled={selectedParent != "" ? true : false}
+                  setCardFormValid={setCardFormValid}
+                  disabled={selectedParent != '' ? true : false}
                 />
-                {/* <div className="form-check">
-                      <input
-                        disabled={selectedParent != "" ? true : false}
-                        className="form-check-input"
-                        type="checkbox"
-                        value={savePaymentFutureUse}
-                        id="flexCheckDefault"
-                        onChange={(e) => setSavePaymentFutureUse(e.target.checked)}
-                      />
-                      <label className="form-check-label" for="flexCheckDefault">
-                        Save the payment information for future use
-                      </label>
-                    </div> */}
                 <div className="d-flex gap-2 justify-content-center mt-3">
                   <button
                     className="w-50 btn_primary text-light p-2 rounded fw-bold "
                     onClick={() => onRegister({ getPayment: true })}
+                    disabled={
+                      cardFormValid && nameCard.length > 0 ? false : true
+                    }
                   >
                     Continue
                   </button>
@@ -170,7 +166,7 @@ export default function StudentRegistrationCCInfo() {
                     onClick={onRegister}
                   >
                     I will do this later
-                  </button>{" "}
+                  </button>{' '}
                 </div>
               </div>
             </div>
