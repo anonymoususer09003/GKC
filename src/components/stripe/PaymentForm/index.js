@@ -1,15 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   CardNumberElement,
   CardExpiryElement,
   CardCvcElement,
-} from "@stripe/react-stripe-js";
-
-import { useStripe, useElements } from "@stripe/react-stripe-js";
-import CreateCustomer from "../../../services/stripe/CreateStripeCustomer";
-import { OneTimePayment } from "../../../services/stripe/OneTimePayment";
-import SavePaymentCard from "../../../services/stripe/SavePaymentCard";
-import GetUserInfo from "../../../services/user/GetUserDetail";
+} from '@stripe/react-stripe-js';
+import { useStripe, useElements } from '@stripe/react-stripe-js';
+import CreateCustomer from '../../../services/stripe/CreateStripeCustomer';
+import { OneTimePayment } from '../../../services/stripe/OneTimePayment';
+import SavePaymentCard from '../../../services/stripe/SavePaymentCard';
+import GetUserInfo from '../../../services/user/GetUserDetail';
 const PaymentForm = ({
   isEdit,
   onClose,
@@ -22,18 +21,19 @@ const PaymentForm = ({
   savePaymentFutureUse,
   disabled,
   data = {},
-  setIsCardValid,
+  setCardFormValid,
 }) => {
   const stripe = useStripe();
   const elements = useElements();
+  const [isCardNumberValid, setIsCardNumberValid] = useState(false);
+  const [isCardExpiryValid, setIsCardExpiryValid] = useState(false);
+  const [isCardCvcValid, setIsCardCvcValid] = useState(false);
   const [billingDetail, setBillingDetail] = useState({
-    name: "",
-    address: "",
-    vatNumber: "",
-    vatType: "",
+    name: '',
+    address: '',
+    vatNumber: '',
+    vatType: '',
   });
-
-  const [cardFormValid, setCardFormValid] = useState(false);
 
   const onChange = (e) => {
     setBillingDetail({ ...billingDetail, [e.target.name]: e.target.value });
@@ -41,26 +41,41 @@ const PaymentForm = ({
   };
 
   const handleElementChange = (event) => {
-    setIsCardValid(event.complete && !event.error);
-    setCardFormValid(event.complete && !event.error);
+    const elementType = event.elementType;
+    const isElementValid = event.complete && !event.error;
+    elementType === 'cardNumber'
+      ? setIsCardNumberValid(isElementValid)
+      : elementType === 'cardExpiry'
+      ? setIsCardExpiryValid(isElementValid)
+      : elementType === 'cardCvc'
+      ? setIsCardCvcValid(isElementValid)
+      : null;
+    // Check if all card elements are valid to update the overall form validity
+    setCardFormValid(
+      (elementType === 'cardNumber' ? isElementValid : isCardNumberValid) &&
+        (elementType === 'cardExpiry' ? isElementValid : isCardExpiryValid) &&
+        (elementType === 'cardCvc' ? isElementValid : isCardCvcValid)
+    );
+    //setCardFormValid(isCardNumberValid && isCardExpiryValid && isCardCvcValid);
   };
+
   let paymentMethodId = null;
   const handlePayment = async () => {
     try {
       const { paymentMethod } = await stripe?.createPaymentMethod({
-        type: "card",
+        type: 'card',
         card: elements.getElement(CardNumberElement),
         card: elements.getElement(CardExpiryElement),
         card: elements.getElement(CardCvcElement),
         billing_details: {
           name: billingDetail.name,
-          email: userInfo?.email || "",
+          email: userInfo?.email || '',
           address: {
             city: null,
             country: null,
-            line1: userInfo?.address1 || userInfo?.address2 || "USA",
+            line1: userInfo?.address1 || userInfo?.address2 || 'USA',
             line2: null,
-            postal_code: userInfo?.zipCode || "54545",
+            postal_code: userInfo?.zipCode || '54545',
             state: null,
           },
         },
@@ -69,7 +84,6 @@ const PaymentForm = ({
       paymentMethodId = paymentMethod?.id;
       if (oneTimePayment) {
         handleOneTimePayment(paymentMethod?.id);
-
         // const { error } = await stripe.confirmCardPayment(paymentIntentId, {
         //   payment_method: {
         //     card: elements.getElement(CardElement),
@@ -82,7 +96,6 @@ const PaymentForm = ({
         res = await CreateCustomer({
           paymentId: paymentMethod?.id,
         });
-
         onPaymentRequest(true);
       }
       if (savePaymentFutureUse) {
@@ -92,9 +105,10 @@ const PaymentForm = ({
           ...data,
         });
       }
+      onPaymentRequest(true);
     } catch (err) {
       onPaymentRequest(false);
-      console.log("err0000-", err);
+      console.log('err0000-', err);
     }
   };
 
@@ -110,23 +124,23 @@ const PaymentForm = ({
       );
 
       if (error) {
-        console.log("err", error);
+        console.log('err', error);
         onPaymentRequest({
           ...error,
           paymentIntentId: paymentMethodId,
           status: error?.payment_intent?.status,
         });
       } else {
-        console.log("res", paymentIntent);
+        console.log('res', paymentIntent);
         onPaymentRequest({
           ...paymentIntent,
           paymentIntentId: paymentMethodId,
         });
-        console.log("Payment successful!");
+        console.log('Payment successful!');
         // Perform any necessary actions after successful payment
       }
     } catch (err) {
-      console.log("err", err);
+      console.log('err', err);
     }
   };
 
@@ -135,8 +149,9 @@ const PaymentForm = ({
       handlePayment();
     }
   }, [onPay]);
+
   return (
-    <form style={{ height: "90%" }} onSubmit={handlePayment}>
+    <form style={{ height: '90%' }}>
       <h4 className="text-dark fw-bold pb-2">{title}</h4>
       <div>
         <input
@@ -146,7 +161,6 @@ const PaymentForm = ({
           className="w-100 p-2 rounded outline-0 border border_gray  my-2"
           onChange={(e) => onChange(e)}
         />
-
         <CardNumberElement
           disabled={true}
           className="w-100 p-2 rounded outline-0 border border_gray text_gray  my-2"
@@ -155,7 +169,6 @@ const PaymentForm = ({
           }}
           onChange={handleElementChange}
         />
-
         <div className="d-flex gap-2 my-3">
           <div className="w-100">
             <CardCvcElement
