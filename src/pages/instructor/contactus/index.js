@@ -1,4 +1,5 @@
 import ContactUs from '@/components/contactUs';
+import Head from 'next/head';
 import { withRole } from '../../../utils/withAuthorization';
 
 function InstructorContactUs() {
