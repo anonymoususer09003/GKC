@@ -128,10 +128,7 @@ const TutorNavbar = ({ isLogin }) => {
                           </a>
                         </li>
                         <li className="p-3">
-                          <a
-                            href="/instructor/contactinstructor"
-                            className="nav-link"
-                          >
+                          <a href="/instructor/contactus" className="nav-link">
                             Contact Us
                           </a>
                         </li>
