@@ -12,7 +12,7 @@ function InstructorContactUs() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <TutorNavbar isLogin={true} role="instructor" />
+      <TutorNavbar isLogin={true} />
       <ContactUs />
     </>
   );
