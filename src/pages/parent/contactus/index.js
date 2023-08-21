@@ -1,5 +1,8 @@
 import ContactUs from '@/components/contactUs';
+import { withRole } from '../../../utils/withAuthorization';
 
-export default function StudentContactUs() {
+function ParentContactUs() {
   return <ContactUs />;
 }
+
+export default withRole(ParentContactUs, ['Parent']);
