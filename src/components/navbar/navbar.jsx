@@ -1,21 +1,21 @@
-import React, { useState, useEffect } from "react";
-import Image from "next/image";
-import styles from "./navbar.module.css";
-import Link from "next/link";
-import { IoMdSettings } from "react-icons/io";
-import { FcCalendar } from "react-icons/fc";
-import onSignOut from "@/utils/signOut";
-import LogoutTimer from "../common/signOutTimer";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
+import styles from './navbar.module.css';
+import Link from 'next/link';
+import { IoMdSettings } from 'react-icons/io';
+import { FcCalendar } from 'react-icons/fc';
+import onSignOut from '@/utils/signOut';
+import LogoutTimer from '../common/signOutTimer';
+import { useDispatch, useSelector } from 'react-redux';
 
 const Navbar = ({ isLogin }) => {
   const [value, setValue] = useState(false);
-  const [role, setRole] = useState("student");
+  const [role, setRole] = useState('student');
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const stored = localStorage.getItem("gkcAuth");
-    let data = stored ? JSON.parse(stored) : "student";
+    const stored = localStorage.getItem('gkcAuth');
+    let data = stored ? JSON.parse(stored) : 'student';
     setValue(stored ? JSON.parse(stored) : false);
     setRole(data?.role?.toLowerCase());
   }, []);
@@ -51,7 +51,7 @@ const Navbar = ({ isLogin }) => {
                 <>
                   <li className="nav-item">
                     <a className="nav-link" href={`/${role}/calandar`}>
-                      <FcCalendar style={{ fontSize: "30px" }} />
+                      <FcCalendar style={{ fontSize: '30px' }} />
                     </a>
                   </li>
                 </>
@@ -83,7 +83,7 @@ const Navbar = ({ isLogin }) => {
             </ul>
             <div className="d-flex align-items-center gap-2">
               {value || isLogin ? (
-                <div className={styles["burger-menu-wrapper"]}>
+                <div className={styles['burger-menu-wrapper']}>
                   <ul className="list-unstyled">
                     <div className="dropdown">
                       <button
@@ -96,7 +96,7 @@ const Navbar = ({ isLogin }) => {
                       </button>
                       <ul
                         className={`dropdown-menu shadow ${styles.dropDown}`}
-                        style={{ right: "0px", width: "240px" }}
+                        style={{ right: '0px', width: '240px' }}
                       >
                         <li className="p-3">
                           <a
@@ -122,7 +122,7 @@ const Navbar = ({ isLogin }) => {
                             Payment Information
                           </a>
                         </li>
-                        {role === "student" && (
+                        {role === 'student' && (
                           <li className="p-3">
                             <a
                               href="/student/reviewinstructor"
@@ -133,7 +133,7 @@ const Navbar = ({ isLogin }) => {
                           </li>
                         )}
 
-                        <li className="p-3">
+                        {/* <li className="p-3">
                           <a
                             href={
                               role === "student"
@@ -147,7 +147,7 @@ const Navbar = ({ isLogin }) => {
                             Report{" "}
                             {role === "student" ? "Instructor" : "Students"}
                           </a>
-                        </li>
+                        </li> */}
                         <li className="p-3">
                           <a
                             href={`/${role}/financialreport`}

@@ -1,5 +1,7 @@
 import ContactUs from '@/components/contactUs';
 
-export default function StudentContactUs() {
+function InstructorContactUs() {
   return <ContactUs />;
 }
+
+export default withRole(InstructorContactUs, ['Instructor']);

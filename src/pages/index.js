@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from "react";
-import Head from "next/head";
-import { Inter } from "next/font/google";
-import { Navbar, Footer, TutorCard } from "./../components";
-const inter = Inter({ subsets: ["latin"] });
-import { withRole } from "./../utils/withAuthorization";
-import axios from "axios";
-import styles from "@/styles/Home.module.css";
-import { base_url } from "../api/client";
+import React, { useState, useEffect } from 'react';
+import Head from 'next/head';
+import { Inter } from 'next/font/google';
+import { Navbar, Footer, TutorCard } from './../components';
+const inter = Inter({ subsets: ['latin'] });
+import { withRole } from './../utils/withAuthorization';
+import axios from 'axios';
+import styles from '@/styles/Home.module.css';
+import { base_url } from '../api/client';
 export const GlobalInstructor = {
   instructors: [],
 };
@@ -17,14 +17,14 @@ function StudentLandingPage() {
   const [showModal, setShowModal] = useState(false);
 
   const [showCards, setShowCards] = useState(false);
-  const [selectedCourse, setSelectCourse] = useState("");
-  const [name, setName] = useState("");
-  const [skill, setSkill] = useState("");
-  const [ageGroup, setAgeGroup] = useState("");
-  const [mode, setMode] = useState("");
-  const [selectedLang, setSelectedLang] = useState("");
-  const [selectedZip, setSelectedZip] = useState("");
-  const [hourlyRate, setHourlyRate] = useState("");
+  const [selectedCourse, setSelectCourse] = useState('');
+  const [name, setName] = useState('');
+  const [skill, setSkill] = useState('');
+  const [ageGroup, setAgeGroup] = useState('');
+  const [mode, setMode] = useState('');
+  const [selectedLang, setSelectedLang] = useState('');
+  const [selectedZip, setSelectedZip] = useState('');
+  const [hourlyRate, setHourlyRate] = useState('');
 
   const [courses, setCourses] = useState([]);
   const [lang, setLang] = useState([]);
@@ -45,13 +45,13 @@ function StudentLandingPage() {
       );
       setInsructors(res.data);
     } catch (error) {
-      console.error("Error fetching profile data:", error);
+      console.error('Error fetching profile data:', error);
     }
   };
 
   const getInstructors = async () => {
     try {
-      var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
+      var typ = JSON.parse(window.localStorage.getItem('gkcAuth'));
       const res = await axios.get(
         `${base_url}/public/landing/filter?page=0&size=10`,
         {
@@ -63,7 +63,7 @@ function StudentLandingPage() {
       setInsructors(res.data);
       console.log(res.data);
     } catch (error) {
-      console.error("Error fetching profile data:", error);
+      console.error('Error fetching profile data:', error);
     }
   };
 
@@ -128,6 +128,9 @@ function StudentLandingPage() {
       <Navbar />
       <main className="">
         <div className="container py-4">
+          <p className="text-center mb-0 tw-font-medium tw-text-[25px] tw-text-[#f48342]">
+            Start here by searching
+          </p>
           <div className="d-flex justify-content-center gap-2 flex-wrap py-3">
             <input
               type="text"
@@ -231,9 +234,9 @@ function StudentLandingPage() {
         <div
           style={{
             backgroundImage: 'url("/assets/home_bg.png")',
-            minHeight: "100vh",
-            backgroundRepeat: "no-repeat",
-            backgroundSize: "100% 100%",
+            minHeight: '100vh',
+            backgroundRepeat: 'no-repeat',
+            backgroundSize: '100% 100%',
           }}
           className=""
         >
@@ -258,4 +261,4 @@ function StudentLandingPage() {
   );
 }
 
-export default withRole(StudentLandingPage, ["Student"]);
+export default withRole(StudentLandingPage, ['Student']);
