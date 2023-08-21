@@ -16,8 +16,12 @@ export default function InstructorRegistrationMore() {
   const [acceptInterview, setAcceptInterview] = useState(false);
   const [deliveryModes, setDeliveryModes] = useState([]);
   const [videoFile, setVideoFile] = useState();
-  const dispatch = useDispatch();
   const [isVideoTooLarge, setIsVideoTooLarge] = useState(false);
+  const [isAtLeastOneModeChecked, setIsAtLeastOneModeChecked] = useState(false);
+  const dispatch = useDispatch();
+
+  const isValidForm =
+    instructorBio.length > 0 && isAtLeastOneModeChecked && hourlyRate > 0;
 
   const handleVideoUpload = (e) => {
     const selectedFile = e.target.files[0];
@@ -87,10 +91,12 @@ export default function InstructorRegistrationMore() {
       return item;
     });
     setDeliveryModes(updatedItems);
-    console.log(deliveryModes);
   };
 
-  console.log(deliveryModes);
+  useEffect(() => {
+    setIsAtLeastOneModeChecked(deliveryModes.some((item) => item.checked));
+  }, [deliveryModes]);
+
   return (
     <>
       <Head>
@@ -136,9 +142,8 @@ export default function InstructorRegistrationMore() {
                 ></textarea>
 
                 <p className=" fw-bold ">
-                  Upload a 30 seconds video recording of yourself (optional)
+                  Upload a video recording of yourself - max 5mb (optional)
                 </p>
-
                 <input
                   type="file"
                   accept="video/*"
@@ -212,9 +217,9 @@ export default function InstructorRegistrationMore() {
                   <div className=" mt-3 d-flex justify-content-center flex-column align-items-center gap-2">
                     <button
                       className={`w-50 text-light p-2 rounded fw-bold  bg-gray-300 ${
-                        !hourlyRate ? 'btn_disabled' : 'btn_primary'
+                        !isValidForm ? 'btn_disabled' : 'btn_primary'
                       }`}
-                      disabled={!hourlyRate}
+                      disabled={!isValidForm}
                       onClick={() => onContinue()}
                     >
                       Continue
