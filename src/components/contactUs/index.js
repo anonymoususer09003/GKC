@@ -17,7 +17,6 @@ export default function ContactUs() {
 
   return (
     <>
-      <Navbar isLogin={true} />
       <div className="vh-100 p-5">
         <div className="text-center">
           <h2 className="text-center">Contact us</h2>
