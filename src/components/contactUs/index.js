@@ -1,14 +1,25 @@
 import { Navbar, Footer } from '../../components';
 import { apiClient } from '@/api/client';
 import { useState } from 'react';
+import ContactUsAPI from '@/services/ContactUs/ContactUsAPI';
 
 export default function ContactUs() {
   const [message, setMessage] = useState('');
 
+  // const handleMessageSubmission = async () => {
+  //   try {
+  //     let url = '/contactus/save-contact-us-from-logged-customer';
+  //     const response = await apiClient.post(url, { message });
+  //     setMessage('');
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
+
   const handleMessageSubmission = async () => {
     try {
-      let url = '/contactus/save-contact-us-from-logged-customer';
-      const response = await apiClient.post(url, { message });
+      const response = await ContactUsAPI(message);
+      console.log(response.data);
       setMessage('');
     } catch (error) {
       console.log(error);
