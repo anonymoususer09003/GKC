@@ -13,10 +13,17 @@ export default function ParentRegistrationCCInfo() {
   const [showPayPalInput, setShowPayPalInput] = useState(false);
   const [userType, setUserType] = useState(null);
   const [userInfo, setUserInfo] = useState(null);
-
   const files = useSelector((state) => state.files);
   const imageFile = files.image;
   const videoFile = files.video;
+  const [isImageFileEmpty, setIsImageFileEmpty] = useState(true);
+  const [isVideoFileEmpty, setIsVideoFileEmpty] = useState(true);
+  const [payPalEmail, setPayPalEmail] = useState('');
+
+  useEffect(() => {
+    setIsImageFileEmpty(Object.keys(imageFile).length === 0);
+    setIsVideoFileEmpty(Object.keys(videoFile).length === 0);
+  }, []);
 
   const onContinue = async () => {
     try {
@@ -44,36 +51,51 @@ export default function ParentRegistrationCCInfo() {
         }
       );
 
+      if (payPalEmail !== '') {
+        const addPayPalEmail = await axios.post(
+          `${base_url}/instructor/set-payPal-email-logged-instructor`,
+          payPalEmail,
+          {
+            headers: {
+              accept: '*/*',
+              Authorization: `Bearer ${response.data.accessToken}`,
+            },
+          }
+        );
+        setPayPalEmail('');
+      }
+
       const res = await axios.get(`${base_url}/user/logged-user-role`, {
         headers: {
           Authorization: `Bearer ${response.data.accessToken}`,
         },
       });
-
-      const uploadImageResponse = await axios.post(
-        `${base_url}/aws/upload-instructor-photo`,
-        imageFile,
-        {
-          headers: {
-            accept: '*/*',
-            Authorization: `Bearer ${response.data.accessToken}`,
-            'Content-Type': 'multipart/form-data',
-          },
-        }
-      );
-
-      const uploadVideoResponse = await axios.post(
-        `${base_url}/aws/upload-instructor-video`,
-        videoFile,
-        {
-          headers: {
-            accept: '*/*',
-            Authorization: `Bearer ${response.data.accessToken}`,
-            'Content-Type': 'multipart/form-data',
-          },
-        }
-      );
-
+      if (!isImageFileEmpty) {
+        const uploadImageResponse = await axios.post(
+          `${base_url}/aws/upload-instructor-photo`,
+          imageFile,
+          {
+            headers: {
+              accept: '*/*',
+              Authorization: `Bearer ${response.data.accessToken}`,
+              'Content-Type': 'multipart/form-data',
+            },
+          }
+        );
+      }
+      if (!isVideoFileEmpty) {
+        const uploadVideoResponse = await axios.post(
+          `${base_url}/aws/upload-instructor-video`,
+          videoFile,
+          {
+            headers: {
+              accept: '*/*',
+              Authorization: `Bearer ${response.data.accessToken}`,
+              'Content-Type': 'multipart/form-data',
+            },
+          }
+        );
+      }
       console.log(res.data);
       window.localStorage.setItem(
         'gkcAuth',
@@ -155,6 +177,8 @@ export default function ParentRegistrationCCInfo() {
             </div>
             {showPayPalInput && (
               <input
+                type="text"
+                onChange={(e) => setPayPalEmail(e.target.value)}
                 placeholder="Enter PayPal info"
                 className="mt-3 fw-bold border-2 border-dark p-1"
               ></input>

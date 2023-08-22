@@ -152,7 +152,7 @@ export default function InstructorRegistrationMore() {
                 />
                 {isVideoTooLarge && (
                   <p className="tw-text-center tw-w-full tw-text-red-500 tw-font-sm">
-                    Max allowed size is 5 MB
+                    Max allowed size is 5MB
                   </p>
                 )}
                 <div className="d-flex mt-4 gap-2 my-2 align-items-center">

@@ -1,14 +1,14 @@
-import { useState } from "react";
-import styles from "../../../styles/Home.module.css";
-import { BsFillChatFill, BsFillSendFill } from "react-icons/bs";
-import { IconContext } from "react-icons";
-import { GoDeviceCameraVideo } from "react-icons/go";
-import { RiDeleteBin6Line } from "react-icons/ri";
-import { useRouter } from "next/router";
-import moment from "moment";
-import FirebaseChat from "../../../hooks/firebase-chat";
-import axios from "axios";
-import { useSelector } from "react-redux";
+import { useState } from 'react';
+import styles from '../../../styles/Home.module.css';
+import { BsFillChatFill, BsFillSendFill } from 'react-icons/bs';
+import { IconContext } from 'react-icons';
+import { GoDeviceCameraVideo } from 'react-icons/go';
+import { RiDeleteBin6Line } from 'react-icons/ri';
+import { useRouter } from 'next/router';
+import moment from 'moment';
+import FirebaseChat from '../../../hooks/firebase-chat';
+import axios from 'axios';
+import { useSelector } from 'react-redux';
 const InstructorSchedule = (props) => {
   const router = useRouter();
   const loggedInUser = useSelector((state) => state.user.userInfo);
@@ -20,7 +20,7 @@ const InstructorSchedule = (props) => {
   const deleteSingleOccurrence = async (eventId, dateToCancel) => {
     try {
       const response = await axios.delete(
-        "http://34.227.65.157/event/delete-single-occurrence",
+        'http://34.227.65.157/event/delete-single-occurrence',
         {
           data: {
             eventId: eventId,
@@ -29,16 +29,16 @@ const InstructorSchedule = (props) => {
         }
       );
 
-      console.log("Event deletion successful:", response.data);
+      console.log('Event deletion successful:', response.data);
     } catch (error) {
-      console.log("Error deleting event:", error);
+      console.log('Error deleting event:', error);
     }
   };
 
   // Button click handler
   const handleDeleteButtonClick = () => {
     const eventID = props.eventId;
-    const date = props.start.split(" ")[0];
+    const date = props.start.split(' ')[0];
 
     deleteSingleOccurrence(eventID, date);
   };
@@ -52,14 +52,14 @@ const InstructorSchedule = (props) => {
 
   const student = {
     courseId: 1,
-    name: "John",
+    name: 'John',
     id: 2,
     parentId: 4,
   };
 
   const parent = {
     courseId: 1,
-    name: "John",
+    name: 'John',
     id: 4,
   };
 
@@ -74,7 +74,7 @@ const InstructorSchedule = (props) => {
       course_id: chatId,
     });
   };
-  console.log("logged in user,", loggedInUser);
+  console.log('logged in user,', loggedInUser);
   const handleTextChange = (e) => {
     setNewMessage(e.target.value);
   };
@@ -85,8 +85,15 @@ const InstructorSchedule = (props) => {
         <h3 className={`text-center ${styles.scheduleHeader}`}>Schedule</h3>
         <div
           className={`shadow p-5 bg-white rounded ${styles.scheduleBox}`}
-          style={{ minHeight: "400px" }}
+          style={{ minHeight: '400px' }}
         >
+          {!props.noEvent ? (
+            <p className="tw-font-semibold tw-text-lg tw-mx-auto">
+              You currently don't have a class or interview scheduled
+            </p>
+          ) : (
+            ''
+          )}
           <div
             onClick={() => openChat(1)}
             className="d-flex align-items-center py-3 gap-2"
@@ -101,13 +108,13 @@ const InstructorSchedule = (props) => {
                   {props.studentName}
                 </h6>
                 <h6 className="p-0 m-0 flex-fill fw-bold flex-fill">
-                  {props.start}{" "}
+                  {props.start}{' '}
                 </h6>
                 <h6 className="p-0 m-0 flex-fill fw-bold flex-fill">
                   {props.courseName}
                 </h6>
                 {loggedInUser?.id && (
-                  <IconContext.Provider value={{ color: "#1677d2" }}>
+                  <IconContext.Provider value={{ color: '#1677d2' }}>
                     <BsFillChatFill
                       className="p-0 m-0 flex-fill h4 flex-fill"
                       data-bs-toggle="modal"
@@ -118,7 +125,7 @@ const InstructorSchedule = (props) => {
 
                 {props.meetingLink && (
                   <IconContext.Provider
-                    value={{ color: enabledCamera ? "#126d2b" : "#48494B" }}
+                    value={{ color: enabledCamera ? '#126d2b' : '#48494B' }}
                   >
                     <GoDeviceCameraVideo
                       className="p-0 m-0 flex-fill h4 flex-fill"
@@ -131,7 +138,7 @@ const InstructorSchedule = (props) => {
                   </IconContext.Provider>
                 )}
                 {props.deleteable && (
-                  <IconContext.Provider value={{ color: "#48494B" }}>
+                  <IconContext.Provider value={{ color: '#48494B' }}>
                     <RiDeleteBin6Line
                       className="p-0 m-0 h4 flex-fill"
                       onClick={handleDeleteButtonClick}
@@ -165,22 +172,22 @@ const InstructorSchedule = (props) => {
                 ></button>
               </div>
               <div className="modal-body">
-                <div className=" p-3" style={{ minHeight: "400px" }}>
+                <div className=" p-3" style={{ minHeight: '400px' }}>
                   {messages.map((item, index) => {
                     let date = item.timestamp.seconds * 1000;
                     return (
                       <div
                         key={index}
                         className={`py-1 ${
-                          item?.user?.id == parent?.id ? "text-end" : ""
+                          item?.user?.id == parent?.id ? 'text-end' : ''
                         }`}
                       >
                         <p className="p-0 m-0 fw-bold">{item.message}</p>
                         <small className="p-0 m-0">
                           {`${item?.user?.name}  ${moment(date).format(
-                            "d/MM/YY"
-                          )}`}{" "}
-                          {moment(date).format("hh:mm a")}
+                            'd/MM/YY'
+                          )}`}{' '}
+                          {moment(date).format('hh:mm a')}
                         </small>
                       </div>
                     );
@@ -194,10 +201,10 @@ const InstructorSchedule = (props) => {
                     type="text"
                     placeholde=""
                     className="border  p-2 rounded flex-fill"
-                  />{" "}
+                  />{' '}
                   <BsFillSendFill
                     onClick={() =>
-                      sendMessage({ type: "instructor", chatId: props.eventId })
+                      sendMessage({ type: 'instructor', chatId: props.eventId })
                     }
                     className="h3 p-0 m-0"
                   />

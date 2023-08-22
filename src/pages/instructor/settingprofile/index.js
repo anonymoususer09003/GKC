@@ -25,11 +25,6 @@ function SettingProfile({ userInfo, loading, error, fetchUser }) {
     fetchUser();
   }, [fetchUser]);
 
-
-  useEffect(() => {
-    console.log('imageLink', userInfo?.instructorPhoto);
-  }, [userInfo?.instructorPhoto]);
-
   if (error) {
     return <div>Error: {error}</div>;
   }
@@ -58,25 +53,46 @@ function SettingProfile({ userInfo, loading, error, fetchUser }) {
             >
               <div className="shadow rounded-10 bg-white py-4">
                 <div className={`px-4 ${styles.instructorCards}`}>
-                  <div
-                    className="bg_primary rounded-circle position-absolute d-flex justify-content-center align-items-center"
-                    style={{ top: '-40px', width: '105px', height: '105px' }}
-                  >
-                    <Image
-                      src={userInfo?.instructorPhoto}
-                      unoptimized={true}
-                      alt="profile image"
-                      width={100}
-                      height={100}
-                      className="rounded-circle bg-light"
-                    />
-                    
-                  </div>
-                  <div className="d-flex justify-content-end">
-                    <p className=" bg_secondary text-white p-2 rounded d-flex align-items-center gap-2 fw-bold">
-                      <MdEmail style={{ fontSize: '20px' }} />
-                      {userInfo?.email}
-                    </p>
+                  <div className="tw-flex mb-5 tw-relative tw-justify-end tw-gap-3 tw-items-center">
+                    <div
+                      className="bg_primary rounded-circle position-absolute d-flex justify-content-center align-items-center"
+                      style={{
+                        top: '-50px',
+                        left: '0px',
+                        width: '105px',
+                        height: '105px',
+                      }}
+                    >
+                      <Image
+                        src={userInfo?.instructorPhoto}
+                        unoptimized={true}
+                        alt="profile image"
+                        width={100}
+                        height={100}
+                        className="rounded-circle bg-light"
+                      />
+                    </div>
+                    <div className="tw-flex tw-gap-2 tw-flex-col tw-items-end">
+                      <p className="bg_secondary m-0 text-white p-1 rounded fw-bold">
+                        <MdEmail style={{ fontSize: '20px' }} />
+                        {userInfo?.email}
+                      </p>
+                      {userInfo?.video && (
+                        <div className="tw-mx-auto">
+                          <div className="tw-relative">
+                            <video
+                              width="200"
+                              height="200"
+                              muted
+                              controls
+                              loop
+                              autoPlay
+                              src={userInfo?.video}
+                            ></video>
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </div>
                   <h5 className="fw-bold pb-2">
                     {userInfo?.firstName} {userInfo?.lastName}

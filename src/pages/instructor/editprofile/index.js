@@ -36,8 +36,14 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
   const [selectedLang, setSelectedLang] = useState([]);
   const fileInputRef = useRef(null);
   const videoFileInputRef = useRef(null);
+  const videoEditInputRef = useRef(null);
   const [isImageTooLarge, setIsImageTooLarge] = useState(false);
   const [isVideoTooLarge, setIsVideoTooLarge] = useState(false);
+  const [image, setImage] = useState('');
+  const [video, setVideo] = useState('');
+
+  const defaultImage =
+    'https://img.freepik.com/premium-photo/top-view-abstract-paper-texture-background_225709-2718.jpg?w=2000';
 
   const onContinue = () => {
     navigation.push('/instructor/settingprofile');
@@ -259,8 +265,6 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
     fetchUser();
   }, [fetchUser]);
 
-  const [image, setImage] = useState();
-
   useEffect(() => {
     if (userInfo) {
       setHourlyRate(userInfo.hourlyRate);
@@ -307,10 +311,11 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
       setAddress1(userInfo.address1);
       setAddress2(userInfo.address2);
       setCity(userInfo.city);
-      setState(userInfo.country);
+      setState(userInfo.state);
       setCountry(userInfo.country);
       setZipCode(userInfo.zipCode);
       setImage(userInfo.instructorPhoto);
+      setVideo(userInfo.video);
 
       let modes = [
         { checked: false, id: 1, label: 'In-Person' },
@@ -367,7 +372,7 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
     const selectedFileSizeInBytes = selectedFile.size;
     const fileSizeInKB = selectedFileSizeInBytes / 1024;
 
-    if (fileSizeInKB > 500) {
+    if (fileSizeInKB > 200) {
       setIsImageTooLarge(true);
       return;
     } else {
@@ -387,6 +392,7 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
           },
         }
       );
+      fetchUser();
     } catch (error) {
       console.log(error.response);
     }
@@ -417,6 +423,7 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
           },
         }
       );
+      fetchUser();
     } catch (error) {
       console.log(error.response);
     }
@@ -445,16 +452,26 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
               <div className="shadow rounded-10 bg-white py-4">
                 <div className="px-4">
                   <div className="tw-flex mb-5 tw-relative tw-justify-end tw-gap-3 tw-items-center">
-                    <div className="tw-absolute tw-h-full tw-left-0 tw-bottom-12">
-                      <Image
-                        src={userInfo?.instructorPhoto}
-                        alt=""
-                        width={100}
-                        height={100}
-                        priority
-                        className="rounded-circle bg-primary tw-w-[105px] tw-h-[105px]  bg-light"
-                      />
-                      <div className="tw-absolute tw--bottom-7 tw-left-[40%]">
+                    <div>
+                      <div
+                        className="bg_primary rounded-circle position-absolute d-flex justify-content-center align-items-center"
+                        style={{
+                          top: '-50px',
+                          left: '0px',
+                          width: '105px',
+                          height: '105px',
+                        }}
+                      >
+                        <Image
+                          src={image || defaultImage}
+                          unoptimized={true}
+                          alt="profile image"
+                          width={100}
+                          height={100}
+                          className="rounded-circle bg-light"
+                        />
+                      </div>
+                      <div className="tw-absolute tw-top-[20px] tw-left-[18%]">
                         <AiOutlineEdit
                           onClick={() => {
                             fileInputRef.current.click();
@@ -473,8 +490,8 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
                         />
                       </div>
                       {isImageTooLarge && (
-                        <p className="tw-text-center tw-text-[15px] tw-w-full tw-text-red-500 tw-font-sm">
-                          Max allowed size is 500KB
+                        <p className="tw-text-center tw-absolute tw-top-14 tw-left-0 tw-text-[15px] tw-text-red-500 tw-font-sm">
+                          Max allowed size is 200KB
                         </p>
                       )}
                     </div>
@@ -484,26 +501,56 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
                         {userInfo?.email}
                       </p>
                       <div className="tw-mx-auto">
-                        <button
-                          onClick={() => {
-                            videoFileInputRef.current.click();
-                          }}
-                          className="btn_primary mx-auto p-1 tw-w-32 fw-bold text-white rounded text-decoration-none"
-                        >
-                          Upload video
-                        </button>
-
-                        <input
-                          ref={videoFileInputRef}
-                          type="file"
-                          accept="video/*"
-                          onChange={(e) => handleVideoUpload(e)}
-                          style={{ display: 'none' }}
-                        />
+                        {video === null ? (
+                          <>
+                            <button
+                              onClick={() => {
+                                videoFileInputRef.current.click();
+                              }}
+                              className="btn_primary mx-auto p-1 tw-w-32 fw-bold text-white rounded text-decoration-none"
+                            >
+                              Upload video
+                            </button>
+                            <input
+                              ref={videoFileInputRef}
+                              type="file"
+                              accept="video/*"
+                              onChange={(e) => handleVideoUpload(e)}
+                              style={{ display: 'none' }}
+                            />
+                          </>
+                        ) : (
+                          <div className="tw-relative">
+                            <video
+                              width="200"
+                              height="200"
+                              muted
+                              controls
+                              loop
+                              autoPlay
+                              src={video}
+                            ></video>
+                            <div className="tw-absolute tw-top-0 tw-right-0">
+                              <AiOutlineEdit
+                                onClick={() => {
+                                  videoEditInputRef.current.click();
+                                }}
+                                className="tw-cursor-pointer tw-w-5 tw-h-5"
+                              />
+                              <input
+                                ref={videoEditInputRef}
+                                type="file"
+                                accept="video/*"
+                                onChange={(e) => handleVideoUpload(e)}
+                                style={{ display: 'none' }}
+                              />
+                            </div>
+                          </div>
+                        )}
                       </div>
                       {isVideoTooLarge && (
                         <p className="tw-text-center tw-w-full tw-text-red-500 tw-font-sm">
-                          Max allowed size is 5 MB
+                          Max allowed size is 5MB
                         </p>
                       )}
                     </div>
