@@ -40,7 +40,7 @@ export default function RegisterInstructor() {
     const selectedFile = e.target.files[0];
     const selectedFileSizeInBytes = selectedFile.size;
     const fileSizeInKB = selectedFileSizeInBytes / 1024; // Convert to KB
-    if (fileSizeInKB > 500) {
+    if (fileSizeInKB > 200) {
       setIsImageTooLarge(true);
       return;
     } else {
@@ -215,7 +215,7 @@ export default function RegisterInstructor() {
                   />
                   {isImageTooLarge && (
                     <p className="tw-text-center tw-text-[15px] tw-w-full tw-text-red-500 tw-font-sm">
-                      Max allowed size is 500KB
+                      Max allowed size is 200KB
                     </p>
                   )}
                 </div>

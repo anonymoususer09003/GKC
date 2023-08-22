@@ -59,7 +59,7 @@ export default function Withdrawals() {
 
   return (
     <div className="tw-px-20 tw-cst-pf tw-h-screen sm:tw-px-6 lg:tw-px-16">
-      <div className="tw-border tw-relative tw-p-10 tw-mt-8 tw-rounded-3xl ">
+      <div className="tw-border tw-cst-pf tw-relative tw-p-10 tw-mt-8 tw-rounded-3xl ">
         <div className="tw-flex tw-space-x-20 tw-mt-4 tw-justify-center tw-items-center tw-mx-auto">
           <p className="tw-text-lg tw-font-medium tw-text-gray-700">
             Amount available for withdrawal
@@ -165,7 +165,7 @@ export default function Withdrawals() {
                   </tbody>
                 </table>
               ) : (
-                <p className="tw-text-center tw-mt-28 tw-font-medium tw-text-2xl">
+                <p className="tw-text-center tw-mt-16 tw-mb-24 tw-font-medium tw-text-2xl">
                   No withdrawals found
                 </p>
               )}
