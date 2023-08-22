@@ -8,6 +8,7 @@ import onSignOut from '@/utils/signOut';
 import LogoutTimer from '@/components/common/signOutTimer';
 
 const ParentNavbar = ({ isLogin }) => {
+
   const [value, setValue] = useState(false);
 
   useEffect(() => {
