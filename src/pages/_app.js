@@ -13,7 +13,7 @@ function App({ Component, ...pageProps }) {
 
   return (
       <StripeWrapper>
-        <Component {...pageProps} />
+          <Component {...pageProps} />
       </StripeWrapper>
   );
 }

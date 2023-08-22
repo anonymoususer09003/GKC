@@ -394,7 +394,7 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
                       value={studentId}
                     >
                       <option>Select</option>
-                      {loggedInUser.dependents.map((dependent) => {
+                      {loggedInUser?.dependents?.map((dependent) => {
                         return (
                           <option key={dependent.email} value={dependent.id}>
                             {dependent.email}

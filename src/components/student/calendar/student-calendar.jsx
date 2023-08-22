@@ -129,7 +129,7 @@ function StudentCalandar() {
         setMeetingLink("meetinglink");
         setInstructorId(matchedBookedEvent.instructorId);
         setNoEvent(false);
-        setEventId(matchedBookedEvent.id);
+        setEventId(49 || matchedBookedEvent.id);
       } else {
         // Clear the states when a matching booked event is not found
         setStudentDetail(null);

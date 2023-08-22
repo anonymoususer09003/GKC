@@ -1,22 +1,35 @@
-import { useState } from 'react';
-import styles from '../../../styles/Home.module.css';
-import { BsFillChatFill, BsFillSendFill } from 'react-icons/bs';
-import { IconContext } from 'react-icons';
-import { GoDeviceCameraVideo } from 'react-icons/go';
-import { RiDeleteBin6Line } from 'react-icons/ri';
-import { useRouter } from 'next/router';
-import moment from 'moment';
-import FirebaseChat from '../../../hooks/firebase-chat';
-import axios from 'axios';
-import { useSelector } from 'react-redux';
+import { useEffect, useState, useCallback } from "react";
+import styles from "../../../styles/Home.module.css";
+import { BsFillChatFill, BsFillSendFill } from "react-icons/bs";
+import { IconContext } from "react-icons";
+import { GoDeviceCameraVideo } from "react-icons/go";
+import { RiDeleteBin6Line } from "react-icons/ri";
+import { useRouter } from "next/router";
+import moment from "moment";
+import FirebaseChat from "../../../hooks/firebase-chat";
+import axios from "axios";
+import { useSelector } from "react-redux";
+import GetUserByid from "@/services/user/GetUserByid";
 const InstructorSchedule = (props) => {
   const router = useRouter();
   const loggedInUser = useSelector((state) => state.user.userInfo);
   const navigation = useRouter();
-  const { sendMessage, messages, setChatInfo, setNewMessage, newMessage } =
-    FirebaseChat();
-  const [enabledCamera, setEnabledCamera] = useState(false);
+  const {
+    sendMessage,
+    messages,
+    setChatInfo,
+    setNewMessage,
+    newMessage,
+    setMessages,
+  } = FirebaseChat();
+  const [student, setStudent] = useState();
+  const [chat, setChat] = useState([]);
 
+  const [enabledCamera, setEnabledCamera] = useState(false);
+  console.log("props", props);
+  useEffect(() => {
+    setChat([...chat, messages]);
+  }, [messages]);
   const deleteSingleOccurrence = async (eventId, dateToCancel) => {
     try {
       const response = await axios.delete(
@@ -50,35 +63,52 @@ const InstructorSchedule = (props) => {
     id: loggedInUser?.id,
   };
 
-  const student = {
-    courseId: 1,
-    name: 'John',
-    id: 2,
-    parentId: 4,
+  // const student = {
+  //   courseId: 1,
+  //   name: "John",
+  //   id: 2,
+  //   parentId: 4,
+  // };
+  const getParticipantsDetail = async (id) => {
+    try {
+      const res = await GetUserByid(id);
+      setStudent({
+        courseId: props?.eventId,
+        name: res.data?.fullName,
+        id: res.data?.userId,
+        parentId: res.data?.parents?.length > 0 ? res.data.parents[0]?.id : "",
+      });
+      console.log("res------", res.data);
+    } catch (err) {
+      console.log("err", err);
+    }
   };
+  console.log("student", student);
+  useEffect(() => {
+    getParticipantsDetail(props?.studentId);
+  }, [props?.eventId]);
 
-  const parent = {
-    courseId: 1,
-    name: 'John',
-    id: 4,
-  };
-
-  const openChat = (chatId) => {
-    setChatInfo({
-      sender: {
-        ...student,
-      },
-      receiver_user: {
-        ...instructor,
-      },
-      course_id: chatId,
-    });
-  };
-  console.log('logged in user,', loggedInUser);
+  const openChat = useCallback(
+    (chatId) => {
+      setChatInfo({
+        sender: {
+          ...student,
+        },
+        receiver_user: {
+          ...instructor,
+        },
+        chatId,
+      });
+    },
+    [student, loggedInUser]
+  );
+  console.log("logged in user,", loggedInUser);
   const handleTextChange = (e) => {
     setNewMessage(e.target.value);
   };
 
+  console.log("message", messages);
+  console.log("props", props.eventId);
   return (
     <>
       <div className="col-12 col-lg-6">
@@ -154,6 +184,7 @@ const InstructorSchedule = (props) => {
       {/* CHAT MODAL NEEDS TO BE FIXED */}
       <div className="d-flex justify-content-center align-items-center">
         <div
+          // onClick={() => setMessages([])}
           className="modal fade"
           id="exampleModal2"
           tabIndex="-1"
@@ -165,6 +196,9 @@ const InstructorSchedule = (props) => {
               <div className="d-flex justify-content-between">
                 <h5 className="modal-title" id="exampleModal2Label"></h5>
                 <button
+                  onClick={() => {
+                    setMessages([]);
+                  }}
                   type="button"
                   className="btn-close"
                   data-bs-dismiss="modal"

@@ -14,8 +14,14 @@ import { base_url } from "../../../api/client";
 const StudentSchedule = (props) => {
   const navigation = useRouter();
   const loggedInUser = useSelector((state) => state.user.userInfo);
-  const { sendMessage, messages, setChatInfo, setNewMessage, newMessage } =
-    FirebaseChat();
+  const {
+    sendMessage,
+    messages,
+    setChatInfo,
+    setNewMessage,
+    newMessage,
+    setMessages,
+  } = FirebaseChat();
   const [enabledCamera, setEnabledCamera] = useState(false);
 
   const deleteSingleOccurrence = async (eventId, dateToCancel) => {
@@ -142,6 +148,9 @@ const StudentSchedule = (props) => {
               <div className="d-flex justify-content-between">
                 <h5 className="modal-title" id="exampleModal2Label"></h5>
                 <button
+                  onClick={() => {
+                    setMessages([]);
+                  }}
                   type="button"
                   className="btn-close"
                   data-bs-dismiss="modal"

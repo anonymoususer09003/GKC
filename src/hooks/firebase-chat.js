@@ -17,6 +17,7 @@ import {
   setDoc,
 } from "../utils/config";
 import { useSelector } from "react-redux";
+import { useRouter } from "next/router";
 const useCustomFirebaseHook = () => {
   const loggedInUser = useSelector((state) => state.user?.userInfo);
   const [messages, setMessages] = useState([]);
@@ -24,11 +25,13 @@ const useCustomFirebaseHook = () => {
   const [chatInfo, setChatInfo] = useState("");
   const [myChatList, setMyChatList] = useState([]);
   const [activeChat, setActiveChat] = useState("");
+  const router = useRouter();
   const [firstTimeRender, setFirstTimeRender] = useState(false);
   // ...
-
+  console.log("router name", router.pathname);
   const fetchChat = async (chatInfo) => {
     try {
+      console.log("messages", messages);
       const chatId = JSON.stringify(chatInfo?.chatId);
       const messagesCollectionRef = collection(
         firestore,
@@ -43,21 +46,25 @@ const useCustomFirebaseHook = () => {
       const addedMessageIds = [];
       setFirstTimeRender(true);
       const unsubscribe = onSnapshot(messagesQueryOrderBy, (snapshot) => {
+        console.log("snapshot", snapshot);
+        let temp = [];
         snapshot.docChanges().forEach((change) => {
-          let temp = [...messages];
+          console.log("docs", change.doc.data());
+          console.log("messages----------------000----00", messages);
           if (change.type === "added") {
             const messageData = change.doc.data();
             const messageId = change.doc.id;
-            if (!addedMessageIds.includes(messageId)) {
-              // Check if the message ID is not already added
 
-              temp.push({ ...messageData, chatId });
-              addedMessageIds.push(messageId); // Track added message ID
-            }
-            setMessages([...temp]);
+            // Check if the message ID is not already added
+
+            temp.push({ ...messageData, chatId });
+
             // Process the newly added message as needed
           }
         });
+
+        console.log("temp000", temp);
+        setMessages((prevMessages) => [...prevMessages, ...temp]);
       });
 
       // Store the unsubscribe function to remove the listener later
@@ -71,21 +78,20 @@ const useCustomFirebaseHook = () => {
     }
   };
 
+  console.log("messages", messages);
   useEffect(() => {
-    if (chatInfo) {
+    if (chatInfo && !router.pathname.includes("messaging")) {
       fetchChat(chatInfo);
     }
 
     // Clean up the listeners when the component unmounts
-    // return () => {
-    //   unsubscribeFunctions.forEach((unsubscribe) => unsubscribe());
-    // };
-  }, [chatInfo]);
+  }, [chatInfo, activeChat]);
 
   const getMyChatList = async (senderId) => {
     try {
       const chatCollectionRef = collection(firestore, "chat");
       onSnapshot(chatCollectionRef, async (snapshot) => {
+        console.log("snapshot", snapshot);
         // Create separate queries for each 'array-contains' condition
         const query1 = query(
           chatCollectionRef,
@@ -130,10 +136,10 @@ const useCustomFirebaseHook = () => {
             index = chat.findIndex((item) => item.chatId === activeChat);
           }
           let chatId = activeChat || chat[index]?.chatId;
-          let otherUserId = chat[index].chatInfo.participants.filter(
+          let otherUserId = chat[index]?.chatInfo?.participants.filter(
             (id) => id != loggedInUser?.id
           );
-          let user = chat[index].chatInfo.userData[otherUserId[0]];
+          let user = chat[index]?.chatInfo.userData[otherUserId[0]];
 
           const student = {
             courseId: chatId,
