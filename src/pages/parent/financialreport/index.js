@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Head from "next/head";
 import { Inter } from "next/font/google";
 import { Navbar, Footer } from "../../../components";
+import {ParentNavbar} from '../../../components/'
 import { FiRefreshCw } from "react-icons/fi";
 import { TbSpeakerphone } from "react-icons/tb";
 import FinancialReport from "@/components/financialReport";
@@ -22,7 +23,7 @@ function ParentFinancialReport() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Navbar isLogin={true} />
+      <ParentNavbar isLogin={true} />
       <FinancialReport role="parent" />
       <Footer />
     </>
