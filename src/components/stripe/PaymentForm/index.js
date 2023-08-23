@@ -41,6 +41,7 @@ const PaymentForm = ({
   };
 
   const handleElementChange = (event) => {
+    
     const elementType = event.elementType;
     const isElementValid = event.complete && !event.error;
     elementType === 'cardNumber'
@@ -56,17 +57,18 @@ const PaymentForm = ({
         (elementType === 'cardExpiry' ? isElementValid : isCardExpiryValid) &&
         (elementType === 'cardCvc' ? isElementValid : isCardCvcValid)
     );
-    //setCardFormValid(isCardNumberValid && isCardExpiryValid && isCardCvcValid);
+
+    // setCardFormValid(isCardNumberValid && isCardExpiryValid && isCardCvcValid);
   };
 
   let paymentMethodId = null;
   const handlePayment = async () => {
     try {
-      const { paymentMethod } = await stripe?.createPaymentMethod({
+      const responce = await stripe?.createPaymentMethod({
         type: 'card',
         card: elements.getElement(CardNumberElement),
-        card: elements.getElement(CardExpiryElement),
         card: elements.getElement(CardCvcElement),
+        card: elements.getElement(CardExpiryElement),
         billing_details: {
           name: billingDetail.name,
           email: userInfo?.email || '',
@@ -80,10 +82,13 @@ const PaymentForm = ({
           },
         },
       });
+      console.log(responce)
       let res = null;
-      paymentMethodId = paymentMethod?.id;
+      paymentMethodId = responce?.paymentMethod?.id;
+      console.log(paymentMethodId)
+      
       if (oneTimePayment) {
-        handleOneTimePayment(paymentMethod?.id);
+        handleOneTimePayment(paymentMethodId);
         // const { error } = await stripe.confirmCardPayment(paymentIntentId, {
         //   payment_method: {
         //     card: elements.getElement(CardElement),
@@ -94,13 +99,15 @@ const PaymentForm = ({
         // });
       } else {
         res = await CreateCustomer({
-          paymentId: paymentMethod?.id,
+          paymentMethodId: paymentMethodId,
         });
+        console.log(res);
         onPaymentRequest(true);
       }
       if (savePaymentFutureUse) {
+        console.log(responce.paymentMethod)
         SavePaymentCard({
-          paymentId: paymentMethod?.id,
+          paymentId: responce.paymentMethod.id,
           whoPaysId: data?.whoPaysId || userInfo?.id,
           ...data,
         });
@@ -167,7 +174,7 @@ const PaymentForm = ({
           options={{
             disabled,
           }}
-          onChange={handleElementChange}
+          onChange={(event) => handleElementChange(event)}
         />
         <div className="d-flex gap-2 my-3">
           <div className="w-100">
@@ -178,7 +185,7 @@ const PaymentForm = ({
               options={{
                 disabled,
               }}
-              onChange={handleElementChange}
+              onChange={(event) => handleElementChange(event)}
             />
           </div>
           <div className="w-100">
@@ -188,7 +195,7 @@ const PaymentForm = ({
               options={{
                 disabled,
               }}
-              onChange={handleElementChange}
+              onChange={(event) => handleElementChange(event)}
             />
           </div>
         </div>
