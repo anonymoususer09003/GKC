@@ -1,21 +1,55 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Head from 'next/head';
 import { TutorNavbar, Footer } from '../../../components';
 import { useRouter } from 'next/router';
 import { withRole } from '../../../utils/withAuthorization';
 import Link from 'next/link';
+import { apiClient } from '@/api/client';
 
 function BankInfo() {
   const navigation = useRouter();
   const [showPayoneerInput, setShowPayoneerInput] = useState(false);
   const [showPayPalInput, setShowPayPalInput] = useState(false);
   const [popupVisible, setPopupVisible] = useState(false);
+  const [email, setEmail] = useState('');
 
   const handleUpdateClick = () => {
     setPopupVisible(true);
     setTimeout(() => {
       setPopupVisible(false);
     }, 3000);
+  };
+
+  const handleEmailChange = (e) => {
+    setEmail(e.target.value);
+  };
+
+  useEffect(() => {
+    getPayPalEmail();
+  }, []);
+
+  const getPayPalEmail = async () => {
+    try {
+      const response = await apiClient.get(
+        '/instructor/get-payPal-email-logged-instructor'
+      );
+      setEmail(response.data.email);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const updatePayPalEmail = async () => {
+    try {
+      const response = await apiClient.put(
+        '/instructor/update-payPal-email-logged-instructor',
+        { email }
+      );
+      handleUpdateClick();
+      setShowPayPalInput(false);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -67,13 +101,15 @@ function BankInfo() {
           </div>
           {showPayPalInput && (
             <input
+              value={email}
+              onChange={(e) => handleEmailChange(e)}
               placeholder="Enter PayPal info"
               className="mt-3 fw-bold border-2 border-dark p-1"
             ></input>
           )}
           <div className="">
             <button
-              onClick={handleUpdateClick}
+              onClick={updatePayPalEmail}
               style={{
                 marginTop: '80px',
                 width: '500px',

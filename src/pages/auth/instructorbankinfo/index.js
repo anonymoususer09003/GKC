@@ -51,10 +51,16 @@ export default function ParentRegistrationCCInfo() {
         }
       );
 
+      const res = await axios.get(`${base_url}/user/logged-user-role`, {
+        headers: {
+          Authorization: `Bearer ${response.data.accessToken}`,
+        },
+      });
+
       if (payPalEmail !== '') {
         const addPayPalEmail = await axios.post(
-          `${base_url}/instructor/set-payPal-email-logged-instructor`,
-          payPalEmail,
+          `${base_url}/instructor/set-payPal-email-logged-instructor?payPalEmail=${payPalEmail}`,
+          {},
           {
             headers: {
               accept: '*/*',
@@ -65,11 +71,6 @@ export default function ParentRegistrationCCInfo() {
         setPayPalEmail('');
       }
 
-      const res = await axios.get(`${base_url}/user/logged-user-role`, {
-        headers: {
-          Authorization: `Bearer ${response.data.accessToken}`,
-        },
-      });
       if (!isImageFileEmpty) {
         const uploadImageResponse = await axios.post(
           `${base_url}/aws/upload-instructor-photo`,
