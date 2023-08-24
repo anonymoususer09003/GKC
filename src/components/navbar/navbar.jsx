@@ -133,7 +133,7 @@ const Navbar = ({ isLogin }) => {
                           </li>
                         )}
 
-                        {/* <li className="p-3">
+                        <li className="p-3">
                           <a
                             href={
                               role === "student"
@@ -144,10 +144,11 @@ const Navbar = ({ isLogin }) => {
                             }
                             className="nav-link fw-bold"
                           >
-                            Report{" "}
+                            Report{' '}
                             {role === "student" ? "Instructor" : "Students"}
                           </a>
-                        </li> */}
+                        </li> 
+
                         <li className="p-3">
                           <a
                             href={`/${role}/financialreport`}

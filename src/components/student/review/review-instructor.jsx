@@ -23,7 +23,8 @@ function ReviewInstructor() {
 
   return (
     <>
-      <Navbar isLogin={true} /> <Review role="student" />
+      <Navbar isLogin={true} /> 
+      <Review role="student" />
       <Footer />
     </>
   );

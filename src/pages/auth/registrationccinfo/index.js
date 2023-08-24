@@ -77,13 +77,17 @@ export default function StudentRegistrationCCInfo() {
     setUserType(typ);
 
     const arr = [];
-    [stored?.emailParent1, stored?.emailParent1, stored.email].map((v) => {
+    [stored?.emailParent1, stored?.emailParent2].map((v) => {
       if (v) {
         arr.push(v);
       }
     });
+    // Convert the array to a Set to remove duplicates
+    const uniqueSet = new Set(arr);
 
-    setParents(arr);
+    // Convert the Set back to an array
+    const uniqueArray = Array.from(uniqueSet);
+        setParents(uniqueArray);
   }, []);
   const handlePaymentRequest = (status) => {
     window.localStorage.removeItem('registrationForm');
