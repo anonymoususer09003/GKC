@@ -140,13 +140,28 @@ function ReportInstructor() {
                 Violation of Policies
                 </label>
               </div>
+              <div className="form-check my-3"
+              onClick={()=>{setreasonOfReporting('Other')}}>
+                <input
+                  className="form-check-input"
+                  type="radio"
+                  name="reason"
+                  id="option5"
+                />
+                <label className="form-check-label" htmlFor="option5">
+                Other...
+                </label>
+              </div>
               <textarea
                 className={`form-control ${styles.reviewDropdown}`}
                 id="exampleFormControlTextarea1"
                 rows="5"
                 onChange={(e)=>{setComment(e.target.value)}}
               ></textarea>
-              <div className="mt-3 text-end">
+              <div className="mt-3 text-end d-md-flex justify-content-lg-between">
+              <p className="opacity-50 mt-2 ms-3">
+              {comment.length}/500 (min. 100 characters)
+              </p>
                 <button
                   className={`${styles.btn_primary} py-2 px-4 fw-bold text-white rounded text-end`}
                   type="submit"

@@ -73,14 +73,14 @@ export default function index() {
   };
 
   return (
-    <main className=" d-flex flex-column justify-content-between  min-vh-100 p3">
-      <div className={`m-auto ${styles.paymentWrapper}`}>
+    <main className=" d-flex flex-column min-vh-100 p3">
+      <div className={`${styles.paymentWrapper}`} style={{margin: '40px auto'}}>
       <div>
       {
         !isEdit && 
           <div>
           <h4 style={{fontWeight:700, marginBottom:20}}>Credit card information</h4>
-          <div style={{display: 'flex', flexDirection:'column', gap:'15px'}}>
+          <div style={{display: 'flex', flexDirection:'column', gap:'15px', fontSize: 20}}>
             <input className="p-2 rounded w-100 border_gray"
               placeholder="card owner"
               value={cardDetail.name}
@@ -108,6 +108,9 @@ export default function index() {
           {
             isEdit && 
             <>
+            <div
+            style={{fontSize: 20}}
+            >
             <PaymentForm
                 title={'Credit card information'}
                 disabled={isEdit ? false : true}
@@ -119,6 +122,7 @@ export default function index() {
                 oneTimePayment={false}
                 onPay={onPay}
               />
+            </div>
           </>
           }
           <div className="d-flex gap-2 justify-content-center mt-3">
@@ -127,7 +131,7 @@ export default function index() {
                 className="w-25 btn_primary text-light p-2 rounded fw-bold "
                 onClick={() => {setIsEdit(true); window.localStorage.removeItem('stripeForm');}}
               >
-                Back
+                Update
               </button>
             )}
             {isEdit &&              

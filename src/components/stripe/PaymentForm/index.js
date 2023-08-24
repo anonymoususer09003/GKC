@@ -160,7 +160,7 @@ const PaymentForm = ({
         <input
           name="name"
           disabled={disabled}
-          placeholder="name"
+          placeholder="Card owner name"
           className="w-100 p-2 rounded outline-0 border border_gray  my-2"
           onChange={(e) => onChange(e)}
         />
