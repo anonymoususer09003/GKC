@@ -16,29 +16,35 @@ export default function index() {
   const [cardFormValid, setCardFormValid] = useState(false);
   const [nameCard, setNameCard] = useState('');
   const [onPay, setOnPay] = useState(false)
+  const [savePaymentFutureUse, setSavePaymentFutureUse] = useState(false)
   const [cardDetail, setCardDetail] = useState({
-    name: "Name as it appears on your credit card",
-    cardNumber: "Card Number",
-    brand: "CVV",
-    expiry: "Expiration",
+    name: "...Loading card owner",
+    cardNumber: "...Loading card number",
+    brand: "...Loaing brand name",
+    expiry: "...Loading expiry date",
   });
 
 
   useEffect(() => {
+    (async ()=>{
+      const responce = await GetUserDetail();
+      setUserInfo(responce.data)
+    })()
     if(window.localStorage.getItem("stripeForm") === 'true'){
       setIsEdit(false);
       fetchUserCardDetail();
     }
-    var stored = JSON.parse(window.localStorage.getItem("registrationForm"))
-    setUserInfo(stored)
-  }, [cardDetail]);
+  }, []);
   
   const handleOnClick = () => {
     if (isEdit) {
-      setIsEdit(false);
+      // setIsEdit(false);
       setOnPay(!onPay)
-      fetchUserCardDetail()
+      setSavePaymentFutureUse(!savePaymentFutureUse)
     }
+    setTimeout(() => {
+      Router.reload()
+    }, 1400);
     window.localStorage.setItem("stripeForm", 'true')
   };
 
@@ -78,23 +84,23 @@ export default function index() {
             <input className="p-2 rounded w-100 border_gray"
               placeholder="card owner"
               value={cardDetail.name}
-              disabled={false}
+              disabled
             />
             <input className="p-2 rounded w-100 border_gray"
               placeholder="card number"
               value={cardDetail.cardNumber}
-              disabled={false}
+              disabled
             />
             <div className="d-flex" style={{justifyContent: 'space-between'}}>
             <input className="p-2 rounded border_gray" style={{width: '49%'}}
               placeholder="card brand"
               value={cardDetail.brand}
-              disabled={false}
+              disabled
             />
             <input className="p-2 rounded border_gray" style={{width: '49%'}}
               placeholder="card expiry date"
               value={cardDetail.expiry}
-              disabled={false}
+              disabled
             />
             </div>
             </div>
@@ -109,7 +115,7 @@ export default function index() {
                 userInfo={userInfo}
                 setCardFormValid={setCardFormValid}
                 onPaymentRequest={handlePaymentRequest}
-                savePaymentFutureUse={false}
+                savePaymentFutureUse={savePaymentFutureUse}
                 oneTimePayment={false}
                 onPay={onPay}
               />
@@ -119,12 +125,12 @@ export default function index() {
             {!isEdit && (
               <button
                 className="w-25 btn_primary text-light p-2 rounded fw-bold "
-                onClick={() => {setIsEdit(true); window.localStorage.removeItem('stripeForm'); Router.reload();}}
+                onClick={() => {setIsEdit(true); window.localStorage.removeItem('stripeForm');}}
               >
                 Back
               </button>
             )}
-            {!isEdit &&              
+            {isEdit &&              
             <button
               className="w-25 btn_primary text-light p-2 rounded fw-bold "
               onClick={handleOnClick}

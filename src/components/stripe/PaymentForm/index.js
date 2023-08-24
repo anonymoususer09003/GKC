@@ -82,10 +82,8 @@ const PaymentForm = ({
           },
         },
       });
-      console.log(responce)
       let res = null;
       paymentMethodId = responce?.paymentMethod?.id;
-      console.log(paymentMethodId)
       
       if (oneTimePayment) {
         handleOneTimePayment(paymentMethodId);
@@ -101,13 +99,11 @@ const PaymentForm = ({
         res = await CreateCustomer({
           paymentMethodId: paymentMethodId,
         });
-        console.log(res);
         onPaymentRequest(true);
       }
       if (savePaymentFutureUse) {
-        console.log(responce.paymentMethod)
         SavePaymentCard({
-          paymentId: responce.paymentMethod.id,
+          paymentId: paymentMethodId,
           whoPaysId: data?.whoPaysId || userInfo?.id,
           ...data,
         });

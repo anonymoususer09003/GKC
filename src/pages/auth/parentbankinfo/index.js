@@ -4,14 +4,17 @@ import { Navbar, Footer } from '../../../components';
 import { useRouter } from 'next/router';
 import axios from 'axios';
 import PaymentForm from '@/components/stripe/PaymentForm';
+import GetUserDetail from '@/services/user/GetUserDetail';
 import { base_url } from '../../../api/client';
 export default function StudentRegistrationCCInfo() {
   const navigation = useRouter();
   const [userType, setUserType] = useState(null);
   const [userInfo, setUserInfo] = useState(null);
+  const [userInfo1, setUserInfo1] = useState(null)
   const [nameCard, setNameCard] = useState('');
   const [confirmPayment, setConfirmPayment] = useState(false);
   const [cardFormValid, setCardFormValid] = useState(false);
+  const [savePaymentFutureUse, setSavePaymentFutureUse] = useState(false)
 
   const onContinue = () => {
     console.log(userInfo);
@@ -65,6 +68,11 @@ export default function StudentRegistrationCCInfo() {
     var typ = JSON.parse(window.localStorage.getItem('userType'));
     setUserInfo(stored);
     setUserType(typ);
+
+    (async () =>{
+      const responce = await GetUserDetail();
+      setUserInfo1(responce.data)
+    })
   }, []);
 
   const handleValueReceived = (value) => {
@@ -101,13 +109,15 @@ export default function StudentRegistrationCCInfo() {
                   title={' Add credit card information'}
                   onValueReceived={handleValueReceived}
                   onPay={confirmPayment}
-                  userInfo={userInfo}
+                  userInfo={userInfo1}
+                  savePaymentFutureUse={savePaymentFutureUse}
+                  oneTimePayment={false}
                   onPaymentRequest={handlePaymentRequest}
                   setCardFormValid={setCardFormValid}
                 />{' '}
                 <div className="d-flex gap-2 justify-content-center mt-3">
                   <button
-                    onClick={() => onRegister({ getPayment: true })}
+                    onClick={() => {setSavePaymentFutureUse(!savePaymentFutureUse); window.localStorage.setItem("stripeForm", 'true'); onRegister({ getPayment: true }); } }
                     className="w-50 text-light p-2 px-5 rounded fw-bold  bg-gray-300 btn_primary "
                     disabled={
                       cardFormValid && nameCard.length > 0 ? false : true
