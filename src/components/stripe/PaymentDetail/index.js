@@ -1,138 +1,154 @@
 import React, { useEffect, useState } from "react";
-import PaymentForm from "../PaymentForm";
 import { useRouter } from "next/router";
 import { ParentNavbar, Footer } from "../../";
 import GetUserCardDetail from "@/services/stripe/GetUserCardDetail";
+import GetUserDetail from "../../../services/user/GetUserDetail";
 import styles from "./payment.module.css"
+import PaymentForm from '@/components/stripe/PaymentForm';
+import Router from "next/router";
 
 
 export default function index() {
   
   const navigation = useRouter();
-  const [isEdit, setIsEdit] = useState(false);
-  const [cardName, setCardName] = useState();
-  const [cardNumber, setCardNumber] = useState();
-  const [cvv, setCvv] = useState();
-  const [expiration, setExpiration] = useState();
-  // const [cardDetail, setCardDetail] = useState({
-  //   name: "Name as it appears on your credit card",
-  //   cardNumber: "Card Number",
-  //   brand: "CVV",
-  //   expiry: "Expiration",
-  // });
+  const [isEdit, setIsEdit] = useState(true);
+  const [userInfo, setUserInfo] = useState(null);
+  const [cardFormValid, setCardFormValid] = useState(false);
+  const [nameCard, setNameCard] = useState('');
+  const [onPay, setOnPay] = useState(false)
+  const [savePaymentFutureUse, setSavePaymentFutureUse] = useState(false)
+  const [cardDetail, setCardDetail] = useState({
+    name: "...Loading card owner",
+    cardNumber: "...Loading card number",
+    brand: "...Loaing brand name",
+    expiry: "...Loading expiry date",
+  });
 
+
+  useEffect(() => {
+    (async ()=>{
+      const responce = await GetUserDetail();
+      setUserInfo(responce.data)
+    })()
+    if(window.localStorage.getItem("stripeForm") === 'true'){
+      setIsEdit(false);
+      fetchUserCardDetail();
+    }
+  }, []);
+  
   const handleOnClick = () => {
     if (isEdit) {
-    } else {
-      setIsEdit(true);
+      // setIsEdit(false);
+      setOnPay(!onPay)
+      setSavePaymentFutureUse(!savePaymentFutureUse)
     }
+    setTimeout(() => {
+      Router.reload()
+    }, 1400);
+    window.localStorage.setItem("stripeForm", 'true')
   };
 
   const fetchUserCardDetail = async () => {
-    try {
-      let res = await GetUserCardDetail();
-      const data = res?.data;
-      setCardName(data?.cardOwner || "")
-      setCardNumber("***********" + data?.last4Digits)
-      setCvv(data?.brand)
-      setExpiration(data?.expMonth + "/" + data?.expYear)
-      // setCardDetail({
-      //   name: data?.cardOwner || "",
-      //   cardNumber: "***********" + data?.last4Digits,
-      //   brand: data?.brand,
-      //   expiry: data?.expMonth + "/" + data?.expYear,
-      // });
+    try { 
+      if(window.localStorage.getItem("stripeForm") === 'true'){
+        let res = await GetUserCardDetail();
+        const data = res?.data;
+        setCardDetail({
+          name: data?.cardOwner || "",
+          cardNumber: "***********" + data?.last4Digits,
+          brand: data?.brand,
+          expiry: data?.expMonth + "/" + data?.expYear,
+        });
+      }
     } catch (err) {
       console.log("err", err);
     }
   };
-
-  useEffect(() => {
-    fetchUserCardDetail();
-  }, []);
+  const handleValueReceived = (value) => {
+    setNameCard(value.name);
+    // Do something with the value in the parent component
+  };
+  const handlePaymentRequest = (status) => {
+    // navigation.push('/parent');
+  };
 
   return (
-    <main className=" d-flex flex-column justify-content-between  min-vh-100 p3">
-      <div className={`m-auto ${styles.paymentWrapper}`}>
-        <div>
-          {isEdit && (
-            <PaymentForm
-              disabled={isEdit ? false : true}
-              title="Credit card information"
+    <main className=" d-flex flex-column min-vh-100 p3">
+      <div className={`${styles.paymentWrapper}`} style={{margin: '40px auto'}}>
+      <div>
+      {
+        !isEdit && 
+          <div>
+          <h4 style={{fontWeight:700, marginBottom:20}}>Credit card information</h4>
+          <div style={{display: 'flex', flexDirection:'column', gap:'15px', fontSize: 20}}>
+            <input className="p-2 rounded w-100 border_gray"
+              placeholder="card owner"
+              value={cardDetail.name}
+              disabled
             />
-          )}
-          {!isEdit && (
+            <input className="p-2 rounded w-100 border_gray"
+              placeholder="card number"
+              value={cardDetail.cardNumber}
+              disabled
+            />
+            <div className="d-flex" style={{justifyContent: 'space-between'}}>
+            <input className="p-2 rounded border_gray" style={{width: '49%'}}
+              placeholder="card brand"
+              value={cardDetail.brand}
+              disabled
+            />
+            <input className="p-2 rounded border_gray" style={{width: '49%'}}
+              placeholder="card expiry date"
+              value={cardDetail.expiry}
+              disabled
+            />
+            </div>
+            </div>
+          </div>}
+          {
+            isEdit && 
             <>
-              <h4 className="text-dark fw-bold pb-2">
-                Credit card information
-              </h4>
-              {/* {Object.keys(cardDetail).map((item, index) => {
-                return (
-                  <div key={index} style={{ height: "90%" }}>
-                    <div>
-                      <input
-                        disabled={true}
-                        placeholder={item}
-                        className="w-100 p-2 rounded outline-0 border border_gray  my-2"
-                        value={cardDetail[item]}
-                      />
-                    </div>
-                  </div>
-                );
-              })} */}
-              <input 
-                style={{ height: "90%" }} 
-                className="w-100 p-2 rounded outline-0 border border_gray  my-2" 
-                placeholder="Name as it appears on your credit card"
-                value={cardName}
-                onChange={(e) => setCardName(e.target.value)}
+            <div
+            style={{fontSize: 20}}
+            >
+            <PaymentForm
+                title={'Credit card information'}
+                disabled={isEdit ? false : true}
+                onValueReceived={handleValueReceived}
+                userInfo={userInfo}
+                setCardFormValid={setCardFormValid}
+                onPaymentRequest={handlePaymentRequest}
+                savePaymentFutureUse={savePaymentFutureUse}
+                oneTimePayment={false}
+                onPay={onPay}
               />
-              <input 
-                style={{ height: "90%" }} 
-                className="w-100 p-2 rounded outline-0 border border_gray  my-2" 
-                placeholder="Card Number"
-                value={cardNumber}
-                onChange={(e) => setCardNumber(e.target.value)}
-              />
-              <div className="form-row">
-                <input 
-                  style={{ height: "90%", width:'50%', marginRight:'30px' }} 
-                  className="p-2 rounded outline-0 border border_gray my-2" 
-                  placeholder="CVV"
-                  value={cvv}
-                  onChange={(e) => setCvv(e.target.value)}
-                />
-                  <input 
-                    style={{ width:'45%' }} 
-                    className="p-2 rounded outline-0 border border_gray my-2"
-                    type="text"
-                    placeholder="Expiration"
-                    onChange={(e) => setExpiration(e.target.value)}
-                    onFocus={(e) => (e.target.type = "date")}
-                    onBlur={(e) => (e.target.type = "text")}
-                    value={expiration}
-                  />
-              </div>
-            </>
-          )}
+            </div>
+          </>
+          }
           <div className="d-flex gap-2 justify-content-center mt-3">
-            {isEdit && (
+            {!isEdit && (
               <button
                 className="w-25 btn_primary text-light p-2 rounded fw-bold "
-                onClick={() => setIsEdit(false)}
+                onClick={() => {setIsEdit(true); window.localStorage.removeItem('stripeForm');}}
               >
-                Back
+                Update
               </button>
             )}
+            {isEdit &&              
             <button
               className="w-25 btn_primary text-light p-2 rounded fw-bold "
               onClick={handleOnClick}
+              disabled={
+                cardFormValid && nameCard.length > 0 ? false : true
+              }
             >
               {isEdit ? "Save" : "Update"}
-            </button>
+            </button>}
+
           </div>
         </div>
       </div>
     </main>
   );
 }
+

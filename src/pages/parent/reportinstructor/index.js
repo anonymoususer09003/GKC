@@ -1,13 +1,69 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ParentNavbar, Footer } from "../../../components";
 import Head from "next/head";
 import { withRole } from '../../../utils/withAuthorization';
 import styles from "../../../styles/Home.module.css";
-
+import GetInstructorForParents from "@/services/Review/GetInstructorForParents";
+import GetInstructorByStudent from "@/services/Review/GetInstructorByStudent";
+import report from "@/services/Report/report";
 
 function ReportInstructor() {
-  const instructors = ["John Doe", "Jone Rich", "Katy Long"];
-  const [instructor, setInstructor] = useState("John Doe");
+  
+  const [instructors, setInstructors] = useState([]);
+  const [selectedInstructor, setSelectedInstructor] = useState(null);
+  const [comment, setComment] = useState('')
+  const [reasonOfReporting, setreasonOfReporting] = useState('')
+
+  function removeDuplicates(arr, key) {
+    const uniqueKeys = new Set();
+    return arr.filter((obj) => {
+      const value = obj[key];
+      if (!uniqueKeys.has(value)) {
+        uniqueKeys.add(value);
+        return true;
+      }
+      return false;
+    });
+  }
+
+  const getReviewInstructors = async () => {
+    try {
+      let res = null;
+      if (window.localStorage.getItem('userType') === "parent") {
+        let instructors = [];
+        res = await GetInstructorForParents();
+        res?.data?.studentAndInstructorList?.map((item) => {
+          instructors = [...instructors, ...item?.instructorList];
+        });
+
+        const uniqueArray = removeDuplicates(instructors, "id");
+        setInstructors(uniqueArray);
+      } else {
+        res = await GetInstructorByStudent();
+        setInstructors(res.data);
+      }
+    } catch (err) {
+      console.log("err", err);
+    }
+  };
+
+  const onSubmit = async () => {
+    try{
+      let body = {
+        comment: comment,
+        reasonOfReporting: reasonOfReporting,
+        reportedUserId: selectedInstructor?.id
+      }
+      const res = await report(body)
+    } catch (err) {
+      console.log("err", err)
+    }
+
+  }
+  useEffect(()=>{
+    getReviewInstructors()
+  },[])
+
   return (
     <>
       <Head>
@@ -22,69 +78,94 @@ function ReportInstructor() {
           <div className="row">
             <div className="col">
               <h5 className="py-3">Your Instructors</h5>
-              {instructors.map((e) => (
-                <p role="button" onClick={() => setInstructor(e)}>
-                  {e}
+              {instructors.map((item, key) => (
+                <p role="button"
+                 onClick={() => setSelectedInstructor(e)}
+                 key={key}
+                 >
+                  {item}
                 </p>
               ))}
             </div>
             <div className="col col-9">
               <h5 className="mb-5">
-                Tell us your reason for reporting {`${instructor}`}
+                Tell us your reason for reporting {`${selectedInstructor}`}
               </h5>
-              <div className="form-check my-3">
+              <div className="form-check my-3"
+                onClick={()=>{setreasonOfReporting('Unprofessional Conduct')}}
+              >
                 <input
                   className="form-check-input"
                   type="radio"
                   name="reason"
                   id="option"
                 />
-                <label className="form-check-label" for="option">
-                  Option 1 ...
+                <label className="form-check-label" htmlFor="option">
+                Unprofessional Conduct
                 </label>
               </div>
-              <div className="form-check my-3">
+              <div className="form-check my-3"
+              onClick={()=>{setreasonOfReporting('Academic Misconduct')}}>
                 <input
                   className="form-check-input"
                   type="radio"
                   name="reason"
                   id="option2"
                 />
-                <label className="form-check-label" for="option2">
-                  Option 2 ...
+                <label className="form-check-label" htmlFor="option2">
+                Academic Misconduct
                 </label>
               </div>
-              <div className="form-check my-3">
+              <div className="form-check my-3"
+              onClick={()=>{setreasonOfReporting('Inadequate Teaching')}}>
                 <input
                   className="form-check-input"
                   type="radio"
                   name="reason"
                   id="option3"
                 />
-                <label className="form-check-label" for="option3">
-                  Option 3 ...
+                <label className="form-check-label" htmlFor="option3">
+                Inadequate Teaching
                 </label>
               </div>
-              <div className="form-check my-3">
+              <div className="form-check my-3"
+              onClick={()=>{setreasonOfReporting('Violation of Policies')}}>
                 <input
                   className="form-check-input"
                   type="radio"
                   name="reason"
                   id="option4"
                 />
-                <label className="form-check-label" for="option4">
-                  Option 4 ...
+                <label className="form-check-label" htmlFor="option4">
+                Violation of Policies
+                </label>
+              </div>
+              <div className="form-check my-3"
+              onClick={()=>{setreasonOfReporting('Other')}}>
+                <input
+                  className="form-check-input"
+                  type="radio"
+                  name="reason"
+                  id="option5"
+                />
+                <label className="form-check-label" htmlFor="option5">
+                Other...
                 </label>
               </div>
               <textarea
                 className={`form-control ${styles.reviewDropdown}`}
                 id="exampleFormControlTextarea1"
                 rows="5"
+                onChange={(e)=>{setComment(e.target.value)}}
               ></textarea>
-              <div className="mt-3 text-end">
+              <div className="mt-3 text-end d-md-flex justify-content-lg-between">
+              <p className="opacity-50 mt-2 ms-3">
+              {comment.length}/500 (min. 100 characters)
+              </p>
                 <button
                   className={`${styles.btn_primary} py-2 px-4 fw-bold text-white rounded text-end`}
                   type="submit"
+                  onClick={onSubmit}
                 >
                   Submit
                 </button>

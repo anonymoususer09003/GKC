@@ -41,6 +41,7 @@ const PaymentForm = ({
   };
 
   const handleElementChange = (event) => {
+    
     const elementType = event.elementType;
     const isElementValid = event.complete && !event.error;
     elementType === 'cardNumber'
@@ -56,17 +57,18 @@ const PaymentForm = ({
         (elementType === 'cardExpiry' ? isElementValid : isCardExpiryValid) &&
         (elementType === 'cardCvc' ? isElementValid : isCardCvcValid)
     );
-    //setCardFormValid(isCardNumberValid && isCardExpiryValid && isCardCvcValid);
+
+    // setCardFormValid(isCardNumberValid && isCardExpiryValid && isCardCvcValid);
   };
 
   let paymentMethodId = null;
   const handlePayment = async () => {
     try {
-      const { paymentMethod } = await stripe?.createPaymentMethod({
+      const responce = await stripe?.createPaymentMethod({
         type: 'card',
         card: elements.getElement(CardNumberElement),
-        card: elements.getElement(CardExpiryElement),
         card: elements.getElement(CardCvcElement),
+        card: elements.getElement(CardExpiryElement),
         billing_details: {
           name: billingDetail.name,
           email: userInfo?.email || '',
@@ -81,9 +83,10 @@ const PaymentForm = ({
         },
       });
       let res = null;
-      paymentMethodId = paymentMethod?.id;
+      paymentMethodId = responce?.paymentMethod?.id;
+      
       if (oneTimePayment) {
-        handleOneTimePayment(paymentMethod?.id);
+        handleOneTimePayment(paymentMethodId);
         // const { error } = await stripe.confirmCardPayment(paymentIntentId, {
         //   payment_method: {
         //     card: elements.getElement(CardElement),
@@ -94,13 +97,13 @@ const PaymentForm = ({
         // });
       } else {
         res = await CreateCustomer({
-          paymentId: paymentMethod?.id,
+          paymentMethodId: paymentMethodId,
         });
         onPaymentRequest(true);
       }
       if (savePaymentFutureUse) {
         SavePaymentCard({
-          paymentId: paymentMethod?.id,
+          paymentId: paymentMethodId,
           whoPaysId: data?.whoPaysId || userInfo?.id,
           ...data,
         });
@@ -157,7 +160,7 @@ const PaymentForm = ({
         <input
           name="name"
           disabled={disabled}
-          placeholder="name"
+          placeholder="Card owner name"
           className="w-100 p-2 rounded outline-0 border border_gray  my-2"
           onChange={(e) => onChange(e)}
         />
@@ -167,7 +170,7 @@ const PaymentForm = ({
           options={{
             disabled,
           }}
-          onChange={handleElementChange}
+          onChange={(event) => handleElementChange(event)}
         />
         <div className="d-flex gap-2 my-3">
           <div className="w-100">
@@ -178,7 +181,7 @@ const PaymentForm = ({
               options={{
                 disabled,
               }}
-              onChange={handleElementChange}
+              onChange={(event) => handleElementChange(event)}
             />
           </div>
           <div className="w-100">
@@ -188,7 +191,7 @@ const PaymentForm = ({
               options={{
                 disabled,
               }}
-              onChange={handleElementChange}
+              onChange={(event) => handleElementChange(event)}
             />
           </div>
         </div>

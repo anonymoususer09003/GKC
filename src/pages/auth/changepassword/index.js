@@ -41,7 +41,7 @@ export default function ForgotPassword() {
       if(data.newPassword === data.confirmPassword){
         onSubmit()
       } else{
-        setErr("Incorrect password confirmation");
+        setErr("New password and confirm new password mismatch");
         console.log("err", err);
       }
 
@@ -102,6 +102,7 @@ export default function ForgotPassword() {
   };
   const onChange = (e) => {
     setData({ ...data, [e.target.name]: e.target.value });
+    setErr("")
   };
   let isValid =
     data.newPassword != ""  &&
@@ -122,7 +123,7 @@ export default function ForgotPassword() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <ParentNavbar />
-      <main className="container-fluid d-flex flex-column justify-content-between  min-vh-100">
+      <main className="container-fluid d-flex flex-column  min-vh-100">
         <Link
           href="/"
           className="text-decoration-none p-4 d-flex gap-2 align-items-center text-dark"
@@ -150,6 +151,7 @@ export default function ForgotPassword() {
           </div>
         </div>
         ) : null}
+        <div>
         <div className="d-flex justify-content-center">
           <h1>Change Password</h1>
         </div>
@@ -215,7 +217,10 @@ export default function ForgotPassword() {
             </div>
           </div>
         </div>
-        <Footer />
+        </div>
+        <div style={{position:"fixed", bottom: 0}}>
+          <Footer />
+        </div>
       </main>
     </>
   );

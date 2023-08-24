@@ -87,7 +87,7 @@ export default function Review({ role }) {
       >
         <div className={`row ${styles.rowWrapper}`}>
           <div className="col-4">
-            <h5 className="py-3"> Your Instructors </h5>{" "}
+            <h5 className="py-3"> Instructors </h5>{" "}
             {instructors.map((item, key) => (
               <ul
                 onClick={() => setSelectedInstructor(item)}
@@ -104,14 +104,14 @@ export default function Review({ role }) {
           <div className="col col-8">
             <div className="container">
               <div className="row w-70">
-                <h5 className="mb-5 col"> Tutor tought me: </h5>{" "}
+                <h5 className="mb-5 col"> Instructor taught: </h5>{" "}
                 <div className="col">
                   <div className="w-50">
                     <select
                       className={`form-select ${styles.reviewDropdown}`}
                       aria-label="Default select example"
                     >
-                      {/* <option selected>Select course</option> */}{" "}
+                      <option selected>Select course</option>{" "}
                       {selectedInstructor?.coursesToTutorAndProficiencies?.map(
                         (item, index) => {
                           return (
@@ -209,9 +209,8 @@ export default function Review({ role }) {
               <button
                 disabled={isDisabled}
                 onSubmit={onSubmit}
-                className={` py-2 px-4 fw-bold text-white rounded text-end  ${
-                  isDisabled ? "btn_disabled" : "btn_primary"
-                }`}
+                className={` py-2 px-4 fw-bold text-white rounded text-end btn_primary`}
+                style={{backgroundColor: '#f48343'}}
                 type="submit"
               >
                 Submit{" "}
