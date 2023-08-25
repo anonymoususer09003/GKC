@@ -102,8 +102,8 @@ function SettingProfile({ userInfo, loading, error, fetchUser }) {
                     <MdLocationOn className="h5 p-0 m-0" />
                     <small>
                       {userInfo?.address1}, {userInfo?.city},{' '}
-                      {userInfo?.zipCode} <br />
-                      {userInfo?.state}, {userInfo?.country}
+                      {userInfo?.state} <br />
+                      {userInfo?.zipCode}, {userInfo?.country}
                     </small>
                   </div>
                   <hr className="bg_secondary" />

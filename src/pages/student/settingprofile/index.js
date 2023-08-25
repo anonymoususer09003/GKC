@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Head from "next/head";
 import { Navbar, Footer } from "../../../components";
-import { MdEmail, MdArrowForwardIos } from "react-icons/md";
+import { MdEmail, MdArrowForwardIos, MdLocationOn } from "react-icons/md";
 import { FiEdit } from "react-icons/fi";
 import { useRouter } from "next/router";
 import { withRole } from "../../../utils/withAuthorization";
@@ -19,6 +19,7 @@ function SettingProfle({ userInfo, loading, error, fetchUser }) {
   useEffect(() => {
     fetchUser();
     console.log(localStorage.getItem("gkcAuth"));
+    console.log(userInfo)
   }, [fetchUser]);
 
   if (loading) {
@@ -55,6 +56,17 @@ function SettingProfle({ userInfo, loading, error, fetchUser }) {
                     <MdEmail style={{ fontSize: "22px" }} />
                     {userInfo?.email}
                   </p>
+
+                  <p className="p-0 m-0 py-2 fw-bold"> Address </p>
+                  <div className="d-flex gap-1 gap-2 pb-3 ">
+                    <MdLocationOn className="h5 p-0 m-0" />
+                    <small>
+                      {userInfo?.address1}, {userInfo?.city},{' '}
+                      {userInfo?.state}<br />
+                      {userInfo?.zipCode}, {userInfo?.country}
+                    </small>
+                  </div>
+
                   <p className="p-0 m-0 py-2 fw-bold">Parent1/guardian1</p>
                   <div className="d-flex gap-1 align-items-center gap-2 pb-3 ">
                     <MdEmail className="h5 p-0 m-0" />
