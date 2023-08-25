@@ -1,42 +1,51 @@
-import React, { useState, useEffect } from "react";
-import Head from "next/head";
-import Link from "next/link";
-import { Navbar, Footer } from "../../../components";
-import { BsCheck2Circle } from "react-icons/bs";
-import { useRouter } from "next/router";
-import { RiArrowGoBackLine } from "react-icons/ri";
-import axios from "axios";
-import styles from "../../../styles/Home.module.css";
-import { base_url } from "../../../api/client";
+import React, { useState, useEffect } from 'react';
+import Head from 'next/head';
+import Link from 'next/link';
+import { Navbar, Footer } from '../../../components';
+import { BsCheck2Circle } from 'react-icons/bs';
+import { useRouter } from 'next/router';
+import { RiArrowGoBackLine } from 'react-icons/ri';
+import axios from 'axios';
+import styles from '../../../styles/Home.module.css';
+import { base_url } from '../../../api/client';
 export default function RegisterStudent() {
   const router = useRouter();
   const navigation = useRouter();
   const [countries, setCountries] = useState([]);
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
-  const [userType, setUserType] = useState("");
-  const [email, setEmail] = useState("");
-  const [guardianEmail1, setGuardianEmail1] = useState("");
-  const [guardianEmail2, setGuardianEmail2] = useState("");
-  const [firstname, setFirstname] = useState("");
-  const [lastname, setLastname] = useState("");
-  const [address1, setAddress1] = useState("");
-  const [address2, setAddress2] = useState("");
-  const [country, setCountry] = useState("");
-  const [state, setState] = useState("");
-  const [city, setCity] = useState("");
-  const [zipCode, setZipCode] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [userType, setUserType] = useState('');
+  const [email, setEmail] = useState('');
+  const [guardianEmail1, setGuardianEmail1] = useState('');
+  const [guardianEmail2, setGuardianEmail2] = useState('');
+  const [firstname, setFirstname] = useState('');
+  const [lastname, setLastname] = useState('');
+  const [address1, setAddress1] = useState('');
+  const [address2, setAddress2] = useState('');
+  const [country, setCountry] = useState('');
+  const [state, setState] = useState('');
+  const [city, setCity] = useState('');
+  const [zipCode, setZipCode] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [termsAgree, setTermsAgree] = useState(false);
   const [isInitialRender, setIsInitialRender] = useState(true);
+  const [guardian1Exists, setGuardian1Exists] = useState(true);
+  const [guardian2Exists, setGuardian2Exists] = useState(true);
 
   let isValidForm =
-    country && state && city && zipCode && password && termsAgree;
+    (guardianEmail1.length == 0 || guardian1Exists) &&
+    (guardianEmail2.length == 0 || guardian2Exists) &&
+    country &&
+    state &&
+    city &&
+    zipCode &&
+    password &&
+    termsAgree;
 
   const onContinue = () => {
-    window.localStorage.setItem("gkcAuth", JSON.stringify(true));
-    var stored = JSON.parse(window.localStorage.getItem("registrationForm"));
+    window.localStorage.setItem('gkcAuth', JSON.stringify(true));
+    var stored = JSON.parse(window.localStorage.getItem('registrationForm'));
     console.log(stored);
     let timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
@@ -44,6 +53,10 @@ export default function RegisterStudent() {
     stored.firstName = firstname;
     stored.lastName = lastname;
     stored.password = password;
+    // stored.emailParent1 =
+    //   guardianEmail1.length > 0 && guardian1Exists ? guardianEmail1 : null;
+    // stored.emailParent2 =
+    //   guardianEmail2.length > 0 && guardian2Exists ? guardianEmail2 : null;
     stored.emailParent1 = guardianEmail1;
     stored.emailParent2 = guardianEmail2;
     stored.address1 = address1;
@@ -56,11 +69,11 @@ export default function RegisterStudent() {
     stored.savePaymentFutureUse = false;
     stored.timeZoneId = timezone;
 
-    window.localStorage.setItem("registrationForm", JSON.stringify(stored));
+    window.localStorage.setItem('registrationForm', JSON.stringify(stored));
     if (password == confirmPassword) {
-      navigation.push("/auth/registrationgrade");
+      navigation.push('/auth/registrationgrade');
     } else {
-      alert("password not matched");
+      alert('password not matched');
     }
   };
 
@@ -85,6 +98,29 @@ export default function RegisterStudent() {
     }
   };
 
+  const checkIfGuardian1Exists = async () => {
+    try {
+      const res = await axios.get(
+        `${base_url}/public/register/is-parent-registered?parentEmail=${guardianEmail1}`,
+        {}
+      );
+      setGuardian1Exists(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const checkIfGuardian2Exists = async () => {
+    try {
+      const res = await axios.get(
+        `${base_url}/public/register/is-parent-registered?parentEmail=${guardianEmail2}`,
+        {}
+      );
+      setGuardian2Exists(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const getCities = async () => {
     try {
       const response = await axios.get(
@@ -97,9 +133,17 @@ export default function RegisterStudent() {
   };
 
   useEffect(() => {
-    const value = JSON.parse(window.localStorage.getItem("userType"));
-    var stored = JSON.parse(window.localStorage.getItem("registrationForm"));
-    setEmail(stored.email);
+    const value = JSON.parse(window.localStorage.getItem('userType'));
+    var stored = JSON.parse(window.localStorage.getItem('registrationForm'));
+    // setEmail(stored.email);
+
+    setEmail('1teststudent@gmail.com');
+    window.localStorage.setItem(
+      'registrationForm',
+      JSON.stringify({
+        email,
+      })
+    );
     setUserType(value);
     getCountries();
   }, []);
@@ -121,7 +165,7 @@ export default function RegisterStudent() {
   }, [state]);
 
   const handleBack = () => {
-    router.push("/auth/activatecode");
+    router.push('/auth/activatecode');
   };
   return (
     <>
@@ -145,9 +189,9 @@ export default function RegisterStudent() {
             className="col-12 col-lg-6 position-relative  d-none d-md-block "
             style={{
               backgroundImage: 'url("/assets/register_group.png")',
-              height: "100vh",
-              backgroundRepeat: "no-repeat",
-              backgroundSize: "100% 100%",
+              height: '100vh',
+              backgroundRepeat: 'no-repeat',
+              backgroundSize: '100% 100%',
             }}
           ></div>
           <div className="col-12 col-lg-6 d-flex justify-content-center align-items-center ">
@@ -160,36 +204,49 @@ export default function RegisterStudent() {
                     Student
                   </h4>
                   <p className="bg_secondary text-white p-2 rounded d-flex align-items-center gap-2 fw-bold">
-                    <BsCheck2Circle style={{ fontSize: "22px" }} />
+                    <BsCheck2Circle style={{ fontSize: '22px' }} />
                     {email}
                   </p>
                 </div>
                 <div>
                   <input
                     type="text"
-                    className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
+                    className="w-100 p-2 rounded outline-0 border border_gray"
                     placeholder="Enter Parent/Guardian 1 Email"
                     value={guardianEmail1}
                     name="guardian1"
                     onChange={(e) => setGuardianEmail1(e.target.value)}
+                    onBlur={checkIfGuardian1Exists}
                   />
+                  {!guardian1Exists && guardianEmail1.length > 0 ? (
+                    <p className="tw-text-red-600">
+                      Parent email doesn't exist
+                    </p>
+                  ) : (
+                    ''
+                  )}
                   <input
                     type="text"
-                    className="w-100 p-2 rounded outline-0 border border_gray  "
+                    className="w-100 p-2 rounded outline-0 border border_gray mt-3  "
                     placeholder="Enter Parent/Guardian 2 Email"
                     value={guardianEmail2}
                     name="guardian3"
                     onChange={(e) => setGuardianEmail2(e.target.value)}
+                    onBlur={checkIfGuardian2Exists}
                   />
+                  {!guardian2Exists && guardianEmail2.length > 0 ? (
+                    <p className="tw-text-red-600">
+                      Parent email doesn't exist
+                    </p>
+                  ) : (
+                    ''
+                  )}
                   <div className="py-2">
-                    <label className=" m-0">
+                    <label className=" m-0 mb-3">
                       This is to link your account to your parent/guardian
                     </label>
                     <br />
-                    <label className=" m-0">
-                      We do not have any record of parent 2
-                    </label>
-                  </div>{" "}
+                  </div>{' '}
                   <div className="d-flex   flex-md-nowrap flex-wrap gap-2">
                     <input
                       type="text"
@@ -302,29 +359,29 @@ export default function RegisterStudent() {
                       onChange={() => setTermsAgree(!termsAgree)}
                     />
                     <label className="form-check-label" for="flexCheckDefault">
-                      I agree to the{" "}
+                      I agree to the{' '}
                       <Link
                         href="/terms-of-use"
                         className="fw-bold no-underline hover:text_secondary text_secondary"
                       >
-                        {" "}
+                        {' '}
                         Terms of Use
-                      </Link>{" "}
-                      and{" "}
+                      </Link>{' '}
+                      and{' '}
                       <Link
                         href="/privicy-policy"
                         className="fw-bold no-underline hover:text_secondary text_secondary"
                       >
-                        {" "}
-                        Privacy Policy{" "}
-                      </Link>{" "}
+                        {' '}
+                        Privacy Policy{' '}
+                      </Link>{' '}
                       of GKC
                     </label>
                   </div>
                   <div className="d-flex flex-wrap gap-2 justify-content-between align-items-center mt-3">
                     <button
                       className={`w-50 text-light p-2 rounded fw-bold  bg-gray-300 ${
-                        !isValidForm ? "btn_disabled" : "btn_primary"
+                        !isValidForm ? 'btn_disabled' : 'btn_primary'
                       }`}
                       disabled={!isValidForm}
                       onClick={onContinue}
