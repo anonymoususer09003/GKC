@@ -1,35 +1,36 @@
-import React, { useEffect, useState } from "react";
-import Head from "next/head";
-import { Navbar, Footer } from "./../../../components";
-import { BsCheck2Circle } from "react-icons/bs";
-import { MdEmail, MdArrowForwardIos } from "react-icons/md";
-import { MultiSelect } from "react-multi-select-component";
-import { useRouter } from "next/router";
-import { withRole } from "../../../utils/withAuthorization";
-import { connect } from "react-redux";
-import { fetchUser } from "../../../store/actions/userActions";
-import axios from "axios";
-import styles from "../../../styles/Home.module.css";
-import { apiClient } from "../../../api/client";
+import React, { useEffect, useState } from 'react';
+import Head from 'next/head';
+import { Navbar, Footer } from './../../../components';
+import { BsCheck2Circle } from 'react-icons/bs';
+import { MdEmail, MdArrowForwardIos } from 'react-icons/md';
+import { MultiSelect } from 'react-multi-select-component';
+import { useRouter } from 'next/router';
+import { withRole } from '../../../utils/withAuthorization';
+import { connect } from 'react-redux';
+import { fetchUser } from '../../../store/actions/userActions';
+import axios from 'axios';
+import styles from '../../../styles/Home.module.css';
+import { apiClient } from '../../../api/client';
 
 function EditProfile({ userInfo, loading, error, fetchUser }) {
   const [selected, setSelected] = useState([]);
-  const [grade, setGrade] = useState("");
-  const [parent1, setParent1] = useState("");
-  const [parent2, setParent2] = useState("");
+  const [grade, setGrade] = useState('');
+  const [parent1, setParent1] = useState('');
+  const [parent2, setParent2] = useState('');
   const [courses, setCourses] = useState([]);
   const [lang, setLang] = useState([]);
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [address1, setAddress1] = useState("");
-  const [address2, setAddress2] = useState("");
-  const [selectedCountry, setSelectedCountry] = useState("");
-  const [selectedState, setSelectedState] = useState("");
-  const [selectedCity, setSelectedCity] = useState("");
-  const [zipCode, setZipCode] = useState("");
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [address1, setAddress1] = useState('');
+  const [address2, setAddress2] = useState('');
+  const [selectedCountry, setSelectedCountry] = useState('');
+  const [selectedState, setSelectedState] = useState('');
+  const [selectedCity, setSelectedCity] = useState('');
+  const [zipCode, setZipCode] = useState('');
   const [selectedCourses, setSelectedCourses] = useState([]);
   const [dependents, setDependents] = useState([]);
   const [selectedLang, setSelectedLang] = useState([]);
+  const [proficiency, setProficiency] = useState([]);
 
   let isValidForm =
     selectedCourses.length > 0 && selectedLang.length > 0 && grade;
@@ -46,11 +47,11 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
     selectedLang.forEach((v) => {
       ln.push(v.value);
     });
-    selectedCourses.forEach((v) => {
+    selectedCourses.forEach((v, i) => {
       aa.push({ courseId: v.value, proficiencyId: v.proficiencyId.id });
     });
     try {
-      const response = await apiClient.put("/user/student/update", {
+      const response = await apiClient.put('/user/student/update', {
         userId: userInfo.id,
         email: userInfo.email,
         firstName: userInfo.firstName,
@@ -63,7 +64,7 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
         zipCode: userInfo.zipCode,
         savePaymentFutureUse: userInfo.savePaymentFutureUse,
         // Here is hardcoded
-        whoPaysEmail: "dileepwork8@gmail.com",
+        whoPaysEmail: 'dileepwork8@gmail.com',
         emailParent1: parent1,
         emailParent2: parent2,
         gradeId: grade,
@@ -72,7 +73,7 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
       });
       console.log(response);
       // setCountries(response.data);
-      navigation.push("/student/settingprofile");
+      navigation.push('/student/settingprofile');
     } catch (error) {
       // console.error(error);
     }
@@ -84,7 +85,7 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
         selected.map((option) => ({
           label: option.label,
           value: option.value,
-          proficiencyId: { id: 1, name: "Beginner" },
+          proficiencyId: { id: 1, name: 'Beginner' },
         }))
     );
   };
@@ -95,28 +96,11 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
         selected.map((option) => ({
           label: option.label,
           value: option.value,
-          proficiencyId: { id: 1, name: "Beginner" },
+          proficiencyId: { id: 1, name: 'Beginner' },
         }))
     );
   };
 
-  const handleAddOrUpdate = (id, newData) => {
-    // Check if the ID exists in the data array
-    const dataIndex = selectedCourses.findIndex((item) => item.courseId === id);
-
-    // if (dataIndex === -1) {
-    //   // ID not found, add the new data to the array
-    //   setSelectedCourses([
-    //     ...selectedCourses,
-    //     { id, ...newData },
-    //   ]);
-    // } else {
-    // ID found, update the data at the specified index
-    const updatedData = [...selectedCourses];
-    updatedData[dataIndex] = { ...updatedData[dataIndex], ...newData };
-    setSelectedCourses(updatedData);
-    // }
-  };
   console.log(selectedCourses);
   console.log(selectedLang);
 
@@ -157,6 +141,7 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
   useEffect(() => {
     getLang();
     getCourses();
+    getProficiency();
   }, []);
 
   useEffect(() => {
@@ -200,6 +185,71 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
   // if (loading) {
   //   return <div>Loading...</div>;
   // }
+  const proficiencyOrder = {
+    Beginner: 1,
+    Intermediate: 2,
+    'Semi-expert': 3,
+  };
+
+  // const handleProficiencySelection = (selectedOptions, optionIndex) => {
+  //   setSelectedCourses((prevData) => {
+  //     const newData = [...prevData];
+  //     newData[optionIndex].proficiencies = selectedOptions.sort(
+  //       (a, b) => proficiencyOrder[a] - proficiencyOrder[b]
+  //     );
+  //     return newData;
+  //   });
+  // };
+
+  // const handleProficiencySelection = (e, i) => {
+  //   setSelectedCourses((prevData) => {
+  //     const newData = [...prevData];
+  //     // newData[optionIndex].proficiencies = selectedOptions;
+  //     console.log('newData:', newData);
+  //     return newData;
+  //   });
+  // };
+
+  const handleProficiencySelection = (e, i) => {
+    const { value } = e.target;
+
+    const proficiencyIdMap = {
+      Beginner: 1,
+      Intermediate: 2,
+      'Semi-Expert': 3,
+    };
+
+    setSelectedCourses((prevCourses) => {
+      const newCourses = [...prevCourses];
+      newCourses[i].proficiencyId.id = proficiencyIdMap[value];
+      newCourses[i].proficiencyId.name = value;
+      console.log('bo', selectedCourses);
+      return newCourses;
+    });
+  };
+
+  const getProficiency = async () => {
+    try {
+      const response = await apiClient.get(
+        `/public/course/get-all-proficiencies`
+      );
+      var arr = [];
+      response.data.map((v) => {
+        arr.push({ value: v.id, label: v.name });
+      });
+      arr.sort((a, b) => {
+        const proficiencyOrder = {
+          Beginner: 0,
+          Intermediate: 1,
+          'Semi-expert': 2,
+        };
+        return proficiencyOrder[a.label] - proficiencyOrder[b.label];
+      });
+      setProficiency(arr);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   if (error) {
     return <div>Error: {error}</div>;
@@ -217,7 +267,7 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
       <main className="container-fluid">
         <div
           className={`p-5 ${styles.editProfileWrapper}`}
-          style={{ minHeight: "90vh", maxWidth: "1700px", margin: "auto" }}
+          style={{ minHeight: '90vh', maxWidth: '1700px', margin: 'auto' }}
         >
           <div className="row">
             <div className="col-12 col-lg-4">
@@ -228,7 +278,7 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
                   </h5>
 
                   <p className="w-75 bg_secondary text-white p-2 rounded d-flex align-items-center gap-2 fw-bold">
-                    <MdEmail style={{ fontSize: "22px" }} />
+                    <MdEmail style={{ fontSize: '22px' }} />
                     {userInfo?.email}
                   </p>
 
@@ -378,7 +428,7 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
                     options={lang}
                     value={selectedLang}
                     onChange={handleLangSelectChange}
-                    labelledBy={"Select Lang"}
+                    labelledBy={'Select Lang'}
                     isCreatable={true}
                     hasSelectAll={false}
                   />
@@ -456,71 +506,96 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
                     options={courses}
                     value={selectedCourses}
                     onChange={handleCourseSelectChange}
-                    labelledBy={"Select Course"}
+                    labelledBy={'Select Course'}
                     isCreatable={true}
                     hasSelectAll={false}
                   />
                 </div>
 
-                <div className="row m-0 p-0 w-100">
-                  <div className="col d-flex justify-content-center">
+                <div className="row m-0 p-0 w-75 d-flex mx-auto">
+                  {/* <div className="col d-flex justify-content-center">
+                    <h4 className="fw-bold m-0 p-0">Courses</h4>
+                  </div> */}
+                  <div className="col ">
                     <h4 className="fw-bold m-0 p-0">Courses</h4>
                   </div>
-                  <div className="col d-flex justify-content-start">
+                  {/* <div className="col d-flex justify-content-start">
                     <h4 className="fw-bold m-0 p-0">Proficiency</h4>
+                  </div> */}
+                  <div className="col tw-ml-60">
+                    <p className="fw-bold h5 m-0 p-0">Proficiency</p>
                   </div>
+                  {/* <div className="container">
+                    <div className="row d-flex justify-content-center py-4"> */}
+                  {selectedCourses.map((v, i) => {
+                    return (
+                      <div className="">
+                        <div className="row m-0 pl-0 pt-4">
+                          {/* <div className="col-md-4 item">
+                          <li className="fw-bold m-0 p-0 h5 fw-lighter">
+                            {v.label}
+                          </li>
+                        </div> */}
+                          <div className="col d-flex align-items-center gap-2 primary-list">
+                            <li className="fw-bold m-0 p-0 fw-lighter">
+                              {v.label}
+                            </li>
+                          </div>
+                          <div className="col-md-4 item">
+                            <select
+                              className="w-100 p-2 rounded outline-0 border border_gray"
+                              value={v.proficiencyId.name}
+                              options={proficiency}
+                              onChange={(e) => handleProficiencySelection(e, i)}
 
-                  <div className="container">
-                    <div className="row d-flex justify-content-center py-4">
-                      {selectedCourses.map((v, ind) => {
-                        return (
-                          <>
-                            <div className="col-md-4 item">
-                              {/* <MdArrowForwardIos className="text_primary h4 p-0 m-0" /> */}
-                              <li className="fw-bold m-0 p-0 h5 fw-lighter">
-                                {v.label}
-                              </li>
-                            </div>
-                            <div className="col-md-4 item">
-                              <select
-                                className="w-100 p-2 rounded outline-0 border border_gray"
-                                value={v.proficiencyId.id}
-                                onChange={(e) => {
-                                  const selectedProficiencyId = Number(
-                                    e.target.value
-                                  );
-                                  const selectedProficiencyName =
-                                    e.target.selectedOptions[0].label;
+                              // onChange={(e) => {
+                              //   const selectedProficiencyId = Number(
+                              //     e.target.value
+                              //   );
+                              //   const selectedProficiencyName =
+                              //     e.target.selectedOptions[0].label;
 
-                                  const updatedCourses = selectedLang.map(
-                                    (lang) => {
-                                      if (lang.value === v.value) {
-                                        return {
-                                          ...lang,
-                                          proficiencyId: {
-                                            id: selectedProficiencyId,
-                                            name: selectedProficiencyName,
-                                          },
-                                        };
-                                      }
-                                      return lang;
-                                    }
-                                  );
+                              // const updatedCourses = selectedLang.map(
+                              //   (lang) => {
+                              //     if (lang.value === v.value) {
+                              //       return {
+                              //         ...lang,
+                              //         proficiencyId: {
+                              //           id: selectedProficiencyId,
+                              //           name: selectedProficiencyName,
+                              //         },
+                              //       };
+                              //     }
+                              //     return lang;
+                              //   }
+                              // );
 
-                                  setSelectedLang(updatedCourses);
-                                  // console.log(updatedLangs)
-                                }}
-                              >
-                                <option value={1}>Beginner</option>
-                                <option value="2">Intermediate</option>
-                                <option value={3}>Semi-Expert</option>
-                              </select>
-                            </div>
-                          </>
-                        );
-                      })}
-                    </div>
-                  </div>
+                              // setSelectedLang(updatedCourses);
+                              // console.log(updatedLangs)
+                              // }}
+                            >
+                              <option value="Beginner">Beginner</option>
+                              <option value="Intermediate">Intermediate</option>
+                              <option value="Semi-Expert">Semi-Expert</option>
+                            </select>
+                          </div>
+                          {/* <div className="col ">
+                          <MultiSelect
+                            options={proficiency}
+                            value={v.proficiencies}
+                            onChange={(selectedOptions) =>
+                              handleProficiencySelection(selectedOptions, i)
+                            }
+                            labelledBy={'Select Proficiency'}
+                            isCreatable={true}
+                          />
+                        </div> */}
+                        </div>
+                      </div>
+                    );
+                  })}
+                  {/* </div>
+                  </div> */}
                 </div>
               </div>
             </div>
@@ -539,5 +614,5 @@ const mapStateToProps = (state) => ({
 });
 
 export default withRole(connect(mapStateToProps, { fetchUser })(EditProfile), [
-  "Student",
+  'Student',
 ]);

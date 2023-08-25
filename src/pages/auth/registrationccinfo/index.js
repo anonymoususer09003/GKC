@@ -30,7 +30,7 @@ export default function StudentRegistrationCCInfo() {
         zipCode: userInfo.zipCode,
         savePaymentFutureUse: false,
         emailParent1: userInfo.emailParent1,
-        emailParent2: '',
+        emailParent2: userInfo.emailParent2,
         whoPaysEmail: selectedParent || userInfo.emailParent || userInfo.email,
         gradeId: userInfo.gradeId,
         courseOfInterestAndProficiency: userInfo.courseOfInterestAndProficiency,

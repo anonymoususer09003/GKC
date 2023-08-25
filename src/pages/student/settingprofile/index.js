@@ -22,6 +22,10 @@ function SettingProfle({ userInfo, loading, error, fetchUser }) {
     console.log(userInfo)
   }, [fetchUser]);
 
+  useEffect(()=>{
+    console.log("object", userInfo);
+  })
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -132,7 +136,7 @@ function SettingProfle({ userInfo, loading, error, fetchUser }) {
                     <h4 className="fw-bold m-0 p-0">Courses:</h4>
                   </div>
                   <div className="col ">
-                    <h4 className="fw-bold m-0 p-0">Perference:</h4>
+                    <h4 className="fw-bold m-0 p-0">Skill Level:</h4>
                   </div>
                 </div>
                 {userInfo?.courseOfInterestAndProficiency?.map(
