@@ -88,7 +88,7 @@ export default function StudentRegistrationCCInfo() {
     // Convert the Set back to an array
     const uniqueArray = Array.from(uniqueSet);
         setParents(uniqueArray);
-  }, []);
+      }, []);
   const handlePaymentRequest = (status) => {
     window.localStorage.removeItem('registrationForm');
     window.localStorage.removeItem('userType');
