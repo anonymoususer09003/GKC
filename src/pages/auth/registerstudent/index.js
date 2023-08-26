@@ -135,15 +135,7 @@ export default function RegisterStudent() {
   useEffect(() => {
     const value = JSON.parse(window.localStorage.getItem('userType'));
     var stored = JSON.parse(window.localStorage.getItem('registrationForm'));
-    // setEmail(stored.email);
-
-    setEmail('1teststudent@gmail.com');
-    window.localStorage.setItem(
-      'registrationForm',
-      JSON.stringify({
-        email,
-      })
-    );
+    setEmail(stored.email);
     setUserType(value);
     getCountries();
   }, []);
