@@ -56,7 +56,7 @@ export default function StudentRegistrationCourse() {
   const getLang = async () => {
     try {
       const response = await axios.get(
-        `http://34.227.65.157/public/language/with-instructors`
+        `http://34.227.65.157/public/register/get-all-languages`
       );
       var arr = [];
       response.data.map((v) => {
