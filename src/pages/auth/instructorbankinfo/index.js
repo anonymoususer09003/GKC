@@ -13,12 +13,12 @@ export default function ParentRegistrationCCInfo() {
   const [showPayPalInput, setShowPayPalInput] = useState(false);
   const [userType, setUserType] = useState(null);
   const [userInfo, setUserInfo] = useState(null);
-  const files = useSelector((state) => state.files);
-  const imageFile = files.image;
-  const videoFile = files.video;
   const [isImageFileEmpty, setIsImageFileEmpty] = useState(true);
   const [isVideoFileEmpty, setIsVideoFileEmpty] = useState(true);
   const [payPalEmail, setPayPalEmail] = useState('');
+  const files = useSelector((state) => state.files);
+  const imageFile = files.image;
+  const videoFile = files.video;
 
   useEffect(() => {
     setIsImageFileEmpty(Object.keys(imageFile).length === 0);
