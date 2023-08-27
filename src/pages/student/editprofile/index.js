@@ -64,7 +64,7 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
         zipCode: userInfo.zipCode,
         savePaymentFutureUse: userInfo.savePaymentFutureUse,
         // Here is hardcoded
-        whoPaysEmail: 'dileepwork8@gmail.com',
+        whoPaysEmail: userInfo.email,
         emailParent1: parent1,
         emailParent2: parent2,
         gradeId: grade,
@@ -75,7 +75,7 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
       // setCountries(response.data);
       navigation.push('/student/settingprofile');
     } catch (error) {
-      // console.error(error);
+      console.error(error);
     }
   };
 
