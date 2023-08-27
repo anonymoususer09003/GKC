@@ -17,7 +17,7 @@ const Navbar = ({ isLogin }) => {
     const stored = localStorage.getItem('gkcAuth');
     let data = stored ? JSON.parse(stored) : 'student';
     setValue(stored ? JSON.parse(stored) : false);
-    setRole(data?.role?.toLowerCase());
+    setRole(data?.role.toLowerCase());
   }, []);
   console.log("role", role);
   return (
