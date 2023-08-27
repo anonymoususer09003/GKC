@@ -14,13 +14,15 @@ export default function StudentRegistrationCCInfo() {
   const [selectedParent, setSelectedParent] = useState('');
   const [nameCard, setNameCard] = useState('');
   const [cardFormValid, setCardFormValid] = useState(false);
+  const [emailParents, setEmailParents] = useState([])
 
   const onRegister = async ({ getPayment }) => {
+    var storreed = JSON.parse(window.localStorage.getItem('registrationForm'))
     try {
-      const response = await axios.post(`${base_url}/auth/register-student`, {
+      const response = await axios.post(`${base_url}/auth/complete-student-registration`, {
         firstName: userInfo.firstName,
         lastName: userInfo.lastName,
-        email: userInfo.email,
+        studentEmail: userInfo.email || storreed.email,
         password: userInfo.password,
         address1: userInfo.address1,
         address2: userInfo.address2,
@@ -31,22 +33,23 @@ export default function StudentRegistrationCCInfo() {
         savePaymentFutureUse: false,
         emailParent1: userInfo.emailParent1,
         emailParent2: userInfo.emailParent2,
-        whoPaysEmail: selectedParent || userInfo.emailParent || userInfo.email,
+        whoPaysEmail: emailParents[parents.indexOf(selectedParent)] || userInfo.emailParent || userInfo.email,
         gradeId: userInfo.gradeId,
         courseOfInterestAndProficiency: userInfo.courseOfInterestAndProficiency,
         languagePreferencesId: userInfo.languagePreferencesId,
-        timeZoneId: userInfo.timeZoneId,
+        // timeZoneId: userInfo.timeZoneId,
       });
+      console.log(response)
       const res = await axios.get(`${base_url}/user/logged-user-role`, {
         headers: {
-          Authorization: `Bearer ${response.data.accessToken}`,
+          Authorization: `Bearer ${response.data.accessToken ?? JSON.parse(window.localStorage.getItem('gkcAuth')).accessToken}`,
         },
       });
       if (res && response) {
         window.localStorage.setItem(
           'gkcAuth',
           JSON.stringify({
-            accessToken: response.data.accessToken,
+            accessToken: JSON.parse(window.localStorage.getItem('gkcAuth')).accessToken,
             role: res.data,
           })
         );
@@ -78,13 +81,62 @@ export default function StudentRegistrationCCInfo() {
         arr.push(v);
       }
     });
-    // Convert the array to a Set to remove duplicates
-    const uniqueSet = new Set(arr);
 
-    // Convert the Set back to an array
+    const uniqueSet = new Set(arr);
     const uniqueArray = Array.from(uniqueSet);
-        setParents(uniqueArray);
+    setEmailParents(uniqueArray)
+
+    // uniqueArray.map((i)=>{
+    //   setParents([...parents, userDetailByEmail(i)])
+    // })
+    userDetailByEmail(uniqueArray)
+    // console.log(uniqueArray)
+    // let parentName1, parentName2;
+    // if(uniqueArray[0] !== undefined){
+    //   parentName1 = userDetailByEmail(uniqueArray[0])
+    // }
+    // if(uniqueArray[1] !== undefined){
+    //   parentName2 = userDetailByEmail(uniqueArray[1])
+    // }
+    // const parentNames = [parentName1, parentName2]
+    // console.log(parentNames)
+    // setParents(parentNames)
+    // console.log(parents)
+    // console.log(parentNames)
+    // userDetailByEmail(uniqueArray)
+    // if(uniqueArray.length = 1){
+    //   userDetailByEmail(uniqueArray[0]).then((value) =>{
+    //     parentNamnes[0] = value.data.fullName
+    //   })
+    // } else {
+    //   userDetailByEmail(uniqueArray[0]).then((value) =>{
+    //     parentNamnes[0] = value.data.fullName
+    //   })
+    //   userDetailByEmail(uniqueArray[1]).then((value) =>{
+    //     parentNamnes[1] = value.data.fullName
+    //   })
+    // }
+
       }, []);
+
+  const userDetailByEmail = (element) =>{
+    console.log(element)
+
+    element.map(async (i)=>{
+        const responce = await axios.get(`${base_url}/user/details/?userEmail=${i}`,{
+          headers: {
+            Accept: "application/json",
+            Authorization: `Bearer ${JSON.parse(window.localStorage.getItem('gkcAuth')).accessToken}`,
+            "Content-Type": 'Access-Control-Allow-Origin'
+  
+          }
+        })
+        console.log(responce.data)
+         setParents([...parents, responce.data.fullName])
+      })
+        
+    console.log(parents)
+  }
   const handlePaymentRequest = (status) => {
     window.localStorage.removeItem('registrationForm');
     window.localStorage.removeItem('userType');
@@ -125,10 +177,10 @@ export default function StudentRegistrationCCInfo() {
                     }
                     value={selectedParent}
                   >
-                    <option> Select </option>
-                    {parents.map((v, i) => {
+                     <option> Select </option>
+                    {parents && parents?.map((v) => {
                       return (
-                        <option value={v} key={i}>
+                        <option>
                           {' '}
                           {v}
                         </option>
@@ -154,7 +206,7 @@ export default function StudentRegistrationCCInfo() {
                     className="w-50 btn_primary text-light p-2 rounded fw-bold "
                     onClick={() => onRegister({ getPayment: true })}
                     disabled={
-                      cardFormValid && nameCard.length > 0 ? false : true
+                      selectedParent || cardFormValid && nameCard.length > 0 ? false : true 
                     }
                   >
                     Continue
