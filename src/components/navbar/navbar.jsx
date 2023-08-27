@@ -17,7 +17,7 @@ const Navbar = ({ isLogin }) => {
     const stored = localStorage.getItem('gkcAuth');
     let data = stored ? JSON.parse(stored) : 'student';
     setValue(stored ? JSON.parse(stored) : false);
-    setRole(typeof data?.role == Object ? localStorage.getItem('userType') : data?.role?.toLowerCase());
+    setRole(typeof data?.role == Object ? localStorage.getItem('userType') : typeof data?.role == Object ? localStorage.getItem('userType') : data?.role?.toLowerCase());
   }, []);
   console.log("role", role);
   return (

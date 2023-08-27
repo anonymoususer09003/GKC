@@ -39,6 +39,9 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
   // const onSaveProfile = () => {
   //   navigation.push("/student/settingprofile")
   // }
+  useEffect(() => {
+    console.log(parent1, parent2);
+  }, [parent1, parent2]);
 
   const handleSubmit = async () => {
     const aa = [];
@@ -90,14 +93,31 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
     );
   };
 
+  // const handleCourseSelectChange = (selected) => {
+  //   setSelectedCourses(
+  //     selected &&
+  //       selected.map((option) => ({
+  //         label: option.label,
+  //         value: option.value,
+  //         proficiencyId: { id: 1, name: 'Beginner' },
+  //       }))
+  //   );
+  // };
+
   const handleCourseSelectChange = (selected) => {
-    setSelectedCourses(
-      selected &&
-        selected.map((option) => ({
+    setSelectedCourses((prevSelectedCourses) =>
+      selected.map((option) => {
+        const existingCourse = prevSelectedCourses.find(
+          (course) => course.value === option.value
+        );
+        return {
           label: option.label,
           value: option.value,
-          proficiencyId: { id: 1, name: 'Beginner' },
-        }))
+          proficiencyId: existingCourse
+            ? existingCourse.proficiencyId
+            : { id: 1, name: 'Beginner' },
+        };
+      })
     );
   };
 
@@ -178,6 +198,8 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
       setSelectedCity(userInfo.city);
       setZipCode(userInfo.zipCode);
       setDependents(userInfo.dependents);
+      setParent1(userInfo.parents[0]?.email);
+      setParent2(userInfo.parents[1]?.email);
     }
   }, [userInfo]);
   console.log(userInfo);
@@ -185,21 +207,6 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
   // if (loading) {
   //   return <div>Loading...</div>;
   // }
-  const proficiencyOrder = {
-    Beginner: 1,
-    Intermediate: 2,
-    'Semi-expert': 3,
-  };
-
-  // const handleProficiencySelection = (selectedOptions, optionIndex) => {
-  //   setSelectedCourses((prevData) => {
-  //     const newData = [...prevData];
-  //     newData[optionIndex].proficiencies = selectedOptions.sort(
-  //       (a, b) => proficiencyOrder[a] - proficiencyOrder[b]
-  //     );
-  //     return newData;
-  //   });
-  // };
 
   // const handleProficiencySelection = (e, i) => {
   //   setSelectedCourses((prevData) => {
@@ -216,7 +223,7 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
     const proficiencyIdMap = {
       Beginner: 1,
       Intermediate: 2,
-      'Semi-Expert': 3,
+      'Semi-expert': 3,
     };
 
     setSelectedCourses((prevCourses) => {
@@ -283,7 +290,6 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
                   </p>
 
                   <p className="p-0 m-0 py-2 fw-bold">Parent1/guardian1</p>
-
                   <input
                     type="text"
                     className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
@@ -318,9 +324,8 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
             <div className="col-12 col-lg-8 py-2">
               <div className="shadow rounded-10 p-5 bg-white">
                 <div className="row">
-                  <div className="col-12 col-md-6">
+                  <div className="col">
                     <h4 className="fw-bold">Grade:</h4>
-
                     <div className="form-check">
                       <input
                         className="form-check-input"
@@ -390,112 +395,25 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
                       </label>
                     </div>
                   </div>
-                  {/* <div className="col-12 col-md-4 border-start px-4 border_primary">
-                    <h4 className="fw-bold">Delivery Mode:</h4>
-                    <div className="form-check">
-                      <input
-                        className="form-check-input"
-                        type="checkbox"
-                        value=""
-                        id="flexCheckDefault"
-                      />
-                      <label className="form-check-label" htmlFor="flexCheckDefault">
-                        In person
-                      </label>
-                    </div>{" "}
-                    <div className="form-check">
-                      <input
-                        className="form-check-input"
-                        type="checkbox"
-                        value=""
-                        id="flexCheckDefault"
-                      />
-                      <label className="form-check-label" htmlFor="flexCheckDefault">
-                        Online
-                      </label>
-                    </div>
-                  </div> */}
-                </div>
-              </div>
+                  <div className="col tw-max-w-[40%] border-start px-4 border_primary">
+                    <h4 className="fw-bold">Languages Preference:</h4>
+                    <MultiSelect
+                      options={lang}
+                      value={selectedLang}
+                      onChange={handleLangSelectChange}
+                      labelledBy={'Select Lang'}
+                      isCreatable={true}
+                      hasSelectAll={false}
+                    />
 
-              <div className="shadow rounded-10 pt-2 pb-5 bg-white my-4">
-                <div className="p-4 w-50 m-auto">
-                  <h4 className="fw-bold m-0 p-0 pb-3 text-center">
-                    Languages List
-                  </h4>
-
-                  <MultiSelect
-                    options={lang}
-                    value={selectedLang}
-                    onChange={handleLangSelectChange}
-                    labelledBy={'Select Lang'}
-                    isCreatable={true}
-                    hasSelectAll={false}
-                  />
-                </div>
-
-                <div className="row m-0 p-0 w-100">
-                  <div className="col d-flex justify-content-center">
-                    <h4 className="fw-bold m-0 p-0">Langs</h4>
-                  </div>
-                  <div className="col d-flex justify-content-start">
-                    <h4 className="fw-bold m-0 p-0">Proficiency</h4>
-                  </div>
-
-                  <div className="container">
-                    <div className="row d-flex justify-content-center py-4">
+                    <ul className="m-0 primary-list">
                       {selectedLang.map((v, ind) => {
-                        return (
-                          <>
-                            <div className="col-md-4 item">
-                              {/* <MdArrowForwardIos className="text_primary h4 p-0 m-0" /> */}
-                              <li className="fw-bold m-0 p-0 h5 fw-lighter">
-                                {v.label}
-                              </li>
-                            </div>
-                            <div className="col-md-4 item">
-                              <select
-                                className="w-100 p-2 rounded outline-0 border border_gray"
-                                value={v?.proficiencyId?.id}
-                                onChange={(e) => {
-                                  const selectedProficiencyId = Number(
-                                    e.target.value
-                                  );
-                                  const selectedProficiencyName =
-                                    e.target.selectedOptions[0].label;
-
-                                  const updatedLangs = selectedLang.map(
-                                    (lang) => {
-                                      if (lang.value === v.value) {
-                                        return {
-                                          ...lang,
-                                          proficiencyId: {
-                                            id: selectedProficiencyId,
-                                            name: selectedProficiencyName,
-                                          },
-                                        };
-                                      }
-                                      return lang;
-                                    }
-                                  );
-
-                                  setSelectedLang(updatedLangs);
-                                  // console.log(updatedLangs)
-                                }}
-                              >
-                                <option value={1}>Beginner</option>
-                                <option value="2">Intermediate</option>
-                                <option value={3}>Semi-Expert</option>
-                              </select>
-                            </div>
-                          </>
-                        );
+                        return <li className="fw-bold m-0 p-0">{v.label}</li>;
                       })}
-                    </div>
+                    </ul>
                   </div>
                 </div>
               </div>
-
               <div className="shadow rounded-10 pt-2 pb-5 bg-white my-4">
                 <div className="p-4 w-50 m-auto">
                   <h4 className="fw-bold m-0 p-0 pb-3 text-center">
@@ -513,29 +431,16 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
                 </div>
 
                 <div className="row m-0 p-0 w-75 d-flex mx-auto">
-                  {/* <div className="col d-flex justify-content-center">
-                    <h4 className="fw-bold m-0 p-0">Courses</h4>
-                  </div> */}
                   <div className="col ">
                     <h4 className="fw-bold m-0 p-0">Courses</h4>
                   </div>
-                  {/* <div className="col d-flex justify-content-start">
-                    <h4 className="fw-bold m-0 p-0">Proficiency</h4>
-                  </div> */}
                   <div className="col tw-ml-60">
                     <p className="fw-bold h5 m-0 p-0">Proficiency</p>
                   </div>
-                  {/* <div className="container">
-                    <div className="row d-flex justify-content-center py-4"> */}
                   {selectedCourses.map((v, i) => {
                     return (
                       <div className="">
-                        <div className="row m-0 pl-0 pt-4">
-                          {/* <div className="col-md-4 item">
-                          <li className="fw-bold m-0 p-0 h5 fw-lighter">
-                            {v.label}
-                          </li>
-                        </div> */}
+                        <div className="row m-0 pl-0 pt-3">
                           <div className="col d-flex align-items-center gap-2 primary-list">
                             <li className="fw-bold m-0 p-0 fw-lighter">
                               {v.label}
@@ -545,51 +450,13 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
                             <select
                               className="w-100 p-2 rounded outline-0 border border_gray"
                               value={v.proficiencyId.name}
-                              options={proficiency}
                               onChange={(e) => handleProficiencySelection(e, i)}
-
-                              // onChange={(e) => {
-                              //   const selectedProficiencyId = Number(
-                              //     e.target.value
-                              //   );
-                              //   const selectedProficiencyName =
-                              //     e.target.selectedOptions[0].label;
-
-                              // const updatedCourses = selectedLang.map(
-                              //   (lang) => {
-                              //     if (lang.value === v.value) {
-                              //       return {
-                              //         ...lang,
-                              //         proficiencyId: {
-                              //           id: selectedProficiencyId,
-                              //           name: selectedProficiencyName,
-                              //         },
-                              //       };
-                              //     }
-                              //     return lang;
-                              //   }
-                              // );
-
-                              // setSelectedLang(updatedCourses);
-                              // console.log(updatedLangs)
-                              // }}
                             >
                               <option value="Beginner">Beginner</option>
                               <option value="Intermediate">Intermediate</option>
-                              <option value="Semi-Expert">Semi-Expert</option>
+                              <option value="Semi-expert">Semi-expert</option>
                             </select>
                           </div>
-                          {/* <div className="col ">
-                          <MultiSelect
-                            options={proficiency}
-                            value={v.proficiencies}
-                            onChange={(selectedOptions) =>
-                              handleProficiencySelection(selectedOptions, i)
-                            }
-                            labelledBy={'Select Proficiency'}
-                            isCreatable={true}
-                          />
-                        </div> */}
                         </div>
                       </div>
                     );
