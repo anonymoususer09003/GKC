@@ -14,6 +14,7 @@ export default function StudentRegistrationCCInfo() {
   const [selectedParent, setSelectedParent] = useState('');
   const [nameCard, setNameCard] = useState('');
   const [cardFormValid, setCardFormValid] = useState(false);
+  const [emailParents, setEmailParents] = useState([])
 
   const onRegister = async ({ getPayment }) => {
     var storreed = JSON.parse(window.localStorage.getItem('registrationForm'))
@@ -21,7 +22,7 @@ export default function StudentRegistrationCCInfo() {
       const response = await axios.post(`${base_url}/auth/complete-student-registration`, {
         firstName: userInfo.firstName,
         lastName: userInfo.lastName,
-        email: userInfo.email || storreed.email,
+        studentEmail: userInfo.email || storreed.email,
         password: userInfo.password,
         address1: userInfo.address1,
         address2: userInfo.address2,
@@ -32,22 +33,23 @@ export default function StudentRegistrationCCInfo() {
         savePaymentFutureUse: false,
         emailParent1: userInfo.emailParent1,
         emailParent2: userInfo.emailParent2,
-        whoPaysEmail: selectedParent || userInfo.emailParent || userInfo.email,
+        whoPaysEmail: emailParents[parents.indexOf(selectedParent)] || userInfo.emailParent || userInfo.email,
         gradeId: userInfo.gradeId,
         courseOfInterestAndProficiency: userInfo.courseOfInterestAndProficiency,
         languagePreferencesId: userInfo.languagePreferencesId,
-        timeZoneId: userInfo.timeZoneId,
+        // timeZoneId: userInfo.timeZoneId,
       });
+      console.log(response)
       const res = await axios.get(`${base_url}/user/logged-user-role`, {
         headers: {
-          Authorization: `Bearer ${response.data.accessToken}`,
+          Authorization: `Bearer ${response.data.accessToken ?? JSON.parse(window.localStorage.getItem('gkcAuth')).accessToken}`,
         },
       });
       if (res && response) {
         window.localStorage.setItem(
           'gkcAuth',
           JSON.stringify({
-            accessToken: response.data.accessToken,
+            accessToken: JSON.parse(window.localStorage.getItem('gkcAuth')).accessToken,
             role: res.data,
           })
         );
@@ -86,6 +88,7 @@ export default function StudentRegistrationCCInfo() {
 
     const uniqueSet = new Set(arr);
     const uniqueArray = Array.from(uniqueSet);
+    setEmailParents(uniqueArray)
 
     // uniqueArray.map((i)=>{
     //   setParents([...parents, userDetailByEmail(i)])
@@ -127,7 +130,7 @@ export default function StudentRegistrationCCInfo() {
         const responce = await axios.get(`${base_url}/user/details/?userEmail=${i}`,{
           headers: {
             Accept: "application/json",
-            Authorization: `Bearer ${JSON.parse(window.localStorage.getItem('gkcAuth'))}`,
+            Authorization: `Bearer ${JSON.parse(window.localStorage.getItem('gkcAuth')).accessToken}`,
             "Content-Type": 'Access-Control-Allow-Origin'
   
           }
