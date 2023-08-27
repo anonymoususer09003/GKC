@@ -56,12 +56,8 @@ export default function StudentRegistrationCCInfo() {
       }
       if (getPayment && selectedParent == '') {
         setConfirmPayment(true);
-        window.localStorage.removeItem('registrationForm');
-        window.localStorage.removeItem('userType');
         navigation.push('/');
       } else {
-        window.localStorage.removeItem('registrationForm');
-        window.localStorage.removeItem('userType');
         navigation.push('/');
       }
     } catch (error) {
