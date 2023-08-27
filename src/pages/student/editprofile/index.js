@@ -68,8 +68,8 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
         savePaymentFutureUse: userInfo.savePaymentFutureUse,
         // Here is hardcoded
         whoPaysEmail: userInfo.email,
-        emailParent1: parent1,
-        emailParent2: parent2,
+        emailParent1: parent1 ?? '',
+        emailParent2: parent2 ?? '',
         gradeId: grade,
         courseOfInterestAndProficiency: aa,
         languagePreferencesId: ln,
