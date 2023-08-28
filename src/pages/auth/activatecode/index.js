@@ -60,7 +60,7 @@ export default function ActivateCode() {
   };
 
   useEffect(() => {
-    const value = window.localStorage.getItem("userType");
+    const value = window.localStorage.getItem("userType").includes(`"`) ? JSON.parse(window.localStorage.getItem("userType")) : window.localStorage.getItem("userType") ;
     setUserType(value);
   }, []);
 
