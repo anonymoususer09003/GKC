@@ -15,6 +15,7 @@ export default function StudentRegistrationCCInfo() {
   const [nameCard, setNameCard] = useState('');
   const [cardFormValid, setCardFormValid] = useState(false);
   const [emailParents, setEmailParents] = useState([])
+  const [showNewDependentPopup, setShowNewDependentPopup] = useState(false)
 
   const onRegister = async ({ getPayment }) => {
     var storreed = JSON.parse(window.localStorage.getItem('registrationForm'))
@@ -40,28 +41,36 @@ export default function StudentRegistrationCCInfo() {
         // timeZoneId: userInfo.timeZoneId,
       });
       console.log(response)
+      if(window.localStorage.getItem("DoesParentCreateNewStudent") !== 'true'){
       const res = await axios.get(`${base_url}/user/logged-user-role`, {
         headers: {
           Authorization: `Bearer ${response.data.accessToken ?? JSON.parse(window.localStorage.getItem('gkcAuth')).accessToken}`,
         },
       });
-      if (res && response) {
-        window.localStorage.setItem(
-          'gkcAuth',
-          JSON.stringify({
-            accessToken: JSON.parse(window.localStorage.getItem('gkcAuth')).accessToken,
-            role: res.data,
-          })
-        );
-      }
+        if (res && response) {
+          window.localStorage.setItem(
+            'gkcAuth',
+            JSON.stringify({
+              accessToken: JSON.parse(window.localStorage.getItem('gkcAuth')).accessToken,
+              role: res.data,
+            })
+          );
+        }
+      
       if (getPayment && selectedParent == '') {
         setConfirmPayment(true);
         navigation.push('/');
       } else {
         navigation.push('/');
       }
+    }
     } catch (error) {
       console.error(error);
+    }
+    finally{
+      if(window.localStorage.getItem("DoesParentCreateNewStudent") === 'true'){
+        setShowNewDependentPopup(true)
+      }
     }
   };
   const handleValueReceived = (value) => {

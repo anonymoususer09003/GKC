@@ -38,7 +38,7 @@ export default function RegisterStudent() {
     termsAgree;
 
   const onContinue = () => {
-    window.localStorage.setItem('gkcAuth', JSON.stringify(true));
+    // window.localStorage.setItem('gkcAuth', JSON.stringify(true));
     var stored = JSON.parse(window.localStorage.getItem('registrationForm'));
     console.log(stored);
     let timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -79,11 +79,13 @@ export default function RegisterStudent() {
     try {
       const responce = await axios.post(`${base_url}/auth/register-student`, studentDetails)
       console.log(responce);
-      window.localStorage.setItem('gkcAuth',           
-      JSON.stringify({
-        accessToken: responce.data.accessToken,
-        role: responce.data,
-      }))
+      if(window.localStorage.getItem("DoesParentCreateNewStudent") !== 'true'){
+        window.localStorage.setItem('gkcAuth',           
+        JSON.stringify({
+          accessToken: responce.data.accessToken,
+          role: responce.data,
+        }))
+      }
     } catch (err) {
       console.log(err)
     }
