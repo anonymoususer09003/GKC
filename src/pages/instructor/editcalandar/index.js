@@ -21,6 +21,12 @@ function EditCalandar({ userInfo, loading, error, fetchUser }) {
   const [selectedDays, setSelectedDays] = useState([]);
   const [startTime, setStartTime] = useState("2000-12-31 06:00");
   const [endTime, setEndTime] = useState("2000-12-31 08:00")
+  let times = ['00:00', '00:30', '01:00', '01:30', '02:00', '02:30', '03:00', '03:30',  
+  '04:00', '04:30', '05:00', '05:30', '06:00', '06:30', '07:00', '07:30',  '08:00', '08:30', 
+  '09:00', '09:30', '10:00', '10:30', '11:00', '11:30',  '12:00', '12:30', '13:00', '13:30', 
+  '14:00', '14:30', '15:00', '15:30',  '16:00', '16:30', '17:00', '17:30', '18:00', '18:30', 
+  '19:00', '19:30',  '20:00', '20:30', '21:00', '21:30', '22:00', '22:30', '23:00', '23:30']
+
 
 
   //calendar
@@ -37,15 +43,19 @@ function EditCalandar({ userInfo, loading, error, fetchUser }) {
 
 
   //days click
+
   const handleDayClick = (day) => {
-    setSelectedDays((prevSelectedDays) => {
+
+    setSelectedDays([day])
+ /*   setSelectedDays((prevSelectedDays) => {
       if (prevSelectedDays.includes(day)) {
         return prevSelectedDays.filter((selectedDay) => selectedDay !== day);
       } else {
         return [...prevSelectedDays, day];
       }
-    });
+    });*/
   };
+
   //start time
   const handleStartTime = (e) => {
     setStartTime(e.target.value);
@@ -55,6 +65,8 @@ function EditCalandar({ userInfo, loading, error, fetchUser }) {
 
   const handleEndTime = (e) => {
     setEndTime(e.target.value);
+    setFilledData(true);
+
   } 
 
 
@@ -74,18 +86,18 @@ function EditCalandar({ userInfo, loading, error, fetchUser }) {
 
  const submitHandler = async () => {
   const dayOfTheWeek =  selectedDays.join(', ');
-  console.log(dayOfTheWeek); 
   setFilledData(true);
   try {
-    let res = await apiClient.post("/instructor/week-schedule", {
-      startTime: startTime,
-      endTime: endTime,
-      available: available,
-      dayOfTheWeek: dayOfTheWeek,
-      instructorId: userInfo.id
-    })
-    setFilledData(true);
-
+    const weekScheduleData = [
+      {
+        startTime: startTime,
+        endTime: endTime,
+        available: available,
+        dayOfTheWeek: dayOfTheWeek,
+      },
+    ];
+  
+    let res = await apiClient.post("/instructor/week-schedule", weekScheduleData);
   }
   catch(error) {
     console.log(error);
@@ -161,7 +173,11 @@ function EditCalandar({ userInfo, loading, error, fetchUser }) {
                            className="w-100 p-2 rounded outline-0 border border_gray col"
                            onChange={handleStartTime}
                            >
-                           <option value="06:00"> 06: 00 am </option> 
+                         {times.map((time) => {
+                           return <option key={time} value={time}> {time} </option> 
+                           }
+                         )}
+                        
                          </select>
                        </div>
                        <div className="row pb-2">
@@ -171,8 +187,11 @@ function EditCalandar({ userInfo, loading, error, fetchUser }) {
                          onChange={handleEndTime}
 
                          >
-                         <option value="08:00"> 08: 00 pm </option> 
-                      </select>
+                        {times.map((time) => {
+                           return <option key={time} value={time}> {time} </option> 
+                           }
+                         )}           
+                     </select>
                     </div>
                   </div>
                 </div>
