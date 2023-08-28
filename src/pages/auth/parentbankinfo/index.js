@@ -80,7 +80,7 @@ export default function StudentRegistrationCCInfo() {
     // Do something with the value in the parent component
   };
   const handlePaymentRequest = (status) => {
-    navigation.push('/parent');
+    // navigation.push('/parent');
   };
   return (
     <>

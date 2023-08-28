@@ -5,6 +5,7 @@ import { useRouter } from 'next/router';
 import axios from 'axios';
 import PaymentForm from '@/components/stripe/PaymentForm';
 import { base_url } from '../../../api/client';
+import Link from 'next/link';
 export default function StudentRegistrationCCInfo() {
   const navigation = useRouter();
   const [userType, setUserType] = useState(null);
@@ -16,9 +17,11 @@ export default function StudentRegistrationCCInfo() {
   const [cardFormValid, setCardFormValid] = useState(false);
   const [emailParents, setEmailParents] = useState([])
   const [showNewDependentPopup, setShowNewDependentPopup] = useState(false)
+  const [savePaymentFutureUse, setSavePaymentFutureUse] = useState(false)
 
   const onRegister = async ({ getPayment }) => {
     var storreed = JSON.parse(window.localStorage.getItem('registrationForm'))
+    setSavePaymentFutureUse(!savePaymentFutureUse)
     try {
       const response = await axios.post(`${base_url}/auth/complete-student-registration`, {
         firstName: userInfo.firstName,
@@ -69,7 +72,7 @@ export default function StudentRegistrationCCInfo() {
     }
     finally{
       if(window.localStorage.getItem("DoesParentCreateNewStudent") === 'true'){
-        setShowNewDependentPopup(true)
+        setShowNewDependentPopup(true)  //popup for creating new student after parent completely registered
       }
     }
   };
@@ -80,7 +83,7 @@ export default function StudentRegistrationCCInfo() {
   useEffect(() => {
     var stored = JSON.parse(window.localStorage.getItem('registrationForm'));
     console.log('storeed', stored);
-    var typ = JSON.parse(window.localStorage.getItem('userType'));
+    var typ = window.localStorage.getItem('userType');
     setUserInfo(stored);
     setUserType(typ);
 
@@ -160,6 +163,38 @@ export default function StudentRegistrationCCInfo() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="container-fluid d-flex flex-column justify-content-between  min-vh-100">
+      {showNewDependentPopup ? (
+        <div style={{position:'fixed', zIndex: 1, left:0,top:0, width:'100%', height:'100%',overflow:'auto', background: 'rgba(0, 0, 0, 0.4)'}}>
+          <div style={{background: 'white', margin: '500px auto', padding:20, width:'500px'}}>
+            <p style={{width: 335, margin: 'auto'}}>Great! Do you want to add new dependent ❓</p>
+            <div
+            style={{display: 'flex', justifyContent:'center', gap:40}}
+            >
+            <Link
+              href="/auth/registeremail"
+              onClick={()=>{window.localStorage.setItem("userType", 'student');
+              window.localStorage.setItem("DoesParentCreateNewStudent", 'true')}}
+            >
+            <button className="btn_primary text-light p-2 rounded fw-bold mt-3" 
+            style={{width: 50, position: 'relative', margin: '0 42%'}}
+            >Yes</button>
+            </Link>
+
+            <Link
+              href="/"
+              onClick={()=>{
+                window.localStorage.removeItem("DoesParentCreateNewStudent");
+                window.localStorage.setItem("userType", 'parent');
+              }}
+            >
+            <button className=" p-2 rounded fw-bold mt-3" 
+            style={{width: 50, position: 'relative', margin: '0 42%', border: 'none', background: 'white'}}
+            >No</button>
+            </Link>
+            </div>
+          </div>
+        </div>
+        ) : null}
         <Navbar isLogin={true} />
         <div className="row">
           <div
@@ -208,6 +243,8 @@ export default function StudentRegistrationCCInfo() {
                   userInfo={userInfo}
                   onPaymentRequest={handlePaymentRequest}
                   setCardFormValid={setCardFormValid}
+                  savePaymentFutureUse={savePaymentFutureUse}
+                  oneTimePayment={false}
                   disabled={selectedParent != '' ? true : false}
                 />
                 <div className="d-flex gap-2 justify-content-center mt-3">
