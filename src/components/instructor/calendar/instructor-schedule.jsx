@@ -71,7 +71,7 @@ const InstructorSchedule = (props) => {
   // };
   const getParticipantsDetail = async (id) => {
     try {
-      const res = await GetUserByid(id);
+      const res = await GetUserByid(loggedInUser?.id);
       setStudent({
         courseId: props?.eventId,
         name: res.data?.fullName,
@@ -143,7 +143,7 @@ const InstructorSchedule = (props) => {
                 <h6 className="p-0 m-0 flex-fill fw-bold flex-fill">
                   {props.courseName}
                 </h6>
-                {loggedInUser?.id && (
+                {messages.length > 1 && (
                   <IconContext.Provider value={{ color: '#1677d2' }}>
                     <BsFillChatFill
                       className="p-0 m-0 flex-fill h4 flex-fill"

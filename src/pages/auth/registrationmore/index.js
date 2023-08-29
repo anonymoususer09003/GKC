@@ -43,7 +43,7 @@ export default function InstructorRegistrationMore() {
   };
 
   const onContinue = () => {
-    window.localStorage.setItem('gkcAuth', JSON.stringify(true));
+    // window.localStorage.setItem('gkcAuth', JSON.stringify(true));
     var stored = JSON.parse(window.localStorage.getItem('registrationForm'));
 
     console.log(modes);

@@ -25,6 +25,7 @@ export default function ForgotPassword() {
   const [showSuccess, setSuccess] = useState(false);
   const [showActivation, setShowActivation] = useState(false);
   const [err, setErr] = useState("");
+  const [userType, setUserType] = useState(false);
   const navigation = useRouter();
 
   const fetchUser = async () => {
@@ -113,6 +114,11 @@ export default function ForgotPassword() {
 
   useEffect(() => {
     fetchUser();
+    if(JSON.parse(window.localStorage.getItem('userType')) === 'instructor'){
+      setUserType(true)
+    } else{
+      setUserType(false)
+    }
   }, [user]);
   return (
     <>
@@ -122,15 +128,12 @@ export default function ForgotPassword() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <ParentNavbar />
+      {
+        userType ? 
+        <Navbar/> :
+        <ParentNavbar />
+      }
       <main className="container-fluid d-flex flex-column  min-vh-100">
-        <Link
-          href="/"
-          className="text-decoration-none p-4 d-flex gap-2 align-items-center text-dark"
-        >
-          <RiArrowGoBackLine />
-          <p className="fw-bold m-0 p-0 ">Back to home</p>
-        </Link>
 
         {/*             background-color: white;
             margin: 10% auto;

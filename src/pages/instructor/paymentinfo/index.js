@@ -31,9 +31,20 @@ function BankInfo() {
   const getPayPalEmail = async () => {
     try {
       const response = await apiClient.get(
-        '/instructor/get-payPal-email-logged-instructor'
+        '/instructor/get-payPal-email-logged-instructor',
+        {
+          headers: {
+            Authorization: JSON.parse(window.localStorage.getItem('gkcAuth')).acessToken
+          }
+        }
       );
-      setEmail(response.data.email);
+      console.log(response?.data == '[object Object]')
+      if( response?.data == '[object Object]' ) {
+        setEmail(response?.data?.email);
+      } else{
+        setEmail(response?.data);
+      }
+      console.log(response)
     } catch (error) {
       console.log(error);
     }
@@ -43,10 +54,18 @@ function BankInfo() {
     try {
       const response = await apiClient.put(
         '/instructor/update-payPal-email-logged-instructor',
-        { email }
+        {email: email},
+        {
+          headers: {
+            Authorization: JSON.parse(window.localStorage.getItem('gkcAuth')).acessToken
+          }
+        
+        }
       );
+
       handleUpdateClick();
       setShowPayPalInput(false);
+      setPopupVisible(!popupVisible)
     } catch (error) {
       console.log(error);
     }
@@ -104,6 +123,7 @@ function BankInfo() {
               value={email}
               onChange={(e) => handleEmailChange(e)}
               placeholder="Enter PayPal info"
+              style={{width: 300, textAlign: 'center'}}
               className="mt-3 fw-bold border-2 border-dark p-1"
             ></input>
           )}
@@ -112,7 +132,7 @@ function BankInfo() {
               onClick={updatePayPalEmail}
               style={{
                 marginTop: '80px',
-                width: '500px',
+                width: 500,
                 backgroundColor: '#f48342',
               }}
               className="text-light p-2 w-100 rounded fw-bold  bg-gray-300"
@@ -131,7 +151,7 @@ function BankInfo() {
                   boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.2)',
                 }}
               >
-                Your payment info has been updated successfully.
+                Your payment info has been updated successfully ✔️
               </div>
             )}
           </div>
