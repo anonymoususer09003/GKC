@@ -91,8 +91,7 @@ function ParentSettingProfile({ userInfo, loading, error, fetchUser }) {
                       userInfo?.dependents.map((dep) => {
                         return (
                           <li className="fw-bold m-0 p-0 ps-4 py-2">
-                            {' '}
-                            Name One{' '}
+                            {' '}{dep.firstName + ' ' + dep.lastName}{' '}
                           </li>
                         );
                       })
