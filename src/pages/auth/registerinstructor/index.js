@@ -67,7 +67,6 @@ export default function RegisterInstructor() {
 
   const onContinue = () => {
     if (password == confirmPassword) {
-    window.localStorage.setItem('gkcAuth', JSON.stringify(true));
     var stored = JSON.parse(window.localStorage.getItem('registrationForm'));
     let timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 

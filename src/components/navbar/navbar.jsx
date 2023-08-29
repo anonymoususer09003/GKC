@@ -17,7 +17,7 @@ const Navbar = ({ isLogin }) => {
     const stored = localStorage.getItem('gkcAuth');
     let data = stored ? JSON.parse(stored) : 'student';
     setValue(stored ? JSON.parse(stored) : false);
-    setRole(typeof data?.role == Object ? localStorage.getItem('userType') : data?.role?.toLowerCase());
+    setRole(localStorage.getItem('userType') !== null ? JSON.parse(window.localStorage.getItem('userType')) : data?.role?.toLowerCase());
   }, []);
   console.log("role", role);
   return (
@@ -132,22 +132,25 @@ const Navbar = ({ isLogin }) => {
                             </a>
                           </li>
                         )}
-
-                        <li className="p-3">
-                          <a
-                            href={
-                              role === "student"
-                                ? `/${role}/reportinstructor`
-                                : role === "student"
-                                ? `/${role}/reportedstudentparents`
-                                : `/${role}/reportedinstructor`
-                            }
-                            className="nav-link fw-bold"
-                          >
-                            Report{' '}
-                            {role === "student" ? "Instructor" : "Students"}
-                          </a>
-                        </li> 
+                        {
+                          role === 'student' && (
+                            <li className="p-3">
+                            <a
+                              href={
+                                role === "student"
+                                  ? `/${role}/reportinstructor`
+                                  : role === "student"
+                                  ? `/${role}/reportedstudentparents`
+                                  : `/${role}/reportedinstructor`
+                              }
+                              className="nav-link fw-bold"
+                            >
+                              Report{' '}
+                              {role === "student" ? "Instructor" : "Students"}
+                            </a>
+                          </li> 
+                          )
+                        }
 
                         <li className="p-3">
                           <a

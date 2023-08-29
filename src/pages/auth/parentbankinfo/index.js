@@ -94,7 +94,7 @@ export default function StudentRegistrationCCInfo() {
       {showNewDependentPopup ? (
         <div style={{position:'fixed', zIndex: 1, left:0,top:0, width:'100%', height:'100%',overflow:'auto', background: 'rgba(0, 0, 0, 0.4)'}}>
           <div style={{background: 'white', margin: '500px auto', padding:20, width:'500px'}}>
-            <p style={{width: 335, margin: 'auto'}}>Great! Do you want to add new dependent ❓</p>
+            <p style={{width: 335, margin: 'auto'}}>Great! Do you want to add a dependent ❓</p>
             <div
             style={{display: 'flex', justifyContent:'center', gap:40}}
             >

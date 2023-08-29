@@ -63,8 +63,8 @@ function SettingProfile({ userInfo, loading, error, fetchUser }) {
                         height: '105px',
                       }}
                     >
-                      <Image
-                        src={userInfo?.instructorPhoto}
+                      <img
+                        src={userInfo?.instructorPhoto ?? 'https://imgs.search.brave.com/FGCJ0RbZE5w6FeE4HxCpb0lOxKyOlVh7VrvMBw1B93g/rs:fit:500:0:0/g:ce/aHR0cHM6Ly9zdGF0/aWMudGhlbm91bnBy/b2plY3QuY29tL3Bu/Zy8yNTA5OTY3LTIw/MC5wbmc'}
                         unoptimized={true}
                         alt="profile image"
                         width={100}

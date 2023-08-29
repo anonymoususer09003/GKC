@@ -42,7 +42,7 @@ export default function RegisterStudent() {
     termsAgree;
 
   const onContinue = () => {
-    window.localStorage.setItem("gkcAuth", JSON.stringify(true));
+    // window.localStorage.setItem("gkcAuth", JSON.stringify(true));
     var stored = JSON.parse(window.localStorage.getItem("registrationForm"));
     let timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     console.log(stored);
