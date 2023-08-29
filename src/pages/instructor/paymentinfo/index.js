@@ -26,7 +26,11 @@ function BankInfo() {
 
   useEffect(() => {
     getPayPalEmail();
-  }, []);
+    if(email !== ''){
+      setShowPayPalInput(true);
+      setShowPayoneerInput(false)
+    }
+  }, [email]);
 
   const getPayPalEmail = async () => {
     try {
@@ -110,13 +114,17 @@ function BankInfo() {
             <p style={{ width: '100px' }} className="fw-bold">
               PayPal
             </p>
-            <button
-              onClick={() => setShowPayPalInput(!showPayPalInput)}
-              style={{ backgroundColor: '#f48342' }}
-              className="py-2 px-4 fw-bold text-white rounded"
-            >
-              Setup
-            </button>
+            {
+              !showPayPalInput && (
+                <button
+                onClick={() => setShowPayPalInput(!showPayPalInput)}
+                style={{ backgroundColor: '#f48342' }}
+                className="py-2 px-4 fw-bold text-white rounded"
+              >
+                Setup
+              </button>
+              )
+            }
           </div>
           {showPayPalInput && (
             <input
@@ -132,10 +140,10 @@ function BankInfo() {
               onClick={updatePayPalEmail}
               style={{
                 marginTop: '80px',
-                width: 500,
+                width: 200,
                 backgroundColor: '#f48342',
               }}
-              className="text-light p-2 w-100 rounded fw-bold  bg-gray-300"
+              className="text-light p-2 rounded fw-bold  bg-gray-300"
             >
               Update
             </button>
