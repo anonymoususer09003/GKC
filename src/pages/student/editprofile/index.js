@@ -357,7 +357,7 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
                         className="form-check-label"
                         htmlFor="flexCheckDefault"
                       >
-                        Middle School &#40;&#60;11yrs - 13yrs&#41;
+                        Middle School &#40;11yrs - 13yrs&#41;
                       </label>
                     </div>
                     <div className="form-check">
@@ -374,7 +374,7 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
                         className="form-check-label"
                         htmlFor="flexCheckDefault"
                       >
-                        High School &#40;&#60;14yrs - 18yrs&#41;
+                        High School &#40;14yrs - 18yrs&#41;
                       </label>
                     </div>
                     <div className="form-check">

@@ -103,7 +103,7 @@ function ReportInstructor() {
                 </label>
               </div>
               <div className="form-check my-3"
-              onClick={()=>{setreasonOfReporting('Academic Misconduct')}}>
+              onClick={()=>{setreasonOfReporting('Not skilled in subject area')}}>
                 <input
                   className="form-check-input"
                   type="radio"
@@ -111,11 +111,11 @@ function ReportInstructor() {
                   id="option2"
                 />
                 <label className="form-check-label" htmlFor="option2">
-                Academic Misconduct
+                Not skilled in subject area
                 </label>
               </div>
               <div className="form-check my-3"
-              onClick={()=>{setreasonOfReporting('Inadequate Teaching')}}>
+              onClick={()=>{setreasonOfReporting('Does not give clear explanation of subject')}}>
                 <input
                   className="form-check-input"
                   type="radio"
@@ -123,11 +123,11 @@ function ReportInstructor() {
                   id="option3"
                 />
                 <label className="form-check-label" htmlFor="option3">
-                Inadequate Teaching
+                Does not give clear explanation of subject
                 </label>
               </div>
               <div className="form-check my-3"
-              onClick={()=>{setreasonOfReporting('Violation of Policies')}}>
+              onClick={()=>{setreasonOfReporting('Inadequate teaching experience')}}>
                 <input
                   className="form-check-input"
                   type="radio"
@@ -135,7 +135,43 @@ function ReportInstructor() {
                   id="option4"
                 />
                 <label className="form-check-label" htmlFor="option4">
-                Violation of Policies
+                Inadequate teaching experience
+                </label>
+              </div>
+              <div className="form-check my-3"
+              onClick={()=>{setreasonOfReporting('Violation of policies')}}>
+                <input
+                  className="form-check-input"
+                  type="radio"
+                  name="reason"
+                  id="option5"
+                />
+                <label className="form-check-label" htmlFor="option5">
+                Violation of policies
+                </label>
+              </div>
+              <div className="form-check my-3"
+              onClick={()=>{setreasonOfReporting('Lateness to class')}}>
+                <input
+                  className="form-check-input"
+                  type="radio"
+                  name="reason"
+                  id="option6"
+                />
+                <label className="form-check-label" htmlFor="option6">
+                Lateness to class
+                </label>
+              </div>
+              <div className="form-check my-3"
+              onClick={()=>{setreasonOfReporting('Does not teach for the hours paid')}}>
+                <input
+                  className="form-check-input"
+                  type="radio"
+                  name="reason"
+                  id="option7"
+                />
+                <label className="form-check-label" htmlFor="option7">
+                Does not teach for the hours paid
                 </label>
               </div>
               <div className="form-check my-3"
@@ -144,9 +180,9 @@ function ReportInstructor() {
                   className="form-check-input"
                   type="radio"
                   name="reason"
-                  id="option5"
+                  id="option8"
                 />
-                <label className="form-check-label" htmlFor="option5">
+                <label className="form-check-label" htmlFor="option8">
                 Other...
                 </label>
               </div>

@@ -105,6 +105,9 @@ function ParentLandingPage() {
       <ParentNavbar />
       <main className="container-fluid">
         <div className="container py-4">
+        <p className="text-center mb-0 tw-font-medium tw-text-[25px] tw-text-[#f48342]">
+            Start here by searching
+          </p>
           <div className="d-flex justify-content-center gap-2 flex-wrap py-3">
             <input
               type="text"

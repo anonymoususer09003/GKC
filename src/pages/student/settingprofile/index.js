@@ -71,21 +71,44 @@ function SettingProfle({ userInfo, loading, error, fetchUser }) {
                     </small>
                   </div>
 
-                  <p className="p-0 m-0 py-2 fw-bold">Parent1/guardian1</p>
-                  <div className="d-flex gap-1 align-items-center gap-2 pb-3 ">
-                    <MdEmail className="h5 p-0 m-0" />
-                    {userInfo?.parents.length > 0
-                      ? userInfo?.parents[0]?.email
-                      : 0}
-                  </div>
-                  <p className="p-0 m-0 py-2 fw-bold">Parent2/guardian2</p>
-
-                  <div className="d-flex gap-1 align-items-center gap-2 pb-3 ">
-                    <MdEmail className="h5 p-0 m-0" />
-                    {userInfo?.parents.length > 1
-                      ? userInfo?.parents[1]?.email
-                      : 0}
-                  </div>
+                  {
+                    userInfo?.parents.length === 0 && (
+                      <p>You didn't select any parents/guardians yet.</p>
+                    )
+                  }
+                  {
+                    userInfo?.parents.length < 1 && (
+                      <>
+                      <p className="p-0 m-0 py-2 fw-bold">Parent1/guardian1</p>
+                      <div className="d-flex gap-1 align-items-center gap-2 pb-3 ">
+                        <MdEmail className="h5 p-0 m-0" />
+                        {userInfo?.parents.length > 0
+                          ? userInfo?.parents[0]?.firstName + ' ' + userInfo?.parents[0]?.lastName
+                          : 0}
+                      </div>
+                      </>
+                    )
+                  }
+                  {
+                    userInfo?.parents.length > 1 && (
+                      <>
+                      <p className="p-0 m-0 py-2 fw-bold">Parent1/guardian1</p>
+                      <div className="d-flex gap-1 align-items-center gap-2 pb-3 ">
+                        <MdEmail className="h5 p-0 m-0" />
+                        {userInfo?.parents.length > 0
+                          ? userInfo?.parents[0]?.firstName + ' ' + userInfo?.parents[0]?.lastName
+                          : 'error'}
+                      </div>
+                      <p className="p-0 m-0 py-2 fw-bold">Parent2/guardian2</p>
+                      <div className="d-flex gap-1 align-items-center gap-2 pb-3 ">
+                      <MdEmail className="h5 p-0 m-0" />
+                      {userInfo?.parents.length > 1
+                        ? userInfo?.parents[1]?.firstName + ' ' + userInfo?.parents[1]?.lastName
+                        : 'error'}
+                      </div>
+                      </>
+                    )
+                  }
                   <hr className="bg_secondary" />
 
                   <div></div>
