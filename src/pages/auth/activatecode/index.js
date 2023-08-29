@@ -30,6 +30,7 @@ export default function ActivateCode() {
 
       setIsVerified(true);
       console.log(response);
+      console.log(userType)
       if (userType === "parent") {
         navigation.push("/auth/registerparent");
       }
@@ -59,7 +60,7 @@ export default function ActivateCode() {
   };
 
   useEffect(() => {
-    const value = JSON.parse(window.localStorage.getItem("userType"));
+    const value = window.localStorage.getItem("userType").includes(`"`) ? JSON.parse(window.localStorage.getItem("userType")) : window.localStorage.getItem("userType") ;
     setUserType(value);
   }, []);
 

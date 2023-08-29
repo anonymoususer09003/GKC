@@ -111,8 +111,14 @@ export default function Home() {
                 </div>
                 <div className="d-flex flex-column justify-content-center align-items-center mt-3">
                   <hr className="w-25" />
-                  <button className="w-50 btn_secondary text-light p-2 rounded fw-bold ">
-                    Login
+                  <button className="w-50 btn_secondary text-light p-2 rounded fw-bold">
+                  <Link
+                  href="/auth/signin"
+                  >
+                  <div className='text-light p-2 rounded fw-bold '>
+                  Login
+                  </div>
+                  </Link>
                   </button>
                 </div>
               </div>

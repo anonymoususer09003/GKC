@@ -35,6 +35,7 @@ export default function RegisterInstructor() {
   const [imageFile, setImageFile] = useState();
   const dispatch = useDispatch();
   const [isImageTooLarge, setIsImageTooLarge] = useState(false);
+  const [err, setErr] = useState('')
 
   const handleImageUpload = (e) => {
     const selectedFile = e.target.files[0];
@@ -65,6 +66,7 @@ export default function RegisterInstructor() {
     termsAgree;
 
   const onContinue = () => {
+    if (password == confirmPassword) {
     window.localStorage.setItem('gkcAuth', JSON.stringify(true));
     var stored = JSON.parse(window.localStorage.getItem('registrationForm'));
     let timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -84,10 +86,9 @@ export default function RegisterInstructor() {
     stored.timeZoneId = timezone;
 
     window.localStorage.setItem('registrationForm', JSON.stringify(stored));
-    if (password == confirmPassword) {
       navigation.push('/auth/registrationmore');
     } else {
-      alert('password not matched');
+      setErr('Password and new password mismatch')
     }
   };
 
@@ -323,7 +324,7 @@ export default function RegisterInstructor() {
                       placeholder="Password"
                       name="password"
                       value={password}
-                      onChange={(e) => setPassword(e.target.value)}
+                      onChange={(e) => {setPassword(e.target.value); setErr('')}}
                     />
                     <input
                       type="password"
@@ -331,9 +332,21 @@ export default function RegisterInstructor() {
                       placeholder="Confirm Password"
                       name="confirmpassword"
                       value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      onChange={(e) => {setConfirmPassword(e.target.value); setErr('')}}
                     />
                   </div>
+                  {err && (
+                    <>
+                  <div>
+                    <p
+                      className="text-secondary fw-bold py-2 text-center"
+                      style={{color:'red'}}
+                    >
+                      {err}
+                    </p>
+                  </div>
+                    </>
+                  ) }
                   <div className="form-check">
                     <input
                       className="form-check-input"
