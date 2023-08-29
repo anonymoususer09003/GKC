@@ -85,19 +85,22 @@ export default function index() {
               placeholder="card owner"
               value={cardDetail.name}
               disabled
+              style={{border: "solid black"}}
             />
             <input className="p-2 rounded w-100 border_gray"
               placeholder="card number"
               value={cardDetail.cardNumber}
               disabled
+              style={{border: "solid black"}}
             />
             <div className="d-flex" style={{justifyContent: 'space-between'}}>
-            <input className="p-2 rounded border_gray" style={{width: '49%'}}
+            <input className="p-2 rounded border_gray" style={{width: '49%', border: "solid black"}}
               placeholder="card brand"
               value={cardDetail.brand}
               disabled
+              
             />
-            <input className="p-2 rounded border_gray" style={{width: '49%'}}
+            <input className="p-2 rounded border_gray" style={{width: '49%', border: "solid black"}}
               placeholder="card expiry date"
               value={cardDetail.expiry}
               disabled

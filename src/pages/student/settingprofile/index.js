@@ -77,7 +77,7 @@ function SettingProfle({ userInfo, loading, error, fetchUser }) {
                     )
                   }
                   {
-                    userInfo?.parents.length < 1 && (
+                    userInfo?.parents.length === 1 && (
                       <>
                       <p className="p-0 m-0 py-2 fw-bold">Parent1/guardian1</p>
                       <div className="d-flex gap-1 align-items-center gap-2 pb-3 ">
@@ -90,7 +90,7 @@ function SettingProfle({ userInfo, loading, error, fetchUser }) {
                     )
                   }
                   {
-                    userInfo?.parents.length > 1 && (
+                    userInfo?.parents.length === 2 && (
                       <>
                       <p className="p-0 m-0 py-2 fw-bold">Parent1/guardian1</p>
                       <div className="d-flex gap-1 align-items-center gap-2 pb-3 ">

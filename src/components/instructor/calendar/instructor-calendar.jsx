@@ -74,32 +74,30 @@ function InstructorCalendar() {
               },
             }
           );
+          console.log(response)
+          const iCalendarData = await response.text();
+          const events = [];
+          const dates = [];
+  
+          const eventLines = iCalendarData.split('BEGIN:VEVENT');
+          eventLines.shift();
+          eventLines.forEach((eventLine) => {
+            const lines = eventLine.split('\n');
+            const event = {};
+            lines.forEach((line) => {
+              const [property, value] = line.split(':');
+              if (property && value) {
+                event[property] = value.replace(/\r/g, '');
+              }
+            });
+            events.push(event);
+            dates.push(event.DTSTART);
+          });
+          setEvents(events);
         }
 
-        // const response = await apiClient.get(
-        //   `${base_url}/instructor/events-iCal`,
-        //   loggedInUser.id
-        // );
 
-        const iCalendarData = await response.text();
-        const events = [];
-        const dates = [];
 
-        const eventLines = iCalendarData.split('BEGIN:VEVENT');
-        eventLines.shift();
-        eventLines.forEach((eventLine) => {
-          const lines = eventLine.split('\n');
-          const event = {};
-          lines.forEach((line) => {
-            const [property, value] = line.split(':');
-            if (property && value) {
-              event[property] = value.replace(/\r/g, '');
-            }
-          });
-          events.push(event);
-          dates.push(event.DTSTART);
-        });
-        setEvents(events);
       } catch (error) {
         console.log('Error fetching iCalendar data:', error);
       }

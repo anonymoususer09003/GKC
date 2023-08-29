@@ -10,6 +10,7 @@ import GetUserDetail from "../../../services/user/GetUserDetail";
 import GetAuthCode from "@/services/Auth/GetAuthCode";
 import VerifyAuthCode from "@/services/Auth/VerifyAuthCode";
 import ChangePassword from "@/services/user/ChangePassword";
+import { TutorNavbar } from "../../../components";
 import axios from "axios";
 import { base_url } from "@/api/client";
 export default function ForgotPassword() {
@@ -27,6 +28,7 @@ export default function ForgotPassword() {
   const [err, setErr] = useState("");
   const [userType, setUserType] = useState(false);
   const navigation = useRouter();
+  const [userTyp, setUserTyp] = useState('')
 
   const fetchUser = async () => {
     try {
@@ -114,11 +116,7 @@ export default function ForgotPassword() {
 
   useEffect(() => {
     fetchUser();
-    if(JSON.parse(window.localStorage.getItem('userType')) === 'instructor'){
-      setUserType(true)
-    } else{
-      setUserType(false)
-    }
+    setUserTyp(JSON.parse(window.localStorage.getItem('userType')).toLowerCase())
   }, [user]);
   return (
     <>
@@ -129,9 +127,13 @@ export default function ForgotPassword() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       {
-        userType ? 
-        <Navbar/> :
-        <ParentNavbar />
+        userTyp == 'student' && <Navbar/> 
+      }
+      {
+        userTyp == 'parent' && <ParentNavbar />
+      }
+      {
+        userTyp == 'instructor' && <TutorNavbar isLogin={true} />
       }
       <main className="container-fluid d-flex flex-column  min-vh-100">
 
