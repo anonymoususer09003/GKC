@@ -7,6 +7,7 @@ import { apiClient } from "../../../api/client";
 import { connect } from "react-redux";
 import { fetchUser } from "../../../store/actions/userActions";
 import calendarStyles from "../../../styles/Calendar.module.css";
+
 import { TutorNavbar } from "./../../../components";
 import { useRouter } from "next/router";
 
@@ -16,11 +17,12 @@ function EditCalandar({ userInfo, loading, error, fetchUser }) {
   const [selectedDate, setSelectedDate] = useState();
   const router = useRouter();
   const formRef = useRef(null)
-  const [available, setAvailable] = useState(true)
+  const [available, setAvailable] = useState(false)
   const [filledData, setFilledData] = useState(false);
   const [selectedDays, setSelectedDays] = useState([]);
   const [startTime, setStartTime] = useState("2000-12-31 06:00");
   const [endTime, setEndTime] = useState("2000-12-31 08:00")
+  const [err, setErr] = useState('')
   let times = ['00:00', '00:30', '01:00', '01:30', '02:00', '02:30', '03:00', '03:30',  
   '04:00', '04:30', '05:00', '05:30', '06:00', '06:30', '07:00', '07:30',  '08:00', '08:30', 
   '09:00', '09:30', '10:00', '10:30', '11:00', '11:30',  '12:00', '12:30', '13:00', '13:30', 
@@ -76,7 +78,7 @@ function EditCalandar({ userInfo, loading, error, fetchUser }) {
       "/instructor/unavailable-day" ,
       {date: selectedDate}
     )
-
+    // console.log(response)
   }catch(error) {
     console.log(error)
   }
@@ -90,18 +92,26 @@ function EditCalandar({ userInfo, loading, error, fetchUser }) {
   try {
     const weekScheduleData = [
       {
-        startTime: startTime,
-        endTime: endTime,
-        available: available,
+        startTime: startTime ?? '00:00',
+        endTime: endTime ?? '23:30',
+        available: available ?? true,
         dayOfTheWeek: dayOfTheWeek,
       },
     ];
   
-    let res = await apiClient.post("/instructor/week-schedule", weekScheduleData);
+    const res = await apiClient.post("/instructor/week-schedule", weekScheduleData);
+    console.log(res)
   }
   catch(error) {
     console.log(error);
+    setErr('You must`ve missing weekdays, time slots or exact day tile.')
   }
+ }
+ const handleTheNotEmptyTimeTable = async () => {
+  if( available !== true) {
+    setStartTime('') && setEndTime('')
+  }
+  setErr('')
  }
 
   useEffect(() => {
@@ -116,6 +126,7 @@ function EditCalandar({ userInfo, loading, error, fetchUser }) {
         <div style={{ height: "90vh" }}>
           <div className="row p-5">
             <div className="col-12 col-lg-6 ">
+            <div>
                 <p className="text-center">
                   Select days you don 't intend to tutor e.g. Thanksgaving, etc.{" "}
                   <br />
@@ -127,6 +138,22 @@ function EditCalandar({ userInfo, loading, error, fetchUser }) {
                   //selectRange={true}
                 />
             </div>{" "}
+            <div className="w-100"
+            style={{display:'flex', justifyContent: 'flex-end', marginTop:20}}
+            >
+            <button
+              className={`w-50 text-light p-2 rounded fw-bold  bg-gray-300 ${
+                selectedDate ? "btn_primary" : "btn_disabled "
+              }`}
+              disabled={!selectedDate}
+              onClick={() => setUnAvialablaDates()}
+            >
+              Save Unavailable Dates
+            </button>
+            </div>
+            </div>
+
+
             <div className="col-12 col-lg-6 ">
 
             <form
@@ -155,17 +182,22 @@ function EditCalandar({ userInfo, loading, error, fetchUser }) {
                       <input
                         className="form-check-input"
                         type="checkbox"
-                        value={true}
-                        checked
-                        onChange={() => setAvailable(true)}
+                        check={available}
+                        value={available}
+                        onChange={() => {
+                          handleTheNotEmptyTimeTable();
+                          setAvailable(!available);
+                        }}
+
                       />
                     </label>
                   </div>
                 </div>
                 <div className="row w-75 py-2 ">
                   <div className="col-4">
-                    <p className="fw-bold"> Available: </p>
                   </div>
+                  {
+                    available && <>
                     <div className="col-8">
                        <div className="row pb-2">
                          <p className="col fw-bold"> From </p>{" "}
@@ -194,30 +226,32 @@ function EditCalandar({ userInfo, loading, error, fetchUser }) {
                      </select>
                     </div>
                   </div>
+                    </>
+                  }
                 </div>
             </form>
+            {
+              err && <p>
+              {err}
+            </p>
+            }
+
+              <div className="w-100"
+            style={{display:'flex', justifyContent: 'flex-end', marginTop:20}}>
+                <button
+                  className={`w-50 text-light p-2 rounded fw-bold  bg-gray-300 ${
+                    filledData ? "btn_primary" : "btn_disabled "
+                  }`}
+                  onClick={submitHandler}
+                >
+                  Save Availability
+                </button>
+              </div>
             </div>
 
             </div>
           </div>
           <div className=" mt-3 d-flex justify-content-center flex-column align-items-center gap-2">
-          <button
-              className={`w-25 text-light p-2 rounded fw-bold  bg-gray-300 ${
-                selectedDate ? "btn_primary" : "btn_disabled "
-              }`}
-              disabled={!selectedDate}
-              onClick={() => setUnAvialablaDates()}
-            >
-              Save Unavailable Dates
-            </button>
-            <button
-              className={`w-25 text-light p-2 rounded fw-bold  bg-gray-300 ${
-                filledData ? "btn_primary" : "btn_disabled "
-              }`}
-              onClick={submitHandler}
-            >
-              Save Availability
-            </button>
           </div>
       </main>
       <Footer /> 
