@@ -56,21 +56,6 @@ function EditCalandar({ userInfo, loading, error, fetchUser }) {
     return occurrences;
   }
 
-  function fromYourTimezoneToUTC(timeslot, timezone) {
-    const yourTimeslot = timeslot; // Replace with your desired time in "HH:mm" format
-    const yourTimezone = timezone;
-
-    // Create a date object with the specified time and time zone
-    const kievDateTimeString = new Date().toLocaleDateString('en-US', {
-      timeZone: yourTimezoneI ,
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-
-    // Extract the time part (HH:mm) from the formatted Kiev time
-    const kievTimeParts = kievDateTimeString.split(" ")[1];
-  }
-
   function undoAll() {
     disabledDates.length = 0;
     setUndo(!undo)
@@ -155,7 +140,7 @@ function EditCalandar({ userInfo, loading, error, fetchUser }) {
 
   // Replace 'en-US' and 'Europe/Kiev' with your desired locale and timezone
     const formattedTime = new Intl.DateTimeFormat('en-US', {
-      timeZone: 'Asia/Tbilisi', // hardcoded. Need to use getuserdetails for getting the timezoneID parameter
+      timeZone: userInfo.timeZoneId, 
       hour: '2-digit',
       minute: '2-digit',
       hour12: false,
@@ -322,7 +307,7 @@ function EditCalandar({ userInfo, loading, error, fetchUser }) {
  const iCalendar = async () => {
  
     try{
-      const responce = await apiClient.get(`/instructor/schedule-iCal?instructorId=53`)
+      const responce = await apiClient.get(`/instructor/schedule-iCal?instructorId=${userInfo.id}`)
       console.log(responce.data)
       // console.log(res)
       const jcalData = ical.parse(responce.data);
