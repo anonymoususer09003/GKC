@@ -131,13 +131,13 @@
   }
   
   .reactCalendar__tile--active {
-    background: #006edc;
+    background: rgb(194, 193, 193);
     color: white;
   }
   
   .reactCalendar__tile--active:enabled:hover,
   .reactCalendar__tile--active:enabled:focus {
-    background: #1087ff;
+    background: rgb(194, 193, 193);
   }
   
   .reactCalendar--selectRange .reactCalendar__tile--hover {

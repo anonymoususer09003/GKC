@@ -19,6 +19,7 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
   console.log("loggedin user", loggedInUser);
   const [instructorData, setInstructorData] = useState({});
   const [instructorCourses, setInstructorCourses] = useState([]);
+  const [selectedInstructor, setSelectedInstructor] = useState(null)
   const [selectedMode, setSelectedMode] = useState("");
   const [courseId, setCourseId] = useState(null);
   const [classFrequency, setClassFrequency] = useState("");
@@ -138,6 +139,33 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
       }
     };
     if (instructorId) getInstructorData(instructorId);
+    const fetchUnavailableDates = async () => {
+      const disabledDates = []
+      try{
+        const responce = await apiClient(`/instructor/unavailable-days-in-UTC-TimeZone?instructorId=${instructorId}`) //hardcoded
+        console.log(responce.data)
+        responce.data.forEach((el)=>{
+          disabledDates.push(new Date(el.end))
+        })
+      console.log(disabledDates)
+      setUnavailableDates(disabledDates)
+      }catch (err) {
+        console.log(err)
+      }
+
+
+    }
+    fetchUnavailableDates()
+    const fetchInstructorData = async () => {
+      try{
+        const responce = await apiClient(`/instructor/details-for-scheduling?instructorId=${instructorId}`) //hardcoded
+        console.log(responce.data)
+        setSelectedInstructor(responce.data)
+      }catch (err) {
+        console.log(err)
+      }
+    }
+    fetchInstructorData()
   }, [instructorId]);
 
   const handleDateChange = async (clickedDate) => {
@@ -271,12 +299,24 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
       <main className="container-fluid">
         <div className="row" style={{ minHeight: "90vh" }}>
           <div className="col-12 col-lg-6 pt-5">
-            <p className="fw-bold text-center">Schedule class with John Doe</p>
+            {
+              selectedInstructor &&
+              <h3
+              style={{
+                textAlign:'center'
+              }}
+              >Calendar for {selectedInstructor?.firstName} {selectedInstructor?.lastName}</h3>
+            }
             <Calendar
               onChange={handleDateChange}
               value={selectedDate}
               tileClassName={tileClassName}
-              tileDisabled={tileDisabled}
+              // tileDisabled={tileDisabled}
+              tileDisabled={unavailableDates.length >1 ? ({date, view})=> view === 'month' && unavailableDates.some(disabledDate =>
+                date.getFullYear() === disabledDate.getFullYear() &&
+                date.getMonth() === disabledDate.getMonth() &&
+                date.getDate() === disabledDate.getDate()
+                ) : () => false}
             />
           </div>
           <div className="col-12 col-lg-6 pt-5">

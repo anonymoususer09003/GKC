@@ -17,6 +17,7 @@ const Navbar = ({ isLogin }) => {
     const stored = localStorage.getItem('gkcAuth');
     let data = stored ? JSON.parse(stored) : 'student';
     setValue(stored ? JSON.parse(stored) : false);
+
     setRole(localStorage.getItem('userType') !== null ? window.localStorage.getItem('userType').includes('"') ? JSON.parse(window.localStorage.getItem('userType')) : window.localStorage.getItem('userType') : data?.role?.toLowerCase());
   }, []);
   console.log("role", role);
@@ -50,7 +51,7 @@ const Navbar = ({ isLogin }) => {
               {value && (
                 <>
                   <li className="nav-item">
-                    <a className="nav-link" href={`/${role}/calandar`}>
+                    <a className="nav-link" href={role !== 'instructor' ? `/${role}/calandar` : 'instructor'}>
                       <FcCalendar style={{ fontSize: '30px' }} />
                     </a>
                   </li>
