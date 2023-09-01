@@ -11,6 +11,7 @@ import * as ical from 'ical.js';
 import { TutorNavbar } from "./../../../components";
 import { useRouter } from "next/router";
 import axios from "axios";
+import { weekdays } from "moment";
 
 
 function EditCalandar({ userInfo, loading, error, fetchUser }) {
@@ -54,6 +55,22 @@ function EditCalandar({ userInfo, loading, error, fetchUser }) {
   
     return occurrences;
   }
+
+  function fromYourTimezoneToUTC(timeslot, timezone) {
+    const yourTimeslot = timeslot; // Replace with your desired time in "HH:mm" format
+    const yourTimezone = timezone;
+
+    // Create a date object with the specified time and time zone
+    const kievDateTimeString = new Date().toLocaleDateString('en-US', {
+      timeZone: yourTimezoneI ,
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+
+    // Extract the time part (HH:mm) from the formatted Kiev time
+    const kievTimeParts = kievDateTimeString.split(" ")[1];
+  }
+
   function undoAll() {
     disabledDates.length = 0;
     setUndo(!undo)
@@ -211,6 +228,7 @@ function EditCalandar({ userInfo, loading, error, fetchUser }) {
     console.log(weekDay)
     setStartTime(timeslot);
     setWeekDays(weekDay)
+    setAvailable(true)
     setIfChoseAnotherWeek(true)
   }
  
@@ -227,6 +245,7 @@ function EditCalandar({ userInfo, loading, error, fetchUser }) {
     console.log(weekDay)
     setEndTime(timeslot);
     setWeekDays(weekDay)
+    setAvailable(true)
     setIfChoseAnotherWeek(true)
     setFilledData(true)
   }
@@ -272,7 +291,7 @@ function EditCalandar({ userInfo, loading, error, fetchUser }) {
     try {
       const response = await apiClient.post(
         "/instructor/unavailable-days" ,
-        {date: date}
+        requestDates
       )
       // console.log(response)
     }catch(error) {
@@ -326,7 +345,7 @@ function EditCalandar({ userInfo, loading, error, fetchUser }) {
             endTime: getTimeSlotFromtDateStr(dateStr2),
             dayOfTheWeek: dayOfWeek1.toLowerCase()
           })
-  
+          
           // console.log(dayOfWeek1, dayOfWeek2)
           // console.log(availability + getTimeSlotFromtDateStr(dateStr1) + ` and ` + getTimeSlotFromtDateStr(dateStr2))
           // setWeekDays([...weekdays, {}])
@@ -347,7 +366,6 @@ function EditCalandar({ userInfo, loading, error, fetchUser }) {
             dayOfTheWeek: el.dayOfTheWeek
           })
         })
-
         const goodweekdays = updateRepetitiveWeekDays(weekDay)
 
         console.log(goodweekdays)
