@@ -1,19 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import styles from './parentnavbar.module.css';
 import Link from 'next/link';
 import { IoMdSettings } from 'react-icons/io';
 import { FcCalendar } from 'react-icons/fc';
 import onSignOut from '@/utils/signOut';
-import LogoutTimer from '@/components/common/signOutTimer';
+import LogoutTimer from '../common/signOutTimer';
+import styles from './tutornavbar.module.css';
 
-const ParentNavbar = ({ isLogin }) => {
-
+const TutorNavbar = ({ isLogin }) => {
   const [value, setValue] = useState(false);
+  console.log(value);
 
   useEffect(() => {
     const stored = localStorage.getItem('gkcAuth');
-
     setValue(stored ? JSON.parse(stored) : false);
   }, []);
 
@@ -45,39 +44,17 @@ const ParentNavbar = ({ isLogin }) => {
           </button>
           <div className="collapse navbar-collapse" id="navbarSupportedContent">
             <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-              {value && (
-                <>
-                  <li className="nav-item">
-                    <a className="nav-link" href="/parent/calandar">
-                      <FcCalendar style={{ fontSize: '30px' }} />
-                    </a>
-                  </li>
-                </>
-              )}
-              <li className="nav-item">
-                <a
-                  className={`nav-link ${styles.homeLink}`}
-                  aria-current="page"
-                  href="/parent"
-                >
-                  Home
-                </a>
-              </li>
-            </ul>
-            <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-              {value && (
-                <>
-                  <li className="nav-item">
-                    <a
-                      className={`nav-link ${styles.homeLink}`}
-                      aria-current="page"
-                      href="/parent/messaging"
-                    >
-                      Message
-                    </a>
-                  </li>
-                </>
-              )}
+              <>
+                {/* <li className="nav-item">
+                  <a
+                    className={`nav-link ${styles.homeLink}`}
+                    aria-current="page"
+                    href="/instructor/messaging"
+                  >
+                    Message
+                  </a>
+                </li> */}
+              </>
             </ul>
             <form className="d-flex align-items-center gap-2">
               {value ? (
@@ -97,59 +74,13 @@ const ParentNavbar = ({ isLogin }) => {
                         style={{ right: '0px', width: '240px' }}
                       >
                         <li className="p-3">
-                          <a
-                            href="/parent/settingprofile"
-                            className="nav-link fw-bold"
-                          >
+                          <a href="/internal/profile" className="nav-link">
                             Profile
                           </a>
                         </li>
                         <li className="p-3">
-                          <a
-                            href="/auth/changepassword"
-                            className="nav-link fw-bold"
-                          >
+                          <a href="/auth/changepassword" className="nav-link">
                             Change Password
-                          </a>
-                        </li>
-                        <li className="p-3">
-                          <a
-                            href="/parent/paymentinfo"
-                            className="nav-link fw-bold"
-                          >
-                            Payment Information
-                          </a>
-                        </li>
-                        <li className="p-3">
-                          <a
-                            href="/parent/reviewinstructor"
-                            className="nav-link fw-bold"
-                          >
-                            Review Instructor
-                          </a>
-                        </li>
-                        <li className="p-3">
-                          <a
-                            href="/parent/reportinstructor"
-                            className="nav-link fw-bold"
-                          >
-                            Report Instructor
-                          </a>
-                        </li>
-                        <li className="p-3">
-                          <a
-                            href="/parent/financialreport"
-                            className="nav-link fw-bold"
-                          >
-                            Financial Report
-                          </a>
-                        </li>
-                        <li className="p-3">
-                          <a
-                            href="/parent/contactus"
-                            className="nav-link fw-bold"
-                          >
-                            Contact Us
                           </a>
                         </li>
                       </ul>
@@ -179,4 +110,4 @@ const ParentNavbar = ({ isLogin }) => {
   );
 };
 
-export default ParentNavbar;
+export default TutorNavbar;

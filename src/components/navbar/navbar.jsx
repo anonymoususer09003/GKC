@@ -19,7 +19,7 @@ const Navbar = ({ isLogin }) => {
     setValue(stored ? JSON.parse(stored) : false);
     setRole(data?.role?.toLowerCase());
   }, []);
-  console.log("role", role);
+  console.log('role', role);
   return (
     <>
       <nav className="navbar navbar-expand-lg navbar-light bg-light p-3">
@@ -161,7 +161,7 @@ const Navbar = ({ isLogin }) => {
                             href={`/${role}/contactus`}
                             className="nav-link fw-bold"
                           >
-                            Contact us
+                            Contact Us
                           </a>
                         </li>
                       </ul>

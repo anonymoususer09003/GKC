@@ -116,7 +116,7 @@ export default function RegistrationGrade() {
 
               <div className="position-absolute bottom-0 p-2 bg-light w-100 bg-opacity-75 fw-bold">
                 <small className="text-dark">
-                  Middle School &#40;&#60;10yrs - 13yrs&#41;
+                  Middle School &#40;10yrs - 13yrs&#41;
                 </small>
               </div>
             </div>
@@ -145,7 +145,7 @@ export default function RegistrationGrade() {
 
               <div className="position-absolute bottom-0 p-2 bg-light w-100 bg-opacity-75 fw-bold">
                 <small className="text-dark">
-                  High School &#40;&#60;14yrs - 16yrs&#41;
+                  High School &#40;14yrs - 16yrs&#41;
                 </small>
               </div>
             </div>

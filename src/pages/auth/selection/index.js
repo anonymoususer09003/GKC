@@ -120,7 +120,7 @@ export default function Selection() {
                 className=""
                 width={400}
                 height={600}
-                priority
+                unoptimized
               />
             </div>
           </div>
