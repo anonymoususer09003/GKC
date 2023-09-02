@@ -58,17 +58,21 @@ export default function ParentRegistrationCCInfo() {
       });
 
       if (payPalEmail !== '') {
-        const addPayPalEmail = await axios.post(
-          `${base_url}/instructor/set-payPal-email-logged-instructor?payPalEmail=${payPalEmail}`,
-          {},
-          {
-            headers: {
-              accept: '*/*',
-              Authorization: `Bearer ${response.data.accessToken}`,
-            },
-          }
-        );
-        setPayPalEmail('');
+        try{
+          const addPayPalEmail = await axios.post(
+            `${base_url}/instructor/set-payPal-email-logged-instructor?payPalEmail=${payPalEmail}`,
+            {},
+            {
+              headers: {
+                accept: '*/*',
+                Authorization: `Bearer ${response.data.accessToken}`,
+              },
+            }
+          );
+          console.log(addPayPalEmail)
+        } catch (error) {
+          
+        }
       }
 
       if (!isImageFileEmpty) {
@@ -105,9 +109,9 @@ export default function ParentRegistrationCCInfo() {
           role: res.data,
         })
       );
-      window.localStorage.removeItem('registrationForm');
-      window.localStorage.removeItem('userType');
-      navigation.push('/instructor');
+      setTimeout(() => {
+        navigation.push('/instructor');
+      }, 1400);
     } catch (error) {
       console.error(error);
     }

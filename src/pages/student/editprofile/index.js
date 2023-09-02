@@ -67,9 +67,9 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
         zipCode: userInfo.zipCode,
         savePaymentFutureUse: userInfo.savePaymentFutureUse,
         // Here is hardcoded
-        whoPaysEmail: '',
-        emailParent1: parent1,
-        emailParent2: parent2,
+        whoPaysEmail: userInfo.email,
+        emailParent1: parent1 ?? '',
+        emailParent2: parent2 ?? '',
         gradeId: grade,
         courseOfInterestAndProficiency: aa,
         languagePreferencesId: ln,
@@ -78,7 +78,7 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
       // setCountries(response.data);
       navigation.push('/student/settingprofile');
     } catch (error) {
-      // console.error(error);
+      console.error(error);
     }
   };
 
@@ -357,7 +357,7 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
                         className="form-check-label"
                         htmlFor="flexCheckDefault"
                       >
-                        Middle School &#40;&#60;11yrs - 13yrs&#41;
+                        Middle School &#40;11yrs - 13yrs&#41;
                       </label>
                     </div>
                     <div className="form-check">
@@ -374,7 +374,7 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
                         className="form-check-label"
                         htmlFor="flexCheckDefault"
                       >
-                        High School &#40;&#60;14yrs - 18yrs&#41;
+                        High School &#40;14yrs - 18yrs&#41;
                       </label>
                     </div>
                     <div className="form-check">

@@ -13,7 +13,14 @@ export default function ForgotPassword() {
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("")
   const [isSent, setIsSent] = useState(false);
+  const [err, setErr] = useState('')
+
+  let isValid =
+  password == '' && confirmPassword == ''
+    ? true
+    : false
 
   const isEmailValid = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(
     email
@@ -32,19 +39,28 @@ export default function ForgotPassword() {
   };
 
   const changePassword = async () => {
-    try {
-      const response = await axios.post(
-        `http://34.227.65.157/user/forgot-password`,
-        {
-          email: email,
-          password: password,
-          code: code,
+    if(password === confirmPassword) {
+      try {
+        const response = await axios.post(
+          `http://34.227.65.157/user/forgot-password`,
+          {
+            email: email,
+            password: password,
+            code: code,
+          }
+        );
+        console.log(response);
+  
+        navigation.push("/auth/signin");
+      } catch (error) {
+        console.error(error);
+        if(error.response.status === 400){
+          console.log('lil')
+          setErr('Verification code is not correct.')
         }
-      );
-      console.log(response);
-      navigation.push("/auth/signin");
-    } catch (error) {
-      console.error(error);
+      }
+    } else{
+      setErr('Password and New password mismatch.')
     }
   };
 
@@ -87,7 +103,7 @@ export default function ForgotPassword() {
                     className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
                     placeholder="Your Email"
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={(e) => {setEmail(e.target.value); setErr('')}}
                   />
                   {isSent && (
                     <input
@@ -96,30 +112,51 @@ export default function ForgotPassword() {
                       placeholder="Enter Confirmation Code"
                       name="code"
                       value={code}
-                      onChange={(e) => setCode(e.target.value)}
+                      onChange={(e) =>{setCode(e.target.value); setErr('')}}
                     />
                   )}
                   {isSent && (
-                    <input
+                    <>
+                      <input
+                        type="password"
+                        name="password"
+                        className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
+                        placeholder="Enter New Password"
+                        onChange={(e) => {setPassword(e.target.value); setErr('')}}
+                      />
+                      <input
                       type="password"
                       name="password"
                       className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
-                      placeholder="Enter New Password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                    />
+                      placeholder="Confirm New Password"
+                      onChange={(e) => {setConfirmPassword(e.target.value); setErr('')}}
+                      />
+                  </>
+
                   )}
                   {isSent && (
                     <p className="text-secondary fw-bold py-2 text-center">
                       Check Email for Confirmation Code
                     </p>
                   )}
+                  {
+                    err && (
+                      <p 
+                      className="text-secondary fw-bold py-2 text-center"
+                      style={{color:'red'}}
+                      >
+                        {err}
+                      </p>
+                    )
+                  }
                   {isSent ? (
                     <button
-                      className={`w-100 text-light p-2 rounded fw-bold mt-3 bg-gray-300 ${"btn_primary"}`}
+                      className={`w-100 text-light p-2 rounded fw-bold mt-3 bg-gray-300 ${
+                        isValid ? "btn_disabled" : "btn_primary"
+                      }`}
                       onClick={() => changePassword()}
-                    >
-                      Update Password
+                      disabled={isValid}
+                    >Update Password
                     </button>
                   ) : (
                     <button
@@ -146,7 +183,7 @@ export default function ForgotPassword() {
             }}
           >
             <div style={{ position: "absolute", right: "0%", bottom: "7%" }}>
-              <Image
+              <img
                 src="/assets/auth_boy_1.png"
                 alt="Vercel Logo"
                 className=""

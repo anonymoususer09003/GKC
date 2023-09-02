@@ -168,7 +168,7 @@ button.tw-cst-pf,
 [type='reset'],
 [type='submit'] {
   -webkit-appearance: button; /* 1 */
-  background-color: transparent; /* 2 */
+  /* background-color: transparent; commented because of direct react-calendar conflict */
   background-image: none; /* 2 */
 }
 

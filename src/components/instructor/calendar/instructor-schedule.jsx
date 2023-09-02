@@ -70,17 +70,19 @@ const InstructorSchedule = (props) => {
   //   parentId: 4,
   // };
   const getParticipantsDetail = async (id) => {
-    try {
-      const res = await GetUserByid(id);
-      setStudent({
-        courseId: props?.eventId,
-        name: res.data?.fullName,
-        id: res.data?.userId,
-        parentId: res.data?.parents?.length > 0 ? res.data.parents[0]?.id : "",
-      });
-      console.log("res------", res.data);
-    } catch (err) {
-      console.log("err", err);
+    if( loggedInUser?.id !== undefined){
+      try {
+        const res = await GetUserByid(loggedInUser?.id);
+        setStudent({
+          courseId: props?.eventId,
+          name: res.data?.fullName,
+          id: res.data?.userId,
+          parentId: res.data?.parents?.length > 0 ? res.data.parents[0]?.id : "",
+        });
+        console.log("res------", res.data);
+      } catch (err) {
+        console.log("err", err);
+      }
     }
   };
   console.log("student", student);
@@ -143,7 +145,7 @@ const InstructorSchedule = (props) => {
                 <h6 className="p-0 m-0 flex-fill fw-bold flex-fill">
                   {props.courseName}
                 </h6>
-                {loggedInUser?.id && (
+                {messages.length > 1 && (
                   <IconContext.Provider value={{ color: '#1677d2' }}>
                     <BsFillChatFill
                       className="p-0 m-0 flex-fill h4 flex-fill"

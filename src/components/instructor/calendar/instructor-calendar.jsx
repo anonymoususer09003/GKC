@@ -44,6 +44,7 @@ function InstructorCalendar() {
   const [userInfoLoaded, setUserInfoLoaded] = useState(false);
   const dispatch = useDispatch();
   const loggedInUser = useSelector((state) => state.user.userInfo);
+  const disabledDates = []
 
   useEffect(() => {
     dispatch(fetchUser());
@@ -74,37 +75,52 @@ function InstructorCalendar() {
               },
             }
           );
+          console.log(response)
+          const iCalendarData = await response.text();
+          const events = [];
+          const dates = [];
+  
+          const eventLines = iCalendarData.split('BEGIN:VEVENT');
+          eventLines.shift();
+          eventLines.forEach((eventLine) => {
+            const lines = eventLine.split('\n');
+            const event = {};
+            lines.forEach((line) => {
+              const [property, value] = line.split(':');
+              if (property && value) {
+                event[property] = value.replace(/\r/g, '');
+              }
+            });
+            events.push(event);
+            dates.push(event.DTSTART);
+          });
+          setEvents(events);
         }
 
-        // const response = await apiClient.get(
-        //   `${base_url}/instructor/events-iCal`,
-        //   loggedInUser.id
-        // );
 
-        const iCalendarData = await response.text();
-        const events = [];
-        const dates = [];
 
-        const eventLines = iCalendarData.split('BEGIN:VEVENT');
-        eventLines.shift();
-        eventLines.forEach((eventLine) => {
-          const lines = eventLine.split('\n');
-          const event = {};
-          lines.forEach((line) => {
-            const [property, value] = line.split(':');
-            if (property && value) {
-              event[property] = value.replace(/\r/g, '');
-            }
-          });
-          events.push(event);
-          dates.push(event.DTSTART);
-        });
-        setEvents(events);
       } catch (error) {
         console.log('Error fetching iCalendar data:', error);
       }
     };
     fetchICalendarData();
+
+    const fetchUnavailableDates = async () => {
+      try{
+        const responce = await apiClient('/instructor/unavailable-days-in-UTC-TimeZone?instructorId=53') //hardcoded
+        console.log(responce.data)
+        responce.data.forEach((el)=>{
+          disabledDates.push(new Date(el.end))
+        })
+      console.log(disabledDates)
+      setUnavailableDates(disabledDates)
+      }catch (err) {
+        console.log(err)
+      }
+
+
+    }
+    fetchUnavailableDates()
   }, [loggedInUser]);
 
   //Logged user events
@@ -210,10 +226,14 @@ function InstructorCalendar() {
                 </p>
                 <FiEdit style={{ fontSize: '24px' }} />
               </div>
-              <Calendar
-                onClickDay={handleCalendarClick}
+                <Calendar
+                onChange={handleCalendarClick}
                 className={calendarStyles.reactCalendar}
-                defaultValue={new Date()}
+                tileDisabled={unavailableDates.length >1 ? ({date, view})=> view === 'month' && unavailableDates.some(disabledDate =>
+                  date.getFullYear() === disabledDate.getFullYear() &&
+                  date.getMonth() === disabledDate.getMonth() &&
+                  date.getDate() === disabledDate.getDate()
+                  ) : () => false}
               />
             </div>
             <InstructorSchedule

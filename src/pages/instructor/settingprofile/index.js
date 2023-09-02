@@ -13,6 +13,7 @@ import styles from '../../../styles/Home.module.css';
 
 function SettingProfile({ userInfo, loading, error, fetchUser }) {
   const navigation = useRouter();
+  const [showVideoPopuo, setShowVideoPopup] = useState(false)
   const onContinue = () => {
     navigation.push('/instructor/editprofile');
   };
@@ -37,6 +38,33 @@ function SettingProfile({ userInfo, loading, error, fetchUser }) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <TutorNavbar isLogin={true} />
+      {showVideoPopuo ? (
+        <div style={{position:'fixed', zIndex: 1, left:0,top:0, width:'100%', height:'100%',overflow:'auto', background: 'rgba(0, 0, 0, 0.4)', zIndex: 3}}>
+          <div style={{background: 'white', margin: '200px auto', padding:20, width:'50%', zIndex: 5}}
+          >
+            <div 
+            style={{width: "100%", display:'flex', justifyContent:'flex-end', cursor: 'pointer'}}>
+              <img
+              style={{width:40, height: 40}}
+              src='https://cdn-icons-png.flaticon.com/128/5368/5368396.png'
+              onClick={()=>{setShowVideoPopup(false)}}
+              />
+            </div>
+                {
+                  userInfo?.video && (
+                    <video
+                    width="100%"
+                    height="500px"
+                    muted
+                    controls
+                    loop
+                    src={userInfo?.video}
+                  ></video>
+                  )
+                }
+          </div>
+        </div>
+        ) : null}
       <main className="container-fluid">
         <div
           className={`p-5 ${styles.instructorProfile}`}
@@ -63,8 +91,8 @@ function SettingProfile({ userInfo, loading, error, fetchUser }) {
                         height: '105px',
                       }}
                     >
-                      <Image
-                        src={userInfo?.instructorPhoto}
+                      <img
+                        src={userInfo?.instructorPhoto ?? 'https://cdn-icons-png.flaticon.com/128/847/847969.png'}
                         unoptimized={true}
                         alt="profile image"
                         width={100}
@@ -78,17 +106,25 @@ function SettingProfile({ userInfo, loading, error, fetchUser }) {
                         {userInfo?.email}
                       </p>
                       {userInfo?.video && (
-                        <div className="tw-mx-auto">
+                        <div className="tw-mx-auto"
+                        onClick={()=>{setShowVideoPopup(true)}}
+                        style={{
+                          cursor:'pointer'
+                        }}
+                        >
                           <div className="tw-relative">
                             <video
                               width="200"
-                              height="200"
+                              height="150"
                               muted
-                              controls
                               loop
-                              autoPlay
                               src={userInfo?.video}
+
                             ></video>
+                            <img
+                            src={'https://cdn-icons-png.flaticon.com/128/109/109197.png'}
+                            style={{position:'relative', width: 60, height: 60, left: -130, top: -55}}
+                            />
                           </div>
                         </div>
                       )}
@@ -102,8 +138,8 @@ function SettingProfile({ userInfo, loading, error, fetchUser }) {
                     <MdLocationOn className="h5 p-0 m-0" />
                     <small>
                       {userInfo?.address1}, {userInfo?.city},{' '}
-                      {userInfo?.zipCode} <br />
-                      {userInfo?.state}, {userInfo?.country}
+                      {userInfo?.state} <br />
+                      {userInfo?.zipCode}, {userInfo?.country}
                     </small>
                   </div>
                   <hr className="bg_secondary" />

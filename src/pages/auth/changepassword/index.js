@@ -10,6 +10,7 @@ import GetUserDetail from "../../../services/user/GetUserDetail";
 import GetAuthCode from "@/services/Auth/GetAuthCode";
 import VerifyAuthCode from "@/services/Auth/VerifyAuthCode";
 import ChangePassword from "@/services/user/ChangePassword";
+import { TutorNavbar } from "../../../components";
 import axios from "axios";
 import { base_url } from "@/api/client";
 export default function ForgotPassword() {
@@ -25,7 +26,9 @@ export default function ForgotPassword() {
   const [showSuccess, setSuccess] = useState(false);
   const [showActivation, setShowActivation] = useState(false);
   const [err, setErr] = useState("");
+  const [userType, setUserType] = useState(false);
   const navigation = useRouter();
+  const [userTyp, setUserTyp] = useState('')
 
   const fetchUser = async () => {
     try {
@@ -41,7 +44,7 @@ export default function ForgotPassword() {
       if(data.newPassword === data.confirmPassword){
         onSubmit()
       } else{
-        setErr("Incorrect password confirmation");
+        setErr("New password and confirm new password mismatch");
         console.log("err", err);
       }
 
@@ -102,6 +105,7 @@ export default function ForgotPassword() {
   };
   const onChange = (e) => {
     setData({ ...data, [e.target.name]: e.target.value });
+    setErr("")
   };
   let isValid =
     data.newPassword != ""  &&
@@ -112,6 +116,7 @@ export default function ForgotPassword() {
 
   useEffect(() => {
     fetchUser();
+    setUserTyp(JSON.parse(window.localStorage.getItem('userType')).toLowerCase())
   }, [user]);
   return (
     <>
@@ -121,15 +126,16 @@ export default function ForgotPassword() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <ParentNavbar />
-      <main className="container-fluid d-flex flex-column justify-content-between  min-vh-100">
-        <Link
-          href="/"
-          className="text-decoration-none p-4 d-flex gap-2 align-items-center text-dark"
-        >
-          <RiArrowGoBackLine />
-          <p className="fw-bold m-0 p-0 ">Back to home</p>
-        </Link>
+      {
+        userTyp == 'student' && <Navbar/> 
+      }
+      {
+        userTyp == 'parent' && <ParentNavbar />
+      }
+      {
+        userTyp == 'instructor' && <TutorNavbar isLogin={true} />
+      }
+      <main className="container-fluid d-flex flex-column  min-vh-100">
 
         {/*             background-color: white;
             margin: 10% auto;
@@ -150,6 +156,7 @@ export default function ForgotPassword() {
           </div>
         </div>
         ) : null}
+        <div>
         <div className="d-flex justify-content-center">
           <h1>Change Password</h1>
         </div>
@@ -215,7 +222,10 @@ export default function ForgotPassword() {
             </div>
           </div>
         </div>
-        <Footer />
+        </div>
+        <div style={{position:"fixed", bottom: 0}}>
+          <Footer />
+        </div>
       </main>
     </>
   );

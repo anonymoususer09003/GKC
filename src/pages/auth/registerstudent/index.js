@@ -34,48 +34,62 @@ export default function RegisterStudent() {
   const [guardian2Exists, setGuardian2Exists] = useState(true);
 
   let isValidForm =
-    (guardianEmail1.length == 0 || guardian1Exists) &&
-    (guardianEmail2.length == 0 || guardian2Exists) &&
-    country &&
-    state &&
-    city &&
-    zipCode &&
-    password &&
+ password === confirmPassword &&
     termsAgree;
 
   const onContinue = () => {
-    window.localStorage.setItem('gkcAuth', JSON.stringify(true));
+    // window.localStorage.setItem('gkcAuth', JSON.stringify(true));
     var stored = JSON.parse(window.localStorage.getItem('registrationForm'));
     console.log(stored);
     let timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
     stored.email = email;
-    stored.firstName = firstname;
-    stored.lastName = lastname;
+    // stored.firstName = firstname;
+    // stored.lastName = lastname;
     stored.password = password;
     // stored.emailParent1 =
     //   guardianEmail1.length > 0 && guardian1Exists ? guardianEmail1 : null;
     // stored.emailParent2 =
     //   guardianEmail2.length > 0 && guardian2Exists ? guardianEmail2 : null;
-    stored.emailParent1 = guardianEmail1;
-    stored.emailParent2 = guardianEmail2;
-    stored.address1 = address1;
-    stored.address2 = address2;
-    stored.country = country;
-    stored.state = state;
-    stored.city = city;
-    stored.zipCode = zipCode;
-    stored.whoPaysEmail = email;
-    stored.savePaymentFutureUse = false;
+    // stored.emailParent1 = guardianEmail1;
+    // stored.emailParent2 = guardianEmail2;
+    // stored.address1 = address1;
+    // stored.address2 = address2;
+    // stored.country = country;
+    // stored.state = state;
+    // stored.city = city;
+    // stored.zipCode = zipCode;
+    // stored.whoPaysEmail = email;
+    // stored.savePaymentFutureUse = false;
     stored.timeZoneId = timezone;
 
     window.localStorage.setItem('registrationForm', JSON.stringify(stored));
+
+    
+
     if (password == confirmPassword) {
-      navigation.push('/auth/registrationgrade');
+      registerStudent(stored);
+      navigation.push('/auth/registerstudentcomplete');
     } else {
       alert('password not matched');
     }
   };
+
+  const registerStudent = async (studentDetails) => {
+    try {
+      const responce = await axios.post(`${base_url}/auth/register-student`, studentDetails)
+      console.log(responce);
+      if(window.localStorage.getItem("DoesParentCreateNewStudent") !== 'true'){
+        window.localStorage.setItem('gkcAuth',           
+        JSON.stringify({
+          accessToken: responce.data.accessToken,
+          role: responce.data,
+        }))
+      }
+    } catch (err) {
+      console.log(err)
+    }
+  }
 
   const getCountries = async () => {
     try {
@@ -98,28 +112,6 @@ export default function RegisterStudent() {
     }
   };
 
-  const checkIfGuardian1Exists = async () => {
-    try {
-      const res = await axios.get(
-        `${base_url}/public/register/is-parent-registered?parentEmail=${guardianEmail1}`,
-        {}
-      );
-      setGuardian1Exists(res.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  const checkIfGuardian2Exists = async () => {
-    try {
-      const res = await axios.get(
-        `${base_url}/public/register/is-parent-registered?parentEmail=${guardianEmail2}`,
-        {}
-      );
-      setGuardian2Exists(res.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   const getCities = async () => {
     try {
@@ -133,7 +125,7 @@ export default function RegisterStudent() {
   };
 
   useEffect(() => {
-    const value = JSON.parse(window.localStorage.getItem('userType'));
+    const value = window.localStorage.getItem('userType');
     var stored = JSON.parse(window.localStorage.getItem('registrationForm'));
     setEmail(stored?.email);
     setUserType(value);
@@ -201,129 +193,6 @@ export default function RegisterStudent() {
                   </p>
                 </div>
                 <div>
-                  <input
-                    type="text"
-                    className="w-100 p-2 rounded outline-0 border border_gray"
-                    placeholder="Enter Parent/Guardian 1 Email"
-                    value={guardianEmail1}
-                    name="guardian1"
-                    onChange={(e) => setGuardianEmail1(e.target.value)}
-                    onBlur={checkIfGuardian1Exists}
-                  />
-                  {!guardian1Exists && guardianEmail1.length > 0 ? (
-                    <p className="tw-text-red-600">
-                      Parent email doesn't exist
-                    </p>
-                  ) : (
-                    ''
-                  )}
-                  <input
-                    type="text"
-                    className="w-100 p-2 rounded outline-0 border border_gray mt-3  "
-                    placeholder="Enter Parent/Guardian 2 Email"
-                    value={guardianEmail2}
-                    name="guardian3"
-                    onChange={(e) => setGuardianEmail2(e.target.value)}
-                    onBlur={checkIfGuardian2Exists}
-                  />
-                  {!guardian2Exists && guardianEmail2.length > 0 ? (
-                    <p className="tw-text-red-600">
-                      Parent email doesn't exist
-                    </p>
-                  ) : (
-                    ''
-                  )}
-                  <div className="py-2">
-                    <label className=" m-0 mb-3">
-                      This is to link your account to your parent/guardian
-                    </label>
-                    <br />
-                  </div>{' '}
-                  <div className="d-flex   flex-md-nowrap flex-wrap gap-2">
-                    <input
-                      type="text"
-                      className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
-                      placeholder="First Name"
-                      name="firstname"
-                      value={firstname}
-                      onChange={(e) => setFirstname(e.target.value)}
-                    />
-                    <input
-                      type="text"
-                      className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
-                      placeholder="Last Name"
-                      name="lastname"
-                      value={lastname}
-                      onChange={(e) => setLastname(e.target.value)}
-                    />
-                  </div>
-                  <input
-                    type="text"
-                    className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
-                    placeholder="Address 1"
-                    name="address1"
-                    value={address1}
-                    onChange={(e) => setAddress1(e.target.value)}
-                  />
-                  <input
-                    type="text"
-                    className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
-                    placeholder="Address 2"
-                    name="address2"
-                    value={address2}
-                    onChange={(e) => setAddress2(e.target.value)}
-                  />
-                  <div className="d-flex   flex-md-nowrap flex-wrap gap-2">
-                    <select
-                      onChange={(e) => setCountry(e.target.value)}
-                      className="w-100 p-2 rounded outline-0 border border_gray  mb-3 "
-                    >
-                      <option value="">Select Country</option>
-                      {countries.map((v, i) => {
-                        return (
-                          <option value={v.name} key={i}>
-                            {v.name}
-                          </option>
-                        );
-                      })}
-                    </select>
-                    <select
-                      onChange={(e) => setState(e.target.value)}
-                      className="w-100 p-2 rounded outline-0 border border_gray  mb-3 "
-                    >
-                      <option value="">Select State</option>
-                      {states.map((v, i) => {
-                        return (
-                          <option value={v.name} key={i}>
-                            {v.name}
-                          </option>
-                        );
-                      })}
-                    </select>
-                  </div>
-                  <div className="d-flex flex-md-nowrap flex-wrap gap-2">
-                    <select
-                      onChange={(e) => setCity(e.target.value)}
-                      className="w-100 p-2 rounded outline-0 border border_gray  mb-3"
-                    >
-                      <option value="student">Select City</option>
-                      {cities.map((v, i) => {
-                        return (
-                          <option value={v.name} key={i}>
-                            {v.name}
-                          </option>
-                        );
-                      })}
-                    </select>
-                    <input
-                      type="text"
-                      className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
-                      placeholder="Zip"
-                      name="zip"
-                      value={zipCode}
-                      onChange={(e) => setZipCode(e.target.value)}
-                    />
-                  </div>
                   <div className="d-flex  flex-md-nowrap flex-wrap gap-2">
                     <input
                       type="password"
