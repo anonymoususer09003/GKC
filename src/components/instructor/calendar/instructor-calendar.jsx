@@ -146,66 +146,15 @@ function InstructorCalendar() {
     const month = clickedDate.toISOString().slice(5, 7);
     const day = (parseInt(clickedDate.toISOString().slice(8, 10)) + 1)
       .toString()
-      .padStart(2, '0');
-    const modifiedClickedDate = `${year}${month}${day}`;
+      .padStart(2, "0");
+    const modifiedClickedDate = `${year}-${month}-${day}`;
+    const eventsArray = []
+    bookedEvents.map(el =>
+      el.start.slice(0,10) === modifiedClickedDate ? eventsArray.push(el) : null
+    )
 
-    const selectedIcalEvent = events.find(
-      (singleEvent) =>
-        singleEvent['DTSTART'].slice(0, 8) === modifiedClickedDate &&
-        singleEvent['EVENT-ID']
-    );
-
-    if (selectedIcalEvent) {
-      setSingleIcalEvent(selectedIcalEvent);
-      bookedEvents.find(
-        (singleBooked) => singleBooked.id == selectedIcalEvent['EVENT-ID']
-      );
-
-      const matchedBookedEvent = bookedEvents.find(
-        (singleBooked) => singleBooked.id == selectedIcalEvent['EVENT-ID']
-      );
-      if (matchedBookedEvent) {
-        console.log('matched book event', matchedBookedEvent);
-        setStudentDetail({
-          name: matchedBookedEvent?.studentName,
-          id: matchedBookedEvent?.studentId,
-        });
-        setInstructorName(matchedBookedEvent.instructorName);
-        setStudent(matchedBookedEvent.studentName);
-        setEventTime(matchedBookedEvent.start.split(' ')[1]);
-        setDeleteable(matchedBookedEvent.deleteable);
-        //HERE WILL BE THE MEETING LINK
-        setMeetingLink('meetinglink');
-        setCourseId(matchedBookedEvent.courseId);
-        setNoEvent(false);
-        setEventId(49 || matchedBookedEvent.id);
-        setCourseName(matchedBookedEvent.courseName);
-        setStudentId(matchedBookedEvent.studentId);
-        setParentId(matchedBookedEvent?.parentsId);
-      } else {
-        // Clear the states when a matching booked event is not found
-        setNoEvent(true);
-        setEventTime('');
-        setInstructorName('');
-        setDeleteable(false);
-        setMeetingLink('');
-        setStudentId('');
-        setParentId(null);
-        setCourseId('');
-      }
-    } else {
-      setStudentDetail(null);
-      setCourseId('');
-      setParentId(null);
-      // Clear the states when a matching iCal event is not found
-      setNoEvent(true);
-      setSingleIcalEvent(null);
-      setEventTime('');
-      setDeleteable(false);
-      setMeetingLink('');
-      setStudentId('');
-      setCourseId('');
-    }
+    console.log(eventsArray)
+    setEvents(eventsArray)
   };
   console.log("event id", eventId);
   return (
@@ -224,7 +173,7 @@ function InstructorCalendar() {
                   Edit to add days you don't intend to work (vacation, holiday,
                   etc.) &rarr;
                 </p>
-                <FiEdit style={{ fontSize: '24px' }} />
+                <FiEdit style={{ fontSize: '24px', cursor: 'pointer' }} />
               </div>
                 <Calendar
                 onChange={handleCalendarClick}
@@ -237,18 +186,7 @@ function InstructorCalendar() {
               />
             </div>
             <InstructorSchedule
-              studentDetail={studentDetail}
-              studentParents={parentsId}
-              instructorName={instructorName}
-              courseId={courseId}
-              studentName={student}
-              start={eventTime}
-              courseName={courseName}
-              meetingLink={meetingLink}
-              deleteable={deleteable}
-              noEvent={noEvent}
-              eventId={eventId}
-              studentId={studentId}
+              schedule={events}
             />
           </div>
           <Footer />

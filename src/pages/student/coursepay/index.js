@@ -8,6 +8,7 @@ import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUser } from "@/store/actions/userActions";
 import SendEmailToParents from "@/services/StudentScheduler/SendEmailToParents";
+import { apiClient } from "@/api/client";
 function StudentRegistrationCCPay() {
   const navigation = useRouter();
   const dispatch = useDispatch();
@@ -27,13 +28,24 @@ function StudentRegistrationCCPay() {
   const [confirmPayment, setConfirmPayment] = useState(false);
   const [isCardValid, setIsCardValid] = useState(false);
   const userInfo = useSelector((state) => state?.user?.userInfo);
+  const [instructorData, setInstructorData] = useState(null)
+  const [hasSavedCC, setHasSavedCC] = useState(false);
+  const [taxesFeesInfo, setTaxesFeesInfo] = useState(null)
+  const [loggedUserCCinfo, setLoggedUserCCinfo] = useState(null)
   const [paymentStatus, setPaymentStatus] = useState("");
+  const [savedCCSelected, setSavedCCSelected] = useState(false)
+  const [err, setErr] = useState('')
 
   const [nameCard, setNameCard] = useState("");
-  console.log("log", userInfo);
   useEffect(() => {
     dispatch(fetchUser());
   }, [dispatch]);
+
+  function formatNumberWithTwoDecimals(number) {
+    
+    return number?.toFixed(2);
+  }
+
 
   const scheduleSaved = async () => {
     try {
@@ -46,7 +58,7 @@ function StudentRegistrationCCPay() {
           classFrequency: classFrequency,
           courseId: parseInt(courseId),
           studentId: parseInt(studentId),
-          whoPaysId: parseInt(whoPaysId),
+          whoPaysId: parseInt(studentId),
           instructorId: parseInt(instructorId),
           eventInPerson: JSON.parse(eventInPerson),
         },
@@ -56,62 +68,80 @@ function StudentRegistrationCCPay() {
           },
         }
       );
+      console.log(res)
     } catch (error) {
       console.error("Error fetching profile data:", error);
     }
   };
 
   const sendEmailToWhoPays = async () => {
+
     try {
+      const ress = await apiClient.get(`user/details/?userEmail=${whoPaysId}`)
       const res = await SendEmailToParents({
         start: start,
         durationInHours: parseInt(durationInHours),
         classFrequency: classFrequency,
         courseId: parseInt(courseId),
         studentId: parseInt(studentId),
-        whoPaysId: parseInt(whoPaysId),
+        whoPaysId: ress.data.userId,
         instructorId: parseInt(instructorId),
-        eventInPerson: JSON.parse(eventInPerson),
+        eventInPerson: JSON.parse(eventInPerson)
       });
     } catch (error) {
       console.error("Error fetching profile data:", error);
     }
+    finally{
+      try{
+        const responce = await apiClient.post('/stripe/one-time-payment-intent',{
+          instructorId: instructorId,
+          durationInHours: durationInHours
+        })
+        console.log(responce)
+      } catch(err){
+        setErr('You have signed wrong data.')
+        cosnsole.log(err)
+      }
+    }
   };
 
   const scheduleNoSaved = async (data) => {
-    try {
-      var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
-      const res = await axios.post(
-        `http://34.227.65.157/event/create-class-no-saved-payment-method`,
-        {
-          classDto: {
-            start: start,
-            durationInHours: parseInt(durationInHours),
-            classFrequency: classFrequency,
-            courseId: parseInt(courseId),
-            studentId: parseInt(studentId),
-            whoPaysId: parseInt(studentId),
-            instructorId: parseInt(instructorId),
-            eventInPerson: JSON.parse(eventInPerson),
+    if(data !== undefined) {
+      try {
+        var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
+        const res = await axios.post(
+          `http://34.227.65.157/event/create-class-no-saved-payment-method`,
+          {
+            classDto: {
+              start: start,
+              durationInHours: parseInt(durationInHours),
+              classFrequency: classFrequency,
+              courseId: parseInt(courseId),
+              studentId: parseInt(studentId),
+              whoPaysId: parseInt(studentId),
+              instructorId: parseInt(instructorId),
+              eventInPerson: JSON.parse(eventInPerson),
+            },
+            stripeResponseDTO: {
+              paymentIntentId: data?.id,
+              paymentStatus: data?.status,
+            },
           },
-          stripeResponseDTO: {
-            paymentIntentId: data?.paymentIntentId,
-            paymentStatus: data?.status,
-          },
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${typ.accessToken}`,
-          },
-        }
-      );
-    } catch (error) {
-      console.error("Error fetching profile data:", error);
+          {
+            headers: {
+              Authorization: `Bearer ${typ.accessToken}`,
+            },
+          }
+        );
+      } catch (error) {
+        console.error("Error fetching profile data:", error);
+      }
     }
   };
 
   const handleValueReceived = (value) => {
     setNameCard(value);
+    setErr('')
     // Do something with the value in the parent component
   };
   const handlePaymentRequest = (data) => {
@@ -119,8 +149,6 @@ function StudentRegistrationCCPay() {
     if (data.status === "succeeded") {
       // scheduleSaved();
       scheduleNoSaved(data);
-    } else {
-      alert("Payment Failed");
     }
     setPaymentStatus(data.status);
     setConfirmPayment(false);
@@ -129,8 +157,59 @@ function StudentRegistrationCCPay() {
     //   scheduleNoSaved();
     // }
   };
-  console.log("who payds", whoPaysId);
 
+  useEffect(()=>{
+    const getInstructorData = async () => {
+      try {
+        var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
+
+        const response = await axios.get(
+          `http://34.227.65.157/instructor/details-for-scheduling?instructorId=${instructorId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${typ.accessToken}`,
+            },
+          }
+        );
+        setInstructorData(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    if (instructorId) getInstructorData();
+    const checkIfUserHasSavedUserCard = async () =>{
+      try{
+        const res = await apiClient('/stripe/has-saved-payment-method')
+        setHasSavedCC(res.data)
+      }catch(err){
+        console.log(err)
+      }
+    }
+    checkIfUserHasSavedUserCard()
+  },[instructorId])
+
+  useEffect(()=>{
+    const getTaxesFees = async () =>{
+      try {
+        const res = await apiClient('/event/get-platform-fees')
+        setTaxesFeesInfo(res.data)
+      } catch (err) {
+        console.log(err)
+      }
+    }
+    getTaxesFees()
+  },[])
+  useEffect(()=>{
+    const getCCdetails = async () =>{
+      try {
+        const res = await apiClient('/stripe/get-logged-user-card-details')
+        setLoggedUserCCinfo(res.data)
+      } catch (err) {
+        console.log(err)
+      }
+    }
+    getCCdetails()
+  },[])
   return (
     <>
       <Head>
@@ -158,12 +237,20 @@ function StudentRegistrationCCPay() {
 
                 <div className="py-2">
                   <div className="d-flex gap-3 py-1">
+                    <p className="p-0 m-0 fw-bold">Hourly Rate:</p>
+                    <p className="p-0 m-0 fw-bold">{formatNumberWithTwoDecimals(instructorData?.hourlyRate )?? 'Calculating..'} USD/hr</p>
+                  </div>
+                  <div className="d-flex gap-3 py-1">
                     <p className="p-0 m-0 fw-bold">No. of Hours:</p>
-                    <p className="p-0 m-0 fw-bold">{durationInHours}</p>
+                    <p className="p-0 m-0 fw-bold">{durationInHours ?? 'Calculating..'} Hrs</p>
+                  </div>
+                  <div className="d-flex gap-3 py-1">
+                    <p className="p-0 m-0 fw-bold">Booking fee:</p>
+                    <p className="p-0 m-0 fw-bold">{formatNumberWithTwoDecimals((instructorData?.hourlyRate * durationInHours)*(taxesFeesInfo?.feePercentage/100) + taxesFeesInfo?.additionalFeeAmount)  ?? 'Calculating..'} USD</p>
                   </div>
                   <div className="d-flex gap-3 py-1">
                     <p className="p-0 m-0 fw-bold">Total Due:</p>
-                    <p className="p-0 m-0 fw-bold">{durationInHours}</p>
+                    <p className="p-0 m-0 fw-bold">{formatNumberWithTwoDecimals((instructorData?.hourlyRate * durationInHours) + (instructorData?.hourlyRate * durationInHours)*(taxesFeesInfo?.feePercentage/100) + taxesFeesInfo?.additionalFeeAmount)  ?? 'Calculating..'} USD</p>
                   </div>
                 </div>
                 <h5 className="text-dark fw-bold">
@@ -175,16 +262,17 @@ function StudentRegistrationCCPay() {
                     className="w-25 p-2 rounded outline-0 border border_gray  mb-3 "
                     value={whoPaysId}
                     onChange={(e) => setWhoPaysId(e.target.value)}
+                    disabled={savedCCSelected}
                   >
                     <option>Select</option>
                     {userInfo?.parents?.length > 0 && (
                       <option value={userInfo?.parents[0]?.id}>
-                        {userInfo?.parents[0]?.email}
+                        {userInfo?.parents[0]?.firstName + ' ' + userInfo?.parents[0]?.lastName}
                       </option>
                     )}
                     {userInfo?.parents?.length > 1 && (
                       <option value={userInfo?.parents[1]?.email}>
-                        {userInfo?.parents[1]?.email}
+                        {userInfo?.parents[1]?.firstName + ' ' + userInfo?.parents[1]?.lastName}
                       </option>
                     )}
                   </select>
@@ -193,22 +281,29 @@ function StudentRegistrationCCPay() {
                 <h5 className="text-dark fw-bold">Use saved Credit Card?</h5>
 
                 <div className="py-2">
-                  <select className="w-25 p-2 rounded outline-0 border border_gray  mb-3 ">
-                    <option>Select</option>
-                    <option>Option 1</option>
-                    <option>Option 2</option>
+                  <select className="w-25 p-2 rounded outline-0 border border_gray  mb-3 "
+                  disabled={whoPaysId !== 'Select' || !hasSavedCC}
+                  onChange={()=>{setSavedCCSelected(!savedCCSelected)}}
+                  >
+                    <option>{hasSavedCC ? 'Select' : 'No saved CC info'}</option>
+                    {
+                      hasSavedCC && <option>...{loggedUserCCinfo?.last4Digits ?? 'Error'}</option>
+                    }
+                    
                   </select>
                 </div>
+
                 <PaymentForm
-                  title="Enter new credit card information"
+                  title="Enter credit card information"
                   onValueReceived={handleValueReceived}
                   onPay={confirmPayment}
                   userInfo={userInfo}
-                  data={{ instructorId, durationInHours, whoPaysId }}
+                  data={{ instructorId, durationInHours, whoPaysId: parseInt(studentId) }}
                   onPaymentRequest={handlePaymentRequest}
                   oneTimePayment={true}
                   savePaymentFutureUse={savePaymentFutureUse}
-                  setIsCardValid={setIsCardValid}
+                  disabled={whoPaysId !== "Select" || savedCCSelected}
+                  setCardFormValid={setIsCardValid}
                 />
                 <div className="form-check">
                   <input
@@ -217,31 +312,38 @@ function StudentRegistrationCCPay() {
                     value={savePaymentFutureUse}
                     onChange={(e) => setSavePaymentFutureUse(e.target.checked)}
                     id="flexCheckDefault"
+                    disabled={whoPaysId !== 'Select' || savedCCSelected}
                   />
                   <label className="form-check-label" for="flexCheckDefault">
                     Save the payment information for future use
                   </label>
                 </div>
+                <b>{err}</b>
                 <div className="d-flex gap-2 justify-content-center mt-3">
                   <button
-                    className={`w-50 btn_primary text-light p-2 rounded fw-bold bg-gray-300 ${
-                      whoPaysId === "Select"
-                        ? "btn_disabled"
-                        : !nameCard || !isCardValid
-                        ? "btn_disabled"
-                        : "btn_primary"
-                    }`}
-                    // disabled={
-                    //   whoPaysId === "Select"
-                    //     ? true
-                    //     : !nameCard || !isCardValid
-                    //     ? true
-                    //     : false
-                    // }
+                    className={`w-50 btn_primary text-light p-2 rounded fw-bold bg-gray-300 btn_primary`}
                     onClick={() => {
-                      whoPaysId === "Select"
-                        ? setConfirmPayment(true)
-                        : sendEmailToWhoPays();
+                      if(whoPaysId !== 'Select'){
+                        console.log('parents')
+                        sendEmailToWhoPays()
+                      } else{
+                        if(savedCCSelected){
+                          console.log('saved cc')
+                          scheduleSaved()
+                        }else{
+                          if(isCardValid) {
+                              console.log('do save valid unsaved cc')
+                              setConfirmPayment(true)
+                              scheduleNoSaved()
+                          }else{
+                            console.log('unvalid unsaved cc')
+                            setErr('Unfortunately your signed data mismatched, please try again or contact us.')
+                          }
+                        }
+                      }
+                      // whoPaysId === "Select"
+                      //   ? setConfirmPayment(true)
+                      //   : sendEmailToWhoPays();
                     }}
                   >
                     Pay

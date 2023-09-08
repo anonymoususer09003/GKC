@@ -135,7 +135,7 @@ function ParentLandingPage() {
               className="p-2 rounded outline-0 border border_gray"
               onChange={(e) => setSkill(e.target.value)}
             >
-              <option value="">Skills Level</option>
+              <option value="">Proficiency</option>
               {proficiency.map((prof) => {
                 return (
                   <option value={prof.value} key={prof.value}>
@@ -149,7 +149,7 @@ function ParentLandingPage() {
               className="p-2 rounded outline-0 border border_gray"
               onChange={(e) => setAgeGroup(e.target.value)}
             >
-              <option value="">Age Group</option>
+              <option value="">Grade</option>
               <option value="1">Elementary &#40;&#60;10yrs&#41;</option>
               <option value="2">
                 Middle School &#40;&#60;10yrs - 13yrs&#41;

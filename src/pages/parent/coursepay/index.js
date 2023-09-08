@@ -7,6 +7,7 @@ import { withRole } from "../../../utils/withAuthorization";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUser } from "@/store/actions/userActions";
+import { apiClient } from "@/api/client";
 import moment from "moment";
 
 function StudentRegistrationCCPay() {
@@ -23,18 +24,40 @@ function StudentRegistrationCCPay() {
     eventInPerson,
   } = navigation.query;
 
-  const [whoPaysId, setWhoPaysId] = useState(studentId);
+  const [whoPaysId, setWhoPaysId] = useState(null);
   const [savePaymentFutureUse, setSavePaymentFutureUse] = useState(false);
   const [confirmPayment, setConfirmPayment] = useState(false);
   const [isCardValid, setIsCardValid] = useState(false);
   const userInfo = useSelector((state) => state?.user?.userInfo);
+  const [instructorData, setInstructorData] = useState(null)
+  const [hasSavedCC, setHasSavedCC] = useState(false);
+  const [taxesFeesInfo, setTaxesFeesInfo] = useState(null)
+  const [loggedUserCCinfo, setLoggedUserCCinfo] = useState(null)
   const [paymentStatus, setPaymentStatus] = useState("");
+  const [savedCCSelected, setSavedCCSelected] = useState(false)
+  const [err, setErr] = useState('')
 
   const [nameCard, setNameCard] = useState("");
 
   useEffect(() => {
     dispatch(fetchUser());
+
+    const userLoggedData = async () =>{
+      try{
+        const res = await apiClient('/user/logged-user-details')
+        setWhoPaysId(res.data.id)
+      }
+      catch(err) {
+        console.log('logged user err', err)
+      }
+    }
+    userLoggedData()
   }, [dispatch]);
+
+  function formatNumberWithTwoDecimals(number) {
+   
+    return number?.toFixed(2);
+  }
 
   const scheduleSaved = async () => {
     try {
@@ -48,7 +71,7 @@ function StudentRegistrationCCPay() {
           classFrequency: classFrequency,
           courseId: courseId,
           studentId: studentId,
-          whoPaysId: studentId,
+          whoPaysId: parseInt(studentId),
           instructorId: instructorId,
           eventInPerson: eventInPerson,
         },
@@ -58,8 +81,40 @@ function StudentRegistrationCCPay() {
           },
         }
       );
+      console.log(res)
     } catch (error) {
       console.error("Error fetching profile data:", error);
+    }
+  };
+
+  const sendEmailToWhoPays = async () => {
+
+    try {
+      const ress = await apiClient.get(`user/details/?userEmail=${whoPaysId}`)
+      const res = await SendEmailToParents({
+        start: start,
+        durationInHours: parseInt(durationInHours),
+        classFrequency: classFrequency,
+        courseId: parseInt(courseId),
+        studentId: parseInt(studentId),
+        whoPaysId: ress.data.userId,
+        instructorId: parseInt(instructorId),
+        eventInPerson: JSON.parse(eventInPerson)
+      });
+    } catch (error) {
+      console.error("Error fetching profile data:", error);
+    }
+    finally{
+      try{
+        const responce = await apiClient.post('/stripe/one-time-payment-intent',{
+          instructorId: instructorId,
+          durationInHours: durationInHours
+        })
+        console.log(responce)
+      } catch(err){
+        setErr('You have signed wrong data.')
+        cosnsole.log(err)
+      }
     }
   };
 
@@ -100,17 +155,15 @@ function StudentRegistrationCCPay() {
   };
 
   const handleValueReceived = (value) => {
+    setErr('')
     setNameCard(value);
     // Do something with the value in the parent component
   };
   const handlePaymentRequest = (data) => {
+    console.log("data", data);
     if (data.status === "succeeded") {
       // scheduleSaved();
-      let payload = { ...data };
-      payload.status = "Succeeded";
-      scheduleNoSaved(payload);
-    } else {
-      alert("Payment Failed");
+      scheduleNoSaved(data);
     }
     setPaymentStatus(data.status);
     setConfirmPayment(false);
@@ -120,6 +173,58 @@ function StudentRegistrationCCPay() {
     // }
   };
 
+  useEffect(()=>{
+    const getInstructorData = async () => {
+      try {
+        var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
+
+        const response = await axios.get(
+          `http://34.227.65.157/instructor/details-for-scheduling?instructorId=${instructorId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${typ.accessToken}`,
+            },
+          }
+        );
+        setInstructorData(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    if (instructorId) getInstructorData();
+    const checkIfUserHasSavedUserCard = async () =>{
+      try{
+        const res = await apiClient('/stripe/has-saved-payment-method')
+        setHasSavedCC(res.data)
+      }catch(err){
+        console.log(err)
+      }
+    }
+    checkIfUserHasSavedUserCard()
+  },[instructorId])
+
+  useEffect(()=>{
+    const getTaxesFees = async () =>{
+      try {
+        const res = await apiClient('/event/get-platform-fees')
+        setTaxesFeesInfo(res.data)
+      } catch (err) {
+        console.log(err)
+      }
+    }
+    getTaxesFees()
+  },[])
+  useEffect(()=>{
+    const getCCdetails = async () =>{
+      try {
+        const res = await apiClient('/stripe/get-logged-user-card-details')
+        setLoggedUserCCinfo(res.data)
+      } catch (err) {
+        console.log(err)
+      }
+    }
+    getCCdetails()
+  },[])
   return (
     <>
       <Head>
@@ -147,40 +252,48 @@ function StudentRegistrationCCPay() {
 
                 <div className="py-2">
                   <div className="d-flex gap-3 py-1">
+                    <p className="p-0 m-0 fw-bold">Hourly Rate:</p>
+                    <p className="p-0 m-0 fw-bold">{formatNumberWithTwoDecimals(instructorData?.hourlyRate )?? 'Calculating..'} USD/hr</p>
+                  </div>
+                  <div className="d-flex gap-3 py-1">
                     <p className="p-0 m-0 fw-bold">No. of Hours:</p>
-                    <p className="p-0 m-0 fw-bold">{durationInHours}</p>
+                    <p className="p-0 m-0 fw-bold">{durationInHours ?? 'Calculating..'} Hrs</p>
+                  </div>
+                  <div className="d-flex gap-3 py-1">
+                    <p className="p-0 m-0 fw-bold">Booking fee:</p>
+                    <p className="p-0 m-0 fw-bold">{formatNumberWithTwoDecimals((instructorData?.hourlyRate * durationInHours)*(taxesFeesInfo?.feePercentage/100) + taxesFeesInfo?.additionalFeeAmount)  ?? 'Calculating..'} USD</p>
                   </div>
                   <div className="d-flex gap-3 py-1">
                     <p className="p-0 m-0 fw-bold">Total Due:</p>
-                    <p className="p-0 m-0 fw-bold">{durationInHours}</p>
+                    <p className="p-0 m-0 fw-bold">{formatNumberWithTwoDecimals((instructorData?.hourlyRate * durationInHours) + (instructorData?.hourlyRate * durationInHours)*(taxesFeesInfo?.feePercentage/100) + taxesFeesInfo?.additionalFeeAmount)  ?? 'Calculating..'} USD</p>
                   </div>
                 </div>
 
                 <h5 className="text-dark fw-bold">Use saved Credit Card?</h5>
 
                 <div className="py-2">
-                  <select className="w-25 p-2 rounded outline-0 border border_gray  mb-3 ">
-                    <option>Select</option>
-                    <option>Option 1</option>
-                    <option>Option 2</option>
+                <select className="w-25 p-2 rounded outline-0 border border_gray  mb-3 "
+                  disabled={!hasSavedCC}
+                  onChange={()=>{setSavedCCSelected(!savedCCSelected)}}
+                  >
+                    <option>{hasSavedCC ? 'Select' : 'No saved CC info'}</option>
+                    {
+                      hasSavedCC && <option>...{loggedUserCCinfo?.last4Digits ?? 'Error'}</option>
+                    }
+                    
                   </select>
                 </div>
                 <PaymentForm
-                  title="Enter new credit card information"
+                  title="Enter credit card information"
                   onValueReceived={handleValueReceived}
                   onPay={confirmPayment}
                   userInfo={userInfo}
-                  data={{
-                    instructorId: parseInt(instructorId),
-                    durationInHours: parseInt(
-                      durationInHours == 0 ? 1 : durationInHours
-                    ),
-                    whoPaysId,
-                  }}
+                  data={{ instructorId, durationInHours, whoPaysId: parseInt(studentId) }}
                   onPaymentRequest={handlePaymentRequest}
                   oneTimePayment={true}
                   savePaymentFutureUse={savePaymentFutureUse}
-                  setIsCardValid={setIsCardValid}
+                  disabled={savedCCSelected}
+                  setCardFormValid={setIsCardValid}
                 />
                 <div className="form-check">
                   <input
@@ -189,19 +302,34 @@ function StudentRegistrationCCPay() {
                     value={savePaymentFutureUse}
                     onChange={(e) => setSavePaymentFutureUse(e.target.checked)}
                     id="flexCheckDefault"
+                    disabled={savedCCSelected}
                   />
                   <label className="form-check-label" for="flexCheckDefault">
                     Save the payment information for future use
                   </label>
                 </div>
-                {console.log("iscard vlid", isCardValid)}
+                <b>{err}</b>
                 <div className="d-flex gap-2 justify-content-center mt-3">
                   <button
-                    className={`w-50 btn_primary text-light p-2 rounded fw-bold bg-gray-300 ${
-                      !nameCard || !isCardValid ? "btn_disabled" : "btn_primary"
-                    }`}
-                    disabled={!nameCard || !isCardValid}
-                    onClick={() => setConfirmPayment(true)}
+                    className={`w-50 btn_primary text-light p-2 rounded fw-bold bg-gray-300 btn_primary`}
+                    onClick={() => {
+
+                        if(savedCCSelected){
+                          console.log('saved cc')
+                          scheduleSaved()
+                        }else{
+                          if(isCardValid) {
+                              console.log('valid unsaved cc')
+                              setConfirmPayment(true)
+                          }else{
+                            console.log('unvalid unsaved cc')
+                            setErr('Unfortunately your signed data mismatched, please try again or contact us.')
+                          }
+                        }
+                      // whoPaysId === "Select"
+                      //   ? setConfirmPayment(true)
+                      //   : sendEmailToWhoPays();
+                    }}
                   >
                     Pay
                   </button>

@@ -16,6 +16,7 @@ import { useDispatch } from "react-redux";
 function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
   const router = useRouter();
   const { instructorId } = router.query;
+  const status = router.isReady;
 
   console.log("router query", router.query);
   const [instructorCourses, setInstructorCourses] = useState([]);
@@ -33,39 +34,42 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
   const [selectedSlots, setSelectedSlots] = useState([]);
   const [time, setTime] = useState();
   const [duration, setDuration] = useState(0);
+  const [err, setErr] = useState('')
 
   const dispatch = useDispatch();
 
   useEffect(() => {
-    fetchUser();
-    const fetchUnavailableDates = async () => {
-      const disabledDates = []
-      try{
-        const responce = await apiClient(`/instructor/unavailable-days-in-UTC-TimeZone?instructorId=${instructorId}`) //hardcoded
-        console.log(responce.data)
-        responce.data.forEach((el)=>{
-          disabledDates.push(new Date(el.end))
-        })
-      console.log(disabledDates)
-      setUnavailableDates(disabledDates)
-      }catch (err) {
-        console.log(err)
+    if(status){
+      fetchUser();
+      const fetchUnavailableDates = async () => {
+        const disabledDates = []
+        try{
+          const responce = await apiClient(`/instructor/unavailable-days-in-UTC-TimeZone?instructorId=${instructorId}`) //hardcoded
+          console.log(responce.data)
+          responce.data.forEach((el)=>{
+            disabledDates.push(new Date(el.end))
+          })
+        console.log(disabledDates)
+        setUnavailableDates(disabledDates)
+        }catch (err) {
+          console.log(err)
+        }
+  
+  
       }
-
-
-    }
-    fetchUnavailableDates()
-    const fetchInstructorData = async () => {
-      try{
-        const responce = await apiClient(`/instructor/details-for-scheduling?instructorId=${instructorId}`) //hardcoded
-        console.log(responce.data)
-        setSelectedInstructor(responce.data)
-      }catch (err) {
-        console.log(err)
+      fetchUnavailableDates()
+      const fetchInstructorData = async () => {
+        try{
+          const responce = await apiClient(`/instructor/details-for-scheduling?instructorId=${instructorId}`) //hardcoded
+          console.log(responce.data)
+          setSelectedInstructor(responce.data)
+        }catch (err) {
+          console.log(err)
+        }
       }
+      fetchInstructorData()
     }
-    fetchInstructorData()
-  }, []);
+  }, [instructorId]);
 
   //Get Courses
   const getCourses = async () => {
@@ -118,7 +122,7 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
     const getUnavailableDate = async () => {
       try {
         const response = await apiClient.get(
-          `/instructor/unavailable-days-in-UTC-TimeZone?instructorId=22`
+          `/instructor/unavailable-days-in-UTC-TimeZone?instructorId=${instructorId}`
         );
 
         console.log(response.data);
@@ -131,7 +135,7 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
     };
 
     getUnavailableDate();
-  }, []);
+  }, [instructorId]);
 
   const isDateUnavailable = (date) => {
     return unavailableDates.some((unavailableDate) => {
@@ -139,10 +143,6 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
       const endDate = new Date(unavailableDate.end);
       return date >= startDate && date <= endDate;
     });
-  };
-
-  const tileDisabled = ({ date }) => {
-    return isDateUnavailable(date);
   };
 
   //apply styles for unavailableDate
@@ -161,10 +161,6 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
   const handleModeChange = (event) => {
     setSelectedMode(event.target.value);
   };
-  //Get course duration
-  const handleDuration = (e) => {
-    setCourseDuration(e.target.value);
-  };
 
   const handleCourseId = (event) => {
     setCourseId(event.target.value);
@@ -178,33 +174,50 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
     const hours = String(dateObj.getHours()).padStart(2, "0");
     const minutes = String(dateObj.getMinutes()).padStart(2, "0");
     const formattedDateStr = `${year}-${month}-${day}`;
+    setDuration(0)
 
     setSelectedDate(formattedDateStr);
-
+    console.log(formattedDateStr)
     try {
       const response = await apiClient.get(
-        `/instructor/available-time-slots-from-date?instructorId=22&date=${formattedDateStr}`
+        `/instructor/available-time-slots-from-date?instructorId=${instructorId}&date=${formattedDateStr}`
       );
-
+      
       const timeSlots = response.data.map((slot) => ({
         start: new Date(slot.start),
         end: new Date(slot.end),
       }));
+      console.log(timeSlots)
+      const isOnHalfHour = (date) => date.getMinutes() === 0 || date.getMinutes() === 30;
 
-      const isOnTheHour = (date) => date.getMinutes() === 0;
 
-      // Create one-hour intervals for each time slot
+
+      // Create half-hour intervals for each time slot
       const formattedTimeSlots = [];
       timeSlots.forEach((slot) => {
-        if (isOnTheHour(slot.start)) {
+        if (isOnHalfHour(slot.start)) {
+          const start = new Date(slot.start);
+          start.setSeconds(0); // Set seconds to 0
+          start.setMilliseconds(0); // Set milliseconds to 0
+
+          const end = new Date(slot.start.getTime() + 30 * 60 * 1000);
+          end.setSeconds(0); // Set seconds to 0
+          end.setMilliseconds(0); // Set milliseconds to 0
+
           formattedTimeSlots.push({
-            start: new Date(slot.start),
-            end: new Date(slot.start.getTime() + 60 * 60 * 1000),
+            start,
+            end,
           });
         }
       });
 
       setAvailableTime(formattedTimeSlots);
+      if(formattedTimeSlots.length>0){
+        setErr('')
+      } else{
+        setErr('Tutor unavailable')
+      }
+      
       console.log(formattedTimeSlots, "formatted time slots");
     } catch (error) {
       console.log(error);
@@ -256,17 +269,17 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
   };
 
   const handleContinue = () => {
+
     const data = {
       start: time,
       durationInHours: duration,
       classFrequency: classFrequency,
-      courseId: courseId,
+      courseId: instructorCourses.find(el => el.label === courseId).value,
       studentId: userInfo.id,
       instructorId: instructorId,
-      eventInPerson: selectedMode == "In-Person" ? true : false,
+      eventInPerson: selectedMode == "In-Person" ? true : false
     };
-
-    console.log("class frequency", classFrequency);
+    console.log("class frequency", data);
     router.push({
       pathname: "/student/coursepay",
       query: data,
@@ -303,10 +316,11 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
               onChange={handleDateChange}
               tileClassName={tileClassName}
               // tileDisabled={tileDisabled}
-              tileDisabled={unavailableDates.length >1 ? ({date, view})=> view === 'month' && unavailableDates.some(disabledDate =>
-                date.getFullYear() === disabledDate.getFullYear() &&
-                date.getMonth() === disabledDate.getMonth() &&
-                date.getDate() === disabledDate.getDate()
+              tileDisabled={unavailableDates.length >1 ? ({date, view})=> view === 'month' && 
+              unavailableDates.some(disabledDate =>
+                new Date(date).getFullYear() === new Date(disabledDate).getFullYear() &&
+                new Date(date).getMonth() === new Date(disabledDate).getMonth() &&
+                new Date(date).getDate() === new Date(disabledDate).getDate()
                 ) : () => false}
             />
           </div>
@@ -318,9 +332,9 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
                 style={{ minHeight: "400px" }}
               >
                 <div className="w-100 ">
-                  <p className="p-0 m-0 fw-bold pb-2">Select time</p>
-                  <ul>
-                    {availableTime.map((slot, index) => (
+                  <p className="p-0 m-0 fw-bold pb-2">{ duration > 0 ? <>You selected {duration} hours</> : <>Select time</>}</p>
+                  <p>{err}</p>
+                    {availableTime && availableTime.map((slot, index) => (
                       <li
                         key={index}
                         className={`m-03 py-1 fw-bold list-unstyled ${
@@ -335,10 +349,9 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
                         }`}
                         onClick={() => handleSlotClick(slot)}
                       >
-                        {`${slot.start.toLocaleTimeString()} - ${slot.end.toLocaleTimeString()}`}
+                        {`${slot.start.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })} - ${slot.end.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}`}
                       </li>
                     ))}
-                  </ul>
                 </div>
                 <div className=" w-100">
                   <p className="p-0 m-0 fw-bold text-center py-2">
@@ -420,14 +433,14 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
 
                     <select
                       className="w-25 p-2 rounded outline-0 border border_gray"
-                      onChange={handleCourseId}
+                      onChange={(event)=>{handleCourseId(event)}}
                       value={courseId}
                     >
                       <option>Select</option>
-                      {instructorCourses.map((course) => {
+                      {selectedInstructor && selectedInstructor?.coursesToTutorAndProficiencies.map((course) => {
                         return (
-                          <option key={course.label} value={course.value}>
-                            {course.label}
+                          <option key={course.course.id} value={course.course.name}>
+                            {course.course.name}
                           </option>
                         );
                       })}
@@ -452,18 +465,22 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
                     <h6 className="text-dark fw-bold m-0 p-0">Hourly Rate:</h6>
 
                     <h6 className="text-dark fw-bold m-0 p-0">
-                      {instructorData?.hourlyRate}
+                      {instructorData?.hourlyRate} USD/hr
                     </h6>
                   </div>
 
                   <div className="py-2 d-flex align-items-start gap-4">
                     <h6 className="text-dark fw-bold m-0 p-0">Grade:</h6>
                     <div>
-                      <h6 className="text-dark fw-bold m-0 p-0"></h6>
-
-                      <h6 className="text-dark fw-bold m-0 p-0">
-                        &#40;12yrs - 14yrs&#41;
-                      </h6>
+                      {
+                        instructorData && instructorData?.gradesToTutor.map((el)=>{
+                          return <>
+                          <h6 key={el.id}  className="text-dark fw-bold m-0 p-0">
+                            {el.description}
+                          </h6>   
+                          </>
+                        })
+                      }
                     </div>
                   </div>
                 </div>

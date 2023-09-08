@@ -11,13 +11,17 @@ const Tutorcard = ({ data }) => {
   const navigation = useRouter();
   const [userData, setUserData] = useState(null);
   const [reviews, setReviews] = useState([]);
-  console.log(userData);
+  console.log(data);
   const [showModal, setShowModal] = useState(false);
   const [showModal2, setShowModal2] = useState(false);
 
-  const handleOpenModal = () => {
-    setShowModal(true);
-  };
+  const handleOpenModal = (ifClass) => {
+    if(ifClass){
+      navigation.push(`/parent/scheduleclass/${data.id}`)
+    } else{
+      navigation.push(`/parent/requestinterview/${data.id}`)
+    }
+ };
 
   const handleCloseModal = () => {
     setShowModal(false);
@@ -103,14 +107,14 @@ const Tutorcard = ({ data }) => {
             <button
               className={`btn_primary py-2 px-5 fw-bold text-white rounded`}
               type="submit"
-              onClick={handleOpenModal}
+              onClick={()=>{handleOpenModal(true)}}
             >
               Select
             </button>
             <button
               className={`btn_primary py-2 px-5 fw-bold text-white rounded`}
               type="submit"
-              onClick={handleOpenModal}
+              onClick={()=>{handleOpenModal(false)}}
             >
               Request Interview
             </button>
