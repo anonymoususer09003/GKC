@@ -19,6 +19,7 @@ function EditCalandar({ userInfo, loading, error, fetchUser }) {
   const [selectedDate, setSelectedDate] = useState();
   const router = useRouter();
   const formRef = useRef(null)
+  const [userId, setUserId] = useState(userInfo?.id ?? null)
   const [available, setAvailable] = useState(true)
   const [filledData, setFilledData] = useState(false);
   const [selectedDays, setSelectedDays] = useState('');
@@ -28,15 +29,13 @@ function EditCalandar({ userInfo, loading, error, fetchUser }) {
   // const [dates, setDates] = useState([])
   const [weekDays, setWeekDays] = useState([])// {available, startTime, endTime, dayOfTheWeek}
   const [ifChoseAnotherWeek, setIfChoseAnotherWeek] = useState(false)
+  const [ifChoseAnotherWeek1, setIfChoseAnotherWeek1] = useState(false)
   const [undo, setUndo] = useState(true)
   const weekDay = [];
-  let dates = []
   const disabledDates = []
-  let times = ['00:00', '00:30', '01:00', '01:30', '02:00', '02:30', '03:00', '03:30',  
-  '04:00', '04:30', '05:00', '05:30', '06:00', '06:30', '07:00', '07:30',  '08:00', '08:30', 
-  '09:00', '09:30', '10:00', '10:30', '11:00', '11:30',  '12:00', '12:30', '13:00', '13:30', 
-  '14:00', '14:30', '15:00', '15:30',  '16:00', '16:30', '17:00', '17:30', '18:00', '18:30', 
-  '19:00', '19:30',  '20:00', '20:30', '21:00', '21:30', '22:00', '22:30', '23:00', '23:30']
+  let times = ['00:00', '01:00',  '02:00',  '03:00',   
+  '04:00',  '05:00',  '06:00',  '07:00',   '08:00',  '09:00',  '10:00',  '11:00',   '12:00',  '13:00',  
+  '14:00',  '15:00',   '16:00',  '17:00',  '18:00',  '19:00',   '20:00',  '21:00',  '22:00',  '23:00']
 
   function findOccurrencesVevent(arr, target) {
     const occurrences = [];
@@ -110,37 +109,13 @@ function EditCalandar({ userInfo, loading, error, fetchUser }) {
     return latestDtEnd ? latestDtEnd.toISOString() : null;
   }
 
-  function findOccurrencesAvailability(arr, target) {
-    let latestDtEnd = null;
-  
-    function search(arr) {
-      for (const item of arr) {
-        if (Array.isArray(item) && item.length >= 2) {
-          const [key, , type, value] = item;
-          if (key === target && type === 'text') {
-            const dtEnd = new Date(value);
-            if (!latestDtEnd || dtEnd > latestDtEnd) {
-              latestDtEnd = dtEnd;
-            }
-          }
-        }
-        if (Array.isArray(item)) {
-          search(item);
-        }
-      }
-    }
-  
-    search(arr);
-  
-    return latestDtEnd;
-  }
 
   function getTimeSlotFromtDateStr(dateStr) {
     const utcDate = new Date(dateStr);
 
   // Replace 'en-US' and 'Europe/Kiev' with your desired locale and timezone
     const formattedTime = new Intl.DateTimeFormat('en-US', {
-      timeZone: userInfo.timeZoneId, 
+      timeZone:  "Asia/Tbilisi", 
       hour: '2-digit',
       minute: '2-digit',
       hour12: false,
@@ -150,25 +125,54 @@ function EditCalandar({ userInfo, loading, error, fetchUser }) {
   }
 
   function getWeekdayFromDate(dateString) {
-    // Create a Date object from the input string
+    // Create a Date object from the input string (parsed in local time)
     const date = new Date(dateString);
   
+    // Define the time zone for "Asia/Tbilisi"
+    const timeZone = 'Asia/Tbilisi';
+  
+    // Get the offset in minutes between the local time zone and "Asia/Tbilisi"
+    const timeZoneOffset = date.getTimezoneOffset() / 60;
+  
+    // Calculate the UTC time by subtracting the time zone offset
+    const utcTime = new Date(date.getTime() - timeZoneOffset * 60 * 60 * 1000);
+  
+    // Create a new Date object in the "Asia/Tbilisi" time zone
+    const tbilisiDate = new Date(utcTime.toLocaleString('en-US', { timeZone }));
+  
     // Define an array of weekday names
-    const weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday', ];
+    const weekdays = ['Sunday','Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
   
     // Get the numeric day of the week (0 = Sunday, 1 = Monday, etc.)
-    const dayOfWeek = date.getDay();
+    const dayOfWeek = tbilisiDate.getDay();
   
     // Use the day of the week to index into the weekdays array
     return weekdays[dayOfWeek];
   }
-
+  
   function getObjectByWeekDay(inputArray, targetWeekDay) {
     // Find the object with the target weekDay
     const targetObject = inputArray.find(item => item?.dayOfTheWeek === targetWeekDay);
-    return targetObject || null; // Return the object or null if not found
+    return targetObject || null;// Return the object or null if not found
   }
 
+  function getAverageDateAndWeekday(date1Str, date2Str) {
+    // Parse the input date strings into Date objects
+    const date1 = new Date(date1Str);
+    const date2 = new Date(date2Str);
+  
+    // Calculate the average time in milliseconds
+    const averageTime = (date1.getTime() + date2.getTime()) / 2;
+  
+    // Create a new Date object for the average time
+    const averageDate = new Date(averageTime);
+  
+    // Get the name of the weekday
+    const weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+    const weekdayName = weekdays[averageDate.getUTCDay()];
+  
+    return weekdayName.toLowerCase(); // Return the lowercase weekday name
+  }
   //calendar
   const handleDateChange = (clickedDate) => {
     console.log(clickedDate)
@@ -190,7 +194,6 @@ function EditCalandar({ userInfo, loading, error, fetchUser }) {
   //days click
 
   const handleDayClick = (day) => {
-    console.log(day)
     setSelectedDays(day)
  /*   setSelectedDays((prevSelectedDays) => {
       if (prevSelectedDays.includes(day)) {
@@ -231,7 +234,7 @@ function EditCalandar({ userInfo, loading, error, fetchUser }) {
     setEndTime(timeslot);
     setWeekDays(weekDay)
     setAvailable(true)
-    setIfChoseAnotherWeek(true)
+    setIfChoseAnotherWeek1(true)
     setFilledData(true)
   }
 
@@ -307,12 +310,13 @@ function EditCalandar({ userInfo, loading, error, fetchUser }) {
  const iCalendar = async () => {
  
     try{
-      const responce = await apiClient.get(`/instructor/schedule-iCal?instructorId=${userInfo.id}`)
+      const responce = await apiClient.get(`/instructor/schedule-iCal?instructorId=${userId}`)
       console.log(responce.data)
       // console.log(res)
       const jcalData = ical.parse(responce.data);
       const comp = new ical.Component(jcalData);
       console.log(comp.jCal[2])
+
 
       const veventArray = findOccurrencesVevent(comp.jCal[2], "vevent")
       console.log(veventArray)
@@ -323,21 +327,25 @@ function EditCalandar({ userInfo, loading, error, fetchUser }) {
           const dateStr2 = findOccurrencesTimeslots(el, 'dtend')
           const dayOfWeek1 = getWeekdayFromDate(dateStr1)
           const dayOfWeek2 = getWeekdayFromDate(dateStr2)
-  
-         weekDay.push({
-            available: availability,
-            startTime: getTimeSlotFromtDateStr(dateStr1),
-            endTime: getTimeSlotFromtDateStr(dateStr2),
-            dayOfTheWeek: dayOfWeek1.toLowerCase()
-          })
+
+
+            weekDay.push({
+              available: availability,
+              startTime: getTimeSlotFromtDateStr(dateStr1),
+              endTime: getTimeSlotFromtDateStr(dateStr2),
+              dayOfTheWeek: dayOfWeek1.toLowerCase()
+            })
+
           
           // console.log(dayOfWeek1, dayOfWeek2)
           // console.log(availability + getTimeSlotFromtDateStr(dateStr1) + ` and ` + getTimeSlotFromtDateStr(dateStr2))
           // setWeekDays([...weekdays, {}])
         })
-        const goodweekdays = updateRepetitiveWeekDays(weekDay)
-        console.log(goodweekdays)
-        setWeekDays(goodweekdays)
+        // const goodweekdays = updateRepetitiveWeekDays(weekDay)
+        
+        console.log(weekDay)
+        setWeekDays(weekDay)
+
       }else {
         const res = await axios.get('/timeavailability_placeholder.json')
         res.data.forEach((el)=>{
@@ -377,6 +385,7 @@ function EditCalandar({ userInfo, loading, error, fetchUser }) {
   useEffect(() => {
     fetchUser();
     iCalendar();
+    console.log(fetchUser(), 'useeeer')
   }, [fetchUser]);
 
 
@@ -452,17 +461,17 @@ function EditCalandar({ userInfo, loading, error, fetchUser }) {
                   schedule
                 </p>
                 <ul className="w-100" style={{display: "flex", justifyContent: "space-between", listStyle: "none"}}>
-                    <li onClick={() => {handleDayClick('MONDAY') ; setIfChoseAnotherWeek(false)}} style={{ background: selectedDays.includes('MONDAY') ? 'gray' : 'none', color: selectedDays.includes('MONDAY') ? 'white' : 'black' }}>Mon</li>
-                    <li onClick={() => {handleDayClick('TUESDAY') ; setIfChoseAnotherWeek(false)}} style={{ background: selectedDays.includes('TUESDAY') ? 'gray' : 'none', color: selectedDays.includes('TUESDAY') ? 'white' : 'black' }}>Tue</li>
-                    <li onClick={() => {handleDayClick('WEDNESDAY') ; setIfChoseAnotherWeek(false)}} style={{ background: selectedDays.includes('WEDNESDAY') ? 'gray' : 'none', color: selectedDays.includes('WEDNESDAY') ? 'white' : 'black' }}>Wed</li>
-                    <li onClick={() => {handleDayClick('THURSDAY') ; setIfChoseAnotherWeek(false)} } style={{ background: selectedDays.includes('THURSDAY') ? 'gray' : 'none', color: selectedDays.includes('THURSDAY') ? 'white' : 'black' }}>Thur</li>
-                    <li onClick={() => {handleDayClick('FRIDAY') ; setIfChoseAnotherWeek(false)}} style={{ background: selectedDays.includes('FRIDAY') ? 'gray' : 'none', color: selectedDays.includes('FRIDAY') ? 'white' : 'black' }}>Fri</li>
-                    <li onClick={() => {handleDayClick('SATURDAY') ; setIfChoseAnotherWeek(false)}} style={{ background: selectedDays.includes('SATURDAY') ? 'gray' : 'none', color: selectedDays.includes('SATURDAY') ? 'white' : 'black' }}>Sat</li>
-                    <li onClick={() => {handleDayClick('SUNDAY') ; setIfChoseAnotherWeek(false)}} style={{ background: selectedDays.includes('SUNDAY') ? 'gray' : 'none', color: selectedDays.includes('SUNDAY') ? 'white' : 'black' }}>Sun</li>
+                    <li onClick={() => {handleDayClick('MONDAY') ; setIfChoseAnotherWeek(false); setIfChoseAnotherWeek1(false); }} style={{ background: selectedDays.includes('MONDAY') ? 'gray' : 'none', color: selectedDays.includes('MONDAY') ? 'white' : 'black' }}>Mon</li>
+                    <li onClick={() => {handleDayClick('TUESDAY') ; setIfChoseAnotherWeek(false); setIfChoseAnotherWeek1(false);}} style={{ background: selectedDays.includes('TUESDAY') ? 'gray' : 'none', color: selectedDays.includes('TUESDAY') ? 'white' : 'black' }}>Tue</li>
+                    <li onClick={() => {handleDayClick('WEDNESDAY') ; setIfChoseAnotherWeek(false); setIfChoseAnotherWeek1(false);}} style={{ background: selectedDays.includes('WEDNESDAY') ? 'gray' : 'none', color: selectedDays.includes('WEDNESDAY') ? 'white' : 'black' }}>Wed</li>
+                    <li onClick={() => {handleDayClick('THURSDAY') ; setIfChoseAnotherWeek(false); setIfChoseAnotherWeek1(false);} } style={{ background: selectedDays.includes('THURSDAY') ? 'gray' : 'none', color: selectedDays.includes('THURSDAY') ? 'white' : 'black' }}>Thur</li>
+                    <li onClick={() => {handleDayClick('FRIDAY') ; setIfChoseAnotherWeek(false); setIfChoseAnotherWeek1(false);}} style={{ background: selectedDays.includes('FRIDAY') ? 'gray' : 'none', color: selectedDays.includes('FRIDAY') ? 'white' : 'black' }}>Fri</li>
+                    <li onClick={() => {handleDayClick('SATURDAY') ; setIfChoseAnotherWeek(false); setIfChoseAnotherWeek1(false);}} style={{ background: selectedDays.includes('SATURDAY') ? 'gray' : 'none', color: selectedDays.includes('SATURDAY') ? 'white' : 'black' }}>Sat</li>
+                    <li onClick={() => {handleDayClick('SUNDAY') ; setIfChoseAnotherWeek(false); setIfChoseAnotherWeek1(false);}} style={{ background: selectedDays.includes('SUNDAY') ? 'gray' : 'none', color: selectedDays.includes('SUNDAY') ? 'white' : 'black' }}>Sun</li>
                   </ul>
                 {
                   !selectedDays && (
-                    <p>Please select week day.</p>
+                    <p>Please select week day. This page has hardcoded http requests. If you see this text, remind Danil about that.</p>
                   )
                 }
                 {
@@ -479,9 +488,9 @@ function EditCalandar({ userInfo, loading, error, fetchUser }) {
                             className="form-check-input"
                             type="checkbox"
                             // value={true}
-                            checked={ifChoseAnotherWeek ? available : getObjectByWeekDay(weekDays, selectedDays.toLowerCase())?.available ?? false}
+                            checked={ifChoseAnotherWeek ? available : ( getObjectByWeekDay(weekDays, selectedDays.toLowerCase())?.available ) ?? false}
                             onChange={() => {
-                              handleCheckbox(selectedDays.toLowerCase(), !getObjectByWeekDay(weekDays, selectedDays.toLowerCase())?.available)
+                              handleCheckbox(selectedDays.toLowerCase(), !getObjectByWeekDay(weekDays, selectedDays.toLowerCase())?.available )
                             }}
     
                           />
@@ -499,7 +508,7 @@ function EditCalandar({ userInfo, loading, error, fetchUser }) {
                              <select
                                className="w-100 p-2 rounded outline-0 border border_gray col"
                                onChange={(e)=>{handleStartTime(e.target.value, selectedDays.toLowerCase())}}
-                               value={ifChoseAnotherWeek ? startTime : getObjectByWeekDay(weekDays, selectedDays.toLowerCase())?.startTime ?? 'loading'}
+                               value={ifChoseAnotherWeek ? startTime : (getObjectByWeekDay(weekDays, selectedDays.toLowerCase())?.startTime ) ?? 'loading'}
 
                                >
                              {times.map((time) => {
@@ -514,7 +523,7 @@ function EditCalandar({ userInfo, loading, error, fetchUser }) {
                              <select 
                              className="w-100 p-2 rounded outline-0 border border_gray col"
                              onChange={(e)=>{handleEndTime(e.target.value, selectedDays.toLowerCase())}}
-                             value={ifChoseAnotherWeek ? endTime : getObjectByWeekDay(weekDays, selectedDays.toLowerCase())?.endTime ?? 'loading'}
+                             value={ifChoseAnotherWeek1 ? endTime : (getObjectByWeekDay(weekDays, selectedDays.toLowerCase())?.endTime ) ?? 'loading'}
                              
                              >
                             {times.map((time) => {

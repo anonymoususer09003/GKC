@@ -12,8 +12,8 @@ import { useSelector } from "react-redux";
 import GetUserByid from "@/services/user/GetUserByid";
 
 const StudentSchedule = (props) => {
-  console.log("props---", props);
   const navigation = useRouter();
+  const loggedInUser = useSelector((state) => state.user.userInfo);
   const {
     sendMessage,
     messages,
@@ -23,12 +23,11 @@ const StudentSchedule = (props) => {
     setMessages,
   } = FirebaseChat();
   const [enabledCamera, setEnabledCamera] = useState(false);
-  const loggedInUser = useSelector((state) => state.user.userInfo);
-  const [parent, setParent] = useState();
+
   const deleteSingleOccurrence = async (eventId, dateToCancel) => {
     try {
       const response = await axios.delete(
-        "http://34.227.65.157/event/delete-single-occurrence",
+        `${base_url}/event/delete-single-occurrence`,
         {
           data: {
             eventId: eventId,
@@ -36,8 +35,6 @@ const StudentSchedule = (props) => {
           },
         }
       );
-
-      console.log("Event deletion successful:", response.data);
     } catch (error) {
       console.log("Error deleting event:", error);
     }
@@ -50,45 +47,26 @@ const StudentSchedule = (props) => {
 
     deleteSingleOccurrence(eventID, date);
   };
-  console.log("log in user", loggedInUser);
+
   //MESSAGES ALSO PROBABLY NEEDS TO BE CHECKED --- MESSAGE
+
   const instructor = {
     name: props?.instructorName,
     id: props?.instructorId,
   };
 
-  const getParticipantsDetail = async (id) => {
-    try {
-      const res = await GetUserByid(id);
-      setParent({
-        courseId: props?.eventId,
-        name: loggedInUser?.firstName,
-        id: loggedInUser?.id,
-        parentId: loggedInUser?.id,
-      });
-      console.log("res------", res.data);
-    } catch (err) {
-      console.log("err", err);
-    }
+  const student = {
+    courseId: props?.eventId,
+    name: loggedInUser?.firstName,
+    id: loggedInUser?.id,
+    parentId: props?.studentParents || 0,
   };
-  console.log("parent", props);
-  useEffect(() => {
-    getParticipantsDetail(props?.studentDetail?.id);
-  }, [props?.eventId]);
 
+  console.log("loggesinduser", loggedInUser);
   const openChat = (chatId) => {
-    console.log("0000", {
-      sender: {
-        ...parent,
-      },
-      receiver_user: {
-        ...instructor,
-      },
-      chatId,
-    });
     setChatInfo({
       sender: {
-        ...parent,
+        ...student,
       },
       receiver_user: {
         ...instructor,
@@ -107,60 +85,64 @@ const StudentSchedule = (props) => {
         <h3 className={`text-center ${styles.scheduleHeader}`}>Schedule</h3>
         <div
           className={`shadow p-5 bg-white rounded ${styles.scheduleBox}`}
-          style={{ minHeight: "400px" }}
+          style={{ minHeight: "400px", maxHeight:620, overflow:'scroll', overflowX:'hidden' }}
         >
-          <div
-            onClick={() => openChat(props?.eventId)}
-            className="d-flex align-items-center py-3 gap-2"
-          >
-            {props.noEvent ? (
-              <h6 className="p-0 m-0 flex-fill fw-bold flex-fill">
-                No Events Found For This Day
-              </h6>
-            ) : (
-              <>
-                <h6 className="p-0 m-0 flex-fill fw-bold flex-fill">
-                  {props.instructorName}
-                </h6>
-                <h6 className="p-0 m-0 flex-fill fw-bold flex-fill">
-                  {props.start}{" "}
-                </h6>
-                <h6 className="p-0 m-0 flex-fill fw-bold flex-fill">
-                  {props.courseName}
-                </h6>
-                {props.instructorId && (
-                  <IconContext.Provider value={{ color: "#1677d2" }}>
-                    <BsFillChatFill
-                      className="p-0 m-0 flex-fill h4 flex-fill"
-                      data-bs-toggle="modal"
-                      data-bs-target="#exampleModal2"
-                    />
-                  </IconContext.Provider>
-                )}
-
-                {props.meetingLink && (
-                  <IconContext.Provider
-                    value={{ color: enabledCamera ? "#126d2b" : "gray" }}
-                  >
-                    <GoDeviceCameraVideo
-                      className="p-0 m-0 flex-fill h4 flex-fill"
-                      onClick={() =>
-                        navigation.push(`/parent/video?${props?.courseName}`)
-                      }
-                    />
-                  </IconContext.Provider>
-                )}
-                {props.deleteable && (
-                  <IconContext.Provider value={{ color: "gray" }}>
-                    <RiDeleteBin6Line
-                      className="p-0 m-0 h4 flex-fill"
-                      onClick={handleDeleteButtonClick}
-                    />
-                  </IconContext.Provider>
-                )}
-              </>
-            )}
-          </div>
+          {
+            props.schedule.length === 0 &&
+            <h6 className="p-0 m-0 flex-fill fw-bold flex-fill">
+              No Events Found For This Day
+            </h6>
+          }
+          {
+            props.schedule && props.schedule.map((el)=>{
+              return (
+                <div
+                onClick={() => openChat(el?.id)}
+                className="d-flex py-3 gap-2"
+                style={{flexDirection:'column'}}
+              >
+                      <div
+                      style={{display:'flex', gap:20}}>
+                      <h6 className="p-0 m-0 flex-fill fw-bold flex-fill">
+                        {el.instructorName}
+                      </h6>
+                      <h6 className="p-0 m-0 flex-fill fw-bold flex-fill">
+                        {el.start.split(' ')[1]}
+                      </h6>
+                      <h6 className="p-0 m-0 flex-fill fw-bold flex-fill">
+                        {el.courseName + (el.eventInterview ? ' (INTERVIEW)': '')}
+                      </h6>
+                      {el.instructorId && (
+                        <BsFillChatFill
+                          style={{fill:'blue', cursor:'pointer'}}
+                          className="p-0 m-0 flex-fill h4"
+                          data-bs-toggle="modal"
+                          data-bs-target="#exampleModal2"
+                        />
+                      )}
+      
+                      {!el.eventInPerson && (
+                        <GoDeviceCameraVideo
+                          style={{fill:'green', cursor:'pointer'}}
+                          className="p-0 m-0 flex-fill h4 flex-fill"
+                          onClick={() =>
+                            navigation.push(`/student/video?${el?.courseName}`)
+                          }
+                        />
+                      )}
+                      {el.deleteable && (
+                        <RiDeleteBin6Line
+                        style={{cursor:'pointer'}}
+                          fill="gray"
+                          className="p-0 m-0 h4 flex-fill"
+                          onClick={handleDeleteButtonClick}
+                        />
+                      )}
+                    </div>
+              </div>
+              )
+            })
+          }
         </div>
       </div>
 
@@ -195,13 +177,13 @@ const StudentSchedule = (props) => {
                       <div
                         key={index}
                         className={`py-1 ${
-                          item?.user?.id == parent?.id ? "text-end" : ""
+                          item?.user?.id == student?.id ? "text-end" : ""
                         }`}
                       >
                         <p className="p-0 m-0 fw-bold">{item.message}</p>
                         <small className="p-0 m-0">
                           {`${item?.user?.name}  ${moment(date).format(
-                            "DD/MM/YY"
+                            "d/MM/YY"
                           )}`}{" "}
                           {moment(date).format("hh:mm a")}
                         </small>
@@ -220,11 +202,7 @@ const StudentSchedule = (props) => {
                   />{" "}
                   <BsFillSendFill
                     onClick={() =>
-                      sendMessage({
-                        type: "parent",
-                        parentInfo: parent,
-                        chatId: props.eventId,
-                      })
+                      sendMessage({ type: "student", chatId: props.eventId })
                     }
                     className="h3 p-0 m-0"
                   />

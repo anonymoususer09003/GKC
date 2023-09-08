@@ -30,22 +30,37 @@ function StudentLandingPage() {
   const [lang, setLang] = useState([]);
   const [proficiency, setProficiency] = useState([]);
   const [insructors, setInsructors] = useState([]);
+  const [page, setPage] = useState(0)
 
   const search = async () => {
-    try {
-      // var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
-      const res = await axios.get(
-        `${base_url}/public/landing/filter?name=${name}&hourlyRate=${hourlyRate}&grades=${ageGroup}&courses=${selectedCourse}&spokenLanguage=${selectedLang}&deliveryModes=${mode}&page=0&size=10`,
-        {
-          /*  headers: {
-          Authorization: `Bearer ${typ.accessToken}`,
-        },
-        */
-        }
-      );
-      setInsructors(res.data);
-    } catch (error) {
-      console.error('Error fetching profile data:', error);
+    console.log(JSON.stringify(page).length > 1 ? page : '0'+page)
+    if(page < 1){
+      try {
+        // var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
+        const res = await axios.get(
+          `${base_url}/public/landing/filter?name=${name}&hourlyRate=${hourlyRate}&grades=${ageGroup}&courses=${selectedCourse}&spokenLanguage=${selectedLang}&deliveryModes=${mode}&page=0&size=10`,
+          {
+            /*  headers: {
+            Authorization: `Bearer ${typ.accessToken}`,
+          },
+          */
+          }
+        );
+        setInsructors(res.data);
+      } catch (error) {
+        console.error('Error fetching profile data:', error);
+      }
+    }
+    if(page >= 1){
+      try {
+        // var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
+        const res = await axios.get(
+          `${base_url}/public/landing/filter?page=${JSON.stringify(page).length > 1 ? page : '0'+page }&name=${name}&hourlyRate=${hourlyRate}&grades=${ageGroup}&courses=${selectedCourse}&spokenLanguage=${selectedLang}&deliveryModes=${mode}&page=0&size=10`,
+        );
+        setInsructors(insructors.concat(res.data));
+      } catch (error) {
+        console.error('Error fetching profile data:', error);
+      }
     }
   };
 
@@ -158,7 +173,7 @@ function StudentLandingPage() {
               className="p-2 rounded outline-0 border border_gray"
               onChange={(e) => setSkill(e.target.value)}
             >
-              <option value="">Skills Level</option>
+              <option value="">Proficiency</option>
               {proficiency.map((prof) => {
                 return (
                   <option value={prof.value} key={prof.value}>
@@ -172,7 +187,7 @@ function StudentLandingPage() {
               className="p-2 rounded outline-0 border border_gray"
               onChange={(e) => setAgeGroup(e.target.value)}
             >
-              <option value="">Age Group</option>
+              <option value="">Grade</option>
               <option value="1">Elementary &#40;&#60;10yrs&#41;</option>
               <option value="2">Middle School &#40;10yrs - 13yrs&#41;</option>
               <option value="3">High School &#40;14yrs - 16yrs&#41;</option>
@@ -220,7 +235,7 @@ function StudentLandingPage() {
             />
             <button
               className={`btn_primary py-2 px-5 fw-bold text-white rounded`}
-              onClick={() => search(true)}
+              onClick={() => search()}
             >
               Search
             </button>
@@ -230,7 +245,7 @@ function StudentLandingPage() {
         <div
           style={{
             backgroundImage: 'url("/assets/home_bg.png")',
-            minHeight: '100vh',
+            height: '600px',
             backgroundRepeat: 'no-repeat',
             backgroundSize: '100% 100%',
           }}
@@ -250,9 +265,29 @@ function StudentLandingPage() {
               })}
             </div>
           )}
+        {
+          insructors.length > 1 &&
+          <>
+                    <div style={{width:'100%', display:'flex',justifyContent:'center'}}>
+          <button
+          className='btn_primary py-2 px-5 fw-bold text-white rounded'
+          onClick={()=>{
+            setPage(page+1)
+            search()
+          }}>
+            Load more
+          </button>
+          </div>
+          <Footer />
+          </>
+          
+        }
         </div>
       </main>
-      <Footer />
+      {
+        insructors.length < 1 && 
+        <Footer />
+      }
     </>
   );
 }

@@ -85,52 +85,64 @@ const StudentSchedule = (props) => {
         <h3 className={`text-center ${styles.scheduleHeader}`}>Schedule</h3>
         <div
           className={`shadow p-5 bg-white rounded ${styles.scheduleBox}`}
-          style={{ minHeight: "400px" }}
+          style={{ minHeight: "400px", maxHeight:620, overflow:'scroll', overflowX:'hidden' }}
         >
-          <div
-            onClick={() => openChat(props?.eventId)}
-            className="d-flex align-items-center py-3 gap-2"
-          >
-            {props.noEvent ? (
-              <h6 className="p-0 m-0 flex-fill fw-bold flex-fill">
-                No Events Found For This Day
-              </h6>
-            ) : (
-              <>
-                <h6 className="p-0 m-0 flex-fill fw-bold flex-fill">
-                  {props.instructorName}
-                </h6>
-                <h6 className="p-0 m-0 flex-fill fw-bold flex-fill">
-                  {props.start}
-                </h6>
-                <h6 className="p-0 m-0 flex-fill fw-bold flex-fill">
-                  {props.courseName}
-                </h6>
-                {props.instructorId && (
-                  <BsFillChatFill
-                    className="p-0 m-0 flex-fill h4 flex-fill"
-                    data-bs-toggle="modal"
-                    data-bs-target="#exampleModal2"
-                  />
-                )}
-
-                {props.meetingLink && (
-                  <GoDeviceCameraVideo
-                    className="p-0 m-0 flex-fill h4 flex-fill"
-                    onClick={() =>
-                      navigation.push(`/student/video?${props?.courseName}`)
-                    }
-                  />
-                )}
-                {props.deleteable && (
-                  <RiDeleteBin6Line
-                    className="p-0 m-0 h4 flex-fill"
-                    onClick={handleDeleteButtonClick}
-                  />
-                )}
-              </>
-            )}
-          </div>
+          {
+            props.schedule.length === 0 &&
+            <h6 className="p-0 m-0 flex-fill fw-bold flex-fill">
+              No Events Found For This Day
+            </h6>
+          }
+          {
+            props.schedule && props.schedule.map((el)=>{
+              return (
+                <div
+                onClick={() => openChat(el?.id)}
+                className="d-flex py-3 gap-2"
+                style={{flexDirection:'column'}}
+              >
+                      <div
+                      style={{display:'flex', gap:20}}>
+                      <h6 className="p-0 m-0 flex-fill fw-bold flex-fill">
+                        {el.instructorName}
+                      </h6>
+                      <h6 className="p-0 m-0 flex-fill fw-bold flex-fill">
+                        {el.start.split(' ')[1]}
+                      </h6>
+                      <h6 className="p-0 m-0 flex-fill fw-bold flex-fill">
+                        {el.courseName + (el.eventInterview ? ' (INTERVIEW)': '')}
+                      </h6>
+                      {el.instructorId && (
+                        <BsFillChatFill
+                          style={{fill:'blue', cursor:'pointer'}}
+                          className="p-0 m-0 flex-fill h4"
+                          data-bs-toggle="modal"
+                          data-bs-target="#exampleModal2"
+                        />
+                      )}
+      
+                      {!el.eventInPerson && (
+                        <GoDeviceCameraVideo
+                          style={{fill:'green', cursor:'pointer'}}
+                          className="p-0 m-0 flex-fill h4 flex-fill"
+                          onClick={() =>
+                            navigation.push(`/student/video?${el?.courseName}`)
+                          }
+                        />
+                      )}
+                      {el.deleteable && (
+                        <RiDeleteBin6Line
+                        style={{cursor:'pointer'}}
+                          fill="gray"
+                          className="p-0 m-0 h4 flex-fill"
+                          onClick={handleDeleteButtonClick}
+                        />
+                      )}
+                    </div>
+              </div>
+              )
+            })
+          }
         </div>
       </div>
 

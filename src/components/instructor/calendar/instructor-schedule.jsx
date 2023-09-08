@@ -117,69 +117,64 @@ const InstructorSchedule = (props) => {
         <h3 className={`text-center ${styles.scheduleHeader}`}>Schedule</h3>
         <div
           className={`shadow p-5 bg-white rounded ${styles.scheduleBox}`}
-          style={{ minHeight: '400px' }}
+          style={{ minHeight: "400px", maxHeight:620, overflow:'scroll', overflowX:'hidden' }}
         >
-          {!props.noEvent ? (
-            <p className="tw-font-semibold tw-text-lg tw-mx-auto">
-              You currently don't have a class or interview scheduled
-            </p>
-          ) : (
-            ''
-          )}
-          <div
-            onClick={() => openChat(1)}
-            className="d-flex align-items-center py-3 gap-2"
-          >
-            {props.noEvent ? (
-              <h6 className="p-0 m-0 flex-fill fw-bold flex-fill">
-                No Events Found For This Day
-              </h6>
-            ) : (
-              <>
-                <h6 className="p-0 m-0 flex-fill fw-bold flex-fill">
-                  {props.studentName}
-                </h6>
-                <h6 className="p-0 m-0 flex-fill fw-bold flex-fill">
-                  {props.start}{' '}
-                </h6>
-                <h6 className="p-0 m-0 flex-fill fw-bold flex-fill">
-                  {props.courseName}
-                </h6>
-                {messages.length > 1 && (
-                  <IconContext.Provider value={{ color: '#1677d2' }}>
-                    <BsFillChatFill
-                      className="p-0 m-0 flex-fill h4 flex-fill"
-                      data-bs-toggle="modal"
-                      data-bs-target="#exampleModal2"
-                    />
-                  </IconContext.Provider>
-                )}
-
-                {props.meetingLink && (
-                  <IconContext.Provider
-                    value={{ color: enabledCamera ? '#126d2b' : '#48494B' }}
-                  >
-                    <GoDeviceCameraVideo
-                      className="p-0 m-0 flex-fill h4 flex-fill"
-                      onClick={() =>
-                        navigation.push(
-                          `/instructor/video?${props?.courseName}`
-                        )
-                      }
-                    />
-                  </IconContext.Provider>
-                )}
-                {props.deleteable && (
-                  <IconContext.Provider value={{ color: '#48494B' }}>
-                    <RiDeleteBin6Line
-                      className="p-0 m-0 h4 flex-fill"
-                      onClick={handleDeleteButtonClick}
-                    />
-                  </IconContext.Provider>
-                )}
-              </>
-            )}
-          </div>
+          {
+            props.schedule.length === 0 &&
+            <h6 className="p-0 m-0 flex-fill fw-bold flex-fill">
+              No Events Found For This Day
+            </h6>
+          }
+          {
+            props.schedule && props.schedule.map((el)=>{
+              return (
+                <div
+                onClick={() => openChat(el?.id)}
+                className="d-flex py-3 gap-2"
+                style={{flexDirection:'column'}}
+              >
+                      <div
+                      style={{display:'flex', gap:20}}>
+                      <h6 className="p-0 m-0 flex-fill fw-bold flex-fill">
+                        {el.studentName}
+                      </h6>
+                      <h6 className="p-0 m-0 flex-fill fw-bold flex-fill">
+                        {el.start.split(' ')[1]}
+                      </h6>
+                      <h6 className="p-0 m-0 flex-fill fw-bold flex-fill">
+                        {el.courseName + (el.eventInterview ? ' (INTERVIEW)': '')}
+                      </h6>
+                      {el.instructorId && (
+                        <BsFillChatFill
+                          style={{fill:'blue', cursor:'pointer'}}
+                          className="p-0 m-0 flex-fill h4"
+                          data-bs-toggle="modal"
+                          data-bs-target="#exampleModal2"
+                        />
+                      )}
+      
+                      {!el.eventInPerson && (
+                        <GoDeviceCameraVideo
+                          style={{fill:'green', cursor:'pointer'}}
+                          className="p-0 m-0 flex-fill h4 flex-fill"
+                          onClick={() =>
+                            navigation.push(`/student/video?${el?.courseName}`)
+                          }
+                        />
+                      )}
+                      {el.deleteable && (
+                        <RiDeleteBin6Line
+                        style={{cursor:'pointer'}}
+                          fill="gray"
+                          className="p-0 m-0 h4 flex-fill"
+                          onClick={handleDeleteButtonClick}
+                        />
+                      )}
+                    </div>
+              </div>
+              )
+            })
+          }
         </div>
       </div>
 

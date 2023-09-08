@@ -16,8 +16,13 @@ const Tutorcard = ({ data }) => {
 
   console.log('data', data);
 
-  const handleOpenModal = () => {
-    setShowModal(true);
+  const handleOpenModal = (ifClass) => {
+    // setShowModal(true);
+    if(ifClass){
+      navigation.push(`/student/scheduleclass/${data.id}`)
+    } else{
+      navigation.push(`/student/requestinterview/${data.id}`)
+    }
   };
 
   const handleCloseModal = () => {
@@ -79,12 +84,12 @@ const Tutorcard = ({ data }) => {
               <div className="mb-2">
                 <StarRatings
                   starRatedColor="#cc9338"
-                  rating={4.2}
+                  rating={data?.averageRating ?? 0}
                   starDimension="20px"
                   starSpacing="0px"
                 />
               </div>
-              <p className="m-0 p-0">Stars 4.2/5</p>
+              <p className="m-0 p-0">Stars {data?.averageRating ?? 0}/5</p>
             </div>
             <button
               className="m-0 p-0 bg_secondary border-0 text-white p-2 rounded d-flex align-items-center gap-2"
@@ -100,14 +105,14 @@ const Tutorcard = ({ data }) => {
             <button
               className={`btn_primary py-2 px-5 fw-bold text-white rounded`}
               type="submit"
-              onClick={handleOpenModal}
+              onClick={()=>{handleOpenModal(true)}}
             >
               Select
             </button>
             <button
               className={`btn_primary py-2 px-5 fw-bold text-white rounded`}
               type="submit"
-              onClick={handleOpenModal}
+              onClick={()=>{handleOpenModal(false)}}
             >
               Request Interview
             </button>

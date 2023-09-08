@@ -31,6 +31,7 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
   const [time, setTime] = useState();
   const [studentId, setStudentId] = useState(null);
   const [duration, setDuration] = useState(0);
+  const [err, setErr] = useState('')
   const eventId = router?.query?.eventId;
   console.log("eventid", eventId);
   //Get Courses
@@ -69,6 +70,7 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
       console.log("err", err);
     }
   };
+
   useEffect(() => {
     getCourses();
     if (eventId) getEventDetail();
@@ -80,9 +82,7 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
   useEffect(() => {
     const getUnavailableDate = async () => {
       try {
-        const response = await apiClient.get(
-          `/instructor/unavailable-days-in-UTC-TimeZone?instructorId=22`
-        );
+        const response = await apiClient.get(`/instructor/unavailable-days-in-UTC-TimeZone?instructorId=${selectedInstructor?.id}`);
 
         console.log(response.data);
         setUnavailableDates(response.data);
@@ -122,50 +122,54 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
   };
 
   useEffect(() => {
-    const getInstructorData = async () => {
-      try {
-        var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
-        const response = await axios.get(
-          `http://34.227.65.157/instructor/details-for-scheduling?instructorId=${instructorId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${typ.accessToken}`,
-            },
-          }
-        );
-        setInstructorData(response.data);
-      } catch (error) {
-        console.log(error);
+    console.log(instructorId, 'id')
+    const run = () => {
+      const getInstructorData = async () => {
+        try {
+          var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
+          const response = await axios.get(
+            `http://34.227.65.157/instructor/details-for-scheduling?instructorId=${instructorId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${typ.accessToken}`,
+              },
+            }
+          );
+          setInstructorData(response.data);
+        } catch (error) {
+          console.log(error);
+        }
+      };
+      if (instructorId) getInstructorData(instructorId);
+      const fetchUnavailableDates = async () => {
+        const disabledDates = []
+        try{
+          const responce = await apiClient(`/instructor/unavailable-days-in-UTC-TimeZone?instructorId=${instructorId}`)
+          console.log(responce.data)
+          responce.data.forEach((el)=>{
+            disabledDates.push(new Date(el.end))
+          })
+        console.log(disabledDates)
+        setUnavailableDates(disabledDates)
+        }catch (err) {
+          console.log(err)
+        }
+  
+  
       }
-    };
-    if (instructorId) getInstructorData(instructorId);
-    const fetchUnavailableDates = async () => {
-      const disabledDates = []
-      try{
-        const responce = await apiClient(`/instructor/unavailable-days-in-UTC-TimeZone?instructorId=${instructorId}`) //hardcoded
-        console.log(responce.data)
-        responce.data.forEach((el)=>{
-          disabledDates.push(new Date(el.end))
-        })
-      console.log(disabledDates)
-      setUnavailableDates(disabledDates)
-      }catch (err) {
-        console.log(err)
+      fetchUnavailableDates()
+      const fetchInstructorData = async () => {
+        try{
+          const responce = await apiClient(`/instructor/details-for-scheduling?instructorId=${instructorId}`)
+          console.log(responce.data)
+          setSelectedInstructor(responce.data)
+        }catch (err) {
+          console.log(err)
+        }
       }
-
-
+      fetchInstructorData()
     }
-    fetchUnavailableDates()
-    const fetchInstructorData = async () => {
-      try{
-        const responce = await apiClient(`/instructor/details-for-scheduling?instructorId=${instructorId}`) //hardcoded
-        console.log(responce.data)
-        setSelectedInstructor(responce.data)
-      }catch (err) {
-        console.log(err)
-      }
-    }
-    fetchInstructorData()
+    if(instructorId) run()
   }, [instructorId]);
 
   const handleDateChange = async (clickedDate) => {
@@ -176,33 +180,50 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
     const hours = String(dateObj.getHours()).padStart(2, "0");
     const minutes = String(dateObj.getMinutes()).padStart(2, "0");
     const formattedDateStr = `${year}-${month}-${day}`;
+    setDuration(0)
 
     setSelectedDate(formattedDateStr);
-
+    console.log(formattedDateStr)
     try {
       const response = await apiClient.get(
-        `/instructor/available-time-slots-from-date?instructorId=22&date=${formattedDateStr}`
+        `/instructor/available-time-slots-from-date?instructorId=${selectedInstructor.id}&date=${formattedDateStr}`
       );
-
+      
       const timeSlots = response.data.map((slot) => ({
         start: new Date(slot.start),
         end: new Date(slot.end),
       }));
+      console.log(timeSlots)
+      const isOnHalfHour = (date) => date.getMinutes() === 0 || date.getMinutes() === 30;
 
-      const isOnTheHour = (date) => date.getMinutes() === 0;
 
-      // Create one-hour intervals for each time slot
+
+      // Create half-hour intervals for each time slot
       const formattedTimeSlots = [];
       timeSlots.forEach((slot) => {
-        if (isOnTheHour(slot.start)) {
+        if (isOnHalfHour(slot.start)) {
+          const start = new Date(slot.start);
+          start.setSeconds(0); // Set seconds to 0
+          start.setMilliseconds(0); // Set milliseconds to 0
+
+          const end = new Date(slot.start.getTime() + 30 * 60 * 1000);
+          end.setSeconds(0); // Set seconds to 0
+          end.setMilliseconds(0); // Set milliseconds to 0
+
           formattedTimeSlots.push({
-            start: new Date(slot.start),
-            end: new Date(slot.start.getTime() + 60 * 60 * 1000),
+            start,
+            end,
           });
         }
       });
 
       setAvailableTime(formattedTimeSlots);
+      if(formattedTimeSlots.length>0){
+        setErr('')
+      } else{
+        setErr('Tutor unavailable')
+      }
+      
       console.log(formattedTimeSlots, "formatted time slots");
     } catch (error) {
       console.log(error);
@@ -268,9 +289,9 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
       start: time,
       durationInHours: duration,
       classFrequency: classFrequency,
-      courseId: courseId,
-      studentId,
-      instructorId: instructorId,
+      courseId: instructorCourses.find(el => el.label === courseId).value,
+      studentId: studentId,
+      instructorId: selectedInstructor.id,
       eventInPerson: selectedMode == "In-Person" ? true : false,
     };
     router.push({
@@ -313,9 +334,9 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
               tileClassName={tileClassName}
               // tileDisabled={tileDisabled}
               tileDisabled={unavailableDates.length >1 ? ({date, view})=> view === 'month' && unavailableDates.some(disabledDate =>
-                date.getFullYear() === disabledDate.getFullYear() &&
-                date.getMonth() === disabledDate.getMonth() &&
-                date.getDate() === disabledDate.getDate()
+                new Date(date).getFullYear() === new Date(disabledDate).getFullYear() &&
+                new Date(date).getMonth() === new Date(disabledDate).getMonth() &&
+                new Date(date).getDate() === new Date(disabledDate).getDate()
                 ) : () => false}
             />
           </div>
@@ -327,9 +348,9 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
                 style={{ minHeight: "400px" }}
               >
                 <div className="w-100 ">
-                  <p className="p-0 m-0 fw-bold pb-2">Select time</p>
-                  <ul>
-                    {availableTime.map((slot, index) => (
+                  <p className="p-0 m-0 fw-bold pb-2">{ duration > 0 ? <>You selected {duration / 2} hours</> : <>Select time</>}</p>
+                  <p>{err}</p>
+                    {availableTime && availableTime.map((slot, index) => (
                       <li
                         key={index}
                         className={`m-03 py-1 fw-bold list-unstyled ${
@@ -344,10 +365,9 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
                         }`}
                         onClick={() => handleSlotClick(slot)}
                       >
-                        {`${slot.start.toLocaleTimeString()} - ${slot.end.toLocaleTimeString()}`}
+                        {`${slot.start.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })} - ${slot.end.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}`}
                       </li>
                     ))}
-                  </ul>
                 </div>
                 <div className=" w-100">
                   <p className="p-0 m-0 fw-bold text-center py-2">
@@ -426,15 +446,15 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
                   </div>
 
                   <div className="py-2 d-flex align-items-center gap-4">
-                    <h6 className="text-dark fw-bold m-0 p-0">On Behlaf of:</h6>
+                    <h6 className="text-dark fw-bold m-0 p-0">On Behalf of:</h6>
 
                     <select
                       className="w-25 p-2 rounded outline-0 border border_gray"
-                      onChange={(value) => setStudentId(e.target.value)}
                       value={studentId}
+                      onChange={(e)=>{setStudentId(e.target.value)}}
                     >
                       <option>Select</option>
-                      {loggedInUser?.dependents?.map((dependent) => {
+                      {loggedInUser && loggedInUser?.dependents?.map((dependent) => {
                         return (
                           <option key={dependent.email} value={dependent.id}>
                             {dependent.email}
@@ -449,14 +469,14 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
 
                     <select
                       className="w-25 p-2 rounded outline-0 border border_gray"
-                      onChange={handleCourseId}
+                      onChange={(event)=>{handleCourseId(event)}}
                       value={courseId}
                     >
                       <option>Select</option>
-                      {instructorCourses.map((course) => {
+                      {selectedInstructor && selectedInstructor?.coursesToTutorAndProficiencies.map((course) => {
                         return (
-                          <option key={course.label} value={course.value}>
-                            {course.label}
+                          <option key={course.course.id} value={course.course.name}>
+                            {course.course.name}
                           </option>
                         );
                       })}
@@ -481,31 +501,30 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
                     <h6 className="text-dark fw-bold m-0 p-0">Hourly Rate:</h6>
 
                     <h6 className="text-dark fw-bold m-0 p-0">
-                      {instructorData?.hourlyRate}
+                      {instructorData?.hourlyRate} USD/hr
                     </h6>
                   </div>
 
                   <div className="py-2 d-flex align-items-start gap-4">
                     <h6 className="text-dark fw-bold m-0 p-0">Grade:</h6>
                     <div>
-                      <h6 className="text-dark fw-bold m-0 p-0"></h6>
-
-                      <h6 className="text-dark fw-bold m-0 p-0">
-                        &#40;12yrs - 14yrs&#41;
-                      </h6>
+                      {
+                        selectedInstructor && selectedInstructor?.gradesToTutor.map((el)=>{
+                          return <>
+                          <h6 key={el.id}  className="text-dark fw-bold m-0 p-0">
+                            {el.description}
+                          </h6>   
+                          </>
+                        })
+                      }
                     </div>
                   </div>
                 </div>
               </div>
               <div className="d-flex gap-2 justify-content-center pt-5">
                 <button
-                  disabled={
-                    !classFrequency || !time || !studentId ? true : false
-                  }
-                  className={`w-25 btn_primary text-light p-2 rounded fw-bold  ${
-                    !classFrequency || !time || !studentId
-                      ? "btn_disabled"
-                      : "btn_primary"
+                  className={`w-25 text-light p-2 rounded fw-bold  ${
+                    !classFrequency || !time ? "btn_disabled" : "btn_primary"
                   }`}
                   onClick={() => onContinue()}
                 >
