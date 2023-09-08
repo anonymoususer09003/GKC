@@ -189,12 +189,8 @@ function StudentLandingPage() {
             >
               <option value="">Grade</option>
               <option value="1">Elementary &#40;&#60;10yrs&#41;</option>
-              <option value="2">
-                Middle School &#40;&#60;10yrs - 13yrs&#41;
-              </option>
-              <option value="3">
-                High School &#40;&#60;14yrs - 16yrs&#41;
-              </option>
+              <option value="2">Middle School &#40;10yrs - 13yrs&#41;</option>
+              <option value="3">High School &#40;14yrs - 16yrs&#41;</option>
               <option value="4">College & Beyond &#40;&gt;18yrs&#41;</option>
             </select>
             <select
