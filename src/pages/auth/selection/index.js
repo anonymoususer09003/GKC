@@ -15,7 +15,6 @@ export default function Selection() {
     window.localStorage.setItem('userType', JSON.stringify(userType));
     navigation.push('/auth/registeremail');
   };
-
   return (
     <>
       <Head>

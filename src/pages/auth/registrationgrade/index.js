@@ -23,13 +23,13 @@ export default function RegistrationGrade() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="container-fluid">
-        <Link
-          href="#"
+        <div
+          onClick={()=>navigation.back()}
           className="text-decoration-none p-4 d-flex gap-2 align-items-center text-dark"
         >
           <RiArrowGoBackLine />
           <p className="fw-bold m-0 p-0 ">Back</p>
-        </Link>
+        </div>
         <div className="py-5 ">
           <h5 className="text-secondary fw-bold text-center py-4">
             Tell us about yourself?

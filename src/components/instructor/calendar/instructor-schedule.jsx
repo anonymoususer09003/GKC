@@ -139,7 +139,7 @@ const InstructorSchedule = (props) => {
                         {el.studentName}
                       </h6>
                       <h6 className="p-0 m-0 flex-fill fw-bold flex-fill">
-                        {el.start.split(' ')[1]}
+                        {el.start && el.start.split(' ')[1]}
                       </h6>
                       <h6 className="p-0 m-0 flex-fill fw-bold flex-fill">
                         {el.courseName + (el.eventInterview ? ' (INTERVIEW)': '')}
