@@ -50,15 +50,17 @@ export default function RegistrationGrade() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="container-fluid">
-        <Link
-          href="#"
+      <main className="container-fluid"
+      >
+        <div
+          onClick={()=>navigation.back()}
           className="text-decoration-none p-4 d-flex gap-2 align-items-center text-dark"
         >
           <RiArrowGoBackLine />
           <p className="fw-bold m-0 p-0 ">Back</p>
-        </Link>
-        <div className="py-5 ">
+        </div>
+        <div className="py-5 "
+      >
           <h5 className="text-secondary fw-bold text-center py-4">
             Which grade/s do you wish to tutor?
           </h5>
@@ -193,9 +195,7 @@ export default function RegistrationGrade() {
             </button>
           </div>
         </div>
-        <div style={{
-          position:'fixed', bottom: 0
-        }}>
+        <div style={{position:'fixed',bottom:0, width:'100vw'}}>
         <Footer />
         </div>
       </main>

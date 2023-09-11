@@ -197,9 +197,12 @@ function ReportInstructor() {
               {comment.length}/500 (min. 100 characters)
               </p>
                 <button
-                  className={`${styles.btn_primary} py-2 px-4 fw-bold text-white rounded text-end`}
+                  className={`py-2 px-4 fw-bold text-white rounded text-end`}
+                  style={{background: comment.length >= 100 && reasonOfReporting.length >= 3 ? '#f48343' : 'gray' }}
+                  disabled={comment.length >= 100 && reasonOfReporting.length >= 3 ? false : true}
                   type="submit"
                   onClick={onSubmit}
+
                 >
                   Submit
                 </button>

@@ -30,7 +30,7 @@ function BankInfo() {
       setShowPayPalInput(true);
       setShowPayoneerInput(false)
     }
-  }, [email]);
+  }, []);
 
   const getPayPalEmail = async () => {
     try {
@@ -45,8 +45,12 @@ function BankInfo() {
       console.log(response?.data == '[object Object]')
       if( response?.data == '[object Object]' ) {
         setEmail(response?.data?.email); 
+        setShowPayPalInput(true);
+        setShowPayoneerInput(false)
       } else{
         setEmail(response?.data);
+        setShowPayPalInput(true);
+        setShowPayoneerInput(false)
       }
       console.log(response)
     } catch (error) {
@@ -68,7 +72,6 @@ function BankInfo() {
       );
 
       handleUpdateClick();
-      setShowPayPalInput(false);
       setPopupVisible(!popupVisible)
     } catch (error) {
       console.log(error);

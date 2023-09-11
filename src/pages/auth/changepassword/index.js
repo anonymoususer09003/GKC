@@ -116,7 +116,7 @@ export default function ForgotPassword() {
 
   useEffect(() => {
     fetchUser();
-    setUserTyp(JSON.parse(window.localStorage.getItem('userType')).toLowerCase())
+    setUserTyp(JSON.parse(window.localStorage.getItem('userType'))?.toLowerCase() ?? JSON.parse(window.localStorage.getItem('gkcAuth'))?.role?.toLowerCase())
   }, [user]);
   return (
     <>
@@ -223,7 +223,7 @@ export default function ForgotPassword() {
           </div>
         </div>
         </div>
-        <div style={{position:"fixed", bottom: 0}}>
+        <div style={{position:"fixed", bottom: 0, width:'100vw'}}>
           <Footer />
         </div>
       </main>

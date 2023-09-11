@@ -165,14 +165,13 @@ export default function RegisterStudent() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="container-fluid d-flex flex-column justify-content-between  min-vh-100">
-        <Link
-          href="#"
+        <div
           className="text-decoration-none p-4 d-flex gap-2 align-items-center text-dark"
-          onClick={handleBack}
+          onClick={()=>navigation.back()}
         >
           <RiArrowGoBackLine />
           <p className="fw-bold m-0 p-0 ">Back</p>
-        </Link>
+        </div>
         <div className="row">
           <div
             className="col-12 col-lg-6 position-relative  d-none d-md-block "
@@ -378,7 +377,7 @@ export default function RegisterStudent() {
                       Continue
                     </button>
                     <Link
-                      href="/"
+                      href="/auth/signin"
                       className="text-decoration-none d-flex gap-2 justify-content-center"
                     >
                       <p className="text-secondary fw-bold">

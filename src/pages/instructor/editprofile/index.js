@@ -61,12 +61,13 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
   };
 
   const handleSelectCourseChange = (selected) => {
+    console.log(selected)
     setSelectedCourses(
       selected &&
         selected.map((option) => ({
           label: option.label,
           value: option.value,
-          proficiencies: [{ value: 1, label: 'Beginner' }],
+          proficiencies: option?.proficiencies !== undefined ? [...option.proficiencies] : [{ value: 1, label: 'Beginner' }],
         }))
     );
   };
