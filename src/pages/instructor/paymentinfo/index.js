@@ -44,7 +44,7 @@ function BankInfo() {
       );
       console.log(response?.data == '[object Object]')
       if( response?.data == '[object Object]' ) {
-        setEmail(response?.data?.email);
+        setEmail(response?.data?.email); 
       } else{
         setEmail(response?.data);
       }

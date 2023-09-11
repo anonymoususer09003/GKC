@@ -340,9 +340,9 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
       setDeliveryModes(newArray);
 
       let gradess = [
-        { checked: false, id: 1, label: 'Elementary <10yrs' },
-        { checked: false, id: 2, label: 'Middle School <10yrs - 13yrs' },
-        { checked: false, id: 3, label: 'High School <14yrs - 16yrs' },
+        { checked: false, id: 1, label: 'Elementary <=10yrs' },
+        { checked: false, id: 2, label: 'Middle School 11yrs - 13yrs' },
+        { checked: false, id: 3, label: 'High School 14yrs - 18yrs' },
         { checked: false, id: 4, label: 'College & Beyond >18yrs' },
       ];
       let selectGrades = [];
