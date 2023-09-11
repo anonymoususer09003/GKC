@@ -110,7 +110,7 @@ export default function ParentRegistrationCCInfo() {
         })
       );
       setTimeout(() => {
-        // navigation.push('/instructor');
+        navigation.push('/instructor');
       }, 1400);
     } catch (error) {
       console.error(error);
