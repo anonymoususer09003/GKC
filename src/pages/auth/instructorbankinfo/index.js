@@ -110,20 +110,23 @@ export default function ParentRegistrationCCInfo() {
         })
       );
       setTimeout(() => {
-        navigation.push('/instructor');
+        // navigation.push('/instructor');
       }, 1400);
     } catch (error) {
       console.error(error);
     }
   };
 
-  useEffect(async () => {
-    let stored = await JSON.parse(
-      window.localStorage.getItem('registrationForm')
-    );
-    let typ = JSON.parse(window.localStorage.getItem('userType'));
-    setUserInfo(stored);
-    setUserType(typ);
+  useEffect(() => {
+    async function run() {
+      let stored = await JSON.parse(
+        window.localStorage.getItem('registrationForm')
+      );
+      let typ = JSON.parse(window.localStorage.getItem('userType'));
+      setUserInfo(stored);
+      setUserType(typ);
+    }
+    run()
   }, []);
 
   return (
