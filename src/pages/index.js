@@ -188,7 +188,7 @@ function StudentLandingPage() {
               onChange={(e) => setAgeGroup(e.target.value)}
             >
               <option value="">Grade</option>
-              <option value="1">Elementary &#40;&#60;=10yrs&#41;</option>
+              <option value="1">Elementary School &#40;&#60;=10yrs&#41;</option>
               <option value="2">Middle School &#40;11yrs - 13yrs&#41;</option>
               <option value="3">High School &#40;14yrs - 18yrs&#41;</option>
               <option value="4">College & Beyond &#40;&gt;18yrs&#41;</option>
@@ -293,11 +293,11 @@ function StudentLandingPage() {
                 display:'flex',
                 alignItems:'center'
               }}
-              >Prepare your child for the future by having them learn coding from live tutors</div>
+              >Why should my child learn to code? With Artificial Intelligence and Machine Learning set to feature prominently in our future lives, we need to get our kids ready</div>
               <div>
                 <img
                 style={{borderRadius: '0 30px 30px 0'}}
-                src={'https://gkc-images.s3.amazonaws.com/childfuture.png'}
+                src={'https://gkc-images.s3.amazonaws.com/childrenlearning.png'}
                 height={256}
                 width={256}
                 />
@@ -318,7 +318,7 @@ function StudentLandingPage() {
                 display:'flex',
                 alignItems:'center'
               }}
-              >Prepare your child for the future by having them learn coding from live tutors</div>
+              >Prepare your child for the future by having them learn how to code from live tutors</div>
               <div>
                 <img
                 style={{borderRadius: '30px 0 0 30px'}}
@@ -343,11 +343,11 @@ function StudentLandingPage() {
                 display:'flex',
                 alignItems:'center'
               }}
-              >Prepare your child for the future by having them learn coding from live tutors</div>
+              >Looking for a tutor to teach your child coding? Look no further – Find great tutors from around the world</div>
               <div>
                 <img
                 style={{borderRadius: '0 30px 30px 0'}}
-                src={'https://gkc-images.s3.amazonaws.com/childfuture.png'}
+                src={'https://gkc-images.s3.amazonaws.com/lookingfortutor.png'}
                 height={256}
                 width={256}
                 />
@@ -368,11 +368,11 @@ function StudentLandingPage() {
                 display:'flex',
                 alignItems:'center'
               }}
-              >Prepare your child for the future by having them learn coding from live tutors</div>
+              >With parents’ busy schedule, eliminate the drive to brick and mortar coding classes. Have your child learn coding from a live tutor from the comfort of their homes</div>
               <div>
                 <img
                 style={{borderRadius: '30px 0 0 30px'}}
-                src={'https://gkc-images.s3.amazonaws.com/childfuture.png'}
+                src={'https://gkc-images.s3.amazonaws.com/familyincar.png'}
                 height={256}
                 width={256}
                 />
@@ -393,11 +393,11 @@ function StudentLandingPage() {
                 display:'flex',
                 alignItems:'center'
               }}
-              >Prepare your child for the future by having them learn coding from live tutors</div>
+              >Online safety concerns? Parents have full access to their child’s livestream tutoring and chats for improved safety</div>
               <div>
                 <img
                 style={{borderRadius: '0 30px 30px 0'}}
-                src={'https://gkc-images.s3.amazonaws.com/childfuture.png'}
+                src={'https://gkc-images.s3.amazonaws.com/onlinesafety.png'}
                 height={256}
                 width={256}
                 />
