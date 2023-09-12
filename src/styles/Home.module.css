@@ -7,6 +7,11 @@
     min-height: 100vh;
 }
 
+.btn_primary {
+    background-color: #f48343;
+    border: 0
+}
+
 .description {
     display: inherit;
     justify-content: inherit;
@@ -108,6 +113,14 @@
     position: relative;
 }
 
+.full_height {
+    min-height: 81vh;
+}
+
+.calendarWrapper {
+  min-height: 90vh;
+}
+
 
 /* Enable hover only on non-touch devices */
 
@@ -185,6 +198,75 @@
         height: 200px;
         background: linear-gradient( to bottom, transparent 0%, rgb(var(--background-end-rgb)) 40%);
         z-index: 1;
+    }
+
+    .checklInputs {
+        min-width: 0;
+    }
+    .studentEmailWrapper {
+        flex-direction: column;
+    }
+
+    .courseWrapper {
+      padding: 0.5rem !important
+    }
+
+    .courseDropdowns {
+        width: 100% !important;
+    }
+    .courseBtnWrapper {
+        justify-content: center;
+    }
+    .landingInputs {
+        width: 100% !important;
+    }
+    .calendarWrapper {
+        min-height: 0vh;
+      } 
+    .reviewContainer {
+      width: 100% !important;
+      padding: 16px;
+    }
+    .rowWrapper {
+      flex-direction: column !important;
+    }
+
+    .reviewDropdown {
+      width: 85vw;
+      margin-bottom: 20px;
+    }
+
+    .report-table-wrapper {
+        min-width: 0 !important;
+        overflow-x: auto;
+
+    }
+    .scheduleHeader {
+        margin-top: 16px;
+    }
+
+    .scheduleBox {
+      padding: 16px !important;
+      margin: 10px;
+    }
+
+    .instructorProfile {
+        padding: 3rem 0.5rem !important;
+    }
+    .instructorCards {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+    .cardShadow {
+        margin-bottom: 1rem;
+    }
+
+    .editProfileWrapper {
+      padding: 1rem !important;
+    }
+    
+    .intructorTitle {
+        flex-direction: column;
     }
 }
 

@@ -1,0 +1,27 @@
+.homeLink {
+  font-weight: bold;
+  color: #ff8c1a;
+}
+.signOutBtn {
+  height: 45px;
+}
+.burger-menu-wrapper {
+  display: flex !important;
+  flex-direction: row;
+}
+.dropDown {
+  left: -176px !important;
+}
+@media (max-width: 700px) {
+  .navLinks {
+   padding-top: 10px;
+   display: flex;
+  }
+  .burger-menu-wrapper {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: space-between;
+    width: 100vw;
+    padding-right: 30px
+  }
+}
