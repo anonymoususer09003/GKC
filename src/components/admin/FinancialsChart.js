@@ -2,28 +2,29 @@ import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
-  BarElement,
+  PointElement,
+  LineElement,
   Title,
   Tooltip,
   Legend,
 } from 'chart.js';
-import { Bar } from 'react-chartjs-2';
-import { faker } from '@faker-js/faker';
+import { Line } from 'react-chartjs-2';
 
 ChartJS.register(
   CategoryScale,
   LinearScale,
-  BarElement,
+  PointElement,
+  LineElement,
   Title,
   Tooltip,
   Legend
 );
 
-export const bar1 = {
+const bar1 = {
   responsive: true,
   plugins: {
     legend: {
-      position: 'top',
+      display: false,
     },
     title: {
       display: true,
@@ -31,11 +32,11 @@ export const bar1 = {
     },
   },
 };
-export const bar2 = {
+const bar2 = {
   responsive: true,
   plugins: {
     legend: {
-      position: 'top',
+      display: false,
     },
     title: {
       display: true,
@@ -43,11 +44,11 @@ export const bar2 = {
     },
   },
 };
-export const bar3 = {
+const bar3 = {
   responsive: true,
   plugins: {
     legend: {
-      position: 'top',
+      display: false,
     },
     title: {
       display: true,
@@ -55,11 +56,11 @@ export const bar3 = {
     },
   },
 };
-export const bar4 = {
+const bar4 = {
   responsive: true,
   plugins: {
     legend: {
-      position: 'top',
+      display: false,
     },
     title: {
       display: true,
@@ -67,11 +68,11 @@ export const bar4 = {
     },
   },
 };
-export const bar5 = {
+const bar5 = {
   responsive: true,
   plugins: {
     legend: {
-      position: 'top',
+      display: false,
     },
     title: {
       display: true,
@@ -79,11 +80,11 @@ export const bar5 = {
     },
   },
 };
-export const bar6 = {
+const bar6 = {
   responsive: true,
   plugins: {
     legend: {
-      position: 'top',
+      display: false,
     },
     title: {
       display: true,
@@ -91,11 +92,11 @@ export const bar6 = {
     },
   },
 };
-export const bar7 = {
+const bar7 = {
   responsive: true,
   plugins: {
     legend: {
-      position: 'top',
+      display: false,
     },
     title: {
       display: true,
@@ -104,47 +105,55 @@ export const bar7 = {
   },
 };
 
-const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
+export function FinancialsChart({
+  grossRevenue,
+  netRevenue,
+  totalPayout,
+  taxTracking,
+}) {
+  function generateChartData(dataArr) {
+    const chartData = {
+      labels: dataArr.map((item) => item.x),
+      datasets: [
+        {
+          data: dataArr.map((item) => item.y),
+          borderColor: 'rgba(255, 99, 132, 0.5)',
+        },
+      ],
+    };
+    return chartData;
+  }
 
-export const data = {
-  labels,
-  datasets: [
-    {
-      label: 'Dataset 1',
-      data: labels.map(() => faker.datatype.number({ min: 100, max: 1000 })),
-      backgroundColor: 'rgba(255, 99, 132, 0.5)',
-    },
-    {
-      label: 'Dataset 2',
-      data: labels.map(() => faker.datatype.number({ min: 0, max: 1000 })),
-      backgroundColor: 'rgba(53, 162, 235, 0.5)',
-    },
-  ],
-};
+  function generateData(dataArr) {
+    return generateChartData(
+      dataArr.map((item) => ({
+        x: new Date(item.date).toLocaleDateString(),
+        y: item.count,
+      }))
+    );
+  }
 
-export function FinancialsChart() {
+  const grossRevenueData = generateData(grossRevenue);
+  const netRevenueData = generateData(netRevenue);
+  const totalPayoutData = generateData(totalPayout);
+  const taxTrackingData = generateData(taxTracking);
+
   return (
     <div className="tw-divide-y tw-w-full tw-h-full tw-divide-gray-200 tw-overflow-hidden tw-rounded-lg tw-py-2  tw-shadow sm:tw-grid sm:tw-grid-cols-3 tw-gap-2 sm:tw-divide-y-0">
       <div>
-        <Bar options={bar1} data={data} />
+        <Line options={bar1} data={grossRevenueData} />
       </div>
       <div>
-        <Bar options={bar2} data={data} />
+        <Line options={bar2} data={totalPayoutData} />
       </div>
       <div>
-        <Bar options={bar3} data={data} />
+        <Line options={bar3} data={netRevenueData} />
       </div>
       <div>
-        <Bar options={bar4} data={data} />
-      </div>
-      <div>
-        <Bar options={bar5} data={data} />
-      </div>
-      <div>
-        <Bar options={bar6} data={data} />
+        <Line options={bar4} data={totalPayoutData} />
       </div>
       <div className="tw-col-start-2">
-        <Bar options={bar7} data={data} />
+        <Line options={bar7} data={taxTrackingData} />
       </div>
     </div>
   );

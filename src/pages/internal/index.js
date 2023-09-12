@@ -9,7 +9,7 @@ import Instructors from './instructors';
 import Complaints from './complaints';
 import Variables from './variables';
 import Profile from './profile';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import TutorNavbar from '@/components/admin/tutornavbar';
 
 const intialTabs = [
@@ -29,10 +29,6 @@ export default function AdminHomePage() {
   const [currentTab, setCurrentTab] = useState('Contact Us');
   const [tabs, setTabs] = useState(intialTabs);
 
-  useEffect(() => {
-    console.log(tabs);
-  }, [tabs]);
-
   const handleTabSelection = (selectedTab) => {
     const updatedTabs = tabs.map((tab) => ({
       ...tab,
@@ -42,6 +38,7 @@ export default function AdminHomePage() {
     setTabs(updatedTabs);
   };
 
+
   return (
     <>
       <TutorNavbar />
@@ -49,23 +46,23 @@ export default function AdminHomePage() {
         <div>
           <AdminTabs tabs={tabs} handleTabSelection={handleTabSelection} />
           {currentTab === 'Contact Us' ? (
-            <ContactUs /> 
+            <ContactUs />
           ) : currentTab === 'Visitors' ? (
-            <Visitors /> 
+            <Visitors />
           ) : currentTab === 'Instructors' ? (
-            <Instructors /> 
+            <Instructors />
           ) : currentTab === 'Students' ? (
-            <Students /> 
+            <Students />
           ) : currentTab === 'Courses' ? (
-            <Courses /> 
+            <Courses />
           ) : currentTab === 'Complaints' ? (
-            <Complaints /> 
+            <Complaints />
           ) : currentTab === 'Financials' ? (
-            <Financials /> 
+            <Financials />
           ) : currentTab === 'Roles' ? (
-            <Roles /> 
+            <Roles />
           ) : currentTab === 'Variables' ? (
-            <Variables /> 
+            <Variables />
           ) : currentTab === 'Profile' ? (
             <Profile />
           ) : (

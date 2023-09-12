@@ -66,7 +66,6 @@ function BankInfo() {
         
         }
       );
-
       handleUpdateClick();
       setShowPayPalInput(false);
       setPopupVisible(!popupVisible)
