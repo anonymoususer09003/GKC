@@ -4,7 +4,7 @@ import { base_url } from '@/api/client';
 import { useState, useEffect } from 'react';
 
 const Variables = () => {
-  const loggedUserEmail = localStorage.getItem('email');
+  const loggedUserEmail = typeof window === 'undefined' ? null : window?.localStorage.getItem('email');
   const [loggedUserInfo, setLoggedUserInfo] = useState();
   const [taxValuePercentage, setTaxValuePercentage] = useState();
   const [feeValuePercentage, setFeeValuePercentage] = useState();
@@ -22,13 +22,19 @@ const Variables = () => {
   };
 
   const getProfileInfo = async () => {
-    try {
-      const response = await apiClient.get(
-        `${base_url}/admin/${loggedUserEmail}`
-      );
-      setLoggedUserInfo(response.data);
-    } catch (error) {
-      console.log(error);
+    if(
+      loggedUserEmail === null
+    ){
+      console.log('waiting till global object window will load, so we can parse email item.')
+    }else{
+      try {
+        const response = await apiClient.get(
+          `${base_url}/admin/${loggedUserEmail}`
+        );
+        setLoggedUserInfo(response.data);
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
 
