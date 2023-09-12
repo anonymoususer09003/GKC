@@ -2,29 +2,30 @@ import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
-  BarElement,
+  PointElement,
+  LineElement,
   Title,
   Tooltip,
   Legend,
 } from 'chart.js';
-import { Bar } from 'react-chartjs-2';
-import { faker } from '@faker-js/faker';
+import { Line } from 'react-chartjs-2';
 
 ChartJS.register(
   CategoryScale,
   LinearScale,
-  BarElement,
+  PointElement,
+  LineElement,
   Title,
   Tooltip,
   Legend
 );
 
 export const bar1 = {
-  maintainAspectRatio: false,
+  // maintainAspectRatio: false,
   responsive: true,
   plugins: {
     legend: {
-      position: 'top',
+      display: false,
     },
     title: {
       display: true,
@@ -33,24 +34,24 @@ export const bar1 = {
   },
 };
 export const bar2 = {
-  maintainAspectRatio: false,
+  // maintainAspectRatio: false,
   responsive: true,
   plugins: {
     legend: {
-      position: 'top',
+      display: false,
     },
     title: {
       display: true,
-      text: 'No of Instructors',
+      text: 'No of Daily Classes',
     },
   },
 };
 export const bar3 = {
-  maintainAspectRatio: false,
+  // maintainAspectRatio: false,
   responsive: true,
   plugins: {
     legend: {
-      position: 'top',
+      display: false,
     },
     title: {
       display: true,
@@ -59,11 +60,11 @@ export const bar3 = {
   },
 };
 export const bar4 = {
-  maintainAspectRatio: false,
+  // maintainAspectRatio: false,
   responsive: true,
   plugins: {
     legend: {
-      position: 'top',
+      display: false,
     },
     title: {
       display: true,
@@ -72,34 +73,48 @@ export const bar4 = {
   },
 };
 
-const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
+export function VisitorsCharts({
+  studentsCountData,
+  instructorsCountData,
+  classesCountData,
+  complaintsCountData,
+}) {
+  function generateChartData(dataArr) {
+    const chartData = {
+      labels: dataArr.map((item) => item.x),
+      datasets: [
+        {
+          data: dataArr.map((item) => item.y),
+          borderColor: 'rgba(255, 99, 132, 0.5)',
+        },
+      ],
+    };
+    return chartData;
+  }
 
-export const data = {
-  labels,
-  datasets: [
-    {
-      label: 'Dataset 1',
-      data: labels.map(() => faker.datatype.number({ min: 100, max: 1000 })),
-      backgroundColor: 'rgba(255, 99, 132, 0.5)',
-    },
-    {
-      label: 'Dataset 2',
-      data: labels.map(() => faker.datatype.number({ min: 0, max: 1000 })),
-      backgroundColor: 'rgba(53, 162, 235, 0.5)',
-    },
-  ],
-};
+  function generateData(dataArr) {
+    return generateChartData(
+      dataArr.map((item) => ({
+        x: new Date(item.date).toLocaleDateString(),
+        y: item.count,
+      }))
+    );
+  }
 
-export function VisitorsCharts() {
+  const studentsCount = generateData(studentsCountData);
+  const instructorsCount = generateData(instructorsCountData);
+  const classesCount = generateData(classesCountData);
+  const complaintsCount = generateData(complaintsCountData);
+
   return (
     <div className="tw-cst-pf tw-flex tw-space-x-4 tw-p-2">
       <div className="tw-max-h-[40vh]">
-        <Bar options={bar1} data={data} />
-        <Bar options={bar2} data={data} />
+        <Line options={bar1} data={studentsCount} />
+        <Line options={bar2} data={classesCount} />
       </div>
       <div className="tw-cst-pf tw-h-full tw-max-h-[40vh]">
-        <Bar options={bar3} data={data} />
-        <Bar options={bar4} data={data} />
+        <Line options={bar3} data={instructorsCount} />
+        <Line options={bar4} data={complaintsCount} />
       </div>
     </div>
   );

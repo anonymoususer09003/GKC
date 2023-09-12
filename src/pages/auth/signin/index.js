@@ -35,13 +35,11 @@ export default function SignIn() {
 
   const onLogin = async () => {
     try {
-      console.log(email, password);
       const response = await axios.post(`${base_url}/auth/login`, {
         email: email,
         password: password,
       });
       const accessToken = response.data.accessToken;
-
       const res = await axios.get(`${base_url}/user/logged-user-role`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -51,6 +49,9 @@ export default function SignIn() {
         'gkcAuth',
         JSON.stringify({ accessToken, role: res.data })
       );
+
+      window.localStorage.setItem('email', email);
+
       if (res.data === 'Student') {
         navigation.push('/');
       }
@@ -61,6 +62,9 @@ export default function SignIn() {
 
       if (res.data === 'Parent') {
         navigation.push('/parent');
+      }
+      if (res.data === 'Admin') {
+        navigation.push('/internal');
       }
     } catch (error) {
       if (

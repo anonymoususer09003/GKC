@@ -70,7 +70,6 @@ function BankInfo() {
         
         }
       );
-
       handleUpdateClick();
       setPopupVisible(!popupVisible)
     } catch (error) {

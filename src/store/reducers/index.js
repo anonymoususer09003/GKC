@@ -6,7 +6,6 @@ import filesReducer from './filesReducer';
 const rootReducer = combineReducers({
   user: userReducer,
   files: filesReducer,
-//   video: videoReducer,
   // Add more reducers here if needed
 });
 

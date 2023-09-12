@@ -44,7 +44,7 @@ export const pie4 = {
   responsive: true,
   plugins: {
     legend: {
-      position: 'top',
+      position: 'right',
     },
     title: {
       display: true,
@@ -52,43 +52,56 @@ export const pie4 = {
     },
   },
 };
-export const data = {
-  labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-  datasets: [
-    {
-      label: '# of Votes',
-      data: [12, 19, 3, 5, 2, 3],
-      backgroundColor: [
-        'rgba(255, 99, 132, 0.2)',
-        'rgba(54, 162, 235, 0.2)',
-        'rgba(255, 206, 86, 0.2)',
-        'rgba(75, 192, 192, 0.2)',
-        'rgba(153, 102, 255, 0.2)',
-        'rgba(255, 159, 64, 0.2)',
-      ],
-      borderColor: [
-        'rgba(255, 99, 132, 1)',
-        'rgba(54, 162, 235, 1)',
-        'rgba(255, 206, 86, 1)',
-        'rgba(75, 192, 192, 1)',
-        'rgba(153, 102, 255, 1)',
-        'rgba(255, 159, 64, 1)',
-      ],
-      borderWidth: 1,
-    },
-  ],
-};
 
-export function VisitorsPieCharts() {
+export function VisitorsPieCharts({
+  ageGroupData,
+  skillLevelData,
+  deliveryModeData,
+  languageData,
+}) {
+  function generateChartData(dataArr) {
+    const chartData = {
+      labels: dataArr.map((item) => item.groupingFilterName),
+      datasets: [
+        {
+          data: dataArr.map((item) => item.count),
+          backgroundColor: [
+            'rgba(255, 99, 132, 0.2)',
+            'rgba(54, 162, 235, 0.2)',
+            'rgba(255, 206, 86, 0.2)',
+            'rgba(75, 192, 192, 0.2)',
+            'rgba(153, 102, 255, 0.2)',
+            'rgba(255, 159, 64, 0.2)',
+          ],
+          borderColor: [
+            'rgba(255, 99, 132, 1)',
+            'rgba(54, 162, 235, 1)',
+            'rgba(255, 206, 86, 0.2)',
+            'rgba(75, 192, 192, 0.2)',
+            'rgba(153, 102, 255, 0.2)',
+            'rgba(255, 159, 64, 0.2)',
+          ],
+          borderWidth: 1,
+        },
+      ],
+    };
+    return chartData;
+  }
+
+  const studentsCount = generateChartData(ageGroupData);
+  const skillLevelCount = generateChartData(skillLevelData);
+  const deliveryModeDataCount = generateChartData(deliveryModeData);
+  const languageCount = generateChartData(languageData);
+
   return (
     <div className="tw-cst-pf tw-flex">
       <div>
-        <Pie options={pie1} data={data} />
-        <Pie options={pie3} data={data} />
+        <Pie options={pie1} data={studentsCount} />
+        <Pie options={pie3} data={deliveryModeDataCount} />
       </div>
       <div>
-        <Pie options={pie2} data={data} />
-        <Pie options={pie4} data={data} />
+        <Pie options={pie2} data={skillLevelCount} />
+        <Pie options={pie4} data={languageCount} />
       </div>
     </div>
   );

@@ -1,6 +1,5 @@
 import { Fragment, useEffect, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
-import ModalCheckbox from './ModalCheckbox';
 import { apiClient } from '@/api/client';
 import { base_url } from '@/api/client';
 
@@ -17,12 +16,18 @@ const checkboxes = [
   'VARIABLES',
 ];
 
-export default function RolesModal({ setOpen, open, getAllAdmins }) {
+export default function RolesEditModal({ setOpen, open, getAllAdmins, admin }) {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [authorities, setAuthorities] = useState([]);
+
+  useEffect(() => {
+    setFirstName(admin.firstName);
+    setLastName(admin.lastName);
+    setEmail(admin.email);
+    setAuthorities(admin.authorities);
+  }, []);
 
   const handleCheckboxChange = (event) => {
     const { name, checked } = event.target;
@@ -35,31 +40,26 @@ export default function RolesModal({ setOpen, open, getAllAdmins }) {
     }
   };
 
-  const addAdmin = async () => {
+  const editAdmin = async (admin) => {
     try {
-      const adminData = {
+      const updatedAdminData = {
+        adminId: admin.id,
         firstName,
         lastName,
         email,
-        password,
+        status: admin.adminStatus,
         authorities,
       };
-      const response = await apiClient.post(
-        `${base_url}/admin/roles/register-admin`,
-        adminData
+      const response = await apiClient.put(
+        `${base_url}/admin/roles/update-admin/${admin.id}`,
+        updatedAdminData
       );
       getAllAdmins();
-      setOpen(false);
-      setFirstName('');
-      setLastName('');
-      setEmail('');
-      setPassword('');
-      setAuthorities([]);
+      setOpen();
     } catch (error) {
       console.log(error);
     }
   };
-
   return (
     <Transition.Root show={open} as={Fragment}>
       <Dialog as="div" className="tw-relative tw-z-10" onClose={setOpen}>
@@ -94,6 +94,7 @@ export default function RolesModal({ setOpen, open, getAllAdmins }) {
                     </label>
                     <div className="tw-mt-2 tw-w-60">
                       <input
+                        value={firstName}
                         onChange={(e) => setFirstName(e.target.value)}
                         type="Text"
                         name="First Name"
@@ -110,6 +111,7 @@ export default function RolesModal({ setOpen, open, getAllAdmins }) {
                     </label>
                     <div className="tw-mt-2 tw-w-60">
                       <input
+                        value={lastName}
                         onChange={(e) => setLastName(e.target.value)}
                         type="text"
                         name="Last Name"
@@ -128,6 +130,7 @@ export default function RolesModal({ setOpen, open, getAllAdmins }) {
                     </label>
                     <div className="tw-mt-2 tw-w-60">
                       <input
+                        value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         type="email"
                         name="Email"
@@ -137,37 +140,23 @@ export default function RolesModal({ setOpen, open, getAllAdmins }) {
                       />
                     </div>
                   </div>
-                  <div className="tw-flex tw-items-center tw-justify-between">
-                    <label
-                      htmlFor="email"
-                      className="tw-block tw-text-sm tw-font-medium tw-leading-6 tw-text-gray-900"
-                    >
-                      Password
-                    </label>
-                    <div className="tw-mt-2 tw-w-60">
-                      <input
-                        onChange={(e) => setPassword(e.target.value)}
-                        type="password"
-                        name="Password"
-                        id="Password"
-                        className="tw-block tw-w-full tw-rounded-md tw-border-0 tw-py-1.5 tw-text-gray-900 tw-shadow-sm tw-ring-1 tw-ring-inset tw-ring-gray-300 placeholder:tw-text-gray-400 focus:tw-ring-2 focus:tw-ring-inset focus:tw-ring-indigo-600 sm:tw-text-sm sm:tw-leading-6"
-                        placeholder="Password"
-                      />
-                    </div>
-                  </div>
                   <div className="tw-flex tw-mt-3 tw-justify-between">
                     <label className="tw-block tw-text-sm tw-font-medium tw-leading-6 tw-text-gray-900">
                       Access
                     </label>
                     <fieldset>
                       <div className="tw-space-y-2">
-                        {checkboxes.map((role) => (
-                          <div className="!tw-relative tw-cst-pf !tw-flex !tw-items-start">
+                        {checkboxes.map((role, index) => (
+                          <div
+                            key={index}
+                            className="!tw-relative tw-cst-pf !tw-flex !tw-items-start"
+                          >
                             <div className="tw-flex tw-h-6 tw-items-center">
                               <input
                                 onChange={handleCheckboxChange}
                                 id={role}
                                 name={role}
+                                checked={authorities.includes(role)}
                                 type="checkbox"
                                 className="tw-h-4 tw-cst-pf !tw-border-2 tw-w-4 tw-rounded !tw-border-gray-300 tw-text-indigo-600 focus:tw-ring-indigo-600"
                               />
@@ -188,7 +177,7 @@ export default function RolesModal({ setOpen, open, getAllAdmins }) {
                 </div>
                 <div className="tw-mt-5 tw-w-[70%] tw-mx-auto sm:tw-mt-6 sm:tw-grid sm:tw-grid-flow-row-dense sm:tw-grid-cols-2 sm:tw-gap-3">
                   <button
-                    onClick={() => setOpen(false)}
+                    onClick={setOpen}
                     type="button"
                     className="tw-block !tw-bg-[#f48342] tw-rounded-md tw-px-3 tw-py-1.5 tw-text-center tw-text-sm tw-font-semibold tw-leading-6 tw-text-white tw-shadow-sm hover:tw-bg-indigo-500 focus-visible:tw-outline focus-visible:tw-outline-2 focus-visible:tw-outline-offset-2 focus-visible:tw-outline-indigo-600"
                   >
@@ -196,7 +185,7 @@ export default function RolesModal({ setOpen, open, getAllAdmins }) {
                   </button>
 
                   <button
-                    onClick={addAdmin}
+                    onClick={() => editAdmin(admin)}
                     type="button"
                     className="tw-block !tw-bg-[#f48342] tw-rounded-md tw-px-3 tw-py-1.5 tw-text-center tw-text-sm tw-font-semibold tw-leading-6 tw-text-white tw-shadow-sm hover:tw-bg-indigo-500 focus-visible:tw-outline focus-visible:tw-outline-2 focus-visible:tw-outline-offset-2 focus-visible:tw-outline-indigo-600"
                   >
