@@ -32,7 +32,7 @@ export default function Home() {
                   src="/assets/logo.png"
                   alt="Vercel Logo"
                   className=""
-                  width={100}
+                  width={240}
                   height={50}
                   priority
                 />

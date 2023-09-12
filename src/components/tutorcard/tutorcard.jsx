@@ -7,7 +7,7 @@ import { FaFileVideo } from 'react-icons/fa';
 import StarRatings from 'react-star-ratings';
 import { useRouter } from 'next/router';
 import { apiClient } from '../../api/client';
-const Tutorcard = ({ data }) => {
+const Tutorcard = ({ data, key }) => {
   const navigation = useRouter();
   const [userData, setUserData] = useState(null);
   const [reviews, setReviews] = useState([]);
@@ -47,7 +47,7 @@ const Tutorcard = ({ data }) => {
 
   return (
     <>
-      <div className="d-flex flex-column flex-md-row align-items-center gap-4 border my-2 p-3 shadow p-3 mb-5 bg-white rounded">
+      <div className="d-flex flex-column flex-md-row align-items-center tw-justify-center gap-4 border my-2 p-3 shadow p-3 mb-5 bg-white rounded">
         <div data-bs-toggle="modal" data-bs-target="#exampleModal">
           <Image
             src="/assets/student-preview.png"
@@ -58,76 +58,55 @@ const Tutorcard = ({ data }) => {
             className="rounded-circle bg-light"
           />
         </div>
-        {data?.video && (
-          <div className="d-flex justify-conntent-between align-items-end">
-            <div>
-              <a href={data.video} target="_blank" rel="noopener noreferrer">
-                <FaFileVideo style={{ fontSize: '40px', color: '#006600' }} />
-              </a>
-            </div>
-          </div>
-        )}
         <div>
-          <div className="d-flex gap-2 flex-wrap align-items-center justify-content-between flex-1">
-            <b
-              className="m-0 p-0"
-              data-bs-toggle="modal"
-              data-bs-target="#exampleModal"
-            >
-              {data?.firstName + ' ' + data?.lastName}
-            </b>
-            <div
-              className="d-flex align-items-center gap-2"
-              data-bs-toggle="modal"
-              data-bs-target="#exampleModal"
-            >
-              <div className="mb-2">
-                <StarRatings
-                  starRatedColor="#cc9338"
-                  rating={data?.averageRating ?? 0}
-                  starDimension="20px"
-                  starSpacing="0px"
-                />
-              </div>
-              <p className="m-0 p-0">Stars {data?.averageRating ?? 0}/5</p>
+          <div className="gap-2 flex-wrap align-items-center justify-content-between">
+            <div className={'d-flex tw-flex-row tw-justify-between'}>
+                <p
+                className="m-0 p-0 fw-bold"
+                data-bs-toggle="modal"
+                data-bs-target="#exampleModal">
+                  {data?.firstName + ' ' + data?.lastName}
+                </p>
+                <p className="m-0 p-0 fw-bold">
+                  ${data?.hourlyRate}/hr
+                </p>
             </div>
-            <button
-              className="m-0 p-0 bg_secondary border-0 text-white p-2 rounded d-flex align-items-center gap-2"
-              // data-bs-toggle="modal"
-              // data-bs-target="#exampleModal1"
-              onClick={() => handleOpenModal2(data?.id)}
-            >
-              <BiMessageAlt style={{ fontSize: '22px' }} />
-              Reviews
-            </button>
-
-            <p className="m-0 p-0 fw-bold">${data?.hourlyRate}/hr</p>
-            <button
-              className={`btn_primary py-2 px-5 fw-bold text-white rounded`}
-              type="submit"
-              onClick={()=>{handleOpenModal(true)}}
-            >
-              Select
-            </button>
-            <button
-              className={`btn_primary py-2 px-5 fw-bold text-white rounded`}
-              type="submit"
-              onClick={()=>{handleOpenModal(false)}}
-            >
-              Request Interview
-            </button>
+            <div className='d-flex tw-flex-row tw-justify-between'>
+              <div
+                className="d-flex align-items-center gap-2"
+                data-bs-toggle="modal"
+                data-bs-target="#exampleModal"
+              >
+                <div className="mb-2">
+                  <StarRatings
+                    starRatedColor="#cc9338"
+                    rating={data?.averageRating ?? 0}
+                    starDimension="20px"
+                    starSpacing="0px"
+                  />
+                </div>
+                <p className="m-0 p-0">Stars {data?.averageRating ?? 0}/5</p>
+              </div>
+              <button
+                className="m-0 p-0 bg_secondary border-0 text-white p-2 rounded d-flex align-items-center gap-2"
+                onClick={() => handleOpenModal2(data?.id)}
+              >
+                <BiMessageAlt style={{ fontSize: '22px' }} />
+                Reviews
+              </button>
+            </div>
           </div>
-          <h5
-            className="m-0 pt-2"
-            data-bs-toggle="modal"
-            data-bs-target="#exampleModal"
-          >
-            Call to action title
-          </h5>
           <p
             className="m-0 py-2"
             data-bs-toggle="modal"
             data-bs-target="#exampleModal"
+            style={{
+              textOverflow:'ellipsis',
+              overflow:'hidden',
+              whiteSpace:'nowrap',
+              lineClamp:4,
+              width: 400
+            }}
           >
             {data?.instructorBio}
           </p>
@@ -152,12 +131,28 @@ const Tutorcard = ({ data }) => {
           </div>
           <div className="d-flex gap-2">
             <b>Speaks:</b>
-            <ul className="d-flex list-unstyled gap-2">
+            <ul className="d-flex list-unstyled gap-2 tw-flex-wrap">
               {data?.languagePreference.map((v, i) => {
-                return <li>{v.name}</li>;
+                return <li className={'tw-whitespace-nowrap'} key={i}>{v.name}</li>;
               })}
             </ul>
           </div>
+          <div className='d-flex tw-flex-row tw-justify-between tw-gap-1'>
+              <button
+                className={`btn_primary py-2 px-5 fw-bold text-white rounded tw-whitespace-nowrap`}
+                type="submit"
+                onClick={()=>{handleOpenModal(false)}}
+              >
+                Request Interview
+              </button>
+              <button
+                className={`d-flex btn_primary py-2 px-5 fw-bold text-white rounded tw-whitespace-nowrap`}
+                type="submit"
+                onClick={()=>{handleOpenModal(true)}}
+              >
+                Book a Class
+              </button>
+            </div>
         </div>
       </div>
 
@@ -173,7 +168,9 @@ const Tutorcard = ({ data }) => {
                   <h5 className="modal-title" id="exampleModalLabel"></h5>
                   <button
                     type="button"
-                    className="btn-close"
+                    style={{
+                      background:'https://cdn-icons-png.flaticon.com/128/5368/5368396.png'
+                    }}
                     onClick={handleCloseModal}
                   ></button>
                 </div>
@@ -194,16 +191,20 @@ const Tutorcard = ({ data }) => {
                         <h5 className="m-0 p-0">
                           {data?.firstName + ' ' + data?.lastName}
                         </h5>
-                        <div className="d-flex align-items-center gap-2">
+                        <div
+                          className="d-flex align-items-center gap-2"
+                          data-bs-toggle="modal"
+                          data-bs-target="#exampleModal"
+                        >
                           <div className="mb-2">
                             <StarRatings
                               starRatedColor="#cc9338"
-                              rating={4.2}
+                              rating={data?.averageRating ?? 0}
                               starDimension="20px"
                               starSpacing="0px"
                             />
                           </div>
-                          <p className="m-0 p-0">Stars 4.2/5</p>
+                          <p className="m-0 p-0">Stars {data?.averageRating ?? 0}/5</p>
                         </div>
                         <button className="m-0 p-0 bg_secondary border-0 text-white p-2 rounded d-flex align-items-center gap-2">
                           <BiMessageAlt style={{ fontSize: '22px' }} />
@@ -223,7 +224,7 @@ const Tutorcard = ({ data }) => {
                       </div>
                     </div>
                   </div>
-                  <p className="my-2 p-0 p-md-3 small">{data?.instructorBio}</p>
+                  <p className="my-2 p-0 p-md-3 small tw-line-clamp-1 tw-truncate">{data?.instructorBio}</p>
 
                   <div className="d-flex gap-2 m-0 px-3 align-items-center">
                     <b className="m-0 p-0">Courses:</b>
@@ -248,7 +249,7 @@ const Tutorcard = ({ data }) => {
                     <b>Speaks:</b>
                     <ul className="d-flex list-unstyled gap-2">
                       {data?.languagePreference.map((v, i) => {
-                        return <li>{v.name}</li>;
+                        return <li key={i} style={{whiteSpace:'nowrap'}}>{v.name}</li>;
                       })}
                     </ul>
                   </div>
@@ -279,51 +280,287 @@ const Tutorcard = ({ data }) => {
         <div className="d-flex justify-content-center align-items-center">
           <div className="modal" tabIndex="-1" role="dialog">
             <div
-              className="modal-dialog modal-dialog-centered modal-lg"
+              className="modal-dialog modal-dialog-centered modal-lg tw-w-2/3"
               role="document"
             >
-              <div className="modal-content p-2">
+              <div className="modal-content p-2"
+              >
                 <div className="d-flex justify-content-between">
                   <h5 className="modal-title" id="exampleModalLabel1"></h5>
                   <button
                     type="button"
-                    className="btn-close"
+                    style={{
+                      width:15,
+                      height:15,
+                      border:'none',
+                      background:'none https://cdn-icons-png.flaticon.com/128/5368/5368396.png',
+                    }}
                     onClick={handleCloseModal2}
-                  ></button>
+                  >X</button>
                 </div>
                 <div className="modal-body">
-                  <div className="d-flex align-items-center gap-3">
-                    <div>
-                      <Image
-                        src="/assets/student-preview.png"
-                        alt=""
-                        width={120}
-                        height={120}
-                        priority
-                        className="rounded-circle bg-light"
-                      />
-                    </div>
-                    <div className="flex-1 w-100">
+                  <div className="d-flex align-items-center tw-justify-center gap-3">
+                    <div className="flex-1">
                       <div className="d-flex gap-3 align-items-center ">
                         <b className="m-0 p-0">
-                          {data?.firstName + ' ' + data?.lastName}
+                          [Instructor] {data?.firstName + ' ' + data?.lastName}
                         </b>
-                        <div className="d-flex align-items-center gap-2">
+                        <div
+                          className="d-flex align-items-center gap-2"
+                          data-bs-toggle="modal"
+                          data-bs-target="#exampleModal"
+                        >
                           <div className="mb-2">
                             <StarRatings
                               starRatedColor="#cc9338"
-                              rating={4.2}
+                              rating={data?.averageRating ?? 0}
                               starDimension="20px"
                               starSpacing="0px"
                             />
                           </div>
-                          <p className="m-0 p-0">Stars 4.2/5</p>
+                          <p className="m-0 p-0">Stars {data?.averageRating ?? 0}/5</p>
                         </div>
                       </div>
                     </div>
                   </div>
 
-                  {reviews.length == 0 ? (
+                  <div
+                    style={{
+                      overflow:'scroll',
+                      overflowX:'hidden',
+                      height:700
+                    }}
+                  >
+                    <div className="d-flex flex-column flex-md-row align-items-center gap-4 border my-2 shadow p-3 bg-white rounded">
+                          <div>
+                            <Image
+                              src="/assets/student-preview.png"
+                              alt=""
+                              width={120}
+                              height={120}
+                              priority
+                              className="rounded-circle bg-light"
+                            />
+                          </div>
+                          <div>
+                            <div className="d-flex align-items-center justify-content-between flex-1">
+                              <b className="m-0 p-0">
+                                {'Mrs' +
+                                  ' ' +
+                                  'Reviewver'}
+                              </b>
+                              <div className="d-flex align-items-center gap-2">
+                                <div className="mb-2">
+                                  <StarRatings
+                                    starRatedColor="#cc9338"
+                                    rating={4.2}
+                                    starDimension="20px"
+                                    starSpacing="0px"
+                                  />
+                                </div>
+                                <p className="m-0 p-0">
+                                  Stars 4.2/5
+                                </p>
+                              </div>
+                            </div>
+                            <p className="m-0 py-2 small">
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                            </p>
+                          </div>
+                    </div>
+
+                    <div className="d-flex flex-column flex-md-row align-items-center gap-4 border my-2 shadow p-3 bg-white rounded">
+                          <div>
+                            <Image
+                              src="/assets/student-preview.png"
+                              alt=""
+                              width={120}
+                              height={120}
+                              priority
+                              className="rounded-circle bg-light"
+                            />
+                          </div>
+                          <div>
+                            <div className="d-flex align-items-center justify-content-between flex-1">
+                              <b className="m-0 p-0">
+                                {'Mrs' +
+                                  ' ' +
+                                  'Reviewver'}
+                              </b>
+                              <div className="d-flex align-items-center gap-2">
+                                <div className="mb-2">
+                                  <StarRatings
+                                    starRatedColor="#cc9338"
+                                    rating={4.2}
+                                    starDimension="20px"
+                                    starSpacing="0px"
+                                  />
+                                </div>
+                                <p className="m-0 p-0">
+                                  Stars 4.2/5
+                                </p>
+                              </div>
+                            </div>
+                            <p className="m-0 py-2 small">
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                            </p>
+                          </div>
+                    </div>
+
+                    <div className="d-flex flex-column flex-md-row align-items-center gap-4 border my-2 shadow p-3 bg-white rounded">
+                          <div>
+                            <Image
+                              src="/assets/student-preview.png"
+                              alt=""
+                              width={120}
+                              height={120}
+                              priority
+                              className="rounded-circle bg-light"
+                            />
+                          </div>
+                          <div>
+                            <div className="d-flex align-items-center justify-content-between flex-1">
+                              <b className="m-0 p-0">
+                                {'Mrs' +
+                                  ' ' +
+                                  'Reviewver'}
+                              </b>
+                              <div className="d-flex align-items-center gap-2">
+                                <div className="mb-2">
+                                  <StarRatings
+                                    starRatedColor="#cc9338"
+                                    rating={4.2}
+                                    starDimension="20px"
+                                    starSpacing="0px"
+                                  />
+                                </div>
+                                <p className="m-0 p-0">
+                                  Stars 4.2/5
+                                </p>
+                              </div>
+                            </div>
+                            <p className="m-0 py-2 small">
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                            </p>
+                          </div>
+                    </div>
+
+                    <div className="d-flex flex-column flex-md-row align-items-center gap-4 border my-2 shadow p-3 bg-white rounded">
+                          <div>
+                            <Image
+                              src="/assets/student-preview.png"
+                              alt=""
+                              width={120}
+                              height={120}
+                              priority
+                              className="rounded-circle bg-light"
+                            />
+                          </div>
+                          <div>
+                            <div className="d-flex align-items-center justify-content-between flex-1">
+                              <b className="m-0 p-0">
+                                {'Mrs' +
+                                  ' ' +
+                                  'Reviewver'}
+                              </b>
+                              <div className="d-flex align-items-center gap-2">
+                                <div className="mb-2">
+                                  <StarRatings
+                                    starRatedColor="#cc9338"
+                                    rating={4.2}
+                                    starDimension="20px"
+                                    starSpacing="0px"
+                                  />
+                                </div>
+                                <p className="m-0 p-0">
+                                  Stars 4.2/5
+                                </p>
+                              </div>
+                            </div>
+                            <p className="m-0 py-2 small">
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                            </p>
+                          </div>
+                    </div>
+
+                    <div className="d-flex flex-column flex-md-row align-items-center gap-4 border my-2 shadow p-3 bg-white rounded">
+                          <div>
+                            <Image
+                              src="/assets/student-preview.png"
+                              alt=""
+                              width={120}
+                              height={120}
+                              priority
+                              className="rounded-circle bg-light"
+                            />
+                          </div>
+                          <div>
+                            <div className="d-flex align-items-center justify-content-between flex-1">
+                              <b className="m-0 p-0">
+                                {'Mrs' +
+                                  ' ' +
+                                  'Reviewver'}
+                              </b>
+                              <div className="d-flex align-items-center gap-2">
+                                <div className="mb-2">
+                                  <StarRatings
+                                    starRatedColor="#cc9338"
+                                    rating={4.2}
+                                    starDimension="20px"
+                                    starSpacing="0px"
+                                  />
+                                </div>
+                                <p className="m-0 p-0">
+                                  Stars 4.2/5
+                                </p>
+                              </div>
+                            </div>
+                            <p className="m-0 py-2 small">
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                            </p>
+                          </div>
+                    </div>
+
+                    <div className="d-flex flex-column flex-md-row align-items-center gap-4 border my-2 shadow p-3 bg-white rounded">
+                          <div>
+                            <Image
+                              src="/assets/student-preview.png"
+                              alt=""
+                              width={120}
+                              height={120}
+                              priority
+                              className="rounded-circle bg-light"
+                            />
+                          </div>
+                          <div>
+                            <div className="d-flex align-items-center justify-content-between flex-1">
+                              <b className="m-0 p-0">
+                                {'Mrs' +
+                                  ' ' +
+                                  'Reviewver'}
+                              </b>
+                              <div className="d-flex align-items-center gap-2">
+                                <div className="mb-2">
+                                  <StarRatings
+                                    starRatedColor="#cc9338"
+                                    rating={4.2}
+                                    starDimension="20px"
+                                    starSpacing="0px"
+                                  />
+                                </div>
+                                <p className="m-0 p-0">
+                                  Stars 4.2/5
+                                </p>
+                              </div>
+                            </div>
+                            <p className="m-0 py-2 small">
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                            </p>
+                          </div>
+                    </div>
+                  </div>
+
+                  {/* {reviews.length == 0 ? (
                     <h3 className="m-0 p-3 text-center fw-bold text-muted">
                       No Reviews Yet.
                     </h3>
@@ -367,7 +604,7 @@ const Tutorcard = ({ data }) => {
                         </div>
                       );
                     })
-                  )}
+                  )} */}
 
                   <div className="d-flex flex-column flex-md-row gap-2 gap-md-0 justify-content-between align-items-center p-3">
                     <Link
@@ -375,10 +612,10 @@ const Tutorcard = ({ data }) => {
                       href="/student/scheduleclass[instructorId]"
                       as={`/student/scheduleclass/${data.id}`}
                     >
-                      Select
+                      Book a Class
                     </Link>
 
-                    <p className="m-0 p-0">Read more</p>
+                    {/* <p className="m-0 p-0">Read more</p> */}
 
                     <Link
                       className={`btn_primary py-2 px-3 fw-bold text-white rounded text-decoration-none`}

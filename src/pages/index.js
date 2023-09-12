@@ -242,22 +242,14 @@ function StudentLandingPage() {
           </div>
         </div>
         <hr className="p-0 m-0" />
-        <div
-          style={{
-            backgroundImage: 'url("/assets/home_bg.png")',
-            height: '600px',
-            backgroundRepeat: 'no-repeat',
-            backgroundSize: '100% 100%',
-          }}
-          className=""
-        >
+
           {insructors && (
             <div className="container py-4">
-              {insructors.map((instructor) => {
+              {insructors.map((instructor, i) => {
                 return (
                   <TutorCard
+                    key={i}
                     data={instructor}
-                    key={instructor.id}
                     //showModal={showModal}
                     //setShowModal={setShowModal}
                   />
@@ -268,7 +260,7 @@ function StudentLandingPage() {
         {
           insructors.length > 1 &&
           <>
-                    <div style={{width:'100%', display:'flex',justifyContent:'center'}}>
+          <div style={{width:'100%', display:'flex',justifyContent:'center'}}>
           <button
           className='btn_primary py-2 px-5 fw-bold text-white rounded'
           onClick={()=>{
@@ -282,11 +274,145 @@ function StudentLandingPage() {
           </>
           
         }
-        </div>
+
       </main>
       {
         insructors.length < 1 && 
+        <>
+
+        <div style={{margin:'0px auto', display:'flex',flexDirection:'column', width:'70%'}}>
+          <div className='d-flex shadow'
+          style={{borderRadius:30, width:700}}>
+              <div
+              style={{
+                width:500,
+                height:256,
+                fontSize: '2svh',
+                padding: '10px 20px',
+                textAlign:'center',
+                display:'flex',
+                alignItems:'center'
+              }}
+              >Prepare your child for the future by having them learn coding from live tutors</div>
+              <div>
+                <img
+                style={{borderRadius: '0 30px 30px 0'}}
+                src={'https://gkc-images.s3.amazonaws.com/childfuture.png'}
+                height={256}
+                width={256}
+                />
+              </div>
+          </div>  
+        </div>
+
+        <div style={{margin:'30px auto', display:'flex',flexDirection:'column', gap:40, width:'70%', alignItems:'end'}}>
+          <div className='d-flex shadow tw-flex-row-reverse'
+          style={{borderRadius:30, width:700}}>
+              <div
+              style={{
+                width:500,
+                height:256,
+                fontSize: '2svh',
+                padding: '10px 20px',
+                textAlign:'center',
+                display:'flex',
+                alignItems:'center'
+              }}
+              >Prepare your child for the future by having them learn coding from live tutors</div>
+              <div>
+                <img
+                style={{borderRadius: '30px 0 0 30px'}}
+                src={'https://gkc-images.s3.amazonaws.com/childfuture.png'}
+                height={256}
+                width={256}
+                />
+              </div>
+          </div>
+        </div>
+
+        <div style={{margin:'30px auto', display:'flex',flexDirection:'column', gap:40, width:'70%'}}>
+          <div className='d-flex shadow'
+          style={{borderRadius:30, width:700}}>
+              <div
+              style={{
+                width:500,
+                height:256,
+                fontSize: '2svh',
+                padding: '10px 20px',
+                textAlign:'center',
+                display:'flex',
+                alignItems:'center'
+              }}
+              >Prepare your child for the future by having them learn coding from live tutors</div>
+              <div>
+                <img
+                style={{borderRadius: '0 30px 30px 0'}}
+                src={'https://gkc-images.s3.amazonaws.com/childfuture.png'}
+                height={256}
+                width={256}
+                />
+              </div>
+          </div>  
+        </div>
+
+        <div style={{margin:'30px auto', display:'flex',flexDirection:'column', gap:40, width:'70%', alignItems:'end'}}>
+          <div className='d-flex shadow tw-flex-row-reverse'
+          style={{borderRadius:30, width:700}}>
+              <div
+              style={{
+                width:500,
+                height:256,
+                fontSize: '2svh',
+                padding: '10px 20px',
+                textAlign:'center',
+                display:'flex',
+                alignItems:'center'
+              }}
+              >Prepare your child for the future by having them learn coding from live tutors</div>
+              <div>
+                <img
+                style={{borderRadius: '30px 0 0 30px'}}
+                src={'https://gkc-images.s3.amazonaws.com/childfuture.png'}
+                height={256}
+                width={256}
+                />
+              </div>
+          </div>
+        </div>
+        
+        <div style={{margin:'30px auto', display:'flex',flexDirection:'column', gap:40, width:'70%'}}>
+          <div className='d-flex shadow'
+          style={{borderRadius:30, width:700}}>
+              <div
+              style={{
+                width:500,
+                height:256,
+                fontSize: '2svh',
+                padding: '10px 20px',
+                textAlign:'center',
+                display:'flex',
+                alignItems:'center'
+              }}
+              >Prepare your child for the future by having them learn coding from live tutors</div>
+              <div>
+                <img
+                style={{borderRadius: '0 30px 30px 0'}}
+                src={'https://gkc-images.s3.amazonaws.com/childfuture.png'}
+                height={256}
+                width={256}
+                />
+              </div>
+          </div>  
+        </div>
+
+        <div 
+        style={{
+          position:'fixed', bottom: 0, width:'100vw', zIndex:999
+        }}
+        >
         <Footer />
+        </div>
+        </>
       }
     </>
   );

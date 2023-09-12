@@ -73,7 +73,7 @@ export default function Home() {
                   src="https://gkc-images.s3.amazonaws.com/logo.png"
                   alt="Vercel Logo"
                   className=""
-                  width={100}
+                  width={240}
                   height={50}
                   unoptimized
                 />
