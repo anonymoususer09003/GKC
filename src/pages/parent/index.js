@@ -212,7 +212,7 @@ function ParentLandingPage() {
         <div
           style={{
             backgroundImage: 'url("/assets/home_bg.png")',
-            minHeight: "100vh",
+            minHeight: "775px",
             backgroundRepeat: "no-repeat",
             backgroundSize: "100% 100%",
           }}

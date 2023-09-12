@@ -30,7 +30,7 @@ const Navbar = ({ isLogin }) => {
             <Image
               src="https://gkc-images.s3.amazonaws.com/logo.png"
               alt="Vercel Logo"
-              width={100}
+              width={240}
               height={50}
               unoptimized
             />

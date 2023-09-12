@@ -10,7 +10,7 @@ const Footer = () => {
               href="."
               className="text-decoration-none text-muted fw-bold small"
             >
-              Privicy Policy
+              Privacy Policy
             </a>
             <a
               href="."
@@ -23,7 +23,7 @@ const Footer = () => {
             <p
               className={`p-0 m-0 text-muted  fw-bold small ${styles.allRights}`}
             >
-              &#169; 2023 GSK. All Rights Reserved
+              &#169;2023 GeekKidsCode. All Rights Reserved
             </p>
           </div>
         </div>
