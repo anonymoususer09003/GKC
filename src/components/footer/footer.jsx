@@ -21,9 +21,31 @@ const Footer = () => {
               Term of Use
             </a>
           </div>
+          <div className={`flex-1 d-flex gap-5 ${styles.linksContainer}`}>
+            <a
+              href="mail:info@geekkidscode.com"
+              style={{textAlign:'center'}}
+              className="text-decoration-none text-muted fw-bold small"
+              target="_blank"
+            >
+              Contact: info@geekkidscode.com
+            </a>
+            <a
+              href="https://geekKidsCode.com"
+              style={{textAlign:'center'}}
+              className="text-decoration-none text-muted fw-bold small"
+              target="_blank"
+            >
+              GeekKidsCode.com is owned and operated by Greinchville Solutions LLC
+            </a>
+          </div>
           <div className="flex-1 ">
             <p
               className={`p-0 m-0 text-muted  fw-bold small ${styles.allRights}`}
+              style={{
+                position: 'relative',
+                left: -20
+              }}
             >
               &#169;2023 GeekKidsCode. All Rights Reserved
             </p>
