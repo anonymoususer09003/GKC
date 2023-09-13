@@ -13,6 +13,7 @@ const Tutorcard = ({ data, key }) => {
   const [reviews, setReviews] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [showModal2, setShowModal2] = useState(false);
+  const [showVideoPopup, setShowVideoPopup] = useState(false);
 
   console.log('data', data);
 
@@ -47,8 +48,35 @@ const Tutorcard = ({ data, key }) => {
 
   return (
     <>
+          {showVideoPopup ? (
+        <div style={{position:'fixed', zIndex: 1, left:0,top:0, width:'100%', height:'100%',overflow:'auto', background: 'rgba(0, 0, 0, 0.4)', zIndex: 3}}>
+          <div style={{background: 'white', margin: '200px auto', padding:20, width:'50%', zIndex: 5}}
+          >
+            <div 
+            style={{width: "100%", display:'flex', justifyContent:'flex-end', cursor: 'pointer'}}>
+              <img
+              style={{width:40, height: 40}}
+              src='https://cdn-icons-png.flaticon.com/128/5368/5368396.png'
+              onClick={()=>{setShowVideoPopup(false)}}
+              />
+            </div>
+                {
+                  data?.video && (
+                    <video
+                    width="100%"
+                    height="500px"
+                    muted
+                    controls
+                    loop
+                    src={data?.video}
+                  ></video>
+                  )
+                }
+          </div>
+        </div>
+        ) : null}
       <div className="d-flex flex-column flex-md-row align-items-center tw-justify-center gap-4 border my-2 p-3 shadow p-3 mb-5 bg-white rounded">
-        <div data-bs-toggle="modal" data-bs-target="#exampleModal">
+        <div>
           <Image
             src="/assets/student-preview.png"
             alt=""
@@ -61,10 +89,8 @@ const Tutorcard = ({ data, key }) => {
           <div className="d-flex justify-conntent-between align-items-end"
           style={{position:'relative',left:160,top:10}}
           >
-            <div>
-              <a href={data.video} target="_blank" rel="noopener noreferrer">
-                <FaFileVideo style={{ fontSize: '40px', color: '#006600' }} />
-              </a>
+            <div onClick={()=>{setShowVideoPopup(true)}}>
+                <FaFileVideo style={{ fontSize: '40px', color: '#006600', cursor:'pointer' }} />
             </div>
           </div>
           )}
@@ -75,9 +101,7 @@ const Tutorcard = ({ data, key }) => {
             style={{fontSize: 20}}
             >
                 <p
-                className="m-0 p-0 fw-bold"
-                data-bs-toggle="modal"
-                data-bs-target="#exampleModal">
+                className="m-0 p-0 fw-bold">
                   {data?.firstName + ' ' + data?.lastName}
                 </p>
                 <p className="m-0 p-0 fw-bold">
@@ -87,8 +111,6 @@ const Tutorcard = ({ data, key }) => {
             <div className='d-flex tw-flex-row tw-justify-between'>
               <div
                 className="d-flex align-items-center gap-2"
-                data-bs-toggle="modal"
-                data-bs-target="#exampleModal"
               >
                 <div className="mb-2">
                   <StarRatings
@@ -111,8 +133,6 @@ const Tutorcard = ({ data, key }) => {
           </div>
           <p
             className="m-0 py-2"
-            data-bs-toggle="modal"
-            data-bs-target="#exampleModal"
             style={{
               textOverflow:'ellipsis',
               overflow:'hidden',
@@ -339,187 +359,60 @@ const Tutorcard = ({ data, key }) => {
                               starSpacing="0px"
                             />
                           </div>
-                          <p className="m-0 p-0">Stars {data?.averageRating ?? 0}/5</p>
+                          <p className="m-0 p-0">Stars {data?.averageRating.toFixed(0) ?? 0}/5</p>
                         </div>
                       </div>
                     </div>
                   </div>
 
-                  <div
-                    style={{
-                      overflow:'scroll',
-                      overflowX:'hidden',
-                      height:700
-                    }}
-                  >
-                    <div className="d-flex flex-column flex-md-row align-items-center gap-4 border my-2 shadow p-3 bg-white rounded">
-                          <div>
-                            <div className="d-flex align-items-center justify-content-between flex-1">
-                              <b className="m-0 p-0">
-                                {'Mrs' +
-                                  ' ' +
-                                  'Reviewver'}
-                              </b>
-                              <div className="d-flex align-items-center gap-2">
-                                <div className="mb-2">
-                                  <StarRatings
-                                    starRatedColor="#cc9338"
-                                    rating={4.2}
-                                    starDimension="20px"
-                                    starSpacing="0px"
-                                  />
-                                </div>
-                                <p className="m-0 p-0">
-                                  Stars 4.2/5
-                                </p>
-                              </div>
-                            </div>
-                            <p className="m-0 py-2 small">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                            </p>
-                          </div>
-                    </div>
 
-                    <div className="d-flex flex-column flex-md-row align-items-center gap-4 border my-2 shadow p-3 bg-white rounded">
-                          <div>
-                            <div className="d-flex align-items-center justify-content-between flex-1">
-                              <b className="m-0 p-0">
-                                {'Mrs' +
-                                  ' ' +
-                                  'Reviewver'}
-                              </b>
-                              <div className="d-flex align-items-center gap-2">
-                                <div className="mb-2">
-                                  <StarRatings
-                                    starRatedColor="#cc9338"
-                                    rating={4.2}
-                                    starDimension="20px"
-                                    starSpacing="0px"
-                                  />
-                                </div>
-                                <p className="m-0 p-0">
-                                  Stars 4.2/5
-                                </p>
-                              </div>
-                            </div>
-                            <p className="m-0 py-2 small">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                            </p>
-                          </div>
-                    </div>
-
-                    <div className="d-flex flex-column flex-md-row align-items-center gap-4 border my-2 shadow p-3 bg-white rounded">
-                          <div>
-                            <div className="d-flex align-items-center justify-content-between flex-1">
-                              <b className="m-0 p-0">
-                                {'Mrs' +
-                                  ' ' +
-                                  'Reviewver'}
-                              </b>
-                              <div className="d-flex align-items-center gap-2">
-                                <div className="mb-2">
-                                  <StarRatings
-                                    starRatedColor="#cc9338"
-                                    rating={4.2}
-                                    starDimension="20px"
-                                    starSpacing="0px"
-                                  />
-                                </div>
-                                <p className="m-0 p-0">
-                                  Stars 4.2/5
-                                </p>
-                              </div>
-                            </div>
-                            <p className="m-0 py-2 small">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                            </p>
-                          </div>
-                    </div>
-
-                    <div className="d-flex flex-column flex-md-row align-items-center gap-4 border my-2 shadow p-3 bg-white rounded">
-                          <div>
-                            <div className="d-flex align-items-center justify-content-between flex-1">
-                              <b className="m-0 p-0">
-                                {'Mrs' +
-                                  ' ' +
-                                  'Reviewver'}
-                              </b>
-                              <div className="d-flex align-items-center gap-2">
-                                <div className="mb-2">
-                                  <StarRatings
-                                    starRatedColor="#cc9338"
-                                    rating={4.2}
-                                    starDimension="20px"
-                                    starSpacing="0px"
-                                  />
-                                </div>
-                                <p className="m-0 p-0">
-                                  Stars 4.2/5
-                                </p>
-                              </div>
-                            </div>
-                            <p className="m-0 py-2 small">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                            </p>
-                          </div>
-                    </div>
-
-                    <div className="d-flex flex-column flex-md-row align-items-center gap-4 border my-2 shadow p-3 bg-white rounded">
-                          <div>
-                            <div className="d-flex align-items-center justify-content-between flex-1">
-                              <b className="m-0 p-0">
-                                {'Mrs' +
-                                  ' ' +
-                                  'Reviewver'}
-                              </b>
-                              <div className="d-flex align-items-center gap-2">
-                                <div className="mb-2">
-                                  <StarRatings
-                                    starRatedColor="#cc9338"
-                                    rating={4.2}
-                                    starDimension="20px"
-                                    starSpacing="0px"
-                                  />
-                                </div>
-                                <p className="m-0 p-0">
-                                  Stars 4.2/5
-                                </p>
-                              </div>
-                            </div>
-                            <p className="m-0 py-2 small">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                            </p>
-                          </div>
-                    </div>
-
-                    <div className="d-flex flex-column flex-md-row align-items-center gap-4 border my-2 shadow p-3 bg-white rounded">
-                          <div>
-                            <div className="d-flex align-items-center justify-content-between flex-1">
-                              <b className="m-0 p-0">
-                                {'Mrs' +
-                                  ' ' +
-                                  'Reviewver'}
-                              </b>
-                              <div className="d-flex align-items-center gap-2">
-                                <div className="mb-2">
-                                  <StarRatings
-                                    starRatedColor="#cc9338"
-                                    rating={4.2}
-                                    starDimension="20px"
-                                    starSpacing="0px"
-                                  />
-                                </div>
-                                <p className="m-0 p-0">
-                                  Stars 4.2/5
-                                </p>
-                              </div>
-                            </div>
-                            <p className="m-0 py-2 small">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                            </p>
-                          </div>
-                    </div>
-                  </div>
+                    {
+                      reviews.length == 0 ? (
+                        <h3 className="m-0 p-3 text-center fw-bold text-muted">
+                          No Reviews Yet.
+                        </h3>
+                      ) : (
+                        <div
+                        style={{
+                          overflow:'scroll',
+                          overflowX:'hidden',
+                          height:700
+                        }}
+                      > 
+                      {
+                        reviews.map((reviewver, index)=>{
+                          return <div className="d-flex flex-column flex-md-row align-items-center gap-4 border my-2 shadow p-3 bg-white rounded" key={index}>
+                                    <div>
+                                      <div className="d-flex align-items-center justify-content-between flex-1">
+                                        <b className="m-0 p-0">
+                                          {reviewver?.reviewer?.firstName +
+                                            ' ' +
+                                            reviewver?.reviewer?.lastName}
+                                        </b>
+                                        <div className="d-flex align-items-center gap-2">
+                                          <div className="mb-2">
+                                            <StarRatings
+                                              starRatedColor="#cc9338"
+                                              rating={reviewver?.totalRating ?? 0}
+                                              starDimension="20px"
+                                              starSpacing="0px"
+                                            />
+                                          </div>
+                                          <p className="m-0 p-0">
+                                            Stars {reviewver?.totalRating.toFixed(2) ?? 0}/5
+                                          </p>
+                                        </div>
+                                      </div>
+                                      <p className="m-0 py-2 small">
+                                      {reviewver?.comment}
+                                      </p>
+                                    </div>
+                                  </div>
+                        })
+                      }
+                      </div>
+                      )
+                    }
 
                   {/* {reviews.length == 0 ? (
                     <h3 className="m-0 p-3 text-center fw-bold text-muted">
