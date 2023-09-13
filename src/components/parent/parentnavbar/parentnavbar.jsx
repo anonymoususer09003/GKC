@@ -48,7 +48,9 @@ const ParentNavbar = ({ isLogin }) => {
               {value && (
                 <>
                   <li className="nav-item">
-                    <a className="nav-link" href="/parent/calandar">
+                    <a className="nav-link" href="/parent/calandar"
+                    style={{display:'flex', justifyContent:'flex-end'}}
+                    >
                       <FcCalendar style={{ fontSize: '30px' }} />
                     </a>
                   </li>
@@ -59,6 +61,7 @@ const ParentNavbar = ({ isLogin }) => {
                   className={`nav-link ${styles.homeLink}`}
                   aria-current="page"
                   href="/parent"
+                  style={{display:'flex', justifyContent:'flex-end'}}
                 >
                   Home
                 </a>
@@ -72,6 +75,7 @@ const ParentNavbar = ({ isLogin }) => {
                       className={`nav-link ${styles.homeLink}`}
                       aria-current="page"
                       href="/parent/messaging"
+                      style={{display:'flex', justifyContent:'flex-end'}}
                     >
                       Message
                     </a>
@@ -79,7 +83,8 @@ const ParentNavbar = ({ isLogin }) => {
                 </>
               )}
             </ul>
-            <form className="d-flex align-items-center gap-2">
+            <form className="d-flex align-items-center gap-2"
+            style={{display:'flex', justifyContent:'flex-end'}}>
               {value ? (
                 <div className={styles['burger-menu-wrapper']}>
                   <ul className="list-unstyled">
