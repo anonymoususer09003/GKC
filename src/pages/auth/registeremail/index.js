@@ -33,7 +33,7 @@ export default function Home() {
   const handleSubmit = async () => {
     try {
       const response = await axios.get(
-        `http://34.227.65.157/auth/code?email=${email}`
+        `https://staging-api.geekkidscode.com/auth/code?email=${email}`
       );
       console.log(response);
       if (email) {
