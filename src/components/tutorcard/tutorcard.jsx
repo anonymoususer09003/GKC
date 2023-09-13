@@ -359,7 +359,7 @@ const Tutorcard = ({ data, key }) => {
                               starSpacing="0px"
                             />
                           </div>
-                          <p className="m-0 p-0">Stars {data?.averageRating.toFixed(0) ?? 0}/5</p>
+                          <p className="m-0 p-0">Stars {data?.averageRating ?? 0}/5</p>
                         </div>
                       </div>
                     </div>
@@ -399,7 +399,7 @@ const Tutorcard = ({ data, key }) => {
                                             />
                                           </div>
                                           <p className="m-0 p-0">
-                                            Stars {reviewver?.totalRating.toFixed(2) ?? 0}/5
+                                            Stars {reviewver?.totalRating?.toFixed(2) ?? 0}/5
                                           </p>
                                         </div>
                                       </div>
