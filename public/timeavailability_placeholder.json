@@ -1,0 +1,44 @@
+[
+    {
+      "startTime": "00:00",
+      "endTime": "00:00",
+      "available": false,
+      "dayOfTheWeek": "MONDAY"
+    },
+    {
+      "startTime": "00:00",
+      "endTime": "00:00",
+      "available": false,
+      "dayOfTheWeek": "TUESDAY"
+    },
+    {
+      "startTime": "00:00",
+      "endTime": "00:00",
+      "available": false,
+      "dayOfTheWeek": "WEDNESDAY"
+    },
+    {
+      "startTime": "00:00",
+      "endTime": "00:00",
+      "available": false,
+      "dayOfTheWeek": "THURSDAY"
+    },
+    {
+      "startTime": "00:00",
+      "endTime": "00:00",
+      "available": false,
+      "dayOfTheWeek": "FRIDAY"
+    },
+    {
+      "startTime": "00:00",
+      "endTime": "00:00",
+      "available": false,
+      "dayOfTheWeek": "SATURDAY"
+    },
+    {
+      "startTime": "00:00",
+      "endTime": "00:00",
+      "available": false,
+      "dayOfTheWeek": "SUNDAY"
+    }
+  ]
