@@ -7,14 +7,14 @@ const Footer = () => {
         <div className="d-flex justify-content-between align-items-center flex-wrap bg-light p-3">
           <div className={`flex-1 d-flex gap-5 ${styles.linksContainer}`}>
             <a
-              href="https://staging-webapp.geekkidscode.com/privacy-policy"
+              href="https://geekkidscode.com/privacy-policy"
               className="text-decoration-none text-muted fw-bold small"
               target="_blank"
             >
               Privacy Policy
             </a>
             <a
-              href="https://staging-webapp.geekkidscode.com/terms-of-use"
+              href="https://geekkidscode.com/terms-of-use"
               className="text-decoration-none text-muted fw-bold small"
               target="_blank"
             >

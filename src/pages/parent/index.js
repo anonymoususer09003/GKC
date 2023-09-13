@@ -150,7 +150,7 @@ function ParentLandingPage() {
               onChange={(e) => setAgeGroup(e.target.value)}
             >
               <option value="">Grade</option>
-              <option value="1">Elementary &#40;&#60;=10yrs&#41;</option>
+              <option value="1">Elementary School &#40;&#60;=10yrs&#41;</option>
               <option value="2">
                 Middle School &#40;11yrs - 13yrs&#41;
               </option>
