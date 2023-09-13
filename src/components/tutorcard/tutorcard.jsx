@@ -57,6 +57,17 @@ const Tutorcard = ({ data, key }) => {
             priority
             className="rounded-circle bg-light"
           />
+          {data?.video && (
+          <div className="d-flex justify-conntent-between align-items-end"
+          style={{position:'relative',left:160,top:10}}
+          >
+            <div>
+              <a href={data.video} target="_blank" rel="noopener noreferrer">
+                <FaFileVideo style={{ fontSize: '40px', color: '#006600' }} />
+              </a>
+            </div>
+          </div>
+          )}
         </div>
         <div>
           <div className="gap-2 flex-wrap align-items-center justify-content-between">
@@ -304,8 +315,16 @@ const Tutorcard = ({ data, key }) => {
                   <div className="d-flex align-items-center tw-justify-center gap-3">
                     <div className="flex-1">
                       <div className="d-flex gap-3 align-items-center ">
+                      <Image
+                        src="/assets/student-preview.png"
+                        alt=""
+                        width={150}
+                        height={150}
+                        priority
+                        className="rounded-circle bg-light"
+                      />
                         <b className="m-0 p-0">
-                          [Instructor] {data?.firstName + ' ' + data?.lastName}
+                          {data?.firstName + ' ' + data?.lastName}
                         </b>
                         <div
                           className="d-flex align-items-center gap-2"
@@ -335,15 +354,33 @@ const Tutorcard = ({ data, key }) => {
                   >
                     <div className="d-flex flex-column flex-md-row align-items-center gap-4 border my-2 shadow p-3 bg-white rounded">
                           <div>
-                            <Image
-                              src="/assets/student-preview.png"
-                              alt=""
-                              width={120}
-                              height={120}
-                              priority
-                              className="rounded-circle bg-light"
-                            />
+                            <div className="d-flex align-items-center justify-content-between flex-1">
+                              <b className="m-0 p-0">
+                                {'Mrs' +
+                                  ' ' +
+                                  'Reviewver'}
+                              </b>
+                              <div className="d-flex align-items-center gap-2">
+                                <div className="mb-2">
+                                  <StarRatings
+                                    starRatedColor="#cc9338"
+                                    rating={4.2}
+                                    starDimension="20px"
+                                    starSpacing="0px"
+                                  />
+                                </div>
+                                <p className="m-0 p-0">
+                                  Stars 4.2/5
+                                </p>
+                              </div>
+                            </div>
+                            <p className="m-0 py-2 small">
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                            </p>
                           </div>
+                    </div>
+
+                    <div className="d-flex flex-column flex-md-row align-items-center gap-4 border my-2 shadow p-3 bg-white rounded">
                           <div>
                             <div className="d-flex align-items-center justify-content-between flex-1">
                               <b className="m-0 p-0">
@@ -373,15 +410,33 @@ const Tutorcard = ({ data, key }) => {
 
                     <div className="d-flex flex-column flex-md-row align-items-center gap-4 border my-2 shadow p-3 bg-white rounded">
                           <div>
-                            <Image
-                              src="/assets/student-preview.png"
-                              alt=""
-                              width={120}
-                              height={120}
-                              priority
-                              className="rounded-circle bg-light"
-                            />
+                            <div className="d-flex align-items-center justify-content-between flex-1">
+                              <b className="m-0 p-0">
+                                {'Mrs' +
+                                  ' ' +
+                                  'Reviewver'}
+                              </b>
+                              <div className="d-flex align-items-center gap-2">
+                                <div className="mb-2">
+                                  <StarRatings
+                                    starRatedColor="#cc9338"
+                                    rating={4.2}
+                                    starDimension="20px"
+                                    starSpacing="0px"
+                                  />
+                                </div>
+                                <p className="m-0 p-0">
+                                  Stars 4.2/5
+                                </p>
+                              </div>
+                            </div>
+                            <p className="m-0 py-2 small">
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                            </p>
                           </div>
+                    </div>
+
+                    <div className="d-flex flex-column flex-md-row align-items-center gap-4 border my-2 shadow p-3 bg-white rounded">
                           <div>
                             <div className="d-flex align-items-center justify-content-between flex-1">
                               <b className="m-0 p-0">
@@ -411,16 +466,6 @@ const Tutorcard = ({ data, key }) => {
 
                     <div className="d-flex flex-column flex-md-row align-items-center gap-4 border my-2 shadow p-3 bg-white rounded">
                           <div>
-                            <Image
-                              src="/assets/student-preview.png"
-                              alt=""
-                              width={120}
-                              height={120}
-                              priority
-                              className="rounded-circle bg-light"
-                            />
-                          </div>
-                          <div>
                             <div className="d-flex align-items-center justify-content-between flex-1">
                               <b className="m-0 p-0">
                                 {'Mrs' +
@@ -448,92 +493,6 @@ const Tutorcard = ({ data, key }) => {
                     </div>
 
                     <div className="d-flex flex-column flex-md-row align-items-center gap-4 border my-2 shadow p-3 bg-white rounded">
-                          <div>
-                            <Image
-                              src="/assets/student-preview.png"
-                              alt=""
-                              width={120}
-                              height={120}
-                              priority
-                              className="rounded-circle bg-light"
-                            />
-                          </div>
-                          <div>
-                            <div className="d-flex align-items-center justify-content-between flex-1">
-                              <b className="m-0 p-0">
-                                {'Mrs' +
-                                  ' ' +
-                                  'Reviewver'}
-                              </b>
-                              <div className="d-flex align-items-center gap-2">
-                                <div className="mb-2">
-                                  <StarRatings
-                                    starRatedColor="#cc9338"
-                                    rating={4.2}
-                                    starDimension="20px"
-                                    starSpacing="0px"
-                                  />
-                                </div>
-                                <p className="m-0 p-0">
-                                  Stars 4.2/5
-                                </p>
-                              </div>
-                            </div>
-                            <p className="m-0 py-2 small">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                            </p>
-                          </div>
-                    </div>
-
-                    <div className="d-flex flex-column flex-md-row align-items-center gap-4 border my-2 shadow p-3 bg-white rounded">
-                          <div>
-                            <Image
-                              src="/assets/student-preview.png"
-                              alt=""
-                              width={120}
-                              height={120}
-                              priority
-                              className="rounded-circle bg-light"
-                            />
-                          </div>
-                          <div>
-                            <div className="d-flex align-items-center justify-content-between flex-1">
-                              <b className="m-0 p-0">
-                                {'Mrs' +
-                                  ' ' +
-                                  'Reviewver'}
-                              </b>
-                              <div className="d-flex align-items-center gap-2">
-                                <div className="mb-2">
-                                  <StarRatings
-                                    starRatedColor="#cc9338"
-                                    rating={4.2}
-                                    starDimension="20px"
-                                    starSpacing="0px"
-                                  />
-                                </div>
-                                <p className="m-0 p-0">
-                                  Stars 4.2/5
-                                </p>
-                              </div>
-                            </div>
-                            <p className="m-0 py-2 small">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                            </p>
-                          </div>
-                    </div>
-
-                    <div className="d-flex flex-column flex-md-row align-items-center gap-4 border my-2 shadow p-3 bg-white rounded">
-                          <div>
-                            <Image
-                              src="/assets/student-preview.png"
-                              alt=""
-                              width={120}
-                              height={120}
-                              priority
-                              className="rounded-circle bg-light"
-                            />
-                          </div>
                           <div>
                             <div className="d-flex align-items-center justify-content-between flex-1">
                               <b className="m-0 p-0">
