@@ -51,7 +51,8 @@ const Navbar = ({ isLogin }) => {
               {value && (
                 <>
                   <li className="nav-item">
-                    <a className="nav-link" href={role !== 'instructor' ? `/${role}/calandar` : 'instructor'}>
+                    <a className="nav-link" href={role !== 'instructor' ? `/${role}/calandar` : 'instructor'}
+                    style={{display:'flex', justifyContent:'flex-end'}}>
                       <FcCalendar style={{ fontSize: '30px' }} />
                     </a>
                   </li>
@@ -62,6 +63,7 @@ const Navbar = ({ isLogin }) => {
                   className={`nav-link ${styles.homeLink}`}
                   aria-current="page"
                   href="/"
+                  style={{display:'flex', justifyContent:'flex-end'}}
                 >
                   Home
                 </a>
@@ -75,6 +77,7 @@ const Navbar = ({ isLogin }) => {
                       className={`nav-link ${styles.homeLink}`}
                       aria-current="page"
                       href={`/${role}/messaging`}
+                      style={{display:'flex', justifyContent:'flex-end'}}
                     >
                       Message
                     </a>
@@ -82,7 +85,9 @@ const Navbar = ({ isLogin }) => {
                 </>
               )}
             </ul>
-            <div className="d-flex align-items-center gap-2">
+            <div className="d-flex align-items-center gap-2"
+            style={{display:'flex', justifyContent:'flex-end'}}
+            >
               {value || isLogin ? (
                 <div className={styles['burger-menu-wrapper']}>
                   <ul className="list-unstyled">

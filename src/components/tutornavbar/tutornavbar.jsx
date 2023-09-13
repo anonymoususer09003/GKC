@@ -47,7 +47,8 @@ const TutorNavbar = ({ isLogin }) => {
               {value && (
                 <>
                   <li className="nav-item">
-                    <a className="nav-link" href="/instructor">
+                    <a className="nav-link" href="/instructor"
+                    style={{display:'flex', justifyContent:'flex-end'}}>
                       <FcCalendar style={{ fontSize: "30px" }} />
                     </a>
                   </li>
@@ -58,12 +59,14 @@ const TutorNavbar = ({ isLogin }) => {
                   className={`nav-link ${styles.homeLink}`}
                   aria-current="page"
                   href="/instructor"
+                  style={{display:'flex', justifyContent:'flex-end'}}
                 >
                   Home
                 </a>
               </li>
             </ul>
-            <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+            <ul className="navbar-nav me-auto mb-2 mb-lg-0"
+            style={{display:'flex', justifyContent:'flex-end'}}>
               {value && (
                 <>
                   <li className="nav-item">
