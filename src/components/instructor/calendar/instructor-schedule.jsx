@@ -33,7 +33,7 @@ const InstructorSchedule = (props) => {
   const deleteSingleOccurrence = async (eventId, dateToCancel) => {
     try {
       const response = await axios.delete(
-        'http://34.227.65.157/event/delete-single-occurrence',
+        'https://staging-api.geekkidscode.com/event/delete-single-occurrence',
         {
           data: {
             eventId: eventId,

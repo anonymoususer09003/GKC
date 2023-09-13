@@ -23,7 +23,7 @@ export default function ActivateCode() {
       const code = otp;
       var stored = JSON.parse(window.localStorage.getItem("registrationForm"));
 
-      const response = await axios.post(`http://34.227.65.157/auth/code`, {
+      const response = await axios.post(`https://staging-api.geekkidscode.com/auth/code`, {
         email: stored.email,
         code: code,
       });
@@ -50,7 +50,7 @@ export default function ActivateCode() {
     try {
       var stored = JSON.parse(window.localStorage.getItem("registrationForm"));
       const response = await axios.get(
-        `http://34.227.65.157/auth/code?email=${stored.email}`
+        `https://staging-api.geekkidscode.com/auth/code?email=${stored.email}`
       );
       console.log(response);
       setIsResent(true);

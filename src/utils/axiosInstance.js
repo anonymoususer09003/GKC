@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const Axios = axios.create({
-  baseURL: "http://34.227.65.157",
+  baseURL: "https://staging-api.geekkidscode.com",
 });
 
 export default Axios;

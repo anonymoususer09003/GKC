@@ -32,7 +32,7 @@ const Tutorcard = ({ data }) => {
     try {
       var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
       const res = await axios.get(
-        `http://34.227.65.157/review/instructors/${id}?page=0&size=10`,
+        `https://staging-api.geekkidscode.com/review/instructors/${id}?page=0&size=10`,
         {
           headers: {
             Authorization: `Bearer ${typ.accessToken}`,

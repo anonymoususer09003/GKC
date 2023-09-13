@@ -60,7 +60,7 @@ function ParentRequestInterview({ userInfo, loading, error, fetchUser }) {
   const getCourses = async () => {
     try {
       const response = await axios.get(
-        `http://34.227.65.157/public/course/with-instructors`
+        `https://staging-api.geekkidscode.com/public/course/with-instructors`
       );
 
       var coursesArray = [];
@@ -82,7 +82,7 @@ function ParentRequestInterview({ userInfo, loading, error, fetchUser }) {
         try {
           var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
           const response = await axios.get(
-            `http://34.227.65.157/instructor/details-for-scheduling?instructorId=${instructorId}`,
+            `https://staging-api.geekkidscode.com/instructor/details-for-scheduling?instructorId=${instructorId}`,
             {
               headers: {
                 Authorization: `Bearer ${typ.accessToken}`,
@@ -138,7 +138,7 @@ function ParentRequestInterview({ userInfo, loading, error, fetchUser }) {
     
     try {
       var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
-      const res = await axios.get(`http://34.227.65.157/instructor/details-for-scheduling?instructorId=${instructorId}`, {
+      const res = await axios.get(`https://staging-api.geekkidscode.com/instructor/details-for-scheduling?instructorId=${instructorId}`, {
       headers: {
         Authorization: `Bearer ${typ.accessToken}`,
       },

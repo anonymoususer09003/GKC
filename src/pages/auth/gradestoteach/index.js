@@ -31,7 +31,7 @@ export default function RegistrationGrade() {
   const getGrades = async () => {
     try {
       const response = await axios.get(
-        `http://34.227.65.157/public/register/get-all-grades`
+        `https://staging-api.geekkidscode.com/public/register/get-all-grades`
       );
       setGrades(response.data);
       console.log(response.data);

@@ -66,7 +66,7 @@ export default function InstructorRegistrationMore() {
   const getDeliveryModes = async () => {
     try {
       const response = await axios.get(
-        `http://34.227.65.157/public/register/get-all-delivery-modes`
+        `https://staging-api.geekkidscode.com/public/register/get-all-delivery-modes`
       );
       var arr = [];
       response.data.map((v) => {

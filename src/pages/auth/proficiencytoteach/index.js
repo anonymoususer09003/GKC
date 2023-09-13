@@ -54,7 +54,7 @@ export default function StudentRegistrationCourse() {
   const getCourses = async () => {
     try {
       const response = await axios.get(
-        `http://34.227.65.157/public/course/get-all-courses`
+        `https://staging-api.geekkidscode.com/public/course/get-all-courses`
       );
 
       var technologyList = [];
@@ -71,7 +71,7 @@ export default function StudentRegistrationCourse() {
   const getLang = async () => {
     try {
       const response = await axios.get(
-        `http://34.227.65.157/public/register/get-all-languages`
+        `https://staging-api.geekkidscode.com/public/register/get-all-languages`
       );
       var arr = [];
       response.data.map((v) => {
@@ -86,7 +86,7 @@ export default function StudentRegistrationCourse() {
   const getProficiency = async () => {
     try {
       const response = await axios.get(
-        `http://34.227.65.157/public/course/get-all-proficiencies`
+        `https://staging-api.geekkidscode.com/public/course/get-all-proficiencies`
       );
       var arr = [];
       response.data.map((v) => {

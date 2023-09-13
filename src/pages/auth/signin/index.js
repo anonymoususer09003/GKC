@@ -19,7 +19,7 @@ export default function SignIn() {
   // useEffect(() => {
   //   const onLogin = async () => {
   //     try {
-  //       const response = await axios.post("http://34.227.65.157/auth/login", {
+  //       const response = await axios.post("https://staging-api.geekkidscode.com/auth/login", {
   //         email: "nitsapath@gmail.com",
   //         password: test123,
   //       });

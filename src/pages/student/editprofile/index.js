@@ -127,7 +127,7 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
   const getLang = async () => {
     try {
       const response = await axios.get(
-        `http://34.227.65.157/public/register/get-all-languages`
+        `https://staging-api.geekkidscode.com/public/register/get-all-languages`
       );
       var arr = [];
       console.log(response.data);
@@ -143,7 +143,7 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
   const getCourses = async () => {
     try {
       const response = await axios.get(
-        `http://34.227.65.157/public/course/get-all-courses`
+        `https://staging-api.geekkidscode.com/public/course/get-all-courses`
       );
 
       var technologyList = [];

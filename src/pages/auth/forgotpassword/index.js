@@ -29,7 +29,7 @@ export default function ForgotPassword() {
   const handleSubmit = async () => {
     try {
       const response = await axios.get(
-        `http://34.227.65.157/auth/code?email=${email}`
+        `https://staging-api.geekkidscode.com/auth/code?email=${email}`
       );
       console.log(response);
       setIsSent(true);
@@ -42,7 +42,7 @@ export default function ForgotPassword() {
     if(password === confirmPassword) {
       try {
         const response = await axios.post(
-          `http://34.227.65.157/user/forgot-password`,
+          `https://staging-api.geekkidscode.com/user/forgot-password`,
           {
             email: email,
             password: password,

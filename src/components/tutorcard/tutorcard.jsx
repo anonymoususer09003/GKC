@@ -60,7 +60,9 @@ const Tutorcard = ({ data, key }) => {
         </div>
         <div>
           <div className="gap-2 flex-wrap align-items-center justify-content-between">
-            <div className={'d-flex tw-flex-row tw-justify-between'}>
+            <div className={'d-flex tw-flex-row tw-justify-between'}
+            style={{fontSize: 20}}
+            >
                 <p
                 className="m-0 p-0 fw-bold"
                 data-bs-toggle="modal"

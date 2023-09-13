@@ -1,8 +1,8 @@
 import axios from 'axios';
-export const base_url = 'http://34.227.65.157';
+export const base_url = 'https://staging-api.geekkidscode.com';
 // Create an instance of Axios with a base URL
 const apiClient = axios.create({
-  baseURL: 'http://34.227.65.157',
+  baseURL: 'https://staging-api.geekkidscode.com',
 });
 
 // Add a request interceptor
