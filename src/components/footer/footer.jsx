@@ -22,6 +22,7 @@ const Footer = () => {
             </a>
           </div>
           <div className={`flex-1 d-flex gap-5 ${styles.linksContainer}`}>
+            <p>
             <a
               href="mail:info@geekkidscode.com"
               style={{textAlign:'center'}}
@@ -30,6 +31,8 @@ const Footer = () => {
             >
               Contact: info@geekkidscode.com
             </a>
+            </p>
+            <p>
             <a
               href="https://geekKidsCode.com"
               style={{textAlign:'center'}}
@@ -38,6 +41,7 @@ const Footer = () => {
             >
               GeekKidsCode.com is owned and operated by Greinchville Solutions LLC
             </a>
+            </p>
           </div>
           <div className="flex-1 ">
             <p
