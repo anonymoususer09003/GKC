@@ -14,15 +14,17 @@ const Tutorcard = ({ data, key }) => {
   const [showModal, setShowModal] = useState(false);
   const [showModal2, setShowModal2] = useState(false);
   const [showVideoPopup, setShowVideoPopup] = useState(false);
+  const [readMore, setReadMore] = useState(false)
+  let string = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
 
   console.log('data', data);
 
   const handleOpenModal = (ifClass) => {
     // setShowModal(true);
     if(ifClass){
-      navigation.push(`/student/scheduleclass/${data.id}`)
+      navigation.push(`/${JSON.parse(window.localStorage.getItem('gkcAuth')).role.toLowerCase()}/scheduleclass/${data.id}`)
     } else{
-      navigation.push(`/student/requestinterview/${data.id}`)
+      navigation.push(`/${JSON.parse(window.localStorage.getItem('gkcAuth')).role.toLowerCase()}/requestinterview/${data.id}`)
     }
   };
 
@@ -77,8 +79,8 @@ const Tutorcard = ({ data, key }) => {
         ) : null}
       <div className="d-flex flex-column flex-md-row align-items-center tw-justify-center gap-4 border my-2 p-3 shadow p-3 mb-5 bg-white rounded">
         <div>
-          <Image
-            src="/assets/student-preview.png"
+          <img
+            src={data.instructorPhoto ?? 'https://cdn-icons-png.flaticon.com/128/847/847969.png'}
             alt=""
             width={200}
             height={200}
@@ -132,17 +134,20 @@ const Tutorcard = ({ data, key }) => {
             </div>
           </div>
           <p
-            className="m-0 py-2"
-            style={{
-              textOverflow:'ellipsis',
-              overflow:'hidden',
-              whiteSpace:'nowrap',
-              lineClamp:4,
-              width: 400
-            }}
+            className={readMore === false ? 'm-0 py-2  tw-truncate' : "m-0 py-2" }
+            style={{width:520}}
+            // style={{
+            //   textOverflow: readMore === true ? 'none' : 'ellipsis',
+            //   overflow: readMore === true ? 'none' : 'hidden',
+            //   whiteSpace: readMore === true ? 'none' : 'nowrap',
+            //   width: 400
+            // }}
           >
             {data?.instructorBio}
           </p>
+          {
+            data?.instructorBio?.length > 100 && !readMore && <div onClick={()=>{setReadMore(true)}} style={{cursor:'pointer', display:'flex', justifyContent:'flex-end'}}>Show more</div>
+          }
           <div className="d-flex gap-2 m-0 p-0 align-items-center">
             <b className="m-0 p-0">Courses:</b>
             <ul className="d-flex flex-wrap list-unstyled m-0 p-0 gap-3 align-items-center">
@@ -257,7 +262,7 @@ const Tutorcard = ({ data, key }) => {
                       </div>
                     </div>
                   </div>
-                  <p className="my-2 p-0 p-md-3 small tw-line-clamp-1 tw-truncate">{data?.instructorBio}</p>
+                  <p className="my-2 p-0 p-md-3 small tw-line-clamp-1 tw-truncate">{string /*data?.instructorBio*/}</p>
 
                   <div className="d-flex gap-2 m-0 px-3 align-items-center">
                     <b className="m-0 p-0">Courses:</b>
@@ -376,7 +381,7 @@ const Tutorcard = ({ data, key }) => {
                         style={{
                           overflow:'scroll',
                           overflowX:'hidden',
-                          height:700
+                          height:400
                         }}
                       > 
                       {

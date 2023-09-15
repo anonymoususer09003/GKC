@@ -317,15 +317,20 @@ function StudentRegistrationCCPay() {
                         if(savedCCSelected){
                           console.log('saved cc')
                           scheduleSaved()
+                          setErr('✅ You successfully bought class.')
                         }else{
                           if(isCardValid) {
                               console.log('valid unsaved cc')
                               setConfirmPayment(true)
+                              setErr('✅ You successfully bought class.')
                           }else{
                             console.log('unvalid unsaved cc')
-                            setErr('Unfortunately your signed data mismatched, please try again or contact us.')
+                            setErr('❌ Unfortunately your signed data mismatched, please try again or contact us.')
                           }
                         }
+                        setTimeout(() => {
+                          navigation.push('/parent/calandar')
+                        }, 3000);
                       // whoPaysId === "Select"
                       //   ? setConfirmPayment(true)
                       //   : sendEmailToWhoPays();
