@@ -337,7 +337,7 @@ function ParentLandingPage() {
               <div>
                 <img
                 style={{borderRadius: '0 30px 30px 0'}}
-                src={'https://gkc-images.s3.amazonaws.com/childfuture.png'}
+                src={'https://gkc-images.s3.amazonaws.com/childrenlearning.png'}
                 height={256}
                 width={256}
                 />
@@ -387,7 +387,7 @@ function ParentLandingPage() {
               <div>
                 <img
                 style={{borderRadius: '0 30px 30px 0'}}
-                src={'https://gkc-images.s3.amazonaws.com/childfuture.png'}
+                src={'https://gkc-images.s3.amazonaws.com/lookingfortutor.png'}
                 height={256}
                 width={256}
                 />
@@ -412,7 +412,7 @@ function ParentLandingPage() {
               <div>
                 <img
                 style={{borderRadius: '30px 0 0 30px'}}
-                src={'https://gkc-images.s3.amazonaws.com/childfuture.png'}
+                src={'https://gkc-images.s3.amazonaws.com/familyincar.png'}
                 height={256}
                 width={256}
                 />
@@ -437,7 +437,7 @@ function ParentLandingPage() {
               <div>
                 <img
                 style={{borderRadius: '0 30px 30px 0'}}
-                src={'https://gkc-images.s3.amazonaws.com/childfuture.png'}
+                src={'https://gkc-images.s3.amazonaws.com/onlinesafety.png'}
                 height={256}
                 width={256}
                 />
