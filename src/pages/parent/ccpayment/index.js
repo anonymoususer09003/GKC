@@ -9,6 +9,26 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchUser } from "@/store/actions/userActions";
 
 function ParentRegistrationCCPay() {
+   //protection starts
+    const nav = useRouter()
+    // checking if user logged in starts
+      if(typeof window !== 'undefined'){ // here we check if global object successfully loaded
+        console.log('lol')
+        useEffect(()=>{
+
+          if(JSON.parse(window.localStorage.getItem('gkcAuth')).role === undefined) { //here we check if user signed in
+            nav.push('/') 
+          } else{
+            if(JSON.parse(window.localStorage.getItem('gkcAuth')).role !== 'Instructor') { //here we check if user has role Instructor
+              nav.push('/')
+            }
+          }
+
+        },[])
+      }
+    // checking if user logged in ends
+
+    //protection ends
   const navigation = useRouter();
   const dispatch = useDispatch();
   console.log("navigation query", navigation.query);
