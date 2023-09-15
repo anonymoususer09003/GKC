@@ -13,11 +13,6 @@ import { useRouter } from "next/router";
 import axios from "axios";
 import { weekdays } from "moment";
 
-//important imports for protections starts
-import { useEffect } from 'react';
-import { useRouter } from 'next/router';
-//important imports for protections ends
-
 function EditCalandar({ userInfo, loading, error, fetchUser }) {
     //protection starts
     const nav = useRouter()
