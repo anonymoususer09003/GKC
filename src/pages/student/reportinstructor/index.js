@@ -1,12 +1,32 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Navbar, Footer } from "../../../components";
 import Head from "next/head";
 import { withRole } from '../../../utils/withAuthorization';
 import styles from "../../../styles/Home.module.css"
-import { useEffect } from "react";
+import { useRouter } from 'next/router';
  
 
 function ReportInstructor() {
+  //protection starts
+  const nav = useRouter()
+  // checking if user logged in starts
+  if(typeof window !== 'undefined'){ // here we check if global object successfully loaded
+    console.log('lol')
+    useEffect(()=>{
+
+      if(JSON.parse(window.localStorage.getItem('gkcAuth')).role === undefined) { //here we check if user signed in
+        nav.push('/') 
+      } else{
+        if(JSON.parse(window.localStorage.getItem('gkcAuth')).role !== 'Student') { //here we check if user has role Student
+          nav.push('/')
+        }
+      }
+
+    },[])
+  }
+  // checking if user logged in ends
+
+  //protection ends
   const [instructors, setInstructors] = useState([]);
   const [selectedInstructor, setSelectedInstructor] = useState(null);
   const [comment, setComment] = useState('')
