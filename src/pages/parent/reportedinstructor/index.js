@@ -1,6 +1,6 @@
 import styles from "@/styles/Navbar.module.css";
 import height from "@/styles/Home.module.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import StarRatings from "react-star-ratings";
 import { ParentNavbar, Footer } from "../../../components";
@@ -8,6 +8,26 @@ import Head from "next/head";
 import { withRole } from '../../../utils/withAuthorization';
 
 function ReportedInstructor() {
+  //protection starts
+  const nav = useRouter()
+  // checking if user logged in starts
+  if(typeof window !== 'undefined'){ // here we check if global object successfully loaded
+    console.log('lol')
+    useEffect(()=>{
+
+      if(JSON.parse(window.localStorage.getItem('gkcAuth')).role === undefined) { //here we check if user signed in
+        nav.push('/') 
+      } else{
+        if(JSON.parse(window.localStorage.getItem('gkcAuth')).role !== 'Parent') { //here we check if user has role Parent
+          nav.push('/')
+        }
+      }
+
+    },[])
+  }
+  // checking if user logged in ends
+
+  //protection ends
   const [showActivation, setShowActivation] = useState(false);
   const instructors = ["John Doe", "Jone Rich", "Katy Long"];
   const [rating1, setRating1] = useState(0);
