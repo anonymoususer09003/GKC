@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Head from "next/head";
 import { Inter } from "next/font/google";
 import { Navbar, Footer } from "../../../components";
@@ -11,6 +11,26 @@ import { withRole } from "../../../utils/withAuthorization";
 import styles from "../../../styles/Home.module.css";
 
 function ParentFinancialReport() {
+    //protection starts
+    const nav = useRouter()
+    // checking if user logged in starts
+      if(typeof window !== 'undefined'){ // here we check if global object successfully loaded
+        console.log('lol')
+        useEffect(()=>{
+
+          if(JSON.parse(window.localStorage.getItem('gkcAuth')).role === undefined) { //here we check if user signed in
+            nav.push('/') 
+          } else{
+            if(JSON.parse(window.localStorage.getItem('gkcAuth')).role !== 'Instructor') { //here we check if user has role Instructor
+              nav.push('/')
+            }
+          }
+
+        },[])
+      }
+    // checking if user logged in ends
+
+    //protection ends
   const navigation = useRouter();
   const onRequestRefund = () => {
     navigation.push("/parent/requestrefund");
