@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 import { withRole } from "../../../utils/withAuthorization";
 import axios from "axios";
 import { fetchUser } from "@/store/actions/userActions";
+import Link from "next/link";
 
 import { connect } from "react-redux";
 import { apiClient } from "@/api/client";
@@ -14,14 +15,15 @@ import moment from "moment";
 import GetUnConfirmedEventById from "@/services/events/GetUnConfirmedEventById";
 function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
   const router = useRouter();
+  console.log(router)
+  console.log('uuuser', userInfo)
   const { instructorId } = router.query;
   const loggedInUser = useSelector((state) => state.user.userInfo);
-  console.log("loggedin user", loggedInUser);
   const [instructorData, setInstructorData] = useState({});
   const [instructorCourses, setInstructorCourses] = useState([]);
   const [selectedInstructor, setSelectedInstructor] = useState(null)
   const [selectedMode, setSelectedMode] = useState("");
-  const [courseId, setCourseId] = useState(null);
+  const [courseId, setCourseId] = useState('');
   const [classFrequency, setClassFrequency] = useState("");
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [unavailableDates, setUnavailableDates] = useState([]);
@@ -32,8 +34,18 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
   const [studentId, setStudentId] = useState(null);
   const [duration, setDuration] = useState(0);
   const [err, setErr] = useState('')
+  const [ifSignedUser, setIfSignedUser] = useState(false)
+  const [eventslotsexists, setEventslotsexists] = useState(false)
+  const [paymentSubmit, setPaymentSubmit] = useState(true)
+  const [date, setDate] = useState(null)
   const eventId = router?.query?.eventId;
   console.log("eventid", eventId);
+  let dur = null;
+  let eventStartTimeslot = undefined;
+  let ca = [];
+  let sid = null;
+  const [dependent, setDependent] = useState(null)
+  console.log(loggedInUser,'loggedinuser')
   //Get Courses
   const getCourses = async () => {
     try {
@@ -46,6 +58,7 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
       response.data.map((v) => {
         coursesArray.push({ value: v.id, label: v.name });
       });
+      ca = coursesArray;
       console.log(response);
       setInstructorCourses(coursesArray);
     } catch (error) {
@@ -56,15 +69,26 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
   const getEventDetail = async () => {
     try {
       let res = await GetUnConfirmedEventById(eventId);
-
+      getCourses();
+      console.log(ca)
       console.log("res", res);
       const { data } = res;
+      eventStartTimeslot = data.start;
+      console.log(moment(data?.start).format("YYYY-MM-DD HH:mm"))
+      // console.log(instructorCourses)
+      // console.log(ca.find(el => el.value === data.courseId).label)
+      dur = data?.durationInHours;
+      sid = data?.studentId;
+      // console.log("dependent", loggedInUser.dependents.find(el=>el.id === sid));
+      // setDependent(loggedInUser.dependents.find(el=>el.id === sid))
       setStudentId(data?.studentId);
       setTime(moment(data?.start).format("YYYY-MM-DD HH:mm"));
       setDuration(data.durationInHours);
+      setDate(data.start.slice(0,10))
       setClassFrequency(data.classFrequency);
-      setCourseId(data?.courseId);
+      setCourseId(ca.find(el => el.value === data.courseId).label);
       setSelectedMode(data?.eventInPerson ? "In-Person" : "Online");
+      
       await handleDateChange(data?.start);
     } catch (err) {
       console.log("err", err);
@@ -73,16 +97,19 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
 
   useEffect(() => {
     getCourses();
-    if (eventId) getEventDetail();
+    if (eventId){
+      getEventDetail()
+    };
   }, [eventId]);
   useEffect(() => {
     fetchUser();
+
   }, []);
 
   useEffect(() => {
     const getUnavailableDate = async () => {
       try {
-        const response = await apiClient.get(`/instructor/unavailable-days-in-UTC-TimeZone?instructorId=${selectedInstructor?.id}`);
+        const response = await apiClient.get(`/instructor/unavailable-days-in-UTC-TimeZone?instructorId=${selectedInstructor?.id ?? instructorId}`);
 
         console.log(response.data);
         setUnavailableDates(response.data);
@@ -102,10 +129,6 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
       const endDate = new Date(unavailableDate.end);
       return date >= startDate && date <= endDate;
     });
-  };
-
-  const tileDisabled = ({ date }) => {
-    return isDateUnavailable(date);
   };
 
   //apply styles for unavailableDate
@@ -170,6 +193,14 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
       fetchInstructorData()
     }
     if(instructorId) run()
+
+    if(typeof window !== 'undefined'){
+      window.localStorage.setItem('goBackSchedule', JSON.stringify({event: eventId, id: instructorId }))
+      if(JSON.parse(window.localStorage.getItem('gkcAuth'))?.role === undefined){
+        setIfSignedUser(true)
+      }
+    }
+
   }, [instructorId]);
 
   const handleDateChange = async (clickedDate) => {
@@ -180,13 +211,15 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
     const hours = String(dateObj.getHours()).padStart(2, "0");
     const minutes = String(dateObj.getMinutes()).padStart(2, "0");
     const formattedDateStr = `${year}-${month}-${day}`;
-    setDuration(0)
+    if(eventId === undefined){
+      setDuration(0)
+    }
 
     setSelectedDate(formattedDateStr);
     console.log(formattedDateStr)
     try {
       const response = await apiClient.get(
-        `/instructor/available-time-slots-from-date?instructorId=${selectedInstructor.id}&date=${formattedDateStr}`
+        `/instructor/available-time-slots-from-date?instructorId=${selectedInstructor?.id ?? instructorId}&date=${formattedDateStr}`
       );
       
       const timeSlots = response.data.map((slot) => ({
@@ -200,22 +233,44 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
 
       // Create half-hour intervals for each time slot
       const formattedTimeSlots = [];
-      timeSlots.forEach((slot) => {
-        if (isOnHalfHour(slot.start)) {
-          const start = new Date(slot.start);
+      if(eventId !== undefined){
+        console.log(dur+'durations amount')
+        for(let i = 1; i <= dur; i++){
+          let utcTime = new Date(eventStartTimeslot);
+          const start =  new Date(utcTime.getTime()+utcTime.getTimezoneOffset() * 60000)
           start.setSeconds(0); // Set seconds to 0
           start.setMilliseconds(0); // Set milliseconds to 0
-
-          const end = new Date(slot.start.getTime() + 30 * 60 * 1000);
+          let durCounter = start.getTime() + (i > 1 ? i * 60 * 60 * 1000 : null)
+          console.log(durCounter)
+  
+          const end = new Date(durCounter + 30 * 60 * 1000)
           end.setSeconds(0); // Set seconds to 0
           end.setMilliseconds(0); // Set milliseconds to 0
-
+  
           formattedTimeSlots.push({
-            start,
-            end,
+            start: start,
+            end: end,
           });
         }
-      });
+        setEventslotsexists(true)
+      } else {
+        timeSlots.forEach((slot) => {
+          if (isOnHalfHour(slot.start)) {
+            const start = new Date(slot.start);
+            start.setSeconds(0); // Set seconds to 0
+            start.setMilliseconds(0); // Set milliseconds to 0
+  
+            const end = new Date(slot.start.getTime() + 30 * 60 * 1000);
+            end.setSeconds(0); // Set seconds to 0
+            end.setMilliseconds(0); // Set milliseconds to 0
+  
+            formattedTimeSlots.push({
+              start,
+              end,
+            });
+          }
+        });
+      }
 
       setAvailableTime(formattedTimeSlots);
       if(formattedTimeSlots.length>0){
@@ -229,7 +284,6 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
       console.log(error);
     }
   };
-
   //Get Modes
   //eventInPerson
   const handleModeChange = (event) => {
@@ -285,9 +339,12 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
   };
 
   const onContinue = () => {
+    if(typeof window !== 'undefined'){
+      window.localStorage.removeItem('goBackSchedule')
+    }
     const data = {
       start: time,
-      durationInHours: duration,
+      durationInHours: duration/2,
       classFrequency: classFrequency,
       courseId: instructorCourses.find(el => el.label === courseId).value,
       studentId: studentId,
@@ -308,7 +365,9 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
+      <div style={{position:'relative'}} className={`${router.asPath.includes('eventId') ? 'tw-z-30' : ''}`}>
       <ParentNavbar isLogin={true} />
+      </div>
       {isLoading && (
         <div className="d-flex justify-content-center">
           <div className="spinner-border text-primary" role="status">
@@ -316,7 +375,77 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
           </div>
         </div>
       )}
-
+      {paymentSubmit ? (
+        <div style={{position:'fixed', zIndex: 1, left:0,top:0, width:'100%', height:'100%',overflow:'hidden', background: 'white', fontSize: 20}}>
+          <div style={{background: 'white', margin: '200px auto', padding:20,width:'500px'}}>
+            <div style={{display:'flex', justifyContent:'flex-end'}}>
+              <button className="fw-bold mt-3" style={{width: '180px', position: 'relative', border:'none', background:'none'}}
+            onClick={()=>{setPaymentSubmit(false)}}
+            ><u>Go to main page</u></button>
+            </div>
+            <p style={{width: 'auto', display:'flex', justifyContent:'center', textAlign:'center'}}> {loggedInUser && loggedInUser.dependents.find(el=>el.id === studentId)?.firstName + ' ' + loggedInUser.dependents.find(el=>el.id === studentId)?.lastName } has requested that you review, approve and pay for the following class:</p>
+            <div style={{display:"flex", justifyContent:'center', margin:'60px 0'}}>
+            <ul style={{listStyleType:'none', width:200, padding:0, textAlign:'center'}}>
+              <li>
+                Tutor
+              </li>
+              <li>
+                Course
+              </li>
+              <li>
+                Cost/hr
+              </li>
+              <li>
+                # of hours
+              </li>
+              <li>
+                Date
+              </li>
+              <li>
+                Mode
+              </li>
+            </ul>
+            <ul style={{listStyleType:'none', width:200, padding:0, textAlign:'center'}}>
+              <li>
+                {instructorData !== undefined ? instructorData.firstName +' '+ instructorData.lastName : ''}
+              </li>
+              <li>
+                {courseId !== 0 ? courseId : ''}
+              </li>
+              <li>
+                {instructorData.hourlyRate ?? ''}
+              </li>
+              <li>
+                {duration/2}
+              </li>
+              <li>
+                {date}
+              </li>
+              <li>
+                {selectedMode}
+              </li>
+            </ul>
+            </div>
+            <div style={{display:'flex', justifyContent:'center'}}>
+            <button className="btn_primary text-light p-2 rounded fw-bold mt-3" style={{width: '300px', position: 'relative'}}
+            onClick={()=>{setPaymentSubmit(false)}}
+            >Review and Approve</button>
+            </div>
+          </div>
+        </div>
+        ) : null}
+      {ifSignedUser ? (
+        <div style={{position:'fixed', zIndex: 1, left:0,top:0, width:'100%', height:'100%',overflow:'auto', background: 'rgba(0, 0, 0, 0.4)'}}>
+          <div style={{background: 'white', margin: '500px auto', padding:20,width:'22%'}}>
+            <p style={{width: 300, margin: 'auto'}}>Please sign in before scheduling a class.</p>
+            <Link
+              href="/auth/signin"
+            >
+            <button className="btn_primary text-light p-2 rounded fw-bold mt-3" style={{width: 50, position: 'relative', margin: '0 42%'}}>Ok</button>
+            </Link>
+          </div>
+        </div>
+        ) : null}
       <main className="container-fluid">
         <div className="row" style={{ minHeight: "90vh" }}>
           <div className="col-12 col-lg-6 pt-5">
@@ -332,12 +461,11 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
               onChange={handleDateChange}
               value={selectedDate}
               tileClassName={tileClassName}
-              // tileDisabled={tileDisabled}
-              tileDisabled={unavailableDates.length >1 ? ({date, view})=> view === 'month' && unavailableDates.some(disabledDate =>
-                new Date(date).getFullYear() === new Date(disabledDate).getFullYear() &&
-                new Date(date).getMonth() === new Date(disabledDate).getMonth() &&
-                new Date(date).getDate() === new Date(disabledDate).getDate()
-                ) : () => false}
+              // tileDisabled={unavailableDates.length >1 ? ({date, view})=> view === 'month' && unavailableDates.some(disabledDate =>
+              //   new Date(date).getFullYear() === new Date(disabledDate).getFullYear() &&
+              //   new Date(date).getMonth() === new Date(disabledDate).getMonth() &&
+              //   new Date(date).getDate() === new Date(disabledDate).getDate()
+              //   ) : () => false}
             />
           </div>
           <div className="col-12 col-lg-6 pt-5">
@@ -362,7 +490,7 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
                           )
                             ? "bg-secondary text-white"
                             : ""
-                        }`}
+                        } ${eventslotsexists ? "bg-secondary text-white" : ''}`}
                         onClick={() => handleSlotClick(slot)}
                       >
                         {`${slot.start.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })} - ${slot.end.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}`}
@@ -404,7 +532,7 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
                       />
                       <label
                         className="form-check-label"
-                        for="flexRadioDefault2"
+                        htmlFor="flexRadioDefault2"
                       >
                         Weekly Recurrence
                       </label>
@@ -421,7 +549,7 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
                       />
                       <label
                         className="form-check-label"
-                        for="flexRadioDefault1"
+                        htmlFor="flexRadioDefault1"
                       >
                         Bi-Weekly
                       </label>
@@ -438,7 +566,7 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
                       />
                       <label
                         className="form-check-label"
-                        for="flexRadioDefault2"
+                        htmlFor="flexRadioDefault2"
                       >
                         Monthly
                       </label>
@@ -475,7 +603,7 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
                       <option>Select</option>
                       {selectedInstructor && selectedInstructor?.coursesToTutorAndProficiencies.map((course) => {
                         return (
-                          <option key={course.course.id} value={course.course.name}>
+                          <option key={course.course.id}>
                             {course.course.name}
                           </option>
                         );
@@ -512,7 +640,7 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
                         selectedInstructor && selectedInstructor?.gradesToTutor.map((el)=>{
                           return <>
                           <h6 key={el.id}  className="text-dark fw-bold m-0 p-0">
-                            {el.description}
+                            {el.name +`\n`+ el.description}
                           </h6>   
                           </>
                         })
@@ -535,7 +663,9 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
           </div>
         </div>
       </main>
-      <Footer />
+      <div style={{position:'relative'}} className={`${router.asPath.includes('eventId') ? 'tw-z-30' : ''}`}>
+         <Footer />
+      </div>
     </>
   );
 }

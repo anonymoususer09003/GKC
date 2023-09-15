@@ -11,6 +11,13 @@ import Variables from './variables';
 import Profile from './profile';
 import { useState } from 'react';
 import TutorNavbar from '@/components/admin/tutornavbar';
+import { apiClient } from '@/api/client';
+import Link from 'next/link';
+
+//important for protection
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
+//important for protection
 
 const intialTabs = [
   { name: 'Contact Us', href: '/internal/contactus', current: true },
@@ -26,6 +33,53 @@ const intialTabs = [
 ];
 
 export default function AdminHomePage() {
+  //protection starts
+  const nav = useRouter()
+    // checking if user logged in starts
+      if(typeof window !== 'undefined' && nav.isReady){
+        useEffect(()=>{
+
+          if(JSON.parse(window.localStorage.getItem('gkcAuth')).role === undefined) {
+            nav.push('/')
+          }
+
+          // if(JSON.parse(window.localStorage.getItem('gkcAuth')).role !== 'Student') {
+          //   setIfSignedUser(true)
+          // } else {
+          //   //redirect
+          // }
+          // if(JSON.parse(window.localStorage.getItem('gkcAuth')).role !== 'Parent') {
+          //   setIfSignedUser(true)
+          // }
+          // if(JSON.parse(window.localStorage.getItem('gkcAuth')).role !== 'Instructor') {
+          //   setIfSignedUser(true)
+          // }
+
+        },[])
+      }
+    // checking if user logged in ends
+
+    // checking if user is admin starts
+
+    const isAdmin = async () =>{
+      try {
+        const res = await apiClient('/admin/roles/all-admins')
+      } catch (err) {
+        console.log(err.response.status)
+          nav.push('/')
+      }
+    }
+
+    useEffect(()=>{
+      isAdmin()
+    }, [])
+    // checking if user is admin ends
+
+  //protection ends
+
+
+
+
   const [currentTab, setCurrentTab] = useState('Contact Us');
   const [tabs, setTabs] = useState(intialTabs);
 
@@ -41,6 +95,30 @@ export default function AdminHomePage() {
 
   return (
     <>
+        {/* {ifSignedUser ? (
+        <div style={{position:'fixed', zIndex: 1, left:0,top:0, width:'100%', height:'100%',overflow:'auto', background: 'rgba(0, 0, 0, 0.4)'}}>
+          <div style={{background: 'white', margin: '500px auto', padding:20,width:'35%'}}>
+            <p style={{width: 300, margin: 'auto'}}>Please sign in before schedule class.</p>
+            <Link
+              href="/auth/signin"
+            >
+            <button className="btn_primary text-light p-2 rounded fw-bold mt-3" style={{width: 50, position: 'relative', margin: '0 42%'}}>Ok</button>
+            </Link>
+          </div>
+        </div>
+        ) : null}
+        {!doesAdmin ? (
+        <div style={{position:'fixed', zIndex: 1, left:0,top:0, width:'100%', height:'100%',overflow:'auto', background: 'rgba(0, 0, 0, 0.4)'}}>
+          <div style={{background: 'white', margin: '500px auto', padding:20,width:'35%'}}>
+            <p style={{width: 300, margin: 'auto'}}>You are not admin, please get out.</p>
+            <Link
+              href="/"
+            >
+            <button className="btn_primary text-light p-2 rounded fw-bold mt-3" style={{width: 50, position: 'relative', margin: '0 42%'}}>Ok</button>
+            </Link>
+          </div>
+        </div>
+        ) : null} */}
       <TutorNavbar />
       <div className="p-10 max-w-full min-h-screen mx-auto">
         <div>

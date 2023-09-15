@@ -315,13 +315,12 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
               value={selectedDate}
               onChange={handleDateChange}
               tileClassName={tileClassName}
-              // tileDisabled={tileDisabled}
-              tileDisabled={unavailableDates.length >1 ? ({date, view})=> view === 'month' && 
-              unavailableDates.some(disabledDate =>
-                new Date(date).getFullYear() === new Date(disabledDate).getFullYear() &&
-                new Date(date).getMonth() === new Date(disabledDate).getMonth() &&
-                new Date(date).getDate() === new Date(disabledDate).getDate()
-                ) : () => false}
+              // tileDisabled={unavailableDates.length >1 ? ({date, view})=> view === 'month' && 
+              // unavailableDates.some(disabledDate =>
+              //   new Date(date).getFullYear() === new Date(disabledDate).getFullYear() &&
+              //   new Date(date).getMonth() === new Date(disabledDate).getMonth() &&
+              //   new Date(date).getDate() === new Date(disabledDate).getDate()
+              //   ) : () => false}
             />
           </div>
           <div className="col-12 col-lg-6 pt-5">
