@@ -15,7 +15,7 @@ function StudentLandingPage() {
   //const authenticated = isAuthenticated();
 
   const [showModal, setShowModal] = useState(false);
-
+  const [stars, setStars] = useState('')
   const [showCards, setShowCards] = useState(false);
   const [selectedCourse, setSelectCourse] = useState('');
   const [name, setName] = useState('');
@@ -39,7 +39,7 @@ function StudentLandingPage() {
       try {
         // var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
         const res = await axios.get(
-          `${base_url}/public/landing/filter?name=${name}${isNaN(hourlyRate) ? '' : '&hourlyRate='+hourlyRate}&grades=${ageGroup}&courses=${selectedCourse}&spokenLanguage=${selectedLang}&deliveryModes=${mode}&page=0&size=10`,
+          `${base_url}/public/landing/filter?name=${name}${isNaN(hourlyRate) ? '' : '&hourlyRate='+hourlyRate}&grades=${ageGroup}${findNumbersUsingRegExp(selectedZip) ? '&zipCode='+selectedZip : '&city='+selectedZip}${proficiency !== 'Proficiency' ? '&proficiency='+proficiency : ''}${stars !== 'Min Stars' ? '&rating='+stars : ''}&courses=${selectedCourse}&spokenLanguage=${selectedLang}&deliveryModes=${mode}&page=0&size=10`,
           {
             /*  headers: {
             Authorization: `Bearer ${typ.accessToken}`,
@@ -56,7 +56,7 @@ function StudentLandingPage() {
       try {
         // var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
         const res = await axios.get(
-          `${base_url}/public/landing/filter?page=${JSON.stringify(page).length > 1 ? page : '0'+page }&name=${name}${isNaN(hourlyRate) ? '' : '&hourlyRate='+hourlyRate}&grades=${ageGroup}&courses=${selectedCourse}&spokenLanguage=${selectedLang}&deliveryModes=${mode}&page=0&size=10`,
+          `${base_url}/public/landing/filter?page=${JSON.stringify(page).length > 1 ? page : '0'+page }${findNumbersUsingRegExp(selectedZip) ? '&zipCode='+selectedZip : '&city='+selectedZip}${proficiency !== 'Proficiency' ? '&proficiency='+proficiency : ''}${stars !== 'Min Stars' ? '&rating='+stars : ''}&name=${name}${isNaN(hourlyRate) ? '' : '&hourlyRate='+hourlyRate}&grades=${ageGroup}&courses=${selectedCourse}&spokenLanguage=${selectedLang}&deliveryModes=${mode}&page=0&size=10`,
         );
         setInsructors(insructors.concat(res.data));
       } catch (error) {
@@ -82,6 +82,16 @@ function StudentLandingPage() {
       console.error('Error fetching profile data:', error);
     }
   };
+
+  function findNumbersUsingRegExp(inputString) {
+    // Define a regular expression to match numbers
+    const regex = /\d+/g;
+  
+    // Use the `match()` method to find all matches in the input string
+    const numbersArray = inputString.match(regex);
+  
+    return numbersArray ? true : false;
+  }
 
   const getCourses = async () => {
     try {
@@ -227,17 +237,19 @@ function StudentLandingPage() {
               className={`p-2 rounded outline-0 border border_gray ${styles.landingInputs}`}
               onChange={(e) => setHourlyRate(parseFloat(e.target.value))}
             />
-            <select className="p-2 rounded outline-0 border border_gray">
-              <option value="">Min Stars</option>
-              <option value="">1 Star</option>
-              <option value="">2 Stars</option>
-              <option value="">3 Stars</option>
-              <option value="">4 Stars</option>
-              <option value="">5 Stars</option>
+            <select className="p-2 rounded outline-0 border border_gray"
+            onChange={(e)=>{setStars(e.target.value)}}
+            >
+              <option>Min Stars</option>
+              <option>1 Star</option>
+              <option>2 Stars</option>
+              <option>3 Stars</option>
+              <option>4 Stars</option>
+              <option>5 Stars</option>
             </select>
             <input
               type="text"
-              placeholder="Enter City and state or Zip/Post Code"
+              placeholder="Enter City or Zip/Post code"
               className={`p-2 rounded outline-0 border border_gray w-25 ${styles.landingInputs}`}
               onChange={(e) => setSelectedZip(e.target.value)}
             />
@@ -330,7 +342,7 @@ function StudentLandingPage() {
               >Prepare your child for the future by having them learn how to code from live tutors</div>
               <div>
                 <img
-                style={{borderRadius: `${innerWidth >980 ? '0 30px 30px 0' : '0 0 30px 30px'}`}}
+                style={{borderRadius: `${innerWidth >980 ? '30px 0 0 30px' : '0 30px 30px 0'}`}}
                 src={'https://gkc-images.s3.amazonaws.com/childfuture.png'}
                 height={256}
                 width={256}
@@ -389,7 +401,7 @@ function StudentLandingPage() {
           </div>
         </div>
         
-        <div style={{margin:'30px auto', display:'flex',flexDirection:'column', gap:40, width:'70%'}}>
+        <div style={{margin:'30px auto', display:'flex',flexDirection:'column', gap:40, width:'70%', marginBottom:90}}>
           <div className={`shadow ${innerWidth > 980 ? 'd-flex' : ''}`}
           style={{borderRadius:30, width:`${innerWidth > 980 ? '700px' : '256px'}`}}>
               <div

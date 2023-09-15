@@ -22,7 +22,7 @@ const Footer = () => {
               Term of Use
             </a>
           </div>
-          <div className={`flex-1 d-flex gap-5 ${styles.linksContainer}`}>
+          <div className={`flex-1 d-flex tw-gap-4 ${styles.linksContainer} max-[980px]:tw-flex-col-reverse`}>
             <p>
             <a
               href="mail:info@geekkidscode.com"
