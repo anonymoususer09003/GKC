@@ -22,7 +22,7 @@ const Footer = () => {
               Term of Use
             </a>
           </div>
-          <div style={{flexDirection:'column-reverse'}} className={`flex-1 d-flex tw-gap-4 ${styles.linksContainer}`}>
+          <div className={`flex-1 d-flex tw-gap-4 ${styles.linksContainer} max-[980px]:tw-flex-col-reverse`}>
             <a
               href="mail:info@geekkidscode.com"
               style={{textAlign:'center'}}
