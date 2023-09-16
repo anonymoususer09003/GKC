@@ -1,0 +1,16 @@
+version: 0.2
+phases:
+  install:
+    commands:
+      - echo "Installing Node.js 18"
+      - n 18
+      - npm install -g next
+      - npm install -g typescript
+  build:
+    commands:
+      - echo "Starting the build process"
+      - npm install
+      - npm run build
+artifacts:
+  files:
+    - '**/*'
