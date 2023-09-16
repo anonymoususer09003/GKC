@@ -42,7 +42,7 @@ function InstructorFinancialReport() {
     <>
       <Head>
         <title> Instructor Financial Report </title>{' '}
-        <meta name="description" content="Where kids code" />
+        <meta name="description" content="Where kids learn to code" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>{' '}
