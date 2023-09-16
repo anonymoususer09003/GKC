@@ -6,6 +6,9 @@ phases:
       - n 18
       - npm install next
       - npm install typescript
+  pre_build:
+    commands:
+      - uname -m      
   build:
     commands:
       - echo "Starting the build process"
