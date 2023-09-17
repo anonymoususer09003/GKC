@@ -3,12 +3,9 @@ phases:
   install:
     commands:
       - echo "Installing Node.js 18"
-      - n 18
+      - n 18.16.0
       - npm install next
-      - npm install typescript
-  pre_build:
-    commands:
-      - uname -m      
+      - npm install typescript   
   build:
     commands:
       - echo "Starting the build process"
