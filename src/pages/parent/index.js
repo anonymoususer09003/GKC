@@ -351,7 +351,7 @@ function ParentLandingPage() {
         <>
         {insructorsFound === false ? 
         <div style={{textAlign:'center', margin:'40px 0'}}>
-          Seems like there is no instructors according to your selected data.
+          Oops! There are no instructors that match your search criteria.
         </div>
         : null}
         <div style={{margin:'0px auto', display:'flex',flexDirection:'column', width:'70%'}}>
