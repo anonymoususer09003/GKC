@@ -5,12 +5,56 @@ import RolesModal from '@/components/admin/RolesModal';
 import { apiClient } from '@/api/client';
 import { base_url } from '@/api/client';
 import RolesEditModal from '@/components/admin/RolesEditModal';
-
+import { useRouter } from 'next/router';
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
 }
 
 export default function Roles() {
+  //protection starts
+  const nav = useRouter()
+    // checking if user logged in starts
+      if(typeof window !== 'undefined' && nav.isReady){
+        useEffect(()=>{
+
+          if(JSON.parse(window.localStorage.getItem('gkcAuth')).role === undefined) {
+            nav.push('/')
+          }
+
+          // if(JSON.parse(window.localStorage.getItem('gkcAuth')).role !== 'Student') {
+          //   setIfSignedUser(true)
+          // } else {
+          //   //redirect
+          // }
+          // if(JSON.parse(window.localStorage.getItem('gkcAuth')).role !== 'Parent') {
+          //   setIfSignedUser(true)
+          // }
+          // if(JSON.parse(window.localStorage.getItem('gkcAuth')).role !== 'Instructor') {
+          //   setIfSignedUser(true)
+          // }
+
+        },[])
+      }
+    // checking if user logged in ends
+
+    // checking if user is admin starts
+
+    const isAdmin = async () =>{
+      try {
+        const res = await apiClient('/admin/roles/all-admins')
+      } catch (err) {
+        console.log(err.response.status)
+          nav.push('/')
+      }
+    }
+
+    useEffect(()=>{
+      isAdmin()
+    }, [])
+    // checking if user is admin ends
+
+  //protection ends
+
   const [openAddModal, setOpenAddModal] = useState(false);
   const [selectedPeople, setSelectedPeople] = useState([]);
   const [admins, setAdmins] = useState([]);
