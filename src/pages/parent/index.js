@@ -214,14 +214,14 @@ function ParentLandingPage() {
               type="text"
               placeholder="Search for a tutor by Name"
               className={`p-2 rounded outline-0 border border_gray ${styles.landingInputs}`}
-              onChange={(e) => setName(e.target.value)}
+              onChange={(e) =>{setPage(0);setName(e.target.value)}}
             />
           </div>
 
           <div className="d-flex justify-content-center gap-2 flex-wrap">
             <select
               className="p-2 rounded outline-0 border border_grFay"
-              onChange={(e) => setSelectCourse(e.target.value)}
+              onChange={(e) => {setPage(0);setSelectCourse(e.target.value)}}
             >
               <option value="">Course</option>
               {courses.map((course) => {
@@ -234,7 +234,7 @@ function ParentLandingPage() {
             </select>
             <select
               className="p-2 rounded outline-0 border border_gray"
-              onChange={(e) => setSkill(e.target.value)}
+              onChange={(e) => {setPage(0);setSkill(e.target.value)}}
             >
               <option value="">Proficiency</option>
               {proficiency.map((prof) => {
@@ -248,7 +248,7 @@ function ParentLandingPage() {
 
             <select
               className="p-2 rounded outline-0 border border_gray"
-              onChange={(e) => setAgeGroup(e.target.value)}
+              onChange={(e) => {setPage(0);setAgeGroup(e.target.value)}}
             >
               <option value="">Grade</option>
               <option value="1">Elementary School &#40;&#60;=10yrs&#41;</option>
@@ -262,7 +262,7 @@ function ParentLandingPage() {
             </select>
             <select
               className="p-2 rounded outline-0 border border_gray"
-              onChange={(e) => setMode(e.target.value)}
+              onChange={(e) => {setPage(0);setMode(e.target.value)}}
             >
               <option value="">Delivery Mode</option>
               <option value="1">In-Person</option>
@@ -270,7 +270,7 @@ function ParentLandingPage() {
             </select>
             <select
               className="p-2 rounded outline-0 border border_gray"
-              onChange={(e) => setSelectedLang(e.target.value)}
+              onChange={(e) => {setPage(0);setSelectedLang(e.target.value)}}
             >
               <option value="">Spoken Language</option>
               {lang.map((lan) => {
@@ -285,10 +285,11 @@ function ParentLandingPage() {
               type="number"
               placeholder="Max Hourly Rate"
               className={`p-2 rounded outline-0 border border_gray ${styles.landingInputs}`}
-              onChange={(e) => setHourlyRate(e.target.value)}
+              onChange={(e) => {
+                setPage(0); setHourlyRate(parseFloat(e.target.value));}}
             />
             <select className="p-2 rounded outline-0 border border_gray"
-            onChange={(e)=>{setStars(e.target.value)}}
+            onChange={(e)=>{ setPage(0);setStars(e.target.value)}}
             >
               <option>Min Stars</option>
               {
@@ -302,11 +303,11 @@ function ParentLandingPage() {
               type="text"
               placeholder="Enter City and state or Zip/Post Code"
               className={`p-2 rounded outline-0 border border_gray w-25 ${styles.landingInputs}`}
-              onChange={(e) => setSelectedZip(e.target.value)}
+              onChange={(e) => {setPage(0);setSelectedZip(e.target.value)}}
             />
             <button
               className={`btn_primary py-2 px-5 fw-bold text-white rounded`}
-              onClick={() => search(true)}
+              onClick={() => search()}
             >
               Search
             </button>
