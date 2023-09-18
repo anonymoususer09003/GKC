@@ -11,9 +11,32 @@ export const GlobalInstructor = {
   instructors: [],
 };
 
+const starArray = [
+  {
+    label:'1 Star',
+    id: '1'
+  },
+  {
+    label:'2 Stars',
+    id: '2'
+  },
+  {
+    label:'3 Stars',
+    id: '3'
+  },
+  {
+    label:'4 Stars',
+    id: '4'
+  },
+  {
+    label:'5 Stars',
+    id: '5'
+  }
+]
+
 function StudentLandingPage() {
   //const authenticated = isAuthenticated();
-
+  const [insructorsFound, setInsructorsFound] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [stars, setStars] = useState('')
   const [showCards, setShowCards] = useState(false);
@@ -39,7 +62,7 @@ function StudentLandingPage() {
       try {
         // var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
         const res = await axios.get(
-          `${base_url}/public/landing/filter?name=${name}${isNaN(hourlyRate) ? '' : '&hourlyRate='+hourlyRate}&grades=${ageGroup}${findNumbersUsingRegExp(selectedZip) ? '&zipCode='+selectedZip : '&city='+selectedZip}${proficiency !== 'Proficiency' ? '&proficiency='+proficiency : ''}${stars !== 'Min Stars' ? '&rating='+stars : ''}&courses=${selectedCourse}&spokenLanguage=${selectedLang}&deliveryModes=${mode}&page=0&size=10`,
+          `${base_url}/public/landing/filter?name=${name}${isNaN(hourlyRate) ? '' : '&hourlyRate='+hourlyRate}${isNaN(skill) ? '' : '&proficiency='+skill}${findNumbersUsingRegExp(selectedZip) ? '&zipCode='+selectedZip : selectedZip.length > 0 ? '&city='+selectedZip : ''}${stars.length>1 ? '' : '&rating='+stars}&grades=${ageGroup}&courses=${selectedCourse}&spokenLanguage=${selectedLang}&deliveryModes=${mode}&page=0&size=10`,
           {
             /*  headers: {
             Authorization: `Bearer ${typ.accessToken}`,
@@ -47,7 +70,13 @@ function StudentLandingPage() {
           */
           }
         );
-        setInsructors(res.data);
+        console.log(res)
+        if(res.data.length > 0){
+          setInsructorsFound(true)
+          setInsructors(res.data);
+        }else{
+          setInsructorsFound(false)
+        }
       } catch (error) {
         console.error('Error fetching profile data:', error);
       }
@@ -56,7 +85,7 @@ function StudentLandingPage() {
       try {
         // var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
         const res = await axios.get(
-          `${base_url}/public/landing/filter?page=${JSON.stringify(page).length > 1 ? page : '0'+page }${findNumbersUsingRegExp(selectedZip) ? '&zipCode='+selectedZip : '&city='+selectedZip}${proficiency !== 'Proficiency' ? '&proficiency='+proficiency : ''}${stars !== 'Min Stars' ? '&rating='+stars : ''}&name=${name}${isNaN(hourlyRate) ? '' : '&hourlyRate='+hourlyRate}&grades=${ageGroup}&courses=${selectedCourse}&spokenLanguage=${selectedLang}&deliveryModes=${mode}&page=0&size=10`,
+          `${base_url}/public/landing/filter?page=${JSON.stringify(page).length > 1 ? page : '0'+page }${findNumbersUsingRegExp(selectedZip) ? '&zipCode='+selectedZip : selectedZip.length > 0 ? '&city='+selectedZip : ''}${isNaN(skill) ? '' : '&proficiency='+skill}${stars.length>1 ? '' : '&rating='+stars}&name=${name}${isNaN(hourlyRate) ? '' : '&hourlyRate='+hourlyRate}&grades=${ageGroup}&courses=${selectedCourse}&spokenLanguage=${selectedLang}&deliveryModes=${mode}&page=0&size=10`,
         );
         setInsructors(insructors.concat(res.data));
       } catch (error) {
@@ -241,11 +270,12 @@ function StudentLandingPage() {
             onChange={(e)=>{setStars(e.target.value)}}
             >
               <option>Min Stars</option>
-              <option>1 Star</option>
-              <option>2 Stars</option>
-              <option>3 Stars</option>
-              <option>4 Stars</option>
-              <option>5 Stars</option>
+              {
+                starArray.map((el)=>{return <option value={el.id} key={el.id}>
+                  {el.label}
+                </option>
+                })
+              }
             </select>
             <input
               type="text"
@@ -299,7 +329,11 @@ function StudentLandingPage() {
       {
         insructors.length < 1 && 
         <>
-
+        {insructorsFound === false ? 
+        <div style={{textAlign:'center', margin:'40px 0'}}>
+          Seems like there is no instructors according to your selected data.
+        </div>
+        : null}
         <div style={{margin:'0px auto', display:'flex',flexDirection:'column', width:'70%'}}>
           <div className={`shadow ${innerWidth > 980 ? 'd-flex' : ''}`}
           style={{borderRadius:30, width:`${innerWidth > 980 ? '700px' : '256px'}`}}>
