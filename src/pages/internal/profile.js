@@ -1,12 +1,57 @@
 import { apiClient } from '@/api/client';
 import { base_url } from '@/api/client';
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
 
 export default function Profile() {
   const loggedUserEmail = typeof window === 'undefined' ? null : window?.localStorage.getItem('email');
   const [loggedUserInfo, setLoggedUserInfo] = useState();
 
   const getProfileInfo = async () => {
+    //protection starts
+  const nav = useRouter()
+    // checking if user logged in starts
+      if(typeof window !== 'undefined' && nav.isReady){
+        useEffect(()=>{
+
+          if(JSON.parse(window.localStorage.getItem('gkcAuth')).role === undefined) {
+            nav.push('/')
+          }
+
+          // if(JSON.parse(window.localStorage.getItem('gkcAuth')).role !== 'Student') {
+          //   setIfSignedUser(true)
+          // } else {
+          //   //redirect
+          // }
+          // if(JSON.parse(window.localStorage.getItem('gkcAuth')).role !== 'Parent') {
+          //   setIfSignedUser(true)
+          // }
+          // if(JSON.parse(window.localStorage.getItem('gkcAuth')).role !== 'Instructor') {
+          //   setIfSignedUser(true)
+          // }
+
+        },[])
+      }
+    // checking if user logged in ends
+
+    // checking if user is admin starts
+
+    const isAdmin = async () =>{
+      try {
+        const res = await apiClient('/admin/roles/all-admins')
+      } catch (err) {
+        console.log(err.response.status)
+          nav.push('/')
+      }
+    }
+
+    useEffect(()=>{
+      isAdmin()
+    }, [])
+    // checking if user is admin ends
+
+  //protection ends
+
     if(
       loggedUserEmail === null
     ){
