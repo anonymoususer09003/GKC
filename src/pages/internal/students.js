@@ -6,6 +6,7 @@ import { StudentsCharts } from '@/components/admin/StudentsCharts';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { AiOutlineCalendar } from 'react-icons/ai';
+import { useRouter } from 'next/router';
 import {
   ArrowLongLeftIcon,
   ArrowLongRightIcon,
@@ -40,6 +41,50 @@ const Students = () => {
   const [isInitialRender, setIsInitialRender] = useState(true);
 
   const handleSelectedStudent = (student) => {
+    //protection starts
+  const nav = useRouter()
+    // checking if user logged in starts
+      if(typeof window !== 'undefined' && nav.isReady){
+        useEffect(()=>{
+
+          if(JSON.parse(window.localStorage.getItem('gkcAuth')).role === undefined) {
+            nav.push('/')
+          }
+
+          // if(JSON.parse(window.localStorage.getItem('gkcAuth')).role !== 'Student') {
+          //   setIfSignedUser(true)
+          // } else {
+          //   //redirect
+          // }
+          // if(JSON.parse(window.localStorage.getItem('gkcAuth')).role !== 'Parent') {
+          //   setIfSignedUser(true)
+          // }
+          // if(JSON.parse(window.localStorage.getItem('gkcAuth')).role !== 'Instructor') {
+          //   setIfSignedUser(true)
+          // }
+
+        },[])
+      }
+    // checking if user logged in ends
+
+    // checking if user is admin starts
+
+    const isAdmin = async () =>{
+      try {
+        const res = await apiClient('/admin/roles/all-admins')
+      } catch (err) {
+        console.log(err.response.status)
+          nav.push('/')
+      }
+    }
+
+    useEffect(()=>{
+      isAdmin()
+    }, [])
+    // checking if user is admin ends
+
+  //protection ends
+
     setSelectedStudentId(student.id);
   };
 
