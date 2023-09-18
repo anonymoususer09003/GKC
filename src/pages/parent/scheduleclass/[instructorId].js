@@ -119,6 +119,8 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
     getCourses();
     if (eventId){
       getEventDetail()
+    } else {
+      setPaymentSubmit(false)
     };
   }, [eventId]);
   useEffect(() => {
@@ -403,7 +405,7 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
             onClick={()=>{setPaymentSubmit(false)}}
             ><u>Go to main page</u></button>
             </div>
-            <p style={{width: 'auto', display:'flex', justifyContent:'center', textAlign:'center'}}> {loggedInUser && loggedInUser.dependents.find(el=>el.id === studentId)?.firstName + ' ' + loggedInUser.dependents.find(el=>el.id === studentId)?.lastName } has requested that you review, approve and pay for the following class:</p>
+            <p style={{width: 'auto', display:'flex', justifyContent:'center', textAlign:'center'}}> {loggedInUser && loggedInUser.dependents?.find(el=>el.id === studentId)?.firstName + ' ' + loggedInUser.dependents?.find(el=>el.id === studentId)?.lastName } has requested that you review, approve and pay for the following class:</p>
             <div style={{display:"flex", justifyContent:'center', margin:'60px 0'}}>
             <ul style={{listStyleType:'none', width:200, padding:0, textAlign:'center'}}>
               <li>
