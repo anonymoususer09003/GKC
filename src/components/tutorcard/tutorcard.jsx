@@ -22,9 +22,18 @@ const Tutorcard = ({ data, key }) => {
   const handleOpenModal = (ifClass) => {
     // setShowModal(true);
     if(ifClass){
-      navigation.push(`/${JSON.parse(window.localStorage.getItem('gkcAuth')).role.toLowerCase()}/scheduleclass/${data.id}`)
+
+      if (typeof window !== 'undefined' && window.localStorage.getItem('gkcAuth') == null) {
+        navigation.push('/auth/signin')
+      } else{
+        navigation.push(`/${JSON.parse(window.localStorage.getItem('gkcAuth')).role.toLowerCase()}/scheduleclass/${data.id}`)
+      }
     } else{
-      navigation.push(`/${JSON.parse(window.localStorage.getItem('gkcAuth')).role.toLowerCase()}/requestinterview/${data.id}`)
+      if (typeof window !== 'undefined' && window.localStorage.getItem('gkcAuth') == null) {
+        navigation.push('/auth/signin')
+      } else{
+        navigation.push(`/${JSON.parse(window.localStorage.getItem('gkcAuth')).role.toLowerCase()}/scheduleclass/${data.id}`)
+      }
     }
   };
 

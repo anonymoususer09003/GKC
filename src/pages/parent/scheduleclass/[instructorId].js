@@ -588,7 +588,7 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
                       {loggedInUser && loggedInUser?.dependents?.map((dependent) => {
                         return (
                           <option key={dependent.email} value={dependent.id}>
-                            {dependent.email}
+                            {dependent.firstName+' '+dependent.lastName}
                           </option>
                         );
                       })}
@@ -636,7 +636,7 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
                     </h6>
                   </div>
 
-                  <div className="py-2 d-flex align-items-start gap-4">
+                  {/* <div className="py-2 d-flex align-items-start gap-4">
                     <h6 className="text-dark fw-bold m-0 p-0">Grade:</h6>
                     <div>
                       {
@@ -649,7 +649,7 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
                         })
                       }
                     </div>
-                  </div>
+                  </div> */}
                 </div>
               </div>
               <div className="d-flex gap-2 justify-content-center pt-5">
