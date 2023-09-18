@@ -14,26 +14,7 @@ import { useDispatch, useSelector } from "react-redux";
 import moment from "moment";
 import GetUnConfirmedEventById from "@/services/events/GetUnConfirmedEventById";
 function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
-  //protection starts
-  const nav = useRouter()
-  // checking if user logged in starts
-  if(typeof window !== 'undefined'){ // here we check if global object successfully loaded
-    console.log('lol')
-    useEffect(()=>{
 
-      if(JSON.parse(window.localStorage.getItem('gkcAuth')).role === undefined) { //here we check if user signed in
-        nav.push('/') 
-      } else{
-        if(JSON.parse(window.localStorage.getItem('gkcAuth')).role !== 'Parent') { //here we check if user has role Parent
-          nav.push('/')
-        }
-      }
-
-    },[])
-  }
-  // checking if user logged in ends
-
-  //protection ends
   const router = useRouter();
   console.log(router)
   console.log('uuuser', userInfo)
