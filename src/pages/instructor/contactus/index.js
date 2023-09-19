@@ -17,10 +17,10 @@ function InstructorContactUs() {
     useEffect(()=>{
 
       if(JSON.parse(window.localStorage.getItem('gkcAuth')).role === undefined) { //here we check if user signed in
-        nav.push('/') 
+        window.location.assign('https://geekkidscode.com/auth/signin')
       } else{
         if(JSON.parse(window.localStorage.getItem('gkcAuth')).role !== 'Instructor') { //here we check if user has role Instructor
-          nav.push('/')
+          window.location.assign('https://geekkidscode.com/')
         }
       }
 
