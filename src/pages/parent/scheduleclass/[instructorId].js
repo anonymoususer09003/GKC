@@ -441,7 +441,7 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
         ) : null}
       {ifSignedUser ? (
         <div style={{position:'fixed', zIndex: 1, left:0,top:0, width:'100%', height:'100%',overflow:'auto', background: 'rgba(0, 0, 0, 0.4)'}}>
-          <div style={{background: 'white', margin: '500px auto', padding:20,width:'22%'}}>
+          <div style={{background: 'white', margin: '500px auto', padding:20,width:'320px'}}>
             <p style={{width: 300, margin: 'auto'}}>Please sign in before scheduling a class.</p>
             <Link
               href="/auth/signin"
