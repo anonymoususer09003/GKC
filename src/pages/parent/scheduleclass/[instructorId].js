@@ -399,42 +399,9 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
         </div>
       )}
       {paymentSubmit ? (
-        <div
-          style={{
-            position: 'fixed',
-            zIndex: 1,
-            left: 0,
-            top: 0,
-            width: '100%',
-            height: '100%',
-            overflow: 'hidden',
-            background: 'white',
-            fontSize: 20,
-          }}
-        >
-          <div
-            style={{
-              background: 'white',
-              margin: '200px auto',
-              padding: 20,
-              width: '500px',
-            }}
-          >
-            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-              <button
-                className="fw-bold mt-3"
-                style={{
-                  width: '180px',
-                  position: 'relative',
-                  border: 'none',
-                  background: 'none',
-                }}
-                onClick={() => {
-                  setPaymentSubmit(false);
-                }}
-              >
-                <u>Go to main page</u>
-              </button>
+        <div style={{position:'fixed', zIndex: 1, left:0,top:0, width:'100%', height:'100%',overflow:'hidden', background: 'white', fontSize: 20}}>
+          <div style={{background: 'white', margin: '200px auto', padding:20,width:'500px'}}>
+            <div style={{display:'flex', justifyContent:'flex-end'}}>
             </div>
             <p
               style={{
@@ -506,6 +473,11 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
               >
                 Review and Approve
               </button>
+            </div>
+            <div style={{display:'flex', justifyContent:'center'}}>
+            <button className="fw-bold mt-3" style={{width: '180px', position: 'relative', border:'none', background:'none'}}
+            onClick={()=>{setPaymentSubmit(false)}}
+            ><u>Go to main page</u></button>
             </div>
           </div>
         </div>

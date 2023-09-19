@@ -55,6 +55,7 @@ function StudentLandingPage() {
   const [insructors, setInsructors] = useState([]);
   const [page, setPage] = useState(0)
   const [innerWidth, setInnerWidth] = useState(null)
+  const [pageState, setPageState] = useState(null)
 
   const search = async () => {
     console.log(JSON.stringify(page).length > 1 ? page : '0'+page)
@@ -71,27 +72,33 @@ function StudentLandingPage() {
           }
         );
         console.log(res)
-        if(res.data.length > 0){
+        if(res.data.content.length > 0){
           setInsructorsFound(true)
-          setInsructors(res.data);
+          setInsructors(res.data.content);
+          setPageState(res.data)
         }else{
           setInsructorsFound(false)
         }
       } catch (error) {
         console.error('Error fetching profile data:', error);
       }
-    }
-    if(page >= 1){
+    } else {
       try {
         // var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
         const res = await axios.get(
-          `${base_url}/public/landing/filter?page=${JSON.stringify(page).length > 1 ? page : '0'+page }${findNumbersUsingRegExp(selectedZip) ? '&zipCode='+selectedZip : selectedZip.length > 0 ? '&city='+selectedZip : ''}${isNaN(skill) ? '' : '&proficiency='+skill}${stars.length>1 ? '' : '&rating='+stars}&name=${name}${isNaN(hourlyRate) ? '' : '&hourlyRate='+hourlyRate}&grades=${ageGroup}&courses=${selectedCourse}&spokenLanguage=${selectedLang}&deliveryModes=${mode}&page=0&size=10`,
+          `${base_url}/public/landing/filter?page=${JSON.stringify(page).length > 1 ? page : '0'+page }${findNumbersUsingRegExp(selectedZip) ? '&zipCode='+selectedZip : selectedZip.length > 0 ? '&city='+selectedZip : ''}${isNaN(skill) ? '' : '&proficiency='+skill}${stars.length>1 ? '' : '&rating='+stars}&name=${name}${isNaN(hourlyRate) ? '' : '&hourlyRate='+hourlyRate}&grades=${ageGroup}&courses=${selectedCourse}&spokenLanguage=${selectedLang}&deliveryModes=${mode}&size=10`,
         );
-        setInsructors(insructors.concat(res.data));
+        setInsructors(insructors.concat(res.data.content));
+        setPageState(res.data)
       } catch (error) {
         console.error('Error fetching profile data:', error);
       }
     }
+  };
+
+  const handleButtonClick = () => {
+    // Update the state immediately
+    setPage(page + 1);
   };
 
   const getInstructors = async () => {
@@ -188,6 +195,7 @@ function StudentLandingPage() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Navbar />
+      <p>{page}</p>
       <main className="">
         <div className="container py-4">
           <p className="text-center mb-0 tw-font-medium tw-text-[25px] tw-text-[#f48342]">
@@ -308,14 +316,16 @@ function StudentLandingPage() {
             </div>
           )}
         {
-          insructors.length > 9 &&
+          pageState?.last === false &&
           <>
           <div style={{width:'100%', display:'flex',justifyContent:'center'}}>
           <button
           className='btn_primary py-2 px-5 fw-bold text-white rounded'
-          onClick={()=>{
-            setPage(page+1)
-            search()
+          onMouseDown={()=> setPage(page+1)}
+          onMouseUp={()=>{
+            setTimeout(() => {
+              search()
+            }, 200);
           }}>
             Load more
           </button>
@@ -331,7 +341,7 @@ function StudentLandingPage() {
         <>
         {insructorsFound === false ? 
         <div style={{textAlign:'center', margin:'40px 0'}}>
-          Seems like there is no instructors according to your selected data.
+          Oops! There are no instructors that match your search criteria.
         </div>
         : null}
         <div style={{margin:'0px auto', display:'flex',flexDirection:'column', width:'70%'}}>

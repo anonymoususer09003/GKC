@@ -57,10 +57,11 @@ function ParentLandingPage() {
   const [proficiency, setProficiency] = useState([]);
   const [insructors, setInsructors] = useState([]);
   const [goBackSchedule, setGoBackSchedule] = useState(false)
+  const [pageState, setPageState] = useState(null)
 
   const search = async () => {
     console.log(JSON.stringify(page).length > 1 ? page : '0'+page)
-    if(page < 1){
+    if(page === 0){
       try {
         // var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
         const res = await axios.get(
@@ -73,9 +74,11 @@ function ParentLandingPage() {
           }
         );
         console.log(res)
-        if(res.data.length > 0){
+        if(res.data.content.length > 0){
           setInsructorsFound(true)
-          setInsructors(res.data);
+          setInsructors(res.data.content);
+          setPageState(res.data)
+          
         }else{
           setInsructorsFound(false)
         }
@@ -89,7 +92,8 @@ function ParentLandingPage() {
         const res = await axios.get(
           `${base_url}/public/landing/filter?page=${JSON.stringify(page).length > 1 ? page : '0'+page }${findNumbersUsingRegExp(selectedZip) ? '&zipCode='+selectedZip : selectedZip.length > 0 ? '&city='+selectedZip : ''}${isNaN(skill) ? '' : '&proficiency='+skill}${stars.length>1 ? '' : '&rating='+stars}&name=${name}${isNaN(hourlyRate) ? '' : '&hourlyRate='+hourlyRate}&grades=${ageGroup}&courses=${selectedCourse}&spokenLanguage=${selectedLang}&deliveryModes=${mode}&page=0&size=10`,
         );
-        setInsructors(insructors.concat(res.data));
+        setInsructors(insructors.concat(res.data.content));
+        setPageState(res.data)
       } catch (error) {
         console.error('Error fetching profile data:', error);
       }
@@ -184,7 +188,7 @@ function ParentLandingPage() {
       <ParentNavbar />
       {goBackSchedule ? (
         <div style={{position:'fixed', zIndex: 1, left:0,top:0, width:'100%', height:'100%',overflow:'auto', background: 'rgba(0, 0, 0, 0.4)'}}>
-          <div style={{background: 'white', margin: '500px auto', padding:20,width:'22%'}}>
+          <div style={{background: 'white', margin: '500px auto', padding:20,width:'380px'}}>
             <p style={{width: 350, margin: 'auto', textAlign:'center', fontSize:18}}>We noticed that you attempted to schedule a class. Would you like to go back to the page where you were?</p>
             <div
             style={{display:'flex', gap:10, justifyContent:'center'}}>
@@ -303,7 +307,7 @@ function ParentLandingPage() {
               type="text"
               placeholder="Enter City and state or Zip/Post Code"
               className={`p-2 rounded outline-0 border border_gray w-25 ${styles.landingInputs}`}
-              onChange={(e) => {setPage(0);setSelectedZip(e.target.value)}}
+              onChange={(e) => { setPage(0);setSelectedZip(e.target.value)}}
             />
             <button
               className={`btn_primary py-2 px-5 fw-bold text-white rounded`}
@@ -330,14 +334,16 @@ function ParentLandingPage() {
           )}
 
         {
-          insructors.length > 1 &&
+          pageState?.last === false &&
           <>
           <div style={{width:'100%', display:'flex',justifyContent:'center'}}>
           <button
           className='btn_primary py-2 px-5 fw-bold text-white rounded'
-          onClick={()=>{
-            setPage(page+1)
-            search()
+          onMouseDown={()=> setPage(page+1)}
+          onMouseUp={()=>{
+            setTimeout(() => {
+              search()
+            }, 200);
           }}>
             Load more
           </button>
@@ -352,7 +358,7 @@ function ParentLandingPage() {
         <>
         {insructorsFound === false ? 
         <div style={{textAlign:'center', margin:'40px 0'}}>
-          Seems like there is no instructors according to your selected data.
+          Oops! There are no instructors that match your search criteria.
         </div>
         : null}
         <div style={{margin:'0px auto', display:'flex',flexDirection:'column', width:'70%'}}>
