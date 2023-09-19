@@ -382,9 +382,6 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
         <div style={{position:'fixed', zIndex: 1, left:0,top:0, width:'100%', height:'100%',overflow:'hidden', background: 'white', fontSize: 20}}>
           <div style={{background: 'white', margin: '200px auto', padding:20,width:'500px'}}>
             <div style={{display:'flex', justifyContent:'flex-end'}}>
-              <button className="fw-bold mt-3" style={{width: '180px', position: 'relative', border:'none', background:'none'}}
-            onClick={()=>{setPaymentSubmit(false)}}
-            ><u>Go to main page</u></button>
             </div>
             <p style={{width: 'auto', display:'flex', justifyContent:'center', textAlign:'center'}}> {loggedInUser && loggedInUser.dependents?.find(el=>el.id === studentId)?.firstName + ' ' + loggedInUser.dependents?.find(el=>el.id === studentId)?.lastName } has requested that you review, approve and pay for the following class:</p>
             <div style={{display:"flex", justifyContent:'center', margin:'60px 0'}}>
@@ -433,6 +430,11 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
             <button className="btn_primary text-light p-2 rounded fw-bold mt-3" style={{width: '300px', position: 'relative'}}
             onClick={()=>{setPaymentSubmit(false)}}
             >Review and Approve</button>
+            </div>
+            <div style={{display:'flex', justifyContent:'center'}}>
+            <button className="fw-bold mt-3" style={{width: '180px', position: 'relative', border:'none', background:'none'}}
+            onClick={()=>{setPaymentSubmit(false)}}
+            ><u>Go to main page</u></button>
             </div>
           </div>
         </div>
