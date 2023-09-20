@@ -5,13 +5,13 @@ phases:
       - echo "Installing Node.js 18"
       - n 18.16.0
       - npm install next
-      - npm install typescript   
+      - npm install typescript
   build:
     commands:
       - echo "Starting the build process"
       - npm install
+      - rm -rf .next
       - npm run build
-#      - rm -rf .next/
 artifacts:
   files:
     - '**/*'
