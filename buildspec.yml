@@ -11,7 +11,7 @@ phases:
       - echo "Starting the build process"
       - npm install
       - npm run build
-      - rm -rf .next
+#      - rm -rf .next/
 artifacts:
   files:
     - '**/*'
