@@ -304,7 +304,7 @@ export default function RegisterStudent() {
                       Continue
                     </button>
                     <Link
-                      href="/"
+                      href="/auth/signin"
                       className="text-decoration-none d-flex gap-2 justify-content-center"
                     >
                       <p className="text-secondary fw-bold">
