@@ -90,7 +90,7 @@ function FinancialReport({ role }) {
             {financialData.length == 0 ? (
               <p className="tw-text-center pt-2 tw-text-[#f48342] tw-font-semibold">
                 {' '}
-                You currently don't have any revenue
+                You currently don't have any transaction to report
               </p>
             ) : (
               ''
