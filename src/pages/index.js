@@ -195,7 +195,6 @@ function StudentLandingPage() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Navbar />
-      <p>{page}</p>
       <main className="">
         <div className="container py-4">
           <p className="text-center mb-0 tw-font-medium tw-text-[25px] tw-text-[#f48342]">
