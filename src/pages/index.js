@@ -58,7 +58,7 @@ function StudentLandingPage() {
   const [pageState, setPageState] = useState(null)
 
   const search = async () => {
-    //console.log(JSON.stringify(page).length > 1 ? page : '0'+page)
+    console.log(JSON.stringify(page).length > 1 ? page : '0'+page)
     if(page === 0){
       try {
         // var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
