@@ -371,7 +371,7 @@ export default function RegisterInstructor() {
                         {' '}
                         Privacy Policy{' '}
                       </Link>{' '}
-                      of GKC
+                      of GeekKidsCode.com
                     </label>
                   </div>
                   <div className="d-flex flex-wrap gap-2 justify-content-between mt-3">
