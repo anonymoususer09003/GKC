@@ -56,7 +56,7 @@ function ReportInstructor() {
   const getReviewInstructors = async () => {
     try {
       let res = null;
-      if (window.localStorage.getItem('userType') === "parent") {
+      if (JSON.parse(window.localStorage.getItem('userType')).role === "Parent") {
         res = await GetInstructorForParents();
         const uniqueArray = removeDuplicates(res.data);
         setInstructors(uniqueArray);
@@ -139,7 +139,7 @@ function ReportInstructor() {
             </div>
             <div className="col col-9">
               <h5 className="mb-5">
-                Tell us your reason for reporting {`${selectedInstructor}`}
+                Tell us your reason for reporting {`${selectedInstructor !== null ? (selectedInstructor?.firstName+' '+selectedInstructor?.lastName) : ''}`}
               </h5>
               <div className="form-check my-3"
                 onClick={()=>{setreasonOfReporting('Unprofessional Conduct')}}

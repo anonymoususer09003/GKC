@@ -58,7 +58,7 @@ function ReportInstructor() {
   const getReviewInstructors = async () => {
     try {
       let res = null;
-      if (window.localStorage.getItem('userType') === "parent") {
+      if (JSON.parse(window.localStorage.getItem('userType')).role === "Parent") {
         res = await GetInstructorForParents();
         const uniqueArray = removeDuplicates(res.data);
         setInstructors(uniqueArray);
