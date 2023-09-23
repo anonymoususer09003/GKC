@@ -83,7 +83,7 @@ export default function Home() {
               <div>
                 <div className="d-flex justify-content-center mb-3">
                   <h4 className="text-secondary fw-bold">
-                    {typeof window !== undefined && window.localStorage.getItem('DoesParentCreateNewStudent') === null ?  'Register Your Email' : 'Register your child\'s email'}
+                    {typeof window !== 'undefined' ? window.localStorage.getItem('DoesParentCreateNewStudent') === null ?  'Register Your Email' : 'Register your child\'s email' : null}
                   </h4>
                 </div>
                 <div>
