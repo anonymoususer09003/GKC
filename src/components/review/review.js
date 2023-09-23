@@ -72,7 +72,7 @@ export default function Review({ role }) {
   const getReviewInstructors = async () => {
     try {
       let res = null;
-      if (window.localStorage.getItem('userType') === "parent") {
+      if (role === "parent") {
         res = await GetInstructorForParents();
         const uniqueArray = removeDuplicates(res.data);
         setInstructors(uniqueArray);
