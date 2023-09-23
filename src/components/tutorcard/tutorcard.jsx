@@ -397,12 +397,14 @@ const Tutorcard = ({ data, key }) => {
                         reviews.map((reviewver, index)=>{
                           return <div className="d-flex flex-column flex-md-row align-items-center gap-4 border my-2 shadow p-3 bg-white rounded" key={index}>
                                     <div>
-                                      <div className="d-flex align-items-center justify-content-between flex-1">
-                                        <b className="m-0 p-0">
-                                          {reviewver?.reviewer?.firstName +
-                                            ' ' +
-                                            reviewver?.reviewer?.lastName}
-                                        </b>
+                                      <div className="d-flex align-items-center tw-gap-12">
+                                        <div>
+                                          <b className="m-0 p-0">
+                                            {reviewver?.reviewer?.firstName +
+                                              ' ' +
+                                              reviewver?.reviewer?.lastName}
+                                          </b>
+                                        </div>
                                         <div className="d-flex align-items-center gap-2">
                                           <div className="mb-2">
                                             <StarRatings
@@ -417,7 +419,9 @@ const Tutorcard = ({ data, key }) => {
                                           </p>
                                         </div>
                                       </div>
-                                      <p className="m-0 py-2 small">
+                                      <p className="m-0 py-2 small"
+                                      style={{width:'100% !important'}}
+                                      >
                                       {reviewver?.comment}
                                       </p>
                                     </div>

@@ -6,6 +6,8 @@ import styles from "../../../styles/Home.module.css"
 import { useRouter } from 'next/router';
 import GetInstructorForParents from "@/services/Review/GetInstructorForParents";
 import GetInstructorByStudent from "@/services/Review/GetInstructorByStudent";
+import report from "@/pages/instructor/report";
+import { apiClient } from "@/api/client";
  
 
 function ReportInstructor() {
@@ -33,34 +35,37 @@ function ReportInstructor() {
   const [selectedInstructor, setSelectedInstructor] = useState(null);
   const [comment, setComment] = useState('')
   const [reasonOfReporting, setreasonOfReporting] = useState('')
+  const [success, setSuccess] = useState(false)
 
-  function removeDuplicates(arr, key) {
-    const uniqueKeys = new Set();
-    return arr.filter((obj) => {
-      const value = obj[key];
-      if (!uniqueKeys.has(value)) {
-        uniqueKeys.add(value);
-        return true;
+  function removeDuplicates(arr) {
+    const uniqueObjects = {};
+    const resultArray = [];
+  
+    for (const obj of arr) {
+      // Convert the object to a string for easy comparison
+      const objString = JSON.stringify(obj);
+  
+      // Check if we've seen this object before
+      if (!uniqueObjects[objString]) {
+        uniqueObjects[objString] = true;
+        resultArray.push(obj);
       }
-      return false;
-    });
+    }
+  
+    return resultArray;
   }
 
   const getReviewInstructors = async () => {
     try {
       let res = null;
       if (window.localStorage.getItem('userType') === "parent") {
-        let instructors = [];
         res = await GetInstructorForParents();
-        res?.data?.studentAndInstructorList?.map((item) => {
-          instructors = [...instructors, ...item?.instructorList];
-        });
-
-        const uniqueArray = removeDuplicates(instructors, "id");
+        const uniqueArray = removeDuplicates(res.data);
         setInstructors(uniqueArray);
       } else {
         res = await GetInstructorByStudent();
-        setInstructors(res.data);
+        const uniqueArray = removeDuplicates(res.data);
+        setInstructors(uniqueArray);
       }
     } catch (err) {
       console.log("err", err);
@@ -74,7 +79,13 @@ function ReportInstructor() {
         reasonOfReporting: reasonOfReporting,
         reportedUserId: selectedInstructor?.id
       }
-      const res = await report(body)
+      const res = await apiClient.post(`/report`,
+      {
+        ...body
+      }
+      )
+      console.log(res)
+      setSuccess(true)
     } catch (err) {
       console.log("err", err)
     }
@@ -86,6 +97,20 @@ function ReportInstructor() {
 
   return (
     <>
+        {success ? (
+        <div style={{position:'fixed', zIndex: 1, left:0,top:0, width:'100%', height:'100%',overflow:'auto', background: 'rgba(0, 0, 0, 0.4)'}}>
+          <div style={{background: 'white', margin: '500px auto', padding:20,width:'380px'}}>
+            <p style={{width: 350, margin: 'auto', textAlign:'center', fontSize:18}}>You successfully sent a report to our team.</p>
+            <div
+            style={{display:'flex', gap:10, justifyContent:'center'}}>
+            <button 
+            onClick={()=>{setSuccess(false);nav.back()}}
+            className="btn_primary text-light p-2 rounded fw-bold mt-3" 
+            style={{width: 100, }}>Ok</button>
+            </div>
+          </div>
+        </div>
+        ) : null}
       <Head>
         <title>Reported Instructor</title>
         <meta name="description" content="Where kids learn to code" />
@@ -98,18 +123,25 @@ function ReportInstructor() {
           <div className="row">
           <div className="col">
               <h5 className="py-3">Your Instructors</h5>
-              {instructors.map((item, key) => (
-                <p role="button"
-                 onClick={() => setSelectedInstructor(e)}
-                 key={key}
-                 >
-                  {item}
-                </p>
-              ))}
+              {instructors.map((item, key) => {
+
+                return (
+                  <ul
+                    onClick={() => setSelectedInstructor(item)}
+                    key={key}
+                    className="p-0 m-0"
+                    style={{ listStyle: "none" }}
+                  >
+                    <li className={`p-0 m-0 fw-bold ${selectedInstructor && selectedInstructor.id === item.id ? 'bg-black text-white' : 'bg-gray'} p-3 my-2 rounded`}>
+                      {item?.firstName + " " + item?.lastName}
+                    </li>{" "}
+                  </ul>
+                )
+              })}
             </div>
             <div className="col col-9">
               <h5 className="mb-5">
-                Tell us your reason for reporting {`${selectedInstructor}`}
+                Tell us your reason for reporting {`${selectedInstructor !== null ? (selectedInstructor?.firstName+' '+selectedInstructor?.lastName) : ''}`}
               </h5>
               <div className="form-check my-3"
                 onClick={()=>{setreasonOfReporting('Unprofessional Conduct')}}
