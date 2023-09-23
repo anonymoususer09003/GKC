@@ -349,8 +349,8 @@ const Tutorcard = ({ data, key }) => {
                   <div className="d-flex align-items-center tw-justify-center gap-3">
                     <div className="flex-1">
                       <div className="d-flex gap-3 align-items-center ">
-                      <Image
-                        src="/assets/student-preview.png"
+                      <img
+                        src={data?.instructorPhoto ?? 'https://cdn-icons-png.flaticon.com/128/847/847969.png'}
                         alt=""
                         width={150}
                         height={150}
@@ -475,23 +475,23 @@ const Tutorcard = ({ data, key }) => {
                   )} */}
 
                   <div className="d-flex flex-column flex-md-row gap-2 gap-md-0 justify-content-between align-items-center p-3">
-                    <Link
+                    <button
                       className={`btn_primary py-2 px-3 fw-bold text-white rounded text-decoration-none`}
-                      href="/student/scheduleclass[instructorId]"
-                      as={`/student/scheduleclass/${data.id}`}
+                      type='submit'
+                      onClick={()=>{handleOpenModal(true)}}
                     >
                       Book a Class
-                    </Link>
+                    </button>
 
                     {/* <p className="m-0 p-0">Read more</p> */}
 
-                    <Link
+                    <button
                       className={`btn_primary py-2 px-3 fw-bold text-white rounded text-decoration-none`}
-                      href="/student/requestinterview[instructorId]"
-                      as={`/student/requestinterview/${data.id}`}
+                      type='submit'
+                      onClick={()=>{handleOpenModal(false)}}
                     >
                       Request Interview
-                    </Link>
+                    </button>
                   </div>
                 </div>
               </div>

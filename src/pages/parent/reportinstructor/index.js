@@ -220,8 +220,8 @@ function ReportInstructor() {
               </p>
                 <button
                   className={` py-2 px-4 fw-bold text-white rounded text-end`}
-                  style={{background: comment.length >= 100 && reasonOfReporting.length >= 3 ? '#f48343' : 'gray' }}
-                  disabled={comment.length >= 100 && reasonOfReporting.length >= 3 ? false : true}
+                  style={{background: comment.length >= 100 && comment.length <= 500 && reasonOfReporting.length >= 3 ? '#f48343' : 'gray' }}
+                  disabled={comment.length >= 100 && comment.length <= 500 && reasonOfReporting.length >= 3 ? false : true}
                   type="submit"
                   onClick={onSubmit}
                 >

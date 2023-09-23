@@ -6,7 +6,7 @@ import { BsCheck2Circle } from 'react-icons/bs';
 import { useRouter } from 'next/router';
 import { RiArrowGoBackLine } from 'react-icons/ri';
 import axios from 'axios';
-import { base_url } from '../../../api/client';
+import { apiClient, base_url } from '../../../api/client';
 import styles from '../../../styles/Home.module.css';
 import { BsPersonCircle } from 'react-icons/bs';
 import { useSelector, useDispatch } from 'react-redux';
@@ -37,39 +37,48 @@ export default function RegisterInstructor() {
   const [isImageTooLarge, setIsImageTooLarge] = useState(false);
   const [err, setErr] = useState('')
 
-  const handleImageUpload = (e) => {
+
+  const handleImageUpload = async (e) => {
     const selectedFile = e.target.files[0];
+
     const selectedFileSizeInBytes = selectedFile.size;
-    const fileSizeInKB = selectedFileSizeInBytes / 1024; // Convert to KB
+    const fileSizeInKB = selectedFileSizeInBytes / 1024;
+
     if (fileSizeInKB > 200) {
       setIsImageTooLarge(true);
       return;
     } else {
       setIsImageTooLarge(false);
     }
+
     const file = new FormData();
     file.append('file', selectedFile);
-    setImageFile(file);
-    dispatch(saveImage(file));
-  };
-
-  const registerInstructor = async (instructorDetails) => {
     try {
-      const responce = await axios.post(`${base_url}/auth/register-instructor`, instructorDetails)
-      console.log(responce);
-      window.localStorage.setItem('gkcAuth',           
-      JSON.stringify({
-        accessToken: responce.data.accessToken,
-        role: responce.data,
-      }))
-    } catch (err) {
-      console.log(err)
+      const response = await apiClient.post(
+        '/aws/upload-instructor-photo',
+        file,
+        {
+          headers: {
+            accept: '*/*',
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
+      fetchUser();
+    } catch (error) {
+      console.log(error.response);
     }
-  }
+  };
 
   let isValidForm =
     email &&
-    termsAgree;
+    firstName &&
+    lastName &&
+    address1 || address2 &&
+    country &&
+    state &&
+    city &&
+    zipCode;
 
   const onContinue = () => {
     if (password == confirmPassword) {
@@ -78,17 +87,20 @@ export default function RegisterInstructor() {
 
     console.log('stor', stored);
     stored.email = email;
+    stored.firstName = firstName;
+    stored.lastName = lastName;
     stored.password = password;
+    stored.address1 = address1;
+    stored.address2 = address2;
+    stored.country = country;
+    stored.state = state;
+    stored.city = city;
+    stored.zipCode = zipCode;
+    stored.savePaymentFutureUse = true;
     stored.timeZoneId = timezone;
 
-
-    registerInstructor(stored);
-
     window.localStorage.setItem('registrationForm', JSON.stringify(stored));
-
-    setTimeout(() => {
-      navigation.push('/auth/registerinstructorcomplete');
-    }, 500);
+      navigation.push('/auth/registrationmore');
     } else {
       setErr('Password and new password mismatch')
     }
@@ -179,7 +191,50 @@ export default function RegisterInstructor() {
           <div className="col-12 col-lg-6 d-flex justify-content-center align-items-center ">
             <div className="w-100 w-md-75 p-5">
               <div>
- 
+                <div className="d-flex flex-column w-75 justify-content-center align-items-center mb-5">
+                  {image ? (
+                    <img
+                      src={image}
+                      style={{
+                        width: '140px',
+                        height: '140px',
+                        borderRadius: '50%',
+                      }}
+                      className="tw-object-fit-cover"
+                    />
+                  ) : (
+                    <BsPersonCircle
+                      style={{
+                        width: '140px',
+                        height: '140px',
+                        borderRadius: '50%',
+                      }}
+                    />
+                  )}
+                  <label
+                    for="files"
+                    style={{ width: '120px', backgroundColor: '#f48342' }}
+                    className="mx-auto p-2 mt-2 tw-rounded-lg text-center"
+                  >
+                    Upload image
+                  </label>
+                  <input
+                    accept="image/*"
+                    className="mt-3"
+                    id="files"
+                    style={{ display: 'none' }}
+                    type="file"
+                    onChange={(e) => {
+                      handleImageUpload(e);
+                      setImage(URL.createObjectURL(e.target.files[0]));
+                    }}
+                  />
+                  {isImageTooLarge && (
+                    <p className="tw-text-center tw-text-[15px] tw-w-full tw-text-red-500 tw-font-sm">
+                      Max allowed size is 200KB
+                    </p>
+                  )}
+                </div>
                 <div
                   className={`d-flex justify-content-between align-items-center mb-3 ${styles.intructorTitle}`}
                 >
@@ -192,65 +247,92 @@ export default function RegisterInstructor() {
                   </p>
                 </div>
                 <div>
+                  <input
+                    type="text"
+                    className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
+                    placeholder="First Name"
+                    name="firstname"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                  />
+                  <input
+                    type="text"
+                    className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
+                    placeholder="Last Name"
+                    name="lastname"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                  />
+                  <input
+                    type="text"
+                    className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
+                    placeholder="Address 1"
+                    value={address1}
+                    name="address1"
+                    onChange={(e) => setAddress1(e.target.value)}
+                  />
+                  <input
+                    type="text"
+                    className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
+                    placeholder="Address 2"
+                    value={address2}
+                    name="address2"
+                    onChange={(e) => setAddress2(e.target.value)}
+                  />
 
-                  <div className="d-flex  flex-md-nowrap flex-wrap gap-2">
-                    <input
-                      type="password"
-                      className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
-                      placeholder="Password"
-                      name="password"
-                      value={password}
-                      onChange={(e) => {setPassword(e.target.value); setErr('')}}
-                    />
-                    <input
-                      type="password"
-                      className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
-                      placeholder="Confirm Password"
-                      name="confirmpassword"
-                      value={confirmPassword}
-                      onChange={(e) => {setConfirmPassword(e.target.value); setErr('')}}
-                    />
-                  </div>
-                  {err && (
-                    <>
-                  <div>
-                    <p
-                      className="fw-bold py-2 text-center"
-                      style={{color:'red'}}
+                  <div className="d-flex   flex-md-nowrap flex-wrap gap-2">
+                    <select
+                      onChange={(e) => setCountry(e.target.value)}
+                      className="w-100 p-2 rounded outline-0 border border_gray  mb-3 "
                     >
-                      {err}
-                    </p>
+                      <option value="">Select Country</option>
+                      {countries.map((v, i) => {
+                        return (
+                          <option value={v.name} key={i}>
+                            {v.name}
+                          </option>
+                        );
+                      })}
+                    </select>
+                    <select
+                      onChange={(e) => setState(e.target.value)}
+                      className="w-100 p-2 rounded outline-0 border border_gray  mb-3 "
+                    >
+                      <option value="">Select State</option>
+                      {states.map((v, i) => {
+                        return (
+                          <option value={v.name} key={i}>
+                            {v.name}
+                          </option>
+                        );
+                      })}
+                    </select>
                   </div>
-                    </>
-                  ) }
-                  <div className="form-check">
+
+                  <div className="d-flex   flex-md-nowrap flex-wrap gap-2">
+                    <select
+                      onChange={(e) => setCity(e.target.value)}
+                      className="w-100 p-2 rounded outline-0 border border_gray  mb-3"
+                    >
+                      <option value="student">Select City</option>
+                      {cities.map((v, i) => {
+                        return (
+                          <option value={v.name} key={i}>
+                            {v.name}
+                          </option>
+                        );
+                      })}
+                    </select>
                     <input
-                      className="form-check-input"
-                      type="checkbox"
-                      value={termsAgree}
-                      id="flexCheckDefault"
-                      onChange={() => setTermsAgree(!termsAgree)}
+                      type="text"
+                      className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
+                      placeholder="Zip/Post Code"
+                      name="zip"
+                      value={zipCode}
+                      onChange={(e) => setZipCode(e.target.value)}
                     />
-                    <label className="form-check-label" for="flexCheckDefault">
-                      I agree to the{' '}
-                      <Link
-                        href="/terms-of-use"
-                        className="fw-bold no-underline hover:text_secondary text_secondary"
-                      >
-                        {' '}
-                        Terms of Use
-                      </Link>{' '}
-                      and{' '}
-                      <Link
-                        href="/privicy-policy"
-                        className="fw-bold no-underline hover:text_secondary text_secondary"
-                      >
-                        {' '}
-                        Privacy Policy{' '}
-                      </Link>{' '}
-                      of GeekKidsCode.com
-                    </label>
                   </div>
+
                   <div className="d-flex flex-wrap gap-2 justify-content-between mt-3">
                     <button
                       className={`w-50 text-light p-2 rounded fw-bold  bg-gray-300 ${

@@ -278,7 +278,6 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
                     onChange={(e) => setAddress2(e.target.value)}
                   />
 
-                  <div className="d-flex align-items-center gap-3 py-2">
                     <select
                       className="w-25 flex-fill p-2 rounded outline-0 border border_gray "
                       value={selectedCountry}
@@ -293,8 +292,7 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
                         );
                       })}
                     </select>
-
-                    <select
+                  <select
                       className="w-25 flex-fill p-2 rounded outline-0 border border_gray "
                       value={selectedState}
                       onChange={(e) => setSelectedState(e.target.value)}
@@ -308,8 +306,6 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
                         );
                       })}
                     </select>
-                  </div>
-
                   <div className="d-flex align-items-center gap-3 py-2">
                     <select
                       className="w-25 flex-fill p-2 rounded outline-0 border border_gray "

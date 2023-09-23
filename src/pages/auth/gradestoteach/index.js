@@ -55,6 +55,7 @@ export default function RegistrationGrade() {
         <div
           onClick={()=>navigation.back()}
           className="text-decoration-none p-4 d-flex gap-2 align-items-center text-dark"
+          style={{cursor:'pointer'}}
         >
           <RiArrowGoBackLine />
           <p className="fw-bold m-0 p-0 ">Back</p>

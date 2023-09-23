@@ -163,6 +163,7 @@ export default function RegisterStudent() {
         <div
           className="text-decoration-none p-4 d-flex gap-2 align-items-center text-dark"
           onClick={()=>navigation.back()}
+          style={{cursor:'pointer'}}
         >
           <RiArrowGoBackLine />
           <p className="fw-bold m-0 p-0 ">Back</p>

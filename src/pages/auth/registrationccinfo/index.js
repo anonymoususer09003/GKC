@@ -21,7 +21,7 @@ export default function StudentRegistrationCCInfo() {
 
   const onRegister = async ({ getPayment }) => {
     var storreed = JSON.parse(window.localStorage.getItem('registrationForm'))
-    setSavePaymentFutureUse(!savePaymentFutureUse)
+    // setSavePaymentFutureUse(!savePaymentFutureUse)
     try {
       const response = await axios.post(`${base_url}/auth/complete-student-registration`, {
         firstName: userInfo.firstName,
@@ -60,11 +60,11 @@ export default function StudentRegistrationCCInfo() {
           );
         }
       
-      if (getPayment && selectedParent == '') {
+      if (getPayment && selectedParent == '' || cardFormValid ) {
         setConfirmPayment(true);
-        navigation.push('/');
+        // navigation.push('/');
       } else {
-        navigation.push('/');
+        // navigation.push('/');
       }
     }
     } catch (error) {

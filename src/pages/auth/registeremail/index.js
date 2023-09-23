@@ -61,6 +61,7 @@ export default function Home() {
         <Link
           href="/"
           className="text-decoration-none p-4 d-flex gap-2 align-items-center text-dark"
+          style={{cursor:'pointer'}}
         >
           <RiArrowGoBackLine />
           <p className="fw-bold m-0 p-0 ">Back to home</p>
@@ -81,7 +82,7 @@ export default function Home() {
               <div>
                 <div className="d-flex justify-content-center mb-3">
                   <h4 className="text-secondary fw-bold">
-                    Register Your Email
+                    {window.localStorage.getItem('DoesParentCreateNewStudent') === null ?  'Register Your Email' : 'Register your child\'s email'}
                   </h4>
                 </div>
                 <div>

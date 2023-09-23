@@ -178,7 +178,9 @@ export default function StudentRegistrationCourse() {
                   selected.map((v) => {
                     return (
                       <div className="d-flex  flex-wrap align-items-center gap-2 ">
-                        <p>{v.label}</p>
+                        <p
+                        style={{width:120}}
+                        >{v.label}</p>
                         <select
                           className="w-25 p-2 rounded outline-0 border border_gray  mb-3 "
                           onChange={(e) => {

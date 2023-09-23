@@ -8,6 +8,7 @@ import { RiArrowGoBackLine } from 'react-icons/ri';
 import axios from 'axios';
 import { useSelector, useDispatch } from 'react-redux';
 import { saveVideo } from '@/store/actions/filesActions';
+import { apiClient } from '@/api/client';
 
 export default function InstructorRegistrationMore() {
   const navigation = useRouter();
@@ -15,34 +16,35 @@ export default function InstructorRegistrationMore() {
   const [instructorBio, setInstructorBio] = useState('');
   const [acceptInterview, setAcceptInterview] = useState(false);
   const [deliveryModes, setDeliveryModes] = useState([]);
-  const [videoFile, setVideoFile] = useState();
+  const [videoFile, setVideoFile] = useState(null);
+  const [videoFilename, setVideoFilename] = useState('null');
   const [isVideoTooLarge, setIsVideoTooLarge] = useState(false);
   const [isAtLeastOneModeChecked, setIsAtLeastOneModeChecked] = useState(false);
   const dispatch = useDispatch();
 
   const isValidForm =
-    instructorBio.length > 0 && isAtLeastOneModeChecked && hourlyRate > 0;
+    instructorBio.length > 0 && instructorBio.length < 501 && isAtLeastOneModeChecked && hourlyRate > 0;
 
-  const handleVideoUpload = (e) => {
-    const selectedFile = e.target.files[0];
+    const handleVideoUpload = async (e) => {
+      const selectedFile = e?.target?.files[0];
+  
+      const selectedFileSizeInBytes = selectedFile?.size;
+      const fileSizeInMB = selectedFileSizeInBytes / (1024 * 1024);
+  
+      if (fileSizeInMB > 5) {
+        setIsVideoTooLarge(true);
+        return;
+      } else {
+        setIsVideoTooLarge(false);
+      }
+      const file = new FormData();
+      file.append('file', selectedFile);
+      console.log(selectedFile)
+      setVideoFile(selectedFile)
 
-    const selectedFileSizeInBytes = selectedFile.size;
-    const fileSizeInMB = selectedFileSizeInBytes / (1024 * 1024); // Convert to MB
+    };
 
-    if (fileSizeInMB > 5) {
-      setIsVideoTooLarge(true);
-      return;
-    } else {
-      setIsVideoTooLarge(false);
-    }
-
-    const file = new FormData();
-    file.append('file', selectedFile);
-    setVideoFile(file);
-    dispatch(saveVideo(file));
-  };
-
-  const onContinue = () => {
+  const onContinue = async () => {
     // window.localStorage.setItem('gkcAuth', JSON.stringify(true));
     var stored = JSON.parse(window.localStorage.getItem('registrationForm'));
 
@@ -58,6 +60,24 @@ export default function InstructorRegistrationMore() {
         modes.push(v.label);
       }
     });
+
+    try {
+      const response = await apiClient.post(
+        '/aws/upload-instructor-video',
+        videoFile,
+        {
+          headers: {
+            accept: '*/*',
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
+      console.log(response)
+      fetchUser();
+    } catch (error) {
+      console.log(error);
+    }
+
     stored.deliveryModes = modes;
     window.localStorage.setItem('registrationForm', JSON.stringify(stored));
     navigation.push('/auth/gradestoteach');
@@ -110,6 +130,7 @@ export default function InstructorRegistrationMore() {
         <div
           onClick={()=>navigation.back()}
           className="text-decoration-none p-4 d-flex gap-2 align-items-center text-dark"
+          style={{cursor:'pointer'}}
         >
           <RiArrowGoBackLine />
           <p className="fw-bold m-0 p-0 ">Back</p>
@@ -140,16 +161,19 @@ export default function InstructorRegistrationMore() {
                   value={instructorBio}
                   onChange={(e) => setInstructorBio(e.target.value)}
                 ></textarea>
+                <p>{instructorBio.length}/500</p>
 
                 <p className=" fw-bold ">
                   Upload a video recording of yourself - max 5mb (optional)
                 </p>
                 <input
-                  type="file"
-                  accept="video/*"
-                  onChange={(e) => handleVideoUpload(e)}
-                  className="w-100 p-1 rounded outline-0 border border_gray"
+                type="file"
+                id='video'
+                accept="video/*"
+                onChange={(e) => handleVideoUpload(e)}
+                className="w-100 p-1 rounded outline-0 border border_gray"
                 />
+                <u style={{cursor:'pointer'}} onClick={()=>{setVideoFile(null);document.querySelector('#video').value = ''}}>Remove selected video?</u>
                 {isVideoTooLarge && (
                   <p className="tw-text-center tw-w-full tw-text-red-500 tw-font-sm">
                     Max allowed size is 5MB

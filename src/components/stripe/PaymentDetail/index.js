@@ -6,6 +6,7 @@ import GetUserDetail from "../../../services/user/GetUserDetail";
 import styles from "./payment.module.css"
 import PaymentForm from '@/components/stripe/PaymentForm';
 import Router from "next/router";
+import { apiClient } from "@/api/client";
 
 
 export default function index() {
@@ -30,10 +31,7 @@ export default function index() {
       const responce = await GetUserDetail();
       setUserInfo(responce.data)
     })()
-    if(window.localStorage.getItem("stripeForm") === 'true'){
-      setIsEdit(false);
-      fetchUserCardDetail();
-    }
+    doesCCexist()
   }, []);
   
   const handleOnClick = () => {
@@ -48,18 +46,29 @@ export default function index() {
     window.localStorage.setItem("stripeForm", 'true')
   };
 
+  const doesCCexist = async () =>{
+    try{
+      const res = await apiClient('/stripe/has-saved-payment-method')
+
+      if(res.data === true) {
+        setIsEdit(false);
+        fetchUserCardDetail();
+      }
+    } catch(err) {
+      console.log(err)
+    }
+  }
+
   const fetchUserCardDetail = async () => {
     try { 
-      if(window.localStorage.getItem("stripeForm") === 'true'){
         let res = await GetUserCardDetail();
         const data = res?.data;
         setCardDetail({
           name: data?.cardOwner || "",
-          cardNumber: "***********" + data?.last4Digits,
+          cardNumber: "**** **** **** " + data?.last4Digits,
           brand: data?.brand,
           expiry: data?.expMonth + "/" + data?.expYear,
         });
-      }
     } catch (err) {
       console.log("err", err);
     }

@@ -114,7 +114,7 @@ function BankInfo() {
           Tell us where to deposit your payments
         </h4>
         <div className="d-flex mt-5 justify-content-center align-items-center flex-column">
-          <div className="d-flex align-items-center gap-5 justify-content-center">
+          {/* <div className="d-flex align-items-center gap-5 justify-content-center">
             <p style={{ width: '100px' }} className="fw-bold">
               Payoneer
             </p>
@@ -131,7 +131,7 @@ function BankInfo() {
               placeholder="Enter Payoneer info"
               className="mt-3 fw-bold border-2 border-dark p-1"
             ></input>
-          )}
+          )} */}
           <div className="mt-5 d-flex gap-5 align-items-center justify-content-center">
             <p style={{ width: '100px' }} className="fw-bold">
               PayPal

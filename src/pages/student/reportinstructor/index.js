@@ -4,6 +4,8 @@ import Head from "next/head";
 import { withRole } from '../../../utils/withAuthorization';
 import styles from "../../../styles/Home.module.css"
 import { useRouter } from 'next/router';
+import GetInstructorForParents from "@/services/Review/GetInstructorForParents";
+import GetInstructorByStudent from "@/services/Review/GetInstructorByStudent";
  
 
 function ReportInstructor() {
@@ -218,8 +220,8 @@ function ReportInstructor() {
               </p>
                 <button
                   className={`py-2 px-4 fw-bold text-white rounded text-end`}
-                  style={{background: comment.length >= 100 && reasonOfReporting.length >= 3 ? '#f48343' : 'gray' }}
-                  disabled={comment.length >= 100 && reasonOfReporting.length >= 3 ? false : true}
+                  style={{background: comment.length >= 100 && comment.length <= 500 && reasonOfReporting.length >= 3 ? '#f48343' : 'gray' }}
+                  disabled={comment.length >= 100 && comment.length <= 500 && reasonOfReporting.length >= 3 ? false : true}
                   type="submit"
                   onClick={onSubmit}
 

@@ -19,7 +19,8 @@ export default function Home() {
         <link rel="icon" href="https://gkc-images.s3.amazonaws.com/favicon.ico" />
       </Head>
       <main className="container-fluid">
-      <Link href="/" className="text-decoration-none p-4 d-flex gap-2 align-items-center text-dark"> 
+      <Link href="/" className="text-decoration-none p-4 d-flex gap-2 align-items-center text-dark"
+      style={{cursor:'pointer'}}> 
       
 <RiArrowGoBackLine /><p className="fw-bold m-0 p-0 ">Back to home</p>
       </Link>

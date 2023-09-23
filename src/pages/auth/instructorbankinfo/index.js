@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import { RiArrowGoBackLine } from 'react-icons/ri';
 import Link from 'next/link';
 import axios from 'axios';
-import { base_url } from '../../../api/client';
+import { apiClient, base_url } from '../../../api/client';
 import { useSelector } from 'react-redux';
 export default function ParentRegistrationCCInfo() {
   const navigation = useRouter();
@@ -27,20 +27,20 @@ export default function ParentRegistrationCCInfo() {
 
   const onContinue = async () => {
     try {
-      const response = await axios.post(
-        `${base_url}/auth/register-instructor`,
+      const response = await apiClient.post(
+        `/auth/complete-instructor-registration`,
         {
           firstName: userInfo.firstName,
           lastName: userInfo.lastName,
-          email: userInfo.email,
-          password: userInfo.password,
+          instructorEmail: userInfo.email,
+
           address1: userInfo.address1,
           address2: userInfo.address2,
           country: userInfo.country,
           state: userInfo.state,
           city: userInfo.city,
           zipCode: userInfo.zipCode,
-          timeZoneId: userInfo.timeZoneId,
+
           instructorBio: userInfo.instructorBio,
           hourlyRate: userInfo.hourlyRate,
           deliveryModes: userInfo.deliveryModes,
@@ -51,61 +51,25 @@ export default function ParentRegistrationCCInfo() {
         }
       );
 
-      const res = await axios.get(`${base_url}/user/logged-user-role`, {
-        headers: {
-          Authorization: `Bearer ${response.data.accessToken}`,
-        },
-      });
+      const res = await apiClient(`/user/logged-user-role`);
 
       if (payPalEmail !== '') {
         try{
-          const addPayPalEmail = await axios.post(
-            `${base_url}/instructor/set-payPal-email-logged-instructor?payPalEmail=${payPalEmail}`,
-            {},
-            {
-              headers: {
-                accept: '*/*',
-                Authorization: `Bearer ${response.data.accessToken}`,
-              },
-            }
+          const addPayPalEmail = await apiClient.post(
+            `/instructor/set-payPal-email-logged-instructor?payPalEmail=${payPalEmail}`
           );
           console.log(addPayPalEmail)
         } catch (error) {
           
         }
       }
-
-      if (!isImageFileEmpty) {
-        const uploadImageResponse = await axios.post(
-          `${base_url}/aws/upload-instructor-photo`,
-          imageFile,
-          {
-            headers: {
-              accept: '*/*',
-              Authorization: `Bearer ${response.data.accessToken}`,
-              'Content-Type': 'multipart/form-data',
-            },
-          }
-        );
-      }
-      if (!isVideoFileEmpty) {
-        const uploadVideoResponse = await axios.post(
-          `${base_url}/aws/upload-instructor-video`,
-          videoFile,
-          {
-            headers: {
-              accept: '*/*',
-              Authorization: `Bearer ${response.data.accessToken}`,
-              'Content-Type': 'multipart/form-data',
-            },
-          }
-        );
-      }
       console.log(res.data);
+      var stor = window.localStorage.getItem('gkcAuth');
+
       window.localStorage.setItem(
         'gkcAuth',
         JSON.stringify({
-          accessToken: response.data.accessToken,
+          accessToken: JSON.parse(stor).accessToken,
           role: res.data,
         })
       );
@@ -139,11 +103,12 @@ export default function ParentRegistrationCCInfo() {
       </Head>
       <main className="container-fluid">
         <Link
-          href="/"
+          href="/auth/proficiencytoteach"
           className="text-decoration-none p-4 d-flex gap-2 align-items-center text-dark"
+          style={{cursor:'pointer'}}
         >
           <RiArrowGoBackLine />
-          <p className="fw-bold m-0 p-0 ">Back to home</p>
+          <p className="fw-bold m-0 p-0 ">Back</p>
         </Link>
         <div style={{ height: '80vh' }}>
           <h4
@@ -153,7 +118,7 @@ export default function ParentRegistrationCCInfo() {
             Tell us where to deposit your payments
           </h4>
           <div className="d-flex mt-5 justify-content-center align-items-center flex-column">
-            <div className="d-flex align-items-center gap-5 justify-content-center">
+            {/* <div className="d-flex align-items-center gap-5 justify-content-center">
               <p style={{ width: '100px' }} className="fw-bold">
                 Payoneer
               </p>
@@ -164,7 +129,7 @@ export default function ParentRegistrationCCInfo() {
               >
                 Setup
               </button>
-            </div>
+            </div> */}
             {showPayoneerInput && (
               <input
                 placeholder="Enter Payoneer info"
