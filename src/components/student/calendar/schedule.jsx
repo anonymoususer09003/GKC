@@ -87,62 +87,83 @@ const StudentSchedule = (props) => {
           className={`shadow p-5 bg-white rounded ${styles.scheduleBox}`}
           style={{ minHeight: "400px", maxHeight:620, overflow:'scroll', overflowX:'hidden' }}
         >
+          <table
+                style={{width:'100%'}}
+          >
           {
             props.schedule.length === 0 &&
-            <h6 className="p-0 m-0 flex-fill fw-bold flex-fill">
-              No Events Found For This Day
-            </h6>
+            <tr>
+              <td className="p-0 m-0 flex-fill fw-bold flex-fill">
+                No Events Found For This Day
+              </td>
+            </tr>
           }
           {
             props.schedule && props.schedule.map((el)=>{
+                            // Define the specific event time as a Date object
+                            var specificEventTime = new Date(el.start);
+
+                            // Get the current time as a Date object
+                            var currentTime = new Date();
+              
+                            // Calculate the time difference in milliseconds
+                            var timeDifference = specificEventTime - currentTime;
+              
+                            // Calculate the time difference in minutes
+                            var minutesDifference = Math.floor(timeDifference / (1000 * 60));
+                            var past = specificEventTime <= currentTime
               return (
-                <div
-                onClick={() => openChat(el?.id)}
-                className="d-flex py-3 gap-2"
-                style={{flexDirection:'column'}}
-              >
-                      <div
-                      style={{display:'flex', gap:20}}>
-                      <h6 className="p-0 m-0 flex-fill fw-bold flex-fill">
+
+
+                      <tr>
+                      <td className="p-0 m-0 flex-fill fw-bold flex-fill">
                         {el.instructorName}
-                      </h6>
-                      <h6 className="p-0 m-0 flex-fill fw-bold flex-fill">
+                      </td>
+                      <td className="p-0 m-0 flex-fill fw-bold flex-fill">
                         {el.start.split(' ')[1]}
-                      </h6>
-                      <h6 className="p-0 m-0 flex-fill fw-bold flex-fill">
+                      </td>
+                      <td className="p-0 m-0 flex-fill fw-bold flex-fill">
                         {el.courseName + (el.eventInterview ? ' (INTERVIEW)': '')}
-                      </h6>
-                      {el.instructorId && (
+                      </td>
+                        <td>
                         <BsFillChatFill
                           style={{fill:'blue', cursor:'pointer'}}
                           className="p-0 m-0 flex-fill h4"
                           data-bs-toggle="modal"
                           data-bs-target="#exampleModal2"
                         />
-                      )}
+                        </td>
       
-                      {!el.eventInPerson && (
-                        <GoDeviceCameraVideo
-                          style={{fill:'green', cursor:'pointer'}}
-                          className="p-0 m-0 flex-fill h4 flex-fill"
-                          onClick={() =>
-                            navigation.push(`/student/video?${el?.courseName}`)
-                          }
-                        />
-                      )}
-                      {el.deleteable && (
+                        <td>
+                          <GoDeviceCameraVideo
+                            style={{fill: minutesDifference >= 10 || past ? 'gray' : 'green', cursor:'pointer'}}
+
+                            className="p-0 m-0 flex-fill h4 flex-fill"
+                            onClick={() =>
+                              {
+                                if(minutesDifference >= 10 || past){
+                                  null
+                                }else{
+                                  navigation.push(`/student/video?${el?.courseName}`)
+                                }
+                              }
+                            }
+                          />
+                        </td>
+                        <td>
                         <RiDeleteBin6Line
                         style={{cursor:'pointer'}}
                           fill="gray"
                           className="p-0 m-0 h4 flex-fill"
                           onClick={handleDeleteButtonClick}
                         />
-                      )}
-                    </div>
-              </div>
+                        </td>
+
+                      </tr>
               )
             })
           }
+          </table>
         </div>
       </div>
 

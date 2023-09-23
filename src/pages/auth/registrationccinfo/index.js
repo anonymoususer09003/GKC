@@ -249,7 +249,7 @@ export default function StudentRegistrationCCInfo() {
                 />
                 <div className="d-flex gap-2 justify-content-center mt-3">
                   <button
-                    className="w-50 btn_primary text-light p-2 rounded fw-bold "
+                    className={`${ selectedParent || cardFormValid && nameCard.length > 0 ? 'btn_primary text-light' : 'bg-gray-600'} w-50 p-2 rounded fw-bold`}
                     onClick={() => onRegister({ getPayment: true })}
                     disabled={
                       selectedParent || cardFormValid && nameCard.length > 0 ? false : true 

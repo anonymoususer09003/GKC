@@ -107,7 +107,7 @@ function InstructorCalendar() {
 
     const fetchUnavailableDates = async () => {
       try{
-        const responce = await apiClient('/instructor/unavailable-days-in-UTC-TimeZone?instructorId=53') //hardcoded
+        const responce = await apiClient(`/instructor/unavailable-days-in-UTC-TimeZone?instructorId=${loggedInUser.id}`)
         console.log(responce.data)
         responce.data.forEach((el)=>{
           disabledDates.push(new Date(el.end))
@@ -160,7 +160,6 @@ function InstructorCalendar() {
   return (
     <>
       <Navbar isLogin={true} role="instructor" />
-
       <main className="container-fluid">
         <div>
           <div className={`row ${styles.calendarWrapper}`}>

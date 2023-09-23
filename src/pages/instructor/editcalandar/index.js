@@ -11,6 +11,7 @@ import * as ical from 'ical.js';
 import { TutorNavbar } from "./../../../components";
 import { useRouter } from "next/router";
 import axios from "axios";
+import { RiArrowGoBackLine } from 'react-icons/ri';
 import { weekdays } from "moment";
 
 function EditCalandar({ userInfo, loading, error, fetchUser }) {
@@ -52,6 +53,10 @@ function EditCalandar({ userInfo, loading, error, fetchUser }) {
   const [undo, setUndo] = useState(true)
   const weekDay = [];
   const disabledDates = []
+  const [unavailableSuccess, setUnavailableSuccess] = useState(false)
+  const [availableSuccess, setAvailableSuccess] = useState(null)
+  const [timezone, setTimezone] = useState('')
+  let tz;
   let times = ['00:00', '01:00',  '02:00',  '03:00',   
   '04:00',  '05:00',  '06:00',  '07:00',   '08:00',  '09:00',  '10:00',  '11:00',   '12:00',  '13:00',  
   '14:00',  '15:00',   '16:00',  '17:00',  '18:00',  '19:00',   '20:00',  '21:00',  '22:00',  '23:00']
@@ -134,7 +139,7 @@ function EditCalandar({ userInfo, loading, error, fetchUser }) {
 
   // Replace 'en-US' and 'Europe/Kiev' with your desired locale and timezone
     const formattedTime = new Intl.DateTimeFormat('en-US', {
-      timeZone:  "Asia/Tbilisi", 
+      timeZone:  tz, 
       hour: '2-digit',
       minute: '2-digit',
       hour12: false,
@@ -148,7 +153,7 @@ function EditCalandar({ userInfo, loading, error, fetchUser }) {
     const date = new Date(dateString);
   
     // Define the time zone for "Asia/Tbilisi"
-    const timeZone = 'Asia/Tbilisi';
+    const timeZone = tz;
   
     // Get the offset in minutes between the local time zone and "Asia/Tbilisi"
     const timeZoneOffset = date.getTimezoneOffset() / 60;
@@ -275,6 +280,7 @@ function EditCalandar({ userInfo, loading, error, fetchUser }) {
 
 
  const setUnAvialablaDates = async (date) => {
+  setUnavailableSuccess(true)
   let dates = []
   disabledDates.forEach((el)=>{
       const year = el.toISOString().slice(0, 4);
@@ -308,6 +314,7 @@ function EditCalandar({ userInfo, loading, error, fetchUser }) {
 
 
  const submitHandler = async () => {
+  setAvailableSuccess(true)
   let weekDay = [];
   weekDays.forEach((el)=>{
     el.dayOfTheWeek = el.dayOfTheWeek.toUpperCase()
@@ -402,15 +409,63 @@ function EditCalandar({ userInfo, loading, error, fetchUser }) {
 
 
   useEffect(() => {
-    fetchUser();
+    const run = async () =>{
+      try{
+        const res = await apiClient('/user/logged-user-details');
+        console.log(res)
+        setTimezone(res.data.timeZoneId)
+        tz = res.data.timeZoneId;
+      } catch (err) {
+        console.log(err)
+      }
+    }
+    run()
+    fetchUser()
     iCalendar();
-    console.log(fetchUser(), 'useeeer')
-  }, [fetchUser]);
+    console.log(userInfo, 'useeeer')
+  }, []);
 
 
   return (
     <>
+      {unavailableSuccess ? (
+        <div style={{position:'fixed', zIndex: 1, left:0,top:0, width:'100%', height:'100%',overflow:'auto', background: 'rgba(0, 0, 0, 0.4)'}}>
+          <div style={{background: 'white', margin: '500px auto', padding:20,width:'380px'}}>
+            <p style={{width: 350, margin: 'auto', textAlign:'center', fontSize:18}}>Unavailable dates saved successfully.</p>
+            <div
+            style={{display:'flex', gap:10, justifyContent:'center'}}>
+            <button 
+            onClick={()=>{setUnavailableSuccess(false);navigation.back()}}
+            className="btn_primary text-light p-2 rounded fw-bold mt-3" 
+            style={{width: 100, }}>Ok</button>
+            </div>
+          </div>
+        </div>
+        ) : null}
+            {availableSuccess ? (
+        <div style={{position:'fixed', zIndex: 1, left:0,top:0, width:'100%', height:'100%',overflow:'auto', background: 'rgba(0, 0, 0, 0.4)'}}>
+          <div style={{background: 'white', margin: '500px auto', padding:20,width:'380px'}}>
+            <p style={{width: 350, margin: 'auto', textAlign:'center', fontSize:18}}>Weekly availability saved successfully.</p>
+            <div
+            style={{display:'flex', gap:10, justifyContent:'center'}}>
+            <button 
+            onClick={()=>{setAvailableSuccess(false);navigation.back()}}
+            className="btn_primary text-light p-2 rounded fw-bold mt-3" 
+            style={{width: 100, }}>Ok</button>
+            </div>
+          </div>
+        </div>
+        ) : null}
+
      <TutorNavbar isLogin={true} role="instructor" />
+     <div
+          className="text-decoration-none p-4 d-flex gap-2 align-items-center text-dark"
+          onClick={()=>navigation.back()}
+          style={{cursor:'pointer'}}
+        >
+          <RiArrowGoBackLine />
+          <p className="fw-bold m-0 p-0 ">Exit</p>
+        </div>
       <main className="container-fluid">
         <div style={{ height: "90vh" }}>
           <div className="row p-5">
@@ -490,7 +545,7 @@ function EditCalandar({ userInfo, loading, error, fetchUser }) {
                   </ul>
                 {
                   !selectedDays && (
-                    <p>Please select week day. This page has hardcoded http requests. If you see this text, remind Danil about that.</p>
+                    <p>Please select week day.</p>
                   )
                 }
                 {

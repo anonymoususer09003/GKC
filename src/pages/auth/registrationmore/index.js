@@ -39,9 +39,25 @@ export default function InstructorRegistrationMore() {
       }
       const file = new FormData();
       file.append('file', selectedFile);
-      console.log(selectedFile)
-      setVideoFile(selectedFile)
+      console.log(file)
+      setVideoFile(file)
 
+      try {
+        const response = await apiClient.post(
+          '/aws/upload-instructor-video',
+          file,
+          {
+            headers: {
+              accept: '*/*',
+              'Content-Type': 'multipart/form-data',
+            },
+          }
+        );
+        console.log(response)
+        fetchUser();
+      } catch (error) {
+        console.log(error);
+      }
     };
 
   const onContinue = async () => {

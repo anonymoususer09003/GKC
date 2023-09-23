@@ -315,7 +315,7 @@ export default function RegisterStudent() {
                     <input
                       type="text"
                       className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
-                      placeholder="Zip"
+                      placeholder="Zip/Post Code"
                       name="zip"
                       value={zipCode}
                       onChange={(e) => setZipCode(e.target.value)}

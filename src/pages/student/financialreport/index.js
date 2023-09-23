@@ -42,7 +42,8 @@ function StudentFinancialReport() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="https://gkc-images.s3.amazonaws.com/favicon.ico" />
       </Head>{' '}
-      <Navbar isLogin={true} /> <FinancialReport role="student" />
+      <Navbar isLogin={true} /> 
+      <FinancialReport role="student" />
       <Footer />
     </>
   );
