@@ -37,6 +37,7 @@ export default function Home() {
       );
       console.log(response);
       if (email) {
+        typeof window !== 'undefined' &&
         window.localStorage.setItem(
           'registrationForm',
           JSON.stringify({
@@ -82,7 +83,7 @@ export default function Home() {
               <div>
                 <div className="d-flex justify-content-center mb-3">
                   <h4 className="text-secondary fw-bold">
-                    {window.localStorage.getItem('DoesParentCreateNewStudent') === null ?  'Register Your Email' : 'Register your child\'s email'}
+                    {typeof window !== undefined && window.localStorage.getItem('DoesParentCreateNewStudent') === null ?  'Register Your Email' : 'Register your child\'s email'}
                   </h4>
                 </div>
                 <div>
