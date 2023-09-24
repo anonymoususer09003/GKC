@@ -201,7 +201,7 @@ export default function InstructorRegistrationMore() {
                     <input
                       type="number"
                       className="w-25 p-2 rounded outline-0 border border_gray  text-center"
-                      placeholder="0:00"
+                      placeholder="0.00"
                       value={hourlyRate}
                       onChange={(e) => setHourlyRate(e.target.value)}
                     />
