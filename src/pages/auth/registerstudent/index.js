@@ -230,7 +230,7 @@ export default function RegisterStudent() {
                       </Link>{' '}
                       and{' '}
                       <Link
-                        href="/privicy-policy"
+                        href="/privacy-policy"
                         className="fw-bold no-underline hover:text_secondary text_secondary"
                       >
                         {' '}
