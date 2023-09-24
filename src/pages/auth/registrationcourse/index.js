@@ -144,6 +144,7 @@ export default function StudentRegistrationCourse() {
                       onChange={setSelected}
                       labelledBy={"Select Course"}
                       isCreatable={true}
+                      hasSelectAll={false}
                     />
                   </div>
                   <div className="d-flex flex-wrap gap-2">
