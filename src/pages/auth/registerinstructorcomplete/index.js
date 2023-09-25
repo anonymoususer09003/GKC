@@ -74,7 +74,6 @@ export default function RegisterInstructor() {
     firstName &&
     lastName &&
     address1 &&
-    address2 &&
     country &&
     state &&
     city &&
