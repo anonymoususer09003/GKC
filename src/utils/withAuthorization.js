@@ -7,6 +7,7 @@ const withRole = (WrappedComponent, allowedRoles) => {
         useEffect(() => {
             const value = JSON.parse(window.localStorage.getItem("gkcAuth"));
             // Check if the user's role is allowed for this route
+            // this is comment to reload pipeline
             const userRole = value?.role; // Fetch the user's role from the session
             if(!value && userRole === "student"){
                 window.location.assign(BASE_URL)
