@@ -14,26 +14,7 @@ import { apiClient } from "@/api/client";
 import { useSelector } from "react-redux";
 
 function ParentRequestInterview({ userInfo, loading, error, fetchUser }) {
-  //protection starts
-  const nav = useRouter()
-  // checking if user logged in starts
-  if(typeof window !== 'undefined'){ // here we check if global object successfully loaded
-    console.log('lol')
-    useEffect(()=>{
 
-      if(JSON.parse(window.localStorage.getItem('gkcAuth')).role === undefined) { //here we check if user signed in
-        nav.push('/') 
-      } else{
-        if(JSON.parse(window.localStorage.getItem('gkcAuth')).role !== 'Parent') { //here we check if user has role Parent
-          nav.push('/')
-        }
-      }
-
-    },[])
-  }
-  // checking if user logged in ends
-
-  //protection ends
   const router = useRouter();
   const { instructorId } = router.query;
   const [time, setTime] = useState(null);

@@ -10,26 +10,7 @@ import styles from '../../../styles/Home.module.css';
 import FinancialReport from '@/components/financialReport';
 
 function StudentFinancialReport() {
-  //protection starts
-  const nav = useRouter()
-  // checking if user logged in starts
-  if(typeof window !== 'undefined'){ // here we check if global object successfully loaded
-    console.log('lol')
-    useEffect(()=>{
 
-      if(JSON.parse(window.localStorage.getItem('gkcAuth')).role === undefined) { //here we check if user signed in
-        nav.push('/') 
-      } else{
-        if(JSON.parse(window.localStorage.getItem('gkcAuth')).role !== 'Student') { //here we check if user has role Student
-          nav.push('/')
-        }
-      }
-
-    },[])
-  }
-  // checking if user logged in ends
-
-  //protection ends
   const navigation = useRouter();
   const onRequestRefund = () => {
     navigation.push('/student/requestrefund');

@@ -3,23 +3,22 @@ import { useEffect } from 'react';
 
 const withRole = (WrappedComponent, allowedRoles) => {
     const AuthorizedRoute = (props) => {
-        const router = useRouter();
-
+        const BASE_URL = 'https://staging-webapp.geekkidscode.com/'
         useEffect(() => {
             const value = JSON.parse(window.localStorage.getItem("gkcAuth"));
             // Check if the user's role is allowed for this route
             const userRole = value?.role; // Fetch the user's role from the session
             if(!value && userRole === "student"){
-                router.push('/');
+                window.location.assign(BASE_URL)
             }
             if(!value && userRole === "Parent"){
-                router.push('/parent');
+                window.location.assign(`${BASE_URL}parent`)
             }   if(!value && userRole === "Instructor"){
-                router.push('/instructor');
+                window.location.assign(`${BASE_URL}instructor`)
             }
-           /* if (!allowedRoles.includes(userRole)) {
-                router.push('/unauthorized');
-            }*/
+            if (!allowedRoles.includes(userRole)) {
+                window.location.assign(`${BASE_URL}auth/signin`)
+            }
         }, []);
 
         return <WrappedComponent {...props }

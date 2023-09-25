@@ -9,26 +9,7 @@ import { useRouter } from 'next/router';
 //important imports for protections ends
 
 function InstructorContactUs() {
-  //protection starts
-  const nav = useRouter()
-  // checking if user logged in starts
-  if(typeof window !== 'undefined'){ // here we check if global object successfully loaded
-    console.log('lol')
-    useEffect(()=>{
 
-      if(JSON.parse(window.localStorage.getItem('gkcAuth'))?.role === undefined) { //here we check if user signed in
-        window.location.assign('https://geekkidscode.com/auth/signin')
-      } else{
-        if(JSON.parse(window.localStorage.getItem('gkcAuth'))?.role !== 'Instructor') { //here we check if user has role Instructor
-          window.location.assign('https://geekkidscode.com/')
-        }
-      }
-
-    },[])
-  }
-  // checking if user logged in ends
-
-  //protection ends
   return (
     <>
       <Head>

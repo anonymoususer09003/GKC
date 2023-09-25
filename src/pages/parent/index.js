@@ -500,4 +500,4 @@ function ParentLandingPage() {
   );
 }
 
-export default withRole(ParentLandingPage, ["Parent"]);
+export default ParentLandingPage;

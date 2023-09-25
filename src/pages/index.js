@@ -482,4 +482,4 @@ function StudentLandingPage() {
   );
 }
 
-export default withRole(StudentLandingPage, ['Student']);
+export default StudentLandingPage;
