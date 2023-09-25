@@ -424,6 +424,12 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
                       labelledBy={'Select Lang'}
                       isCreatable={true}
                       hasSelectAll={false}
+                      overrideStrings={{
+                        // selectSomeItems: "Select Some items...",
+                        allItemsAreSelected: "All proficiencies selected",
+                        // selectAll: "Select All",
+                        // search: "Search",
+                    }}
                     />
 
                     <ul className="m-0 primary-list">
@@ -447,6 +453,12 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
                     labelledBy={'Select Course'}
                     isCreatable={true}
                     hasSelectAll={false}
+                    overrideStrings={{
+                      // selectSomeItems: "Select Some items...",
+                      allItemsAreSelected: "All proficiencies selected",
+                      // selectAll: "Select All",
+                      // search: "Search",
+                  }}
                   />
                 </div>
 

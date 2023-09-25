@@ -793,6 +793,12 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
                         labelledBy={'Select Lang'}
                         isCreatable={true}
                         hasSelectAll={false}
+                        overrideStrings={{
+                          // selectSomeItems: "Select Some items...",
+                          allItemsAreSelected: "All proficiencies selected",
+                          // selectAll: "Select All",
+                          // search: "Search",
+                      }}
                       />
                     </div>
                     <div className="w-50">
@@ -865,6 +871,12 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
                     onChange={handleSelectCourseChange}
                     labelledBy={'Select Course'}
                     isCreatable={true}
+                    overrideStrings={{
+                      // selectSomeItems: "Select Some items...",
+                      allItemsAreSelected: "All proficiencies selected",
+                      // selectAll: "Select All",
+                      // search: "Search",
+                  }}
                   />
                 </div>
 
@@ -894,6 +906,12 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
                             }
                             labelledBy={'Select Proficiency'}
                             isCreatable={true}
+                            overrideStrings={{
+                              // selectSomeItems: "Select Some items...",
+                              allItemsAreSelected: "All proficiencies selected",
+                              // selectAll: "Select All",
+                              // search: "Search",
+                          }}
                           />
                         </div>
                       </div>

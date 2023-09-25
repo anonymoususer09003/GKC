@@ -145,6 +145,12 @@ export default function StudentRegistrationCourse() {
                       labelledBy={"Select Course"}
                       isCreatable={true}
                       hasSelectAll={false}
+                      overrideStrings={{
+                        // selectSomeItems: "Select Some items...",
+                        allItemsAreSelected: "All proficiencies selected",
+                        // selectAll: "Select All",
+                        // search: "Search",
+                    }}
                     />
                   </div>
                   <div className="d-flex flex-wrap gap-2">
@@ -218,6 +224,12 @@ export default function StudentRegistrationCourse() {
                         labelledBy={"Select Language"}
                         isCreatable={true}
                         hasSelectAll={false}
+                        overrideStrings={{
+                          // selectSomeItems: "Select Some items...",
+                          allItemsAreSelected: "All proficiencies selected",
+                          // selectAll: "Select All",
+                          // search: "Search",
+                      }}
                       />
                     </div>
                   </div>

@@ -102,7 +102,8 @@ export default function StudentRegistrationCCInfo() {
               href="/auth/registeremail"
               onClick={()=>{window.localStorage.setItem("userType", 'student'); window.localStorage.setItem("DoesParentCreateNewStudent", 'true')}}
             >
-            <button className="btn_primary text-light p-2 rounded fw-bold mt-3" 
+            <button className="btn_primary text-light p-2 rounded fw-bold mt-3"
+            onClick={()=>{typeof window !== 'undefined' ? window.localStorage.setItem('parentData', window.localStorage.getItem('registrationForm')) : null}} 
             style={{width: 50, position: 'relative', margin: '0 42%'}}
             >Yes</button>
             </Link>
@@ -148,7 +149,7 @@ export default function StudentRegistrationCCInfo() {
                 <div className="d-flex gap-2 justify-content-center mt-3">
                   <button
                     onClick={() => {setSavePaymentFutureUse(!savePaymentFutureUse); window.localStorage.setItem("stripeForm", 'true'); onRegister({ getPayment: true }); } }
-                    className="w-50 text-light p-2 px-5 rounded fw-bold  bg-gray-300 btn_primary "
+                    className={`w-50 p-2 px-5 rounded fw-bold ${cardFormValid && nameCard.length > 0 ? ' text-light bg-gray-300 btn_primary' : 'tw-text-black'}`}
                     disabled={
                       cardFormValid && nameCard.length > 0 ? false : true
                     }

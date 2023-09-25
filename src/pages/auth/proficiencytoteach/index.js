@@ -218,6 +218,12 @@ export default function StudentRegistrationCourse() {
                               handleSelection(selectedOptions, index)
                             }
                             labelledBy={'Select Proficiency'}
+                            overrideStrings={{
+                              // selectSomeItems: "Select Some items...",
+                              allItemsAreSelected: "All proficiencies selected",
+                              // selectAll: "Select All",
+                              // search: "Search",
+                          }}
                             isCreatable={true}
                             hasSelectAll={true}
                           />
@@ -241,6 +247,12 @@ export default function StudentRegistrationCourse() {
                         onChange={setSelectedLang}
                         labelledBy={'Select Language'}
                         isCreatable={true}
+                        overrideStrings={{
+                          // selectSomeItems: "Select Some items...",
+                          allItemsAreSelected: "All proficiencies selected",
+                          // selectAll: "Select All",
+                          // search: "Search",
+                      }}
                       />
                     </div>
                   </div>

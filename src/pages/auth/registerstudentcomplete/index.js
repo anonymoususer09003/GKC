@@ -32,6 +32,7 @@ export default function RegisterStudent() {
   const [isInitialRender, setIsInitialRender] = useState(true);
   const [guardian1Exists, setGuardian1Exists] = useState(true);
   const [guardian2Exists, setGuardian2Exists] = useState(true);
+  const [parenmail, setParentmail] = useState('')
 
   let isValidForm =
     (guardianEmail1.length == 0 || guardian1Exists) &&
@@ -151,7 +152,14 @@ export default function RegisterStudent() {
     } else {
       getCities();
     }
+
+    if(window !== 'undefined'){
+      let stor = JSON.parse(window.localStorage.getItem('parentData'));
+      setGuardianEmail1(stor.email)
+    }
   }, [state]);
+
+
 
   const handleBack = () => {
     router.push('/auth/registerstudent');
