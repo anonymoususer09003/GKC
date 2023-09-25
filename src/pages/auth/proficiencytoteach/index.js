@@ -5,6 +5,7 @@ import { BsCheck2Circle } from 'react-icons/bs';
 import { useRouter } from 'next/router';
 import axios from 'axios';
 import { MultiSelect } from 'react-multi-select-component';
+import { RiArrowGoBackLine } from 'react-icons/ri';
 import Select from 'react-select';
 import styles from '../../../styles/Home.module.css';
 
@@ -100,6 +101,8 @@ export default function StudentRegistrationCourse() {
         };
         return proficiencyOrder[a.label] - proficiencyOrder[b.label];
       });
+
+      console.log('arr', arr);
       setProficiency(arr);
     } catch (error) {
       console.error(error);
@@ -113,6 +116,7 @@ export default function StudentRegistrationCourse() {
   }, []);
 
   const handleSelection = (selectedOptions, optionIndex) => {
+    console.log('selected option', selectedOptions);
     setSelected((prevData) => {
       const newData = [...prevData];
       newData[optionIndex].proficienciesId = selectedOptions;
@@ -128,10 +132,20 @@ export default function StudentRegistrationCourse() {
         <title>Auth | Proficiency Course</title>
         <meta name="description" content="Where kids learn to code" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="https://gkc-images.s3.amazonaws.com/favicon.ico" />
+        <link
+          rel="icon"
+          href="https://gkc-images.s3.amazonaws.com/favicon.ico"
+        />
       </Head>
       <main className="container-fluid d-flex flex-column justify-content-between  min-vh-100">
-        <Navbar isLogin={true} />
+        <div
+          className="text-decoration-none p-4 d-flex gap-2 align-items-center text-dark"
+          onClick={() => navigation.back()}
+          style={{ cursor: 'pointer' }}
+        >
+          <RiArrowGoBackLine />
+          <p className="fw-bold m-0 p-0 ">Back</p>
+        </div>
         <div className="row">
           <div
             className="col-12 col-lg-5 position-relative d-none d-lg-block"
@@ -190,6 +204,7 @@ export default function StudentRegistrationCourse() {
                   </div>
                 ) : (
                   selected.map((v, index) => {
+                    console.log('v', v);
                     return (
                       <div className="d-flex align-items-center gap-2 ">
                         <div style={{ width: '120px' }}>
@@ -204,6 +219,7 @@ export default function StudentRegistrationCourse() {
                             }
                             labelledBy={'Select Proficiency'}
                             isCreatable={true}
+                            hasSelectAll={true}
                           />
                         </div>
                       </div>

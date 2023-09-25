@@ -35,8 +35,7 @@ export default function RegisterInstructor() {
   const [imageFile, setImageFile] = useState();
   const dispatch = useDispatch();
   const [isImageTooLarge, setIsImageTooLarge] = useState(false);
-  const [err, setErr] = useState('')
-
+  const [err, setErr] = useState('');
 
   const handleImageUpload = async (e) => {
     const selectedFile = e.target.files[0];
@@ -74,7 +73,8 @@ export default function RegisterInstructor() {
     email &&
     firstName &&
     lastName &&
-    address1 || address2 &&
+    address1 &&
+    address2 &&
     country &&
     state &&
     city &&
@@ -82,27 +82,27 @@ export default function RegisterInstructor() {
 
   const onContinue = () => {
     if (password == confirmPassword) {
-    var stored = JSON.parse(window.localStorage.getItem('registrationForm'));
-    let timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      var stored = JSON.parse(window.localStorage.getItem('registrationForm'));
+      let timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-    console.log('stor', stored);
-    stored.email = email;
-    stored.firstName = firstName;
-    stored.lastName = lastName;
-    stored.password = password;
-    stored.address1 = address1;
-    stored.address2 = address2;
-    stored.country = country;
-    stored.state = state;
-    stored.city = city;
-    stored.zipCode = zipCode;
-    stored.savePaymentFutureUse = true;
-    stored.timeZoneId = timezone;
+      console.log('stor', stored);
+      stored.email = email;
+      stored.firstName = firstName;
+      stored.lastName = lastName;
+      stored.password = password;
+      stored.address1 = address1;
+      stored.address2 = address2;
+      stored.country = country;
+      stored.state = state;
+      stored.city = city;
+      stored.zipCode = zipCode;
+      stored.savePaymentFutureUse = true;
+      stored.timeZoneId = timezone;
 
-    window.localStorage.setItem('registrationForm', JSON.stringify(stored));
+      window.localStorage.setItem('registrationForm', JSON.stringify(stored));
       navigation.push('/auth/registrationmore');
     } else {
-      setErr('Password and new password mismatch')
+      setErr('Password and new password mismatch');
     }
   };
 
@@ -167,13 +167,16 @@ export default function RegisterInstructor() {
         <title>Auth | Instructor Registration</title>
         <meta name="description" content="Where kids learn to code" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="https://gkc-images.s3.amazonaws.com/favicon.ico" />
+        <link
+          rel="icon"
+          href="https://gkc-images.s3.amazonaws.com/favicon.ico"
+        />
       </Head>
       <main className="container-fluid d-flex flex-column justify-content-between  min-vh-100">
         <div
-          onClick={()=>navigation.back()}
+          onClick={() => navigation.back()}
           className="text-decoration-none p-4 d-flex gap-2 align-items-center text-dark"
-          style={{cursor:'pointer'}}
+          style={{ cursor: 'pointer' }}
         >
           <RiArrowGoBackLine />
           <p className="fw-bold m-0 p-0 ">Back</p>
