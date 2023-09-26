@@ -21,7 +21,7 @@ function EditCalandar({ userInfo, loading, error, fetchUser }) {
   const router = useRouter();
   const formRef = useRef(null)
   const [userId, setUserId] = useState(userInfo?.id ?? null)
-  const [available, setAvailable] = useState(true)
+  const [available, setAvailable] = useState(false)
   const [filledData, setFilledData] = useState(false);
   const [selectedDays, setSelectedDays] = useState('');
   const [startTime, setStartTime] = useState("2000-12-31 06:00");
@@ -542,7 +542,7 @@ function EditCalandar({ userInfo, loading, error, fetchUser }) {
                             className="form-check-input"
                             type="checkbox"
                             // value={true}
-                            checked={ifChoseAnotherWeek ? available : ( getObjectByWeekDay(weekDays, selectedDays.toLowerCase())?.available ) ?? false}
+                            checked={!ifChoseAnotherWeek ? available : ( getObjectByWeekDay(weekDays, selectedDays.toLowerCase())?.available ) ?? false}
                             onChange={() => {
                               handleCheckbox(selectedDays.toLowerCase(), !getObjectByWeekDay(weekDays, selectedDays.toLowerCase())?.available )
                             }}
@@ -616,7 +616,10 @@ function EditCalandar({ userInfo, loading, error, fetchUser }) {
           <div className=" mt-3 d-flex justify-content-center flex-column align-items-center gap-2">
           </div>
       </main>
-      <Footer /> 
+      <div
+      style={{position:'fixed',bottom:0, width:'100vw'}}>
+        <Footer /> 
+      </div>
     </>
   );
 }

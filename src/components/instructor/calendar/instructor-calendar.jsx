@@ -46,6 +46,50 @@ function InstructorCalendar() {
   const loggedInUser = useSelector((state) => state.user.userInfo);
   const disabledDates = []
 
+  function guessContinent(timeZone) {
+    const americaIdentifiers = [
+      'America/',
+      'US/',
+      'Canada/',
+      'Mexico/',
+      'Argentina/',
+      'Brazil/',
+      'Chile/',
+      'Colombia/',
+    ];
+  
+    const europeIdentifiers = [
+      'Europe/',
+      'London/',
+      'Paris/',
+      'Berlin/',
+      'Madrid/',
+      'Rome/',
+      'Athens/',
+    ];
+  
+    for (const identifier of americaIdentifiers) {
+      if (timeZone.startsWith(identifier)) {
+        return 'America';
+      }
+    }
+  
+    for (const identifier of europeIdentifiers) {
+      if (timeZone.startsWith(identifier)) {
+        return 'Europe';
+      }
+    }
+  
+    // If neither America nor Europe is found, return "Unknown"
+    return 'Unknown';
+  }
+  
+  // // Example usage:
+  // const timeZone = 'America/New_York'; // You can change this to test different time zones
+  // const continent = guessContinent(timeZone);
+  // console.log(`The time zone "${timeZone}" is in ${continent} continent.`);
+  
+
   useEffect(() => {
     dispatch(fetchUser());
   }, [dispatch]);
@@ -109,8 +153,39 @@ function InstructorCalendar() {
       try{
         const responce = await apiClient(`/instructor/unavailable-days-in-UTC-TimeZone?instructorId=${loggedInUser.id}`)
         console.log(responce.data)
+        function getCurrentTimeZone() {
+          // Get the current date
+          const now = new Date();
+        
+          // Get the time zone name from the user's browser settings
+          const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        
+          return timeZone;
+        }
+        let timezone = getCurrentTimeZone();
+        
         responce.data.forEach((el)=>{
-          disabledDates.push(new Date(el.start))
+          let time;
+          if(guessContinent(timezone) === 'Europe'){
+            time = new Date(el.start)
+          }
+          if(guessContinent(timezone) === 'America'){
+            time = new Date(el.end)
+          }
+          // if(guessContinent(timezone) === 'Unknown'){
+          //   time = new Date(el.start)
+          // }
+          disabledDates.push(new Intl.DateTimeFormat('en-US', {
+            timeZone: loggedInUser.timeZoneId,
+            weekday: 'short',
+            month: 'short',
+            day: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            timeZoneName: 'short',
+          }).format(time))
         })
       console.log(disabledDates)
       setUnavailableDates(disabledDates)
@@ -178,9 +253,9 @@ function InstructorCalendar() {
                 onChange={handleCalendarClick}
                 className={calendarStyles.reactCalendar}
                 tileDisabled={unavailableDates.length >1 ? ({date, view})=> view === 'month' && unavailableDates.some(disabledDate =>
-                  date.getFullYear() === disabledDate.getFullYear() &&
-                  date.getMonth() === disabledDate.getMonth() &&
-                  date.getDate() === disabledDate.getDate()
+                  date.getFullYear() === new Date(disabledDate).getFullYear() &&
+                  date.getMonth() === new Date(disabledDate).getMonth() &&
+                  date.getDate() === new Date(disabledDate).getDate()
                   ) : () => false}
               />
             </div>
@@ -188,7 +263,10 @@ function InstructorCalendar() {
               schedule={events}
             />
           </div>
-          <Footer />
+          <div
+          style={{position:'fixed',bottom:0, width:'100vw'}}>
+            <Footer />
+          </div>
         </div>
       </main>
     </>
