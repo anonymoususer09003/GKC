@@ -122,6 +122,7 @@ const InstructorSchedule = (props) => {
           <table
                 style={{width:'100%'}}
           >
+            <tbody>
           {
             props.schedule.length === 0 &&
             <tr>
@@ -195,6 +196,7 @@ const InstructorSchedule = (props) => {
               )
             })
           }
+          </tbody>
           </table>
         </div>
       </div>

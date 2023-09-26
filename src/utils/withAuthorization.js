@@ -1,15 +1,15 @@
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 
+export const BASE_URL = 'https://staging-webapp.geekkidscode.com/'
 const withRole = (WrappedComponent, allowedRoles) => {
     const AuthorizedRoute = (props) => {
-        const BASE_URL = 'https://staging-webapp.geekkidscode.com/'
         useEffect(() => {
             const value = JSON.parse(window.localStorage.getItem("gkcAuth"));
             // Check if the user's role is allowed for this route
             // this is comment to reload pipeline
             const userRole = value?.role; // Fetch the user's role from the session
-            if(!value && userRole === "student"){
+            if(!value && userRole === "Student"){
                 window.location.assign(BASE_URL)
             }
             if(!value && userRole === "Parent"){

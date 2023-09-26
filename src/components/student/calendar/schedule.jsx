@@ -96,6 +96,9 @@ const StudentSchedule = (props) => {
           }}
         >
           <table style={{ width: '100%' }}>
+            <tbody>
+
+            
             {props.schedule.length === 0 && (
               <tr>
                 <td className="p-0 m-0 flex-fill fw-bold flex-fill">
@@ -169,6 +172,7 @@ const StudentSchedule = (props) => {
                   </tr>
                 );
               })}
+              </tbody>
           </table>
         </div>
       </div>

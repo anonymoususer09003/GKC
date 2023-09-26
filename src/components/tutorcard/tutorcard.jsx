@@ -172,8 +172,14 @@ const Tutorcard = ({ data, key }) => {
           </div>
           <div className="d-flex gap-2 m-0 py-2 align-items-center">
             <b className="m-0 p-0">Mode:</b>
-            <ul className="d-flex list-unstyled m-0 p-0">
-              <li className="m-0 p-0">Online In-Person</li>
+            <ul className="d-flex list-unstyled m-0 p-0 gap-3">
+              {
+                data.deliveryModes.map((v,i)=>{ 
+                  return <li key={i}>
+                    {v.name}
+                  </li>
+                })
+              }
             </ul>
           </div>
           <div className="d-flex gap-2">
@@ -185,13 +191,16 @@ const Tutorcard = ({ data, key }) => {
             </ul>
           </div>
           <div className='d-flex tw-flex-row tw-justify-between tw-gap-1'>
+            {
+              data?.acceptInterviewRequest &&               
               <button
-                className={`btn_primary py-2 px-5 fw-bold text-white rounded tw-whitespace-nowrap`}
-                type="submit"
-                onClick={()=>{handleOpenModal(false)}}
-              >
-                Request Interview
-              </button>
+              className={`btn_primary py-2 px-5 fw-bold text-white rounded tw-whitespace-nowrap`}
+              type="submit"
+              onClick={()=>{handleOpenModal(false)}}
+            >
+              Request Interview
+            </button>
+            }
               <button
                 className={`d-flex btn_primary py-2 px-5 fw-bold text-white rounded tw-whitespace-nowrap`}
                 type="submit"
@@ -489,13 +498,16 @@ const Tutorcard = ({ data, key }) => {
 
                     {/* <p className="m-0 p-0">Read more</p> */}
 
-                    <button
+                    {
+                      data?.acceptInterviewRequest &&
+                      <button
                       className={`btn_primary py-2 px-3 fw-bold text-white rounded text-decoration-none`}
                       type='submit'
                       onClick={()=>{handleOpenModal(false)}}
                     >
                       Request Interview
                     </button>
+                    }
                   </div>
                 </div>
               </div>

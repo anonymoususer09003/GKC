@@ -110,7 +110,7 @@ function InstructorCalendar() {
         const responce = await apiClient(`/instructor/unavailable-days-in-UTC-TimeZone?instructorId=${loggedInUser.id}`)
         console.log(responce.data)
         responce.data.forEach((el)=>{
-          disabledDates.push(new Date(el.end))
+          disabledDates.push(new Date(el.start))
         })
       console.log(disabledDates)
       setUnavailableDates(disabledDates)

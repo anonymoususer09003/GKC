@@ -2,7 +2,7 @@ import Head from "next/head";
 import { useState, useEffect, useRef } from "react";
 import { Navbar,  Footer } from "./../../../components";
 import Calendar from "react-calendar";
-import { withRole } from "../../../utils/withAuthorization";
+import { BASE_URL, withRole } from "../../../utils/withAuthorization";
 import { apiClient } from "../../../api/client";
 import { connect } from "react-redux";
 import { fetchUser } from "../../../store/actions/userActions";
@@ -253,7 +253,6 @@ function EditCalandar({ userInfo, loading, error, fetchUser }) {
         setAvailable(el.available)
       }
     })
-    setIfChoseAnotherWeek(true)
     weekDay = weekDays;
     setWeekDays(weekDay)
     console.log(weekDay)
@@ -416,7 +415,7 @@ function EditCalandar({ userInfo, loading, error, fetchUser }) {
             <div
             style={{display:'flex', gap:10, justifyContent:'center'}}>
             <button 
-            onClick={()=>{setUnavailableSuccess(false);navigation.back()}}
+            onClick={()=>{setUnavailableSuccess(false);window.location.assign(`${BASE_URL}instructor`)}}
             className="btn_primary text-light p-2 rounded fw-bold mt-3" 
             style={{width: 100, }}>Ok</button>
             </div>
@@ -430,7 +429,7 @@ function EditCalandar({ userInfo, loading, error, fetchUser }) {
             <div
             style={{display:'flex', gap:10, justifyContent:'center'}}>
             <button 
-            onClick={()=>{setAvailableSuccess(false);navigation.back()}}
+            onClick={()=>{setAvailableSuccess(false);window.location.assign(`${BASE_URL}instructor`)}}
             className="btn_primary text-light p-2 rounded fw-bold mt-3" 
             style={{width: 100, }}>Ok</button>
             </div>
@@ -441,7 +440,7 @@ function EditCalandar({ userInfo, loading, error, fetchUser }) {
      <TutorNavbar isLogin={true} role="instructor" />
      <div
           className="text-decoration-none p-4 d-flex gap-2 align-items-center text-dark"
-          onClick={()=>navigation.back()}
+          onClick={()=>{window.location.assign(`${BASE_URL}instructor`)}}
           style={{cursor:'pointer'}}
         >
           <RiArrowGoBackLine />
@@ -556,7 +555,7 @@ function EditCalandar({ userInfo, loading, error, fetchUser }) {
                       <div className="col-4">
                       </div>
                       {
-                        getObjectByWeekDay(weekDays, selectedDays.toLowerCase())?.available  && <>
+                        (ifChoseAnotherWeek ? available : ( getObjectByWeekDay(weekDays, selectedDays.toLowerCase())?.available ) ?? false) && <>
                         <div className="col-8">
                            <div className="row pb-2">
                              <p className="col fw-bold"> From </p>{" "}

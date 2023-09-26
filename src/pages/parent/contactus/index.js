@@ -3,10 +3,6 @@ import ContactUs from '@/components/contactUs';
 import Head from 'next/head';
 import { withRole } from '../../../utils/withAuthorization';
 
-//important imports for protections starts
-import { useEffect } from 'react';
-import { useRouter } from 'next/router';
-//important imports for protections ends
 
 function ParentContactUs() {
 

@@ -10,31 +10,7 @@ import report from '@/pages/instructor/report';
 import { apiClient } from '@/api/client';
 
 function ReportInstructor() {
-  //protection starts
-  const nav = useRouter();
-  // checking if user logged in starts
-  if (typeof window !== 'undefined') {
-    // here we check if global object successfully loaded
-    console.log('lol');
-    useEffect(() => {
-      if (
-        JSON.parse(window.localStorage.getItem('gkcAuth')).role === undefined
-      ) {
-        //here we check if user signed in
-        nav.push('/');
-      } else {
-        if (
-          JSON.parse(window.localStorage.getItem('gkcAuth')).role !== 'Student'
-        ) {
-          //here we check if user has role Student
-          nav.push('/');
-        }
-      }
-    }, []);
-  }
-  // checking if user logged in ends
 
-  //protection ends
   const [instructors, setInstructors] = useState([]);
   const [selectedInstructor, setSelectedInstructor] = useState(null);
   const [comment, setComment] = useState('');
