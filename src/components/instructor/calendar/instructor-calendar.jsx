@@ -59,6 +59,7 @@ function InstructorCalendar() {
     ];
   
     const europeIdentifiers = [
+      'Asia/',
       'Europe/',
       'London/',
       'Paris/',
@@ -153,39 +154,31 @@ function InstructorCalendar() {
       try{
         const responce = await apiClient(`/instructor/unavailable-days-in-UTC-TimeZone?instructorId=${loggedInUser.id}`)
         console.log(responce.data)
-        function getCurrentTimeZone() {
-          // Get the current date
-          const now = new Date();
-        
-          // Get the time zone name from the user's browser settings
-          const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-        
-          return timeZone;
+        const options = {
+          timeZone: loggedInUser.timeZoneId,
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+          hour12: false,
         }
-        let timezone = getCurrentTimeZone();
-        
+        const formatter = new Intl.DateTimeFormat('en-US', options);
         responce.data.forEach((el)=>{
           let time;
-          if(guessContinent(timezone) === 'Europe'){
-            time = new Date(el.start)
+          if(guessContinent(loggedInUser.timeZoneId) === 'Europe'){
+            time = el.end
           }
-          if(guessContinent(timezone) === 'America'){
-            time = new Date(el.end)
+          if(guessContinent(loggedInUser.timeZoneId) === 'America'){
+            time = el.start
           }
-          // if(guessContinent(timezone) === 'Unknown'){
-          //   time = new Date(el.start)
-          // }
-          disabledDates.push(new Intl.DateTimeFormat('en-US', {
-            timeZone: loggedInUser.timeZoneId,
-            weekday: 'short',
-            month: 'short',
-            day: '2-digit',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit',
-            timeZoneName: 'short',
-          }).format(time))
+
+          const formattedDateParts = formatter.formatToParts(new Date(time));
+
+          // Extract the formatted parts and create the desired string
+          const formattedDate = `${formattedDateParts[4].value}-${formattedDateParts[0].value}-${formattedDateParts[2].value}T${formattedDateParts[6].value}:${formattedDateParts[8].value}:${formattedDateParts[10].value}`;
+          disabledDates.push(formattedDate)
         })
       console.log(disabledDates)
       setUnavailableDates(disabledDates)

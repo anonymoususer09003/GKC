@@ -35,6 +35,7 @@ function EditCalandar({ loading, error, fetchUser }) {
   const [undo, setUndo] = useState(true)
   const weekDay = [];
   const disabledDates = []
+  const [dd, setDD] = useState([])
   const [unavailableSuccess, setUnavailableSuccess] = useState(false)
   const [availableSuccess, setAvailableSuccess] = useState(null)
   const [timezone, setTimezone] = useState('')
@@ -42,6 +43,45 @@ function EditCalandar({ loading, error, fetchUser }) {
   let times = ['00:00', '01:00',  '02:00',  '03:00',   
   '04:00',  '05:00',  '06:00',  '07:00',   '08:00',  '09:00',  '10:00',  '11:00',   '12:00',  '13:00',  
   '14:00',  '15:00',   '16:00',  '17:00',  '18:00',  '19:00',   '20:00',  '21:00',  '22:00',  '23:00']
+
+  function guessContinent(timeZone) {
+    const americaIdentifiers = [
+      'America/',
+      'US/',
+      'Canada/',
+      'Mexico/',
+      'Argentina/',
+      'Brazil/',
+      'Chile/',
+      'Colombia/',
+    ];
+  
+    const europeIdentifiers = [
+      'Asia/',
+      'Europe/',
+      'London/',
+      'Paris/',
+      'Berlin/',
+      'Madrid/',
+      'Rome/',
+      'Athens/',
+    ];
+  
+    for (const identifier of americaIdentifiers) {
+      if (timeZone.startsWith(identifier)) {
+        return 'America';
+      }
+    }
+  
+    for (const identifier of europeIdentifiers) {
+      if (timeZone.startsWith(identifier)) {
+        return 'Europe';
+      }
+    }
+  
+    // If neither America nor Europe is found, return "Unknown"
+    return 'Unknown';
+  }
 
   // function findOccurrencesVevent(arr, target) {
   //   const occurrences = [];
@@ -182,7 +222,7 @@ function EditCalandar({ loading, error, fetchUser }) {
   //calendar
   const handleDateChange = (clickedDate) => {
     console.log(clickedDate)
-
+    // console.log(disabledDates)
 
       //  const year = clickedDate.toISOString().slice(0, 4);
       //  const month = clickedDate.toISOString().slice(5, 7);
@@ -192,8 +232,8 @@ function EditCalandar({ loading, error, fetchUser }) {
 
       //  const modifiedClickedDate = `${year}-${month}-${day}`;
        disabledDates.push(new Date(clickedDate))
+      //  setDD([...disabledDates, ])
        console.log(disabledDates)
-
   };
 
 
@@ -345,8 +385,8 @@ function EditCalandar({ loading, error, fetchUser }) {
       try{
         const res = await apiClient('/user/logged-user-details');
         console.log(res)
-        setTimezone(res.data.timeZoneId)
-        setUserInfo(res.data)
+        setTimezone(res.data.timeZoneId);
+        setUserInfo(res.data);
       } catch (err) {
         console.log(err)
       }
@@ -354,6 +394,49 @@ function EditCalandar({ loading, error, fetchUser }) {
     run()
     fetchUser()
     iCalendar();
+
+
+    const fetchUnavailableDates = async () => {
+      try{
+        const res = await apiClient('/user/logged-user-details');
+        const responce = await apiClient(`/instructor/unavailable-days-in-UTC-TimeZone?instructorId=${res.data.id}`)
+        console.log(responce.data)
+        const options = {
+          timeZone: res.data.timeZoneId,
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+          hour12: false,
+        }
+        const formatter = new Intl.DateTimeFormat('en-US', options);
+        responce.data.forEach((el)=>{
+          let time;
+          if(guessContinent(res.data.timeZoneId) === 'Europe'){
+            time = el.end
+          }
+          if(guessContinent(res.data.timeZoneId) === 'America'){
+            time = el.start
+          }
+
+          const formattedDateParts = formatter.formatToParts(new Date(time));
+
+          // Extract the formatted parts and create the desired string
+          const formattedDate = `${formattedDateParts[4].value}-${formattedDateParts[0].value}-${formattedDateParts[2].value}T${formattedDateParts[6].value}:${formattedDateParts[8].value}:${formattedDateParts[10].value}`;
+          disabledDates.push(formattedDate)
+        })
+      setDD(disabledDates)
+      console.log(disabledDates)
+      
+      }catch (err) {
+        console.log(err)
+      }
+
+
+    }
+    fetchUnavailableDates()
     console.log(userInfo, 'useeeer')
   }, []);
 
@@ -400,7 +483,7 @@ function EditCalandar({ loading, error, fetchUser }) {
         </div>
       <main className="container-fluid">
         <div style={{ height: "90vh" }}>
-          <div className="row p-5">
+          <div className="row pb-5 pr-5 pl-5">
             <div className="col-12 col-lg-6 ">
             <div>
                 <p className="text-center">
@@ -417,11 +500,11 @@ function EditCalandar({ loading, error, fetchUser }) {
                     value={selectedDate}
                     // selectRange={true}
                     onClickDay={handleDisabledTile}
-                    tileDisabled={({date, view})=> view === 'month' && disabledDates.some(disabledDate =>
-                      date.getFullYear() === disabledDate.getFullYear() &&
-                      date.getMonth() === disabledDate.getMonth() &&
-                      date.getDate() === disabledDate.getDate()
-                      )}
+                    tileDisabled={dd.length !== 0 ? ({date, view})=> view === 'month' && dd.concat(disabledDates).some(disabledDate =>
+                      new Date(date).getFullYear() === new Date(disabledDate).getFullYear() &&
+                      new Date(date).getMonth() === new Date(disabledDate).getMonth() &&
+                      new Date(date).getDate() === new Date(disabledDate).getDate()
+                      ) : () => false}
                   /> :
                   <Calendar
                   // style={calendarStyles}
@@ -430,11 +513,11 @@ function EditCalandar({ loading, error, fetchUser }) {
                     value={selectedDate}
                     // selectRange={true}
                     onClickDay={handleDisabledTile}
-                    tileDisabled={({date, view})=> view === 'month' && disabledDates.some(disabledDate =>
-                      date.getFullYear() === disabledDate.getFullYear() &&
-                      date.getMonth() === disabledDate.getMonth() &&
-                      date.getDate() === disabledDate.getDate()
-                      )}
+                    tileDisabled={dd.length !== 0 ? ({date, view})=> view === 'month' && dd.concat(disabledDates).some(disabledDate =>
+                      new Date(date).getFullYear() === new Date(disabledDate).getFullYear() &&
+                      new Date(date).getMonth() === new Date(disabledDate).getMonth() &&
+                      new Date(date).getDate() === new Date(disabledDate).getDate()
+                      ) : () => false}
                   />
                 }
             </div>{" "}
