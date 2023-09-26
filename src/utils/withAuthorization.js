@@ -8,16 +8,17 @@ const withRole = (WrappedComponent, allowedRoles) => {
             const value = JSON.parse(window.localStorage.getItem("gkcAuth"));
             // Check if the user's role is allowed for this route
             // this is comment to reload pipeline
-            const userRole = value?.role; // Fetch the user's role from the session
-            if(!value && userRole === "Student"){
+            const userRole = value?.role.toLowerCase(); // Fetch the user's role from the session
+            if(!value && userRole === "student"){
                 window.location.assign(BASE_URL)
             }
-            if(!value && userRole === "Parent"){
+            if(!value && userRole === "parent"){
                 window.location.assign(`${BASE_URL}parent`)
-            }   if(!value && userRole === "Instructor"){
+            }   
+            if(!value && userRole === "instructor"){
                 window.location.assign(`${BASE_URL}instructor`)
             }
-            if (!allowedRoles.includes(userRole)) {
+            if (!allowedRoles[0].toLowerCase().includes(userRole)) {
                 window.location.assign(`${BASE_URL}auth/signin`)
             }
         }, []);
