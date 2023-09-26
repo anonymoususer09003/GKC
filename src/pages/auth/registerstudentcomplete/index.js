@@ -155,7 +155,7 @@ export default function RegisterStudent() {
 
     if(window !== 'undefined'){
       let stor = JSON.parse(window.localStorage.getItem('parentData'));
-      setGuardianEmail1(stor.email)
+      setGuardianEmail1(stor?.email ?? '')
     }
   }, [state]);
 
