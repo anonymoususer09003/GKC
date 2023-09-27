@@ -231,8 +231,10 @@ function EditCalandar({ loading, error, fetchUser }) {
       //  .padStart(2, "0");
 
       //  const modifiedClickedDate = `${year}-${month}-${day}`;
-       disabledDates.push(new Date(clickedDate))
-      //  setDD([...disabledDates, ])
+
+      disabledDates.push(new Date(clickedDate).toLocaleDateString('en-US', {timezone: timezone}))
+
+      // setDD([...disabledDates, ])
        console.log(disabledDates)
   };
 
@@ -294,19 +296,20 @@ function EditCalandar({ loading, error, fetchUser }) {
   }
 
 
- const setUnAvialablaDates = async (date) => {
-  setUnavailableSuccess(true)
+ const setUnAvialablaDates = async () => {
+  // setUnavailableSuccess(true)
   let dates = []
   disabledDates.forEach((el)=>{
-      const year = el.toISOString().slice(0, 4);
-      const month = el.toISOString().slice(5, 7);
-      const day = (parseInt(el.toISOString().slice(8, 10)) + 1)
+    
+      const year = new Date(el).toISOString().slice(0, 4);
+      const month = new Date(el).toISOString().slice(5, 7);
+      const day = (parseInt(new Date(el).toISOString().slice(8, 10)) + 1)
       .toString()
       .padStart(2, "0");
 
       const modifiedClickedDate = `${year}-${month}-${day}`;
       dates.push(modifiedClickedDate)
-    })
+  })
   let requestDates = []
   dates.forEach((el)=>{
     requestDates.push(
@@ -315,7 +318,7 @@ function EditCalandar({ loading, error, fetchUser }) {
       }
     )
   })
-    console.log(requestDates)
+  console.log(requestDates)
     try {
       const response = await apiClient.post(
         "/instructor/unavailable-days" ,
@@ -401,35 +404,13 @@ function EditCalandar({ loading, error, fetchUser }) {
         const res = await apiClient('/user/logged-user-details');
         const responce = await apiClient(`/instructor/unavailable-days-in-UTC-TimeZone?instructorId=${res.data.id}`)
         console.log(responce.data)
-        const options = {
-          timeZone: res.data.timeZoneId,
-          year: 'numeric',
-          month: '2-digit',
-          day: '2-digit',
-          hour: '2-digit',
-          minute: '2-digit',
-          second: '2-digit',
-          hour12: false,
-        }
-        const formatter = new Intl.DateTimeFormat('en-US', options);
+        console.log(res.data)
         responce.data.forEach((el)=>{
-          let time;
-          if(guessContinent(res.data.timeZoneId) === 'Europe'){
-            time = el.end
-          }
-          if(guessContinent(res.data.timeZoneId) === 'America'){
-            time = el.start
-          }
-
-          const formattedDateParts = formatter.formatToParts(new Date(time));
-
-          // Extract the formatted parts and create the desired string
-          const formattedDate = `${formattedDateParts[4].value}-${formattedDateParts[0].value}-${formattedDateParts[2].value}T${formattedDateParts[6].value}:${formattedDateParts[8].value}:${formattedDateParts[10].value}`;
-          disabledDates.push(formattedDate)
+          let time = el.start+'Z';
+          disabledDates.push(new Date(time).toISOString('en-US', {timezone: res.data.timeZoneId}))
         })
       setDD(disabledDates)
-      console.log(disabledDates)
-      
+      console.log(disabledDates) 
       }catch (err) {
         console.log(err)
       }
@@ -499,7 +480,7 @@ function EditCalandar({ loading, error, fetchUser }) {
                     // onClickDay={}
                     value={selectedDate}
                     // selectRange={true}
-                    onClickDay={handleDisabledTile}
+                    // onClickDay={handleDisabledTile}
                     tileDisabled={dd.length !== 0 ? ({date, view})=> view === 'month' && dd.concat(disabledDates).some(disabledDate =>
                       new Date(date).getFullYear() === new Date(disabledDate).getFullYear() &&
                       new Date(date).getMonth() === new Date(disabledDate).getMonth() &&

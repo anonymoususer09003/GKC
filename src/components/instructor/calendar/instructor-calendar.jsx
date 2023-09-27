@@ -154,31 +154,11 @@ function InstructorCalendar() {
       try{
         const responce = await apiClient(`/instructor/unavailable-days-in-UTC-TimeZone?instructorId=${loggedInUser.id}`)
         console.log(responce.data)
-        const options = {
-          timeZone: loggedInUser.timeZoneId,
-          year: 'numeric',
-          month: '2-digit',
-          day: '2-digit',
-          hour: '2-digit',
-          minute: '2-digit',
-          second: '2-digit',
-          hour12: false,
-        }
-        const formatter = new Intl.DateTimeFormat('en-US', options);
+
         responce.data.forEach((el)=>{
-          let time;
-          if(guessContinent(loggedInUser.timeZoneId) === 'Europe'){
-            time = el.end
-          }
-          if(guessContinent(loggedInUser.timeZoneId) === 'America'){
-            time = el.start
-          }
+          let time = el.start+'Z';
 
-          const formattedDateParts = formatter.formatToParts(new Date(time));
-
-          // Extract the formatted parts and create the desired string
-          const formattedDate = `${formattedDateParts[4].value}-${formattedDateParts[0].value}-${formattedDateParts[2].value}T${formattedDateParts[6].value}:${formattedDateParts[8].value}:${formattedDateParts[10].value}`;
-          disabledDates.push(formattedDate)
+          disabledDates.push(new Date(time).toISOString("en-US", {timeZone: loggedInUser.timeZoneId}))
         })
       console.log(disabledDates)
       setUnavailableDates(disabledDates)
