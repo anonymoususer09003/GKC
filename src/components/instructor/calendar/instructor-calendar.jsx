@@ -223,21 +223,31 @@ function InstructorCalendar() {
                 <FiEdit style={{ fontSize: '24px', cursor: 'pointer' }} />
               </div>
                 <Calendar
-                onChange={handleCalendarClick}
-                className={calendarStyles.reactCalendar}
-                tileDisabled={unavailableDates.length >1 ? ({date, view})=> view === 'month' && unavailableDates.some(disabledDate =>
-                  date.getFullYear() === new Date(disabledDate).getFullYear() &&
-                  date.getMonth() === new Date(disabledDate).getMonth() &&
-                  date.getDate() === new Date(disabledDate).getDate()
-                  ) : () => false}
-              />
+                  // style={calendarStyles}
+                    onChange={handleCalendarClick}
+                    // onClickDay={}
+                    // selectRange={true}
+                    className={calendarStyles.reactCalendar}
+                    tileDisabled={unavailableDates.length !== 0 ? ({date, view})=> view === 'month' && unavailableDates.some(disabledDate =>
+                      { 
+                      let formdate = new Date(disabledDate)
+                      if(formdate.toString().includes('-')){
+                        formdate.setTime(formdate.getTime() - 60000)
+                      }
+                      console.log(formdate)
+                      return new Date(date).getFullYear() === formdate.getFullYear() &&
+                      new Date(date).getMonth() === formdate.getMonth() &&
+                      new Date(date).getDate() === formdate.getDate()
+                    }
+                      ) : () => false}
+                  />
             </div>
             <InstructorSchedule
               schedule={events}
             />
           </div>
           <div
-          style={{position:'fixed',bottom:0, width:'100vw'}}>
+          style={{position:'relative',bottom:0, width:'100vw'}}>
             <Footer />
           </div>
         </div>

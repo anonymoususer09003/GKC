@@ -297,7 +297,7 @@ function EditCalandar({ loading, error, fetchUser }) {
 
 
  const setUnAvialablaDates = async () => {
-  // setUnavailableSuccess(true)
+  setUnavailableSuccess(true)
   let dates = []
   disabledDates.forEach((el)=>{
     
@@ -431,7 +431,7 @@ function EditCalandar({ loading, error, fetchUser }) {
             <div
             style={{display:'flex', gap:10, justifyContent:'center'}}>
             <button 
-            onClick={()=>{setUnavailableSuccess(false);window.location.assign(`${BASE_URL}instructor`)}}
+            onClick={()=>{setUnavailableSuccess(false)}}
             className="btn_primary text-light p-2 rounded fw-bold mt-3" 
             style={{width: 100, }}>Ok</button>
             </div>
@@ -445,7 +445,7 @@ function EditCalandar({ loading, error, fetchUser }) {
             <div
             style={{display:'flex', gap:10, justifyContent:'center'}}>
             <button 
-            onClick={()=>{setAvailableSuccess(false);window.location.assign(`${BASE_URL}instructor`)}}
+            onClick={()=>{setAvailableSuccess(false)}}
             className="btn_primary text-light p-2 rounded fw-bold mt-3" 
             style={{width: 100, }}>Ok</button>
             </div>
@@ -480,11 +480,18 @@ function EditCalandar({ loading, error, fetchUser }) {
                     // onClickDay={}
                     value={selectedDate}
                     // selectRange={true}
-                    // onClickDay={handleDisabledTile}
+                    onClickDay={handleDisabledTile}
                     tileDisabled={dd.length !== 0 ? ({date, view})=> view === 'month' && dd.concat(disabledDates).some(disabledDate =>
-                      new Date(date).getFullYear() === new Date(disabledDate).getFullYear() &&
-                      new Date(date).getMonth() === new Date(disabledDate).getMonth() &&
-                      new Date(date).getDate() === new Date(disabledDate).getDate()
+                      { 
+                      const ddate = new Date(disabledDate)
+                      let formdate = new Date(disabledDate)
+                      
+                      if(ddate.toString().includes('-')){
+                        formdate.setTime(ddate.getTime() - 60000)
+                      }
+                      return new Date(date).getFullYear() === formdate.getFullYear() &&
+                      new Date(date).getMonth() === formdate.getMonth() &&
+                      new Date(date).getDate() === formdate.getDate()}
                       ) : () => false}
                   /> :
                   <Calendar
@@ -495,9 +502,14 @@ function EditCalandar({ loading, error, fetchUser }) {
                     // selectRange={true}
                     onClickDay={handleDisabledTile}
                     tileDisabled={dd.length !== 0 ? ({date, view})=> view === 'month' && dd.concat(disabledDates).some(disabledDate =>
-                      new Date(date).getFullYear() === new Date(disabledDate).getFullYear() &&
-                      new Date(date).getMonth() === new Date(disabledDate).getMonth() &&
-                      new Date(date).getDate() === new Date(disabledDate).getDate()
+                      { 
+                      let formdate = new Date(disabledDate)
+                      if(formdate.toString().includes('-')){
+                        formdate.setTime(formdate.getTime() - 60000)
+                      }
+                      return new Date(date).getFullYear() === formdate.getFullYear() &&
+                      new Date(date).getMonth() === formdate.getMonth() &&
+                      new Date(date).getDate() === formdate.getDate()}
                       ) : () => false}
                   />
                 }
@@ -631,9 +643,11 @@ function EditCalandar({ loading, error, fetchUser }) {
           </div>
       </main>
       <div
-      style={{position:'fixed',bottom:0, width:'100vw'}}>
-        <Footer /> 
-      </div>
+          style={{position:'relative', bottom:0, width: '100vw'}}
+          >
+          <Footer />
+          </div>
+
     </>
   );
 }
