@@ -196,6 +196,7 @@ function ParentLandingPage() {
             style={{display:'flex', gap:10, justifyContent:'center'}}>
             <button 
             onClick={()=>{
+              window.localStorage.removeItem('goBackSchedule');
               nav.push(`/parent/scheduleclass/${
                 JSON.parse(window.localStorage.getItem('goBackSchedule'))?.id
               }?eventId=${
@@ -222,6 +223,7 @@ function ParentLandingPage() {
             style={{display:'flex', gap:10, justifyContent:'center'}}>
             <button 
             onClick={()=>{
+              window.localStorage.removeItem('goScheduleFromSignIn');
               nav.push(`/parent/scheduleclass/${
                 JSON.parse(window.localStorage.getItem('goScheduleFromSignIn'))
               }`)

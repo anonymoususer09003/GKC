@@ -212,6 +212,7 @@ useEffect(()=>{
             style={{display:'flex', gap:10, justifyContent:'center'}}>
             <button 
             onClick={()=>{
+              window.localStorage.removeItem('goScheduleFromSignIn');
               nav.push(`/student/scheduleclass/${
                 JSON.parse(window.localStorage.getItem('goScheduleFromSignIn'))
               }`)
