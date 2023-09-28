@@ -273,7 +273,7 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
 
     const data = {
       start: time,
-      durationInHours: duration,
+      durationInHours: duration/2,
       classFrequency: classFrequency,
       courseId: instructorCourses.find(el => el.label === courseId).value,
       studentId: userInfo.id,
@@ -331,10 +331,13 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
                 className="d-flex flex-sm-nowrap flex-wrap justify-content-between gap-4 px-5"
                 style={{ minHeight: "400px" }}
               >
-                <div className="w-100 ">
-                  <p className="p-0 m-0 fw-bold pb-2">{ duration > 0 ? <>You selected {duration} hours</> : <>Select time</>}</p>
+                <div className="w-100 "
+                >
+                  <p className="p-0 m-0 fw-bold pb-2">{ duration > 0 ? <>You selected {duration/2} hours</> : <>Select time</>}</p>
                   <p>{err}</p>
-                    {availableTime && availableTime.map((slot, index) => (
+                  <div
+                  style={{height:500, overflow:'hidden', overflowY: 'auto', width:200}}>
+                  {availableTime && availableTime.map((slot, index) => (
                       <li
                         key={index}
                         className={`m-03 py-1 fw-bold list-unstyled ${
@@ -352,6 +355,7 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
                         {`${slot.start.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })} - ${slot.end.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}`}
                       </li>
                     ))}
+                  </div>
                 </div>
                 <div className=" w-100">
                   <p className="p-0 m-0 fw-bold text-center py-2">
@@ -397,14 +401,14 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
                         className="form-check-input"
                         type="radio"
                         name="flexRadioDefault"
-                        id="flexRadioDefault1"
+                        id="flexRadioDefault3"
                         value="BIWEEKLY"
                         checked={classFrequency == "BIWEEKLY"}
                         onChange={(e) => setClassFrequency(e.target.value)}
                       />
                       <label
                         className="form-check-label"
-                        for="flexRadioDefault1"
+                        for="flexRadioDefault3"
                       >
                         Bi-Weekly
                       </label>
@@ -414,14 +418,14 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
                         className="form-check-input"
                         type="radio"
                         name="flexRadioDefault"
-                        id="flexRadioDefault2"
+                        id="flexRadioDefault4"
                         vale="MONTHLY"
                         checked={classFrequency == "MONTHLY"}
                         onChange={(e) => setClassFrequency(e.target.value)}
                       />
                       <label
                         className="form-check-label"
-                        for="flexRadioDefault2"
+                        for="flexRadioDefault4"
                       >
                         Monthly
                       </label>
@@ -456,8 +460,13 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
                       onChange={handleModeChange}
                     >
                       <option value="">Select</option>
-                      <option value="Online">Online</option>
-                      <option value="In-Person">In-Person</option>
+                      {selectedInstructor && selectedInstructor?.deliveryModes.map((mode) => {
+                        return (
+                          <option key={mode.id} value={mode.name}>
+                            {mode.name}
+                          </option>
+                        );
+                      })}
                     </select>
                   </div>
 

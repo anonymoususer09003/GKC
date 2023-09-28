@@ -40,6 +40,7 @@ const Tutorcard = ({ data, key }) => {
         typeof window !== 'undefined' &&
         window.localStorage.getItem('gkcAuth') == null
       ) {
+        window.localStorage.setItem('goScheduleFromSignIn', JSON.stringify(data.id));
         navigation.push('/auth/signin');
       } else {
         navigation.push(
@@ -53,6 +54,7 @@ const Tutorcard = ({ data, key }) => {
         typeof window !== 'undefined' &&
         window.localStorage.getItem('gkcAuth') == null
       ) {
+        window.localStorage.setItem('goScheduleFromSignIn', JSON.stringify(data.id));
         navigation.push('/auth/signin');
       } else {
         navigation.push(

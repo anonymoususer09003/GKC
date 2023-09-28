@@ -573,6 +573,8 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
                     )}
                   </p>
                   <p>{err}</p>
+                  <div
+                  style={{height:500, overflow:'hidden', overflowY: 'auto', width:200}}>
                   {availableTime &&
                     availableTime.map((slot, index) => (
                       <li
@@ -598,6 +600,7 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
                         })}`}
                       </li>
                     ))}
+                  </div>
                 </div>
 
                 <div className=" w-100">
@@ -731,8 +734,13 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
                       onChange={handleModeChange}
                     >
                       <option value="">Select</option>
-                      <option value="Online">Online</option>
-                      <option value="In-Person">In-Person</option>
+                      {selectedInstructor && selectedInstructor?.deliveryModes.map((mode) => {
+                        return (
+                          <option key={mode.id} value={mode.name}>
+                            {mode.name}
+                          </option>
+                        );
+                      })}
                     </select>
                   </div>
 
@@ -790,7 +798,4 @@ const mapStateToProps = (state) => ({
   error: state.user.error,
 });
 
-export default withRole(
-  connect(mapStateToProps, { fetchUser })(ParentScheduleClass),
-  ['Parent']
-);
+export default ParentScheduleClass;

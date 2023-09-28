@@ -401,13 +401,11 @@ function EditCalandar({ loading, error, fetchUser }) {
 
     const fetchUnavailableDates = async () => {
       try{
-        const res = await apiClient('/user/logged-user-details');
-        const responce = await apiClient(`/instructor/unavailable-days-in-UTC-TimeZone?instructorId=${res.data.id}`)
+        const responce = await apiClient(`/instructor/unavailable-days-in-logged-instructor-TimeZone`)
         console.log(responce.data)
-        console.log(res.data)
         responce.data.forEach((el)=>{
-          let time = el.start+'Z';
-          disabledDates.push(new Date(time).toISOString('en-US', {timezone: res.data.timeZoneId}))
+          let time = el.start;
+          disabledDates.push(new Date(time))
         })
       setDD(disabledDates)
       console.log(disabledDates) 
@@ -483,15 +481,10 @@ function EditCalandar({ loading, error, fetchUser }) {
                     onClickDay={handleDisabledTile}
                     tileDisabled={dd.length !== 0 ? ({date, view})=> view === 'month' && dd.concat(disabledDates).some(disabledDate =>
                       { 
-                      const ddate = new Date(disabledDate)
-                      let formdate = new Date(disabledDate)
-                      
-                      if(ddate.toString().includes('-')){
-                        formdate.setTime(ddate.getTime() - 60000)
-                      }
-                      return new Date(date).getFullYear() === formdate.getFullYear() &&
-                      new Date(date).getMonth() === formdate.getMonth() &&
-                      new Date(date).getDate() === formdate.getDate()}
+
+                      return new Date(date).getFullYear() === new Date(disabledDate).getFullYear() &&
+                      new Date(date).getMonth() === new Date(disabledDate).getMonth() &&
+                      new Date(date).getDate() === new Date(disabledDate).getDate()}
                       ) : () => false}
                   /> :
                   <Calendar
@@ -503,13 +496,9 @@ function EditCalandar({ loading, error, fetchUser }) {
                     onClickDay={handleDisabledTile}
                     tileDisabled={dd.length !== 0 ? ({date, view})=> view === 'month' && dd.concat(disabledDates).some(disabledDate =>
                       { 
-                      let formdate = new Date(disabledDate)
-                      if(formdate.toString().includes('-')){
-                        formdate.setTime(formdate.getTime() - 60000)
-                      }
-                      return new Date(date).getFullYear() === formdate.getFullYear() &&
-                      new Date(date).getMonth() === formdate.getMonth() &&
-                      new Date(date).getDate() === formdate.getDate()}
+                      return new Date(date).getFullYear() === new Date(disabledDate).getFullYear() &&
+                      new Date(date).getMonth() === new Date(disabledDate).getMonth() &&
+                      new Date(date).getDate() === new Date(disabledDate).getDate()}
                       ) : () => false}
                   />
                 }

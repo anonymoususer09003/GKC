@@ -7,6 +7,7 @@ import { withRole } from './../utils/withAuthorization';
 import axios from 'axios';
 import styles from '@/styles/Home.module.css';
 import { base_url } from '../api/client';
+import { useRouter } from 'next/router';
 export const GlobalInstructor = {
   instructors: [],
 };
@@ -55,7 +56,9 @@ function StudentLandingPage() {
   const [insructors, setInsructors] = useState([]);
   const [page, setPage] = useState(0)
   const [innerWidth, setInnerWidth] = useState(null)
+  const [goScheduleFromSignIn, setGoScheduleFromSignIn] = useState(false)
   const [pageState, setPageState] = useState(null)
+  const nav = useRouter()
 
   const search = async () => {
     console.log(JSON.stringify(page).length > 1 ? page : '0'+page)
@@ -185,6 +188,13 @@ function StudentLandingPage() {
       setInnerWidth(window.innerWidth)
     },[window.innerWidth])
   }
+useEffect(()=>{
+    if(typeof window !== 'undefined'){
+      if(window.localStorage.getItem('goScheduleFromSignIn') !== null){
+        setGoScheduleFromSignIn(true)
+      }
+  }
+},[])
 
   return (
     <>
@@ -194,6 +204,30 @@ function StudentLandingPage() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
+      {goScheduleFromSignIn ? (
+        <div style={{position:'fixed', zIndex: 1, left:0,top:0, width:'100%', height:'100%',overflow:'auto', background: 'rgba(0, 0, 0, 0.4)'}}>
+          <div style={{background: 'white', margin: '500px auto', padding:20,width:'380px'}}>
+            <p style={{width: 350, margin: 'auto', textAlign:'center', fontSize:18}}>We noticed that you attempted to schedule a class. Would you like to go back to the page where you were?</p>
+            <div
+            style={{display:'flex', gap:10, justifyContent:'center'}}>
+            <button 
+            onClick={()=>{
+              nav.push(`/parent/scheduleclass/${
+                JSON.parse(window.localStorage.getItem('goScheduleFromSignIn'))
+              }`)
+            }}
+            className="btn_primary text-light p-2 rounded fw-bold mt-3" 
+            style={{width: 100, }}>Yes</button>
+            <button className="p-2 rounded fw-bold mt-3"
+            style={{background:'none', border:'none'}}
+            onClick={()=>{setGoScheduleFromSignIn(false); window.localStorage.removeItem('goScheduleFromSignIn')}}
+            >
+              No
+            </button>
+            </div>
+          </div>
+        </div>
+        ) : null}
       <Navbar />
       <main className="">
         <div className="container py-4">

@@ -149,17 +149,15 @@ function InstructorCalendar() {
     const fetchUnavailableDates = async () => {
       try {
         const responce = await apiClient(
-          `/instructor/unavailable-days-in-UTC-TimeZone?instructorId=${loggedInUser.id}`
+          `/instructor/unavailable-days-in-logged-instructor-TimeZone`
         );
         console.log(responce.data);
 
         responce.data.forEach((el) => {
-          let time = el.start + 'Z';
+          let time = el.start;
 
           disabledDates.push(
-            new Date(time).toISOString('en-US', {
-              timeZone: loggedInUser.timeZoneId,
-            })
+            new Date(time)
           );
         });
         console.log(disabledDates);
@@ -235,16 +233,10 @@ function InstructorCalendar() {
                     ? ({ date, view }) =>
                         view === 'month' &&
                         unavailableDates.some((disabledDate) => {
-                          let formdate = new Date(disabledDate);
-                          if (formdate.toString().includes('-')) {
-                            formdate.setTime(formdate.getTime() - 60000);
-                          }
-                          console.log(formdate);
                           return (
-                            new Date(date).getFullYear() ===
-                              formdate.getFullYear() &&
-                            new Date(date).getMonth() === formdate.getMonth() &&
-                            new Date(date).getDate() === formdate.getDate()
+                            new Date(date).getFullYear() === new Date(disabledDate).getFullYear() &&
+                            new Date(date).getMonth() === new Date(disabledDate).getMonth() &&
+                            new Date(date).getDate() === new Date(disabledDate).getDate()
                           );
                         })
                     : () => false
