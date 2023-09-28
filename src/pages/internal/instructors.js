@@ -4,6 +4,7 @@ import axios from 'axios';
 import { InstructorsCharts } from '@/components/admin/InstructorsCharts';
 import { apiClient, base_url } from '@/api/client';
 import 'react-datepicker/dist/react-datepicker.css';
+import { useRouter } from 'next/router';
 import {
   ArrowLongLeftIcon,
   ArrowLongRightIcon,
@@ -14,6 +15,9 @@ function classNames(...classes) {
 }
 
 const Instructors = () => {
+  //protection starts
+  const nav = useRouter()
+
   const [countries, setCountries] = useState([]);
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);

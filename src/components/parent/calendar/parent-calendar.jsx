@@ -87,4 +87,4 @@ function ParentCalendar() {
   )
 }
 
-export default withRole(ParentCalendar, ["Student"]);
+export default withRole(ParentCalendar, ["Parent"]);

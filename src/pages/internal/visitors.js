@@ -6,8 +6,11 @@ import axios from 'axios';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { AiOutlineCalendar } from 'react-icons/ai';
+import { useRouter } from 'next/router';
 
 const Visitors = () => {
+
+
   const [countries, setCountries] = useState([]);
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);

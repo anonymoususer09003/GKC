@@ -5,6 +5,7 @@ import { FinancialsChart } from '@/components/admin/FinancialsChart';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { AiOutlineCalendar } from 'react-icons/ai';
+import { useRouter } from 'next/router';
 
 const filteredDataTest = [
   {
@@ -30,6 +31,9 @@ const filteredDataTest = [
 ];
 
 const Financials = () => {
+  //protection starts
+  const nav = useRouter()
+
   const [countries, setCountries] = useState([]);
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);

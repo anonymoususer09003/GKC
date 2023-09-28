@@ -2,7 +2,7 @@ import Head from "next/head";
 import { useState, useEffect, useRef } from "react";
 import { Navbar,  Footer } from "./../../../components";
 import Calendar from "react-calendar";
-import { withRole } from "../../../utils/withAuthorization";
+import { BASE_URL, withRole } from "../../../utils/withAuthorization";
 import { apiClient } from "../../../api/client";
 import { connect } from "react-redux";
 import { fetchUser } from "../../../store/actions/userActions";
@@ -11,36 +11,18 @@ import * as ical from 'ical.js';
 import { TutorNavbar } from "./../../../components";
 import { useRouter } from "next/router";
 import axios from "axios";
+import { RiArrowGoBackLine } from 'react-icons/ri';
 import { weekdays } from "moment";
 
-function EditCalandar({ userInfo, loading, error, fetchUser }) {
-    //protection starts
-    const nav = useRouter()
-    // checking if user logged in starts
-      if(typeof window !== 'undefined'){ // here we check if global object successfully loaded
-        console.log('lol')
-        useEffect(()=>{
+function EditCalandar({ loading, error, fetchUser }) {
 
-          if(JSON.parse(window.localStorage.getItem('gkcAuth')).role === undefined) { //here we check if user signed in
-            nav.push('/') 
-          } else{
-            if(JSON.parse(window.localStorage.getItem('gkcAuth')).role !== 'Instructor') { //here we check if user has role Instructor
-              nav.push('/')
-            }
-          }
-
-        },[])
-      }
-    // checking if user logged in ends
-
-    //protection ends
-    
   const [value, onChange] = useState(new Date());
+  const [userInfo, setUserInfo] = useState(null)
   const [selectedDate, setSelectedDate] = useState();
   const router = useRouter();
   const formRef = useRef(null)
   const [userId, setUserId] = useState(userInfo?.id ?? null)
-  const [available, setAvailable] = useState(true)
+  const [available, setAvailable] = useState(false)
   const [filledData, setFilledData] = useState(false);
   const [selectedDays, setSelectedDays] = useState('');
   const [startTime, setStartTime] = useState("2000-12-31 06:00");
@@ -53,150 +35,194 @@ function EditCalandar({ userInfo, loading, error, fetchUser }) {
   const [undo, setUndo] = useState(true)
   const weekDay = [];
   const disabledDates = []
+  const [dd, setDD] = useState([])
+  const [unavailableSuccess, setUnavailableSuccess] = useState(false)
+  const [availableSuccess, setAvailableSuccess] = useState(null)
+  const [timezone, setTimezone] = useState('')
+  let tz;
   let times = ['00:00', '01:00',  '02:00',  '03:00',   
   '04:00',  '05:00',  '06:00',  '07:00',   '08:00',  '09:00',  '10:00',  '11:00',   '12:00',  '13:00',  
   '14:00',  '15:00',   '16:00',  '17:00',  '18:00',  '19:00',   '20:00',  '21:00',  '22:00',  '23:00']
 
-  function findOccurrencesVevent(arr, target) {
-    const occurrences = [];
+  function guessContinent(timeZone) {
+    const americaIdentifiers = [
+      'America/',
+      'US/',
+      'Canada/',
+      'Mexico/',
+      'Argentina/',
+      'Brazil/',
+      'Chile/',
+      'Colombia/',
+    ];
   
-    function search(arr) {
-      for (const item of arr) {
-        if (Array.isArray(item) && item.length >= 2 && item[0] === target) {
-          occurrences.push(item[1]); // Add the [1] element of the matching array
-        } else if (Array.isArray(item)) {
-          search(item); // Recurse into subarray
-        }
+    const europeIdentifiers = [
+      'Asia/',
+      'Europe/',
+      'London/',
+      'Paris/',
+      'Berlin/',
+      'Madrid/',
+      'Rome/',
+      'Athens/',
+    ];
+  
+    for (const identifier of americaIdentifiers) {
+      if (timeZone.startsWith(identifier)) {
+        return 'America';
       }
     }
   
-    search(arr);
+    for (const identifier of europeIdentifiers) {
+      if (timeZone.startsWith(identifier)) {
+        return 'Europe';
+      }
+    }
   
-    return occurrences;
+    // If neither America nor Europe is found, return "Unknown"
+    return 'Unknown';
   }
+
+  // function findOccurrencesVevent(arr, target) {
+  //   const occurrences = [];
+  
+  //   function search(arr) {
+  //     for (const item of arr) {
+  //       if (Array.isArray(item) && item.length >= 2 && item[0] === target) {
+  //         occurrences.push(item[1]); // Add the [1] element of the matching array
+  //       } else if (Array.isArray(item)) {
+  //         search(item); // Recurse into subarray
+  //       }
+  //     }
+  //   }
+  
+  //   search(arr);
+  
+  //   return occurrences;
+  // }
 
   function undoAll() {
     disabledDates.length = 0;
     setUndo(!undo)
   }
-  function updateRepetitiveWeekDays(inputArray) {
-    const weekDayCount = {}; // To keep track of encountered weekDay numbers
-    const weekDayNames = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
+  // function updateRepetitiveWeekDays(inputArray) {
+  //   const weekDayCount = {}; // To keep track of encountered weekDay numbers
+  //   const weekDayNames = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
     
-    // Iterate through the array and update weekDay numbers
-    for (let i = 0; i < inputArray.length; i++) {
-      const item = inputArray[i];
-      const weekDayName = item.dayOfTheWeek;
+  //   // Iterate through the array and update weekDay numbers
+  //   for (let i = 0; i < inputArray.length; i++) {
+  //     const item = inputArray[i];
+  //     const weekDayName = item.dayOfTheWeek;
       
-      // Find the index of the weekDayName in the array
-      const weekDayIndex = weekDayNames.indexOf(weekDayName);
+  //     // Find the index of the weekDayName in the array
+  //     const weekDayIndex = weekDayNames.indexOf(weekDayName);
       
-      // Check if we've encountered this weekDay before
-      if (weekDayCount[weekDayIndex]) {
-        // Increment and update the weekDayName
-        item.dayOfTheWeek = weekDayNames[(weekDayIndex + 1) % 7]; // Wrap around to Monday if Sunday is encountered
-      }
+  //     // Check if we've encountered this weekDay before
+  //     if (weekDayCount[weekDayIndex]) {
+  //       // Increment and update the weekDayName
+  //       item.dayOfTheWeek = weekDayNames[(weekDayIndex + 1) % 7]; // Wrap around to Monday if Sunday is encountered
+  //     }
       
-      // Update the count for this weekDay
-      weekDayCount[weekDayIndex] = (weekDayCount[weekDayIndex] || 0) + 1;
-    }
+  //     // Update the count for this weekDay
+  //     weekDayCount[weekDayIndex] = (weekDayCount[weekDayIndex] || 0) + 1;
+  //   }
     
-    return inputArray;
-  }
+  //   return inputArray;
+  // }
 
-  function findOccurrencesTimeslots(arr, target) {
-    let latestDtEnd = null;
+  // function findOccurrencesTimeslots(arr, target) {
+  //   let latestDtEnd = null;
   
-    function search(arr) {
-      for (const item of arr) {
-        if (Array.isArray(item) && item.length >= 2) {
-          const [key, , type, value] = item;
-          if (key === target && type === "date-time") {
-            const dtEnd = new Date(value);
-            if (!latestDtEnd || dtEnd > latestDtEnd) {
-              latestDtEnd = dtEnd;
-            }
-          }
-        }
-        if (Array.isArray(item)) {
-          search(item);
-        }
-      }
-    }
+  //   function search(arr) {
+  //     for (const item of arr) {
+  //       if (Array.isArray(item) && item.length >= 2) {
+  //         const [key, , type, value] = item;
+  //         if (key === target && type === "date-time") {
+  //           const dtEnd = new Date(value);
+  //           if (!latestDtEnd || dtEnd > latestDtEnd) {
+  //             latestDtEnd = dtEnd;
+  //           }
+  //         }
+  //       }
+  //       if (Array.isArray(item)) {
+  //         search(item);
+  //       }
+  //     }
+  //   }
   
-    search(arr);
+  //   search(arr);
   
-    return latestDtEnd ? latestDtEnd.toISOString() : null;
-  }
+  //   return latestDtEnd ? latestDtEnd.toISOString() : null;
+  // }
 
 
-  function getTimeSlotFromtDateStr(dateStr) {
-    const utcDate = new Date(dateStr);
+  // function getTimeSlotFromtDateStr(dateStr) {
+  //   const utcDate = new Date(dateStr);
 
-  // Replace 'en-US' and 'Europe/Kiev' with your desired locale and timezone
-    const formattedTime = new Intl.DateTimeFormat('en-US', {
-      timeZone:  "Asia/Tbilisi", 
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false,
-    }).format(utcDate);
+  // // Replace 'en-US' and 'Europe/Kiev' with your desired locale and timezone
+  //   const formattedTime = new Intl.DateTimeFormat('en-US', {
+  //     timeZone:  tz, 
+  //     hour: '2-digit',
+  //     minute: '2-digit',
+  //     hour12: false,
+  //   }).format(utcDate);
 
-    return formattedTime
-  }
+  //   return formattedTime
+  // }
 
-  function getWeekdayFromDate(dateString) {
-    // Create a Date object from the input string (parsed in local time)
-    const date = new Date(dateString);
+  // function getWeekdayFromDate(dateString) {
+  //   // Create a Date object from the input string (parsed in local time)
+  //   const date = new Date(dateString);
   
-    // Define the time zone for "Asia/Tbilisi"
-    const timeZone = 'Asia/Tbilisi';
+  //   // Define the time zone for "Asia/Tbilisi"
+  //   const timeZone = tz;
   
-    // Get the offset in minutes between the local time zone and "Asia/Tbilisi"
-    const timeZoneOffset = date.getTimezoneOffset() / 60;
+  //   // Get the offset in minutes between the local time zone and "Asia/Tbilisi"
+  //   const timeZoneOffset = date.getTimezoneOffset() / 60;
   
-    // Calculate the UTC time by subtracting the time zone offset
-    const utcTime = new Date(date.getTime() - timeZoneOffset * 60 * 60 * 1000);
+  //   // Calculate the UTC time by subtracting the time zone offset
+  //   const utcTime = new Date(date.getTime() - timeZoneOffset * 60 * 60 * 1000);
   
-    // Create a new Date object in the "Asia/Tbilisi" time zone
-    const tbilisiDate = new Date(utcTime.toLocaleString('en-US', { timeZone }));
+  //   // Create a new Date object in the "Asia/Tbilisi" time zone
+  //   const tbilisiDate = new Date(utcTime.toLocaleString('en-US', { timeZone }));
   
-    // Define an array of weekday names
-    const weekdays = ['Sunday','Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  //   // Define an array of weekday names
+  //   const weekdays = ['Sunday','Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
   
-    // Get the numeric day of the week (0 = Sunday, 1 = Monday, etc.)
-    const dayOfWeek = tbilisiDate.getDay();
+  //   // Get the numeric day of the week (0 = Sunday, 1 = Monday, etc.)
+  //   const dayOfWeek = tbilisiDate.getDay();
   
-    // Use the day of the week to index into the weekdays array
-    return weekdays[dayOfWeek];
-  }
+  //   // Use the day of the week to index into the weekdays array
+  //   return weekdays[dayOfWeek];
+  // }
   
   function getObjectByWeekDay(inputArray, targetWeekDay) {
     // Find the object with the target weekDay
-    const targetObject = inputArray.find(item => item?.dayOfTheWeek === targetWeekDay);
+    const targetObject = inputArray?.find(item => item?.dayOfTheWeek === targetWeekDay);
     return targetObject || null;// Return the object or null if not found
   }
 
-  function getAverageDateAndWeekday(date1Str, date2Str) {
-    // Parse the input date strings into Date objects
-    const date1 = new Date(date1Str);
-    const date2 = new Date(date2Str);
+  // function getAverageDateAndWeekday(date1Str, date2Str) {
+  //   // Parse the input date strings into Date objects
+  //   const date1 = new Date(date1Str);
+  //   const date2 = new Date(date2Str);
   
-    // Calculate the average time in milliseconds
-    const averageTime = (date1.getTime() + date2.getTime()) / 2;
+  //   // Calculate the average time in milliseconds
+  //   const averageTime = (date1.getTime() + date2.getTime()) / 2;
   
-    // Create a new Date object for the average time
-    const averageDate = new Date(averageTime);
+  //   // Create a new Date object for the average time
+  //   const averageDate = new Date(averageTime);
   
-    // Get the name of the weekday
-    const weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
-    const weekdayName = weekdays[averageDate.getUTCDay()];
+  //   // Get the name of the weekday
+  //   const weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+  //   const weekdayName = weekdays[averageDate.getUTCDay()];
   
-    return weekdayName.toLowerCase(); // Return the lowercase weekday name
-  }
+  //   return weekdayName.toLowerCase(); // Return the lowercase weekday name
+  // }
   //calendar
   const handleDateChange = (clickedDate) => {
     console.log(clickedDate)
-
+    // console.log(disabledDates)
 
       //  const year = clickedDate.toISOString().slice(0, 4);
       //  const month = clickedDate.toISOString().slice(5, 7);
@@ -205,9 +231,11 @@ function EditCalandar({ userInfo, loading, error, fetchUser }) {
       //  .padStart(2, "0");
 
       //  const modifiedClickedDate = `${year}-${month}-${day}`;
-       disabledDates.push(new Date(clickedDate))
-       console.log(disabledDates)
 
+      disabledDates.push(new Date(clickedDate).toLocaleDateString('en-US', {timezone: timezone}))
+
+      // setDD([...disabledDates, ])
+       console.log(disabledDates)
   };
 
 
@@ -215,13 +243,7 @@ function EditCalandar({ userInfo, loading, error, fetchUser }) {
 
   const handleDayClick = (day) => {
     setSelectedDays(day)
- /*   setSelectedDays((prevSelectedDays) => {
-      if (prevSelectedDays.includes(day)) {
-        return prevSelectedDays.filter((selectedDay) => selectedDay !== day);
-      } else {
-        return [...prevSelectedDays, day];
-      }
-    });*/
+    setAvailable(getObjectByWeekDay(weekDays, day)?.available)
   };
 
   //start time
@@ -264,29 +286,30 @@ function EditCalandar({ userInfo, loading, error, fetchUser }) {
     let weekDay = [];
     weekDays.forEach((el)=>{
       if(el.dayOfTheWeek === weekdayname){
-        el.available = checkState
-        setAvailable(el.available)
+        el.available = checkState;
+        setAvailable(!available)
       }
     })
-    setIfChoseAnotherWeek(true)
     weekDay = weekDays;
     setWeekDays(weekDay)
     console.log(weekDay)
   }
 
 
- const setUnAvialablaDates = async (date) => {
+ const setUnAvialablaDates = async () => {
+  setUnavailableSuccess(true)
   let dates = []
   disabledDates.forEach((el)=>{
-      const year = el.toISOString().slice(0, 4);
-      const month = el.toISOString().slice(5, 7);
-      const day = (parseInt(el.toISOString().slice(8, 10)) + 1)
+    
+      const year = new Date(el).toISOString().slice(0, 4);
+      const month = new Date(el).toISOString().slice(5, 7);
+      const day = (parseInt(new Date(el).toISOString().slice(8, 10)) + 1)
       .toString()
       .padStart(2, "0");
 
       const modifiedClickedDate = `${year}-${month}-${day}`;
       dates.push(modifiedClickedDate)
-    })
+  })
   let requestDates = []
   dates.forEach((el)=>{
     requestDates.push(
@@ -295,7 +318,7 @@ function EditCalandar({ userInfo, loading, error, fetchUser }) {
       }
     )
   })
-    console.log(requestDates)
+  console.log(requestDates)
     try {
       const response = await apiClient.post(
         "/instructor/unavailable-days" ,
@@ -309,6 +332,7 @@ function EditCalandar({ userInfo, loading, error, fetchUser }) {
 
 
  const submitHandler = async () => {
+  setAvailableSuccess(true)
   let weekDay = [];
   weekDays.forEach((el)=>{
     el.dayOfTheWeek = el.dayOfTheWeek.toUpperCase()
@@ -318,11 +342,13 @@ function EditCalandar({ userInfo, loading, error, fetchUser }) {
     const res = await apiClient.post("/instructor/week-schedule", weekDay);
     console.log(res)
   }
+
   catch(error) {
     console.log(error);
     setErr('You must`ve missing weekdays, time slots or exact day tile.')
   }
  }
+
  const handleDisabledTile = (value, event) => {
     console.log(value)
  }
@@ -330,61 +356,16 @@ function EditCalandar({ userInfo, loading, error, fetchUser }) {
  const iCalendar = async () => {
  
     try{
-      const responce = await apiClient.get(`/instructor/schedule-iCal?instructorId=${userId}`)
+      const responce = await apiClient.get(`/instructor/week-schedule/from-logged-instructor`)
       console.log(responce.data)
-      // console.log(res)
-      const jcalData = ical.parse(responce.data);
-      const comp = new ical.Component(jcalData);
-      console.log(comp.jCal[2])
 
+        setWeekDays(responce.data)
+        if(responce.data.length === 0){
+          const res = await axios.get('/timeavailability_placeholder.json')
+          console.log(res.data)
+          setWeekDays(res.data)
+        }
 
-      const veventArray = findOccurrencesVevent(comp.jCal[2], "vevent")
-      console.log(veventArray)
-      if(veventArray.length > 1){
-        veventArray.forEach((el)=>{
-          const availability = el.length > 8 ? false : true
-          const dateStr1 = findOccurrencesTimeslots(el, 'dtstart')
-          const dateStr2 = findOccurrencesTimeslots(el, 'dtend')
-          const dayOfWeek1 = getWeekdayFromDate(dateStr1)
-          const dayOfWeek2 = getWeekdayFromDate(dateStr2)
-
-
-            weekDay.push({
-              available: availability,
-              startTime: getTimeSlotFromtDateStr(dateStr1),
-              endTime: getTimeSlotFromtDateStr(dateStr2),
-              dayOfTheWeek: dayOfWeek1.toLowerCase()
-            })
-
-          
-          // console.log(dayOfWeek1, dayOfWeek2)
-          // console.log(availability + getTimeSlotFromtDateStr(dateStr1) + ` and ` + getTimeSlotFromtDateStr(dateStr2))
-          // setWeekDays([...weekdays, {}])
-        })
-        // const goodweekdays = updateRepetitiveWeekDays(weekDay)
-        
-        console.log(weekDay)
-        setWeekDays(weekDay)
-
-      }else {
-        const res = await axios.get('/timeavailability_placeholder.json')
-        res.data.forEach((el)=>{
-          el.dayOfTheWeek = el.dayOfTheWeek.toLowerCase()
-        })
-        res.data.forEach((el)=>{
-          weekDay.push({
-            available: el.available,
-            startTime: el.startTime,
-            endTime: el.endTime,
-            dayOfTheWeek: el.dayOfTheWeek
-          })
-        })
-        const goodweekdays = updateRepetitiveWeekDays(weekDay)
-
-        console.log(goodweekdays)
-        setWeekDays(goodweekdays)
-        
-      }
       // // Iterate through events and add to calendar
       // vevents.forEach(vevent => {
       //   const eventStart = vevent.getFirstPropertyValue('dtstart').toJSDate();
@@ -403,18 +384,85 @@ function EditCalandar({ userInfo, loading, error, fetchUser }) {
 
 
   useEffect(() => {
-    fetchUser();
+    const run = async () =>{
+      try{
+        const res = await apiClient('/user/logged-user-details');
+        console.log(res)
+        setTimezone(res.data.timeZoneId);
+        setUserInfo(res.data);
+      } catch (err) {
+        console.log(err)
+      }
+    }
+    run()
+    fetchUser()
     iCalendar();
-    console.log(fetchUser(), 'useeeer')
-  }, [fetchUser]);
+
+
+    const fetchUnavailableDates = async () => {
+      try{
+        const responce = await apiClient(`/instructor/unavailable-days-in-logged-instructor-TimeZone`)
+        console.log(responce.data)
+        responce.data.forEach((el)=>{
+          let time = el.start;
+          disabledDates.push(new Date(time))
+        })
+      setDD(disabledDates)
+      console.log(disabledDates) 
+      }catch (err) {
+        console.log(err)
+      }
+
+
+    }
+    fetchUnavailableDates()
+    console.log(userInfo, 'useeeer')
+  }, []);
 
 
   return (
     <>
+      {unavailableSuccess ? (
+        <div style={{position:'fixed', zIndex: 1, left:0,top:0, width:'100%', height:'100%',overflow:'auto', background: 'rgba(0, 0, 0, 0.4)'}}>
+          <div style={{background: 'white', margin: '500px auto', padding:20,width:'380px'}}>
+            <p style={{width: 350, margin: 'auto', textAlign:'center', fontSize:18}}>Unavailable dates saved successfully.</p>
+            <div
+            style={{display:'flex', gap:10, justifyContent:'center'}}>
+            <button 
+            onClick={()=>{setUnavailableSuccess(false)}}
+            className="btn_primary text-light p-2 rounded fw-bold mt-3" 
+            style={{width: 100, }}>Ok</button>
+            </div>
+          </div>
+        </div>
+        ) : null}
+      {availableSuccess ? (
+        <div style={{position:'fixed', zIndex: 1, left:0,top:0, width:'100%', height:'100%',overflow:'auto', background: 'rgba(0, 0, 0, 0.4)'}}>
+          <div style={{background: 'white', margin: '500px auto', padding:20,width:'380px'}}>
+            <p style={{width: 350, margin: 'auto', textAlign:'center', fontSize:18}}>Weekly availability saved successfully.</p>
+            <div
+            style={{display:'flex', gap:10, justifyContent:'center'}}>
+            <button 
+            onClick={()=>{setAvailableSuccess(false)}}
+            className="btn_primary text-light p-2 rounded fw-bold mt-3" 
+            style={{width: 100, }}>Ok</button>
+            </div>
+          </div>
+        </div>
+        ) : null}
+
      <TutorNavbar isLogin={true} role="instructor" />
+     <div
+          className="text-decoration-none p-4 d-flex gap-2 align-items-center text-dark"
+          onClick={()=>{window.location.assign(`${BASE_URL}instructor`)}}
+          style={{cursor:'pointer'}}
+        >
+          <RiArrowGoBackLine />
+          <p className="fw-bold m-0 p-0 ">Exit</p>
+        </div>
       <main className="container-fluid">
         <div style={{ height: "90vh" }}>
-          <div className="row p-5">
+          <div className="row pb-5 pr-5 pl-5">
             <div className="col-12 col-lg-6 ">
             <div>
                 <p className="text-center">
@@ -431,11 +479,13 @@ function EditCalandar({ userInfo, loading, error, fetchUser }) {
                     value={selectedDate}
                     // selectRange={true}
                     onClickDay={handleDisabledTile}
-                    tileDisabled={({date, view})=> view === 'month' && disabledDates.some(disabledDate =>
-                      date.getFullYear() === disabledDate.getFullYear() &&
-                      date.getMonth() === disabledDate.getMonth() &&
-                      date.getDate() === disabledDate.getDate()
-                      )}
+                    tileDisabled={dd.length !== 0 ? ({date, view})=> view === 'month' && dd.concat(disabledDates).some(disabledDate =>
+                      { 
+
+                      return new Date(date).getFullYear() === new Date(disabledDate).getFullYear() &&
+                      new Date(date).getMonth() === new Date(disabledDate).getMonth() &&
+                      new Date(date).getDate() === new Date(disabledDate).getDate()}
+                      ) : () => false}
                   /> :
                   <Calendar
                   // style={calendarStyles}
@@ -444,11 +494,12 @@ function EditCalandar({ userInfo, loading, error, fetchUser }) {
                     value={selectedDate}
                     // selectRange={true}
                     onClickDay={handleDisabledTile}
-                    tileDisabled={({date, view})=> view === 'month' && disabledDates.some(disabledDate =>
-                      date.getFullYear() === disabledDate.getFullYear() &&
-                      date.getMonth() === disabledDate.getMonth() &&
-                      date.getDate() === disabledDate.getDate()
-                      )}
+                    tileDisabled={dd.length !== 0 ? ({date, view})=> view === 'month' && dd.concat(disabledDates).some(disabledDate =>
+                      { 
+                      return new Date(date).getFullYear() === new Date(disabledDate).getFullYear() &&
+                      new Date(date).getMonth() === new Date(disabledDate).getMonth() &&
+                      new Date(date).getDate() === new Date(disabledDate).getDate()}
+                      ) : () => false}
                   />
                 }
             </div>{" "}
@@ -491,7 +542,7 @@ function EditCalandar({ userInfo, loading, error, fetchUser }) {
                   </ul>
                 {
                   !selectedDays && (
-                    <p>Please select week day. This page has hardcoded http requests. If you see this text, remind Danil about that.</p>
+                    <p>Please select week day.</p>
                   )
                 }
                 {
@@ -507,12 +558,10 @@ function EditCalandar({ userInfo, loading, error, fetchUser }) {
                           <input
                             className="form-check-input"
                             type="checkbox"
-                            // value={true}
-                            checked={ifChoseAnotherWeek ? available : ( getObjectByWeekDay(weekDays, selectedDays.toLowerCase())?.available ) ?? false}
+                            checked={available}
                             onChange={() => {
-                              handleCheckbox(selectedDays.toLowerCase(), !getObjectByWeekDay(weekDays, selectedDays.toLowerCase())?.available )
+                              handleCheckbox(selectedDays, !getObjectByWeekDay(weekDays, selectedDays)?.available )
                             }}
-    
                           />
                         </label>
                       </div>
@@ -521,14 +570,14 @@ function EditCalandar({ userInfo, loading, error, fetchUser }) {
                       <div className="col-4">
                       </div>
                       {
-                        getObjectByWeekDay(weekDays, selectedDays.toLowerCase())?.available  && <>
+                        available && <>
                         <div className="col-8">
                            <div className="row pb-2">
                              <p className="col fw-bold"> From </p>{" "}
                              <select
                                className="w-100 p-2 rounded outline-0 border border_gray col"
-                               onChange={(e)=>{handleStartTime(e.target.value, selectedDays.toLowerCase())}}
-                               value={ifChoseAnotherWeek ? startTime : (getObjectByWeekDay(weekDays, selectedDays.toLowerCase())?.startTime ) ?? 'loading'}
+                               onChange={(e)=>{handleStartTime(e.target.value, selectedDays)}}
+                               value={getObjectByWeekDay(weekDays, selectedDays)?.startTime}
 
                                >
                              {times.map((time) => {
@@ -542,8 +591,8 @@ function EditCalandar({ userInfo, loading, error, fetchUser }) {
                             <p className="col fw-bold"> To </p>{" "}
                              <select 
                              className="w-100 p-2 rounded outline-0 border border_gray col"
-                             onChange={(e)=>{handleEndTime(e.target.value, selectedDays.toLowerCase())}}
-                             value={ifChoseAnotherWeek1 ? endTime : (getObjectByWeekDay(weekDays, selectedDays.toLowerCase())?.endTime ) ?? 'loading'}
+                             onChange={(e)=>{handleEndTime(e.target.value, selectedDays)}}
+                             value={getObjectByWeekDay(weekDays, selectedDays)?.endTime}
                              
                              >
                             {times.map((time) => {
@@ -582,13 +631,17 @@ function EditCalandar({ userInfo, loading, error, fetchUser }) {
           <div className=" mt-3 d-flex justify-content-center flex-column align-items-center gap-2">
           </div>
       </main>
-      <Footer /> 
+      <div
+          style={{position:'relative', bottom:0, width: '100vw'}}
+          >
+          <Footer />
+          </div>
+
     </>
   );
 }
 
 const mapStateToProps = (state) => ({
-  userInfo: state.user.userInfo,
   loading: state.user.loading,
   error: state.user.error,
 });

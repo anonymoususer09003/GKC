@@ -44,7 +44,51 @@ function InstructorCalendar() {
   const [userInfoLoaded, setUserInfoLoaded] = useState(false);
   const dispatch = useDispatch();
   const loggedInUser = useSelector((state) => state.user.userInfo);
-  const disabledDates = []
+  const disabledDates = [];
+
+  function guessContinent(timeZone) {
+    const americaIdentifiers = [
+      'America/',
+      'US/',
+      'Canada/',
+      'Mexico/',
+      'Argentina/',
+      'Brazil/',
+      'Chile/',
+      'Colombia/',
+    ];
+
+    const europeIdentifiers = [
+      'Asia/',
+      'Europe/',
+      'London/',
+      'Paris/',
+      'Berlin/',
+      'Madrid/',
+      'Rome/',
+      'Athens/',
+    ];
+
+    for (const identifier of americaIdentifiers) {
+      if (timeZone.startsWith(identifier)) {
+        return 'America';
+      }
+    }
+
+    for (const identifier of europeIdentifiers) {
+      if (timeZone.startsWith(identifier)) {
+        return 'Europe';
+      }
+    }
+
+    // If neither America nor Europe is found, return "Unknown"
+    return 'Unknown';
+  }
+
+  // // Example usage:
+  // const timeZone = 'America/New_York'; // You can change this to test different time zones
+  // const continent = guessContinent(timeZone);
+  // console.log(`The time zone "${timeZone}" is in ${continent} continent.`);
 
   useEffect(() => {
     dispatch(fetchUser());
@@ -75,11 +119,11 @@ function InstructorCalendar() {
               },
             }
           );
-          console.log(response)
+          console.log(response);
           const iCalendarData = await response.text();
           const events = [];
           const dates = [];
-  
+
           const eventLines = iCalendarData.split('BEGIN:VEVENT');
           eventLines.shift();
           eventLines.forEach((eventLine) => {
@@ -96,9 +140,6 @@ function InstructorCalendar() {
           });
           setEvents(events);
         }
-
-
-
       } catch (error) {
         console.log('Error fetching iCalendar data:', error);
       }
@@ -106,21 +147,26 @@ function InstructorCalendar() {
     fetchICalendarData();
 
     const fetchUnavailableDates = async () => {
-      try{
-        const responce = await apiClient('/instructor/unavailable-days-in-UTC-TimeZone?instructorId=53') //hardcoded
-        console.log(responce.data)
-        responce.data.forEach((el)=>{
-          disabledDates.push(new Date(el.end))
-        })
-      console.log(disabledDates)
-      setUnavailableDates(disabledDates)
-      }catch (err) {
-        console.log(err)
+      try {
+        const responce = await apiClient(
+          `/instructor/unavailable-days-in-logged-instructor-TimeZone`
+        );
+        console.log(responce.data);
+
+        responce.data.forEach((el) => {
+          let time = el.start;
+
+          disabledDates.push(
+            new Date(time)
+          );
+        });
+        console.log(disabledDates);
+        setUnavailableDates(disabledDates);
+      } catch (err) {
+        console.log(err);
       }
-
-
-    }
-    fetchUnavailableDates()
+    };
+    fetchUnavailableDates();
   }, [loggedInUser]);
 
   //Logged user events
@@ -146,21 +192,22 @@ function InstructorCalendar() {
     const month = clickedDate.toISOString().slice(5, 7);
     const day = (parseInt(clickedDate.toISOString().slice(8, 10)) + 1)
       .toString()
-      .padStart(2, "0");
+      .padStart(2, '0');
     const modifiedClickedDate = `${year}-${month}-${day}`;
-    const eventsArray = []
-    bookedEvents.map(el =>
-      el.start.slice(0,10) === modifiedClickedDate ? eventsArray.push(el) : null
-    )
+    const eventsArray = [];
+    bookedEvents.map((el) =>
+      el.start.slice(0, 10) === modifiedClickedDate
+        ? eventsArray.push(el)
+        : null
+    );
 
-    console.log(eventsArray)
-    setEvents(eventsArray)
+    console.log(eventsArray);
+    setEvents(eventsArray);
   };
-  console.log("event id", eventId);
+  console.log('event id', eventId);
   return (
     <>
       <Navbar isLogin={true} role="instructor" />
-
       <main className="container-fluid">
         <div>
           <div className={`row ${styles.calendarWrapper}`}>
@@ -175,21 +222,32 @@ function InstructorCalendar() {
                 </p>
                 <FiEdit style={{ fontSize: '24px', cursor: 'pointer' }} />
               </div>
-                <Calendar
+              <Calendar
+                // style={calendarStyles}
                 onChange={handleCalendarClick}
+                // onClickDay={}
+                // selectRange={true}
                 className={calendarStyles.reactCalendar}
-                tileDisabled={unavailableDates.length >1 ? ({date, view})=> view === 'month' && unavailableDates.some(disabledDate =>
-                  date.getFullYear() === disabledDate.getFullYear() &&
-                  date.getMonth() === disabledDate.getMonth() &&
-                  date.getDate() === disabledDate.getDate()
-                  ) : () => false}
+                tileDisabled={
+                  unavailableDates.length !== 0
+                    ? ({ date, view }) =>
+                        view === 'month' &&
+                        unavailableDates.some((disabledDate) => {
+                          return (
+                            new Date(date).getFullYear() === new Date(disabledDate).getFullYear() &&
+                            new Date(date).getMonth() === new Date(disabledDate).getMonth() &&
+                            new Date(date).getDate() === new Date(disabledDate).getDate()
+                          );
+                        })
+                    : () => false
+                }
               />
             </div>
-            <InstructorSchedule
-              schedule={events}
-            />
+            <InstructorSchedule schedule={events} />
           </div>
-          <Footer />
+          <div style={{ position: 'relative', bottom: 0, width: '100vw' }}>
+            <Footer />
+          </div>
         </div>
       </main>
     </>

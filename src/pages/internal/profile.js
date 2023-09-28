@@ -1,12 +1,15 @@
 import { apiClient } from '@/api/client';
 import { base_url } from '@/api/client';
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
 
 export default function Profile() {
   const loggedUserEmail = typeof window === 'undefined' ? null : window?.localStorage.getItem('email');
   const [loggedUserInfo, setLoggedUserInfo] = useState();
 
   const getProfileInfo = async () => {
+
+
     if(
       loggedUserEmail === null
     ){

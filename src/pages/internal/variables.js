@@ -2,6 +2,7 @@ import React from 'react';
 import { apiClient } from '@/api/client';
 import { base_url } from '@/api/client';
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
 
 const Variables = () => {
   const loggedUserEmail = typeof window === 'undefined' ? null : window?.localStorage.getItem('email');
@@ -22,6 +23,8 @@ const Variables = () => {
   };
 
   const getProfileInfo = async () => {
+
+
     if(
       loggedUserEmail === null
     ){

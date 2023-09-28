@@ -4,12 +4,14 @@ import { MagnifyingGlassIcon } from '@heroicons/react/20/solid';
 import { apiClient, base_url } from '@/api/client';
 import axios from 'axios';
 import { CourseChart } from '@/components/admin/CoursesChart';
-
+import { useRouter } from 'next/router';
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
 }
 
 const Courses = () => {
+
+
   const [countries, setCountries] = useState([]);
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);

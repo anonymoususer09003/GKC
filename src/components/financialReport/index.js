@@ -29,21 +29,23 @@ function FinancialReport({ role }) {
       let res = null;
       let filter = null;
       if (applyFilter)
-        filter = `?start=${moment(date.start).toISOString()}&end=${moment(
-          date.end
-        ).toISOString()}`;
-      switch (role) {
-        case 'parent':
-          res = await ParentFinancialReport({ filter });
-          break;
-        case 'student':
-          res = await StudentFinancialReport({ filter });
-          break;
-        default:
-          res = await InstructorFinancialReport({ filter });
+        filter = `?start=${date.start}&end=${date.end}`;
+      if (filter !== null){
+        switch (role) {
+          case 'parent':
+            res = await ParentFinancialReport({ filter });
+            break;
+          case 'student':
+            res = await StudentFinancialReport({ filter });
+            break;
+          default:
+            res = await InstructorFinancialReport({ filter });
+        }
       }
-      setFinancialData(res.data);
+
+      setFinancialData(res?.data ?? []);
       console.log('res', res);
+      console.log(financialData)
     } catch (err) {
       console.log('err', err);
     }
@@ -52,9 +54,7 @@ function FinancialReport({ role }) {
     try {
       let filter = null;
       if (date.start && date.end) {
-        filter = `?start=${moment(date.start).toISOString()}&end=${moment(
-          date.end
-        ).toISOString()}`;
+        filter = `?start=${date.start}&end=${date.end}`;
       }
       let res = await DownloadFinancialReport({ filter });
       console.log('download report ', res);
@@ -63,6 +63,7 @@ function FinancialReport({ role }) {
     }
   };
   const handleDateChange = (e) => {
+    console.log(e.target.value)
     setDate({ ...date, [e.target.name]: e.target.value });
   };
   const handleReset = () => {
@@ -92,9 +93,7 @@ function FinancialReport({ role }) {
                 {' '}
                 You currently don't have any transaction to report
               </p>
-            ) : (
-              ''
-            )}
+            ) : null}
             <div
               className="border rounded p-4 my-4"
               style={{ minHeight: '400px' }}
@@ -127,6 +126,7 @@ function FinancialReport({ role }) {
                       />
                       <FiRefreshCw
                         onClick={handleReset}
+                        // onClick={()=>{console.log(date)}}
                         style={{ fontSize: '35px' }}
                       />{' '}
                     </div>
@@ -178,17 +178,16 @@ function FinancialReport({ role }) {
                     </tr>{' '}
                   </thead>{' '}
                   <tbody>
-                    {financialData.map((item, index) => {
-                      <tr key={index}>
+                    {financialData.length > 0 && financialData.map((item, index) => { return<tr key={index}>
                         <th className="fw-bold" scope="row">
                           {' '}
-                          {moment(item?.createdAt).format('MM / DD /YYYY ')}
+                          {item?.createdAt.slice(0,10)}
                         </th>{' '}
                         <td className="fw-bold w-25">
                           {' '}
                           {role === 'instructor'
                             ? item?.studentName
-                            : item?.instructor?.firstName}{' '}
+                            : item?.instructorName}{' '}
                         </td>{' '}
                         {role === 'parent' && (
                           <td className="fw-bold w-25">
@@ -203,7 +202,7 @@ function FinancialReport({ role }) {
                         <td className="fw-bold d-flex justify-content-between align-items-center">
                           {' '}
                           ${item?.totalAmount}{' '}
-                          <TbSpeakerphone onClick={() => onRequestRefund()} />{' '}
+                          {/* <TbSpeakerphone onClick={() => onRequestRefund()} />{' '} */}
                         </td>{' '}
                       </tr>;
                     })}

@@ -6,6 +6,7 @@ import { StudentsCharts } from '@/components/admin/StudentsCharts';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { AiOutlineCalendar } from 'react-icons/ai';
+import { useRouter } from 'next/router';
 import {
   ArrowLongLeftIcon,
   ArrowLongRightIcon,
@@ -40,6 +41,8 @@ const Students = () => {
   const [isInitialRender, setIsInitialRender] = useState(true);
 
   const handleSelectedStudent = (student) => {
+
+
     setSelectedStudentId(student.id);
   };
 
