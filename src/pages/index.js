@@ -212,7 +212,7 @@ useEffect(()=>{
             style={{display:'flex', gap:10, justifyContent:'center'}}>
             <button 
             onClick={()=>{
-              nav.push(`/parent/scheduleclass/${
+              nav.push(`/student/scheduleclass/${
                 JSON.parse(window.localStorage.getItem('goScheduleFromSignIn'))
               }`)
             }}
