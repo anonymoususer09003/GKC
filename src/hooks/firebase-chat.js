@@ -26,59 +26,62 @@ const useCustomFirebaseHook = () => {
   const [myChatList, setMyChatList] = useState([]);
   const [activeChat, setActiveChat] = useState('');
   const router = useRouter();
+  const [unsubscribeFunction, setUnsubscribeFunction] = useState(null);
   const [firstTimeRender, setFirstTimeRender] = useState(false);
   // ...
   console.log('router name', router.pathname);
-  const fetchChat = async (chatInfo) => {
-    try {
-      console.log('messages', messages);
-      const chatId = chatInfo?.chatId;
-      const messagesCollectionRef = collection(
-        firestore,
-        'chat',
-        chatId,
-        'messages'
-      );
-      const messagesQueryOrderBy = query(
-        messagesCollectionRef,
-        orderBy('timestamp')
-      );
-      const addedMessageIds = [];
-      setFirstTimeRender(true);
-      const unsubscribe = onSnapshot(messagesQueryOrderBy, (snapshot) => {
-        console.log('snapshot', snapshot);
-        let temp = [];
-        snapshot.docChanges().forEach((change) => {
-          console.log('docs', change.doc.data());
-          console.log('messages----------------000----00', messages);
-          if (change.type === 'added') {
-            const messageData = change.doc.data();
-            const messageId = change.doc.id;
+  const fetchChat = useCallback(
+    async (chatInfo) => {
+      try {
+        setMessages([]);
+        console.log('messages', messages);
+        const chatId = chatInfo?.chatId;
+        const messagesCollectionRef = collection(
+          firestore,
+          'chat',
+          chatId,
+          'messages'
+        );
+        const messagesQueryOrderBy = query(
+          messagesCollectionRef,
+          orderBy('timestamp')
+        );
+        const addedMessageIds = [];
+        setFirstTimeRender(true);
+        const unsubscribe = onSnapshot(messagesQueryOrderBy, (snapshot) => {
+          console.log('snapshot', snapshot);
+          let temp = [];
+          snapshot.docChanges().forEach((change) => {
+            if (change.type === 'added') {
+              const messageData = change.doc.data();
+              const messageId = change.doc.id;
 
-            // Check if the message ID is not already added
+              // Check if the message ID is not already added
 
-            temp.push({ ...messageData, chatId });
+              temp.push({ ...messageData, chatId });
 
-            // Process the newly added message as needed
-          }
+              // Process the newly added message as needed
+            }
+          });
+
+          setMessages((prevMessages) => [...prevMessages, ...temp]);
         });
 
-        console.log('temp000', temp);
-        setMessages((prevMessages) => [...prevMessages, ...temp]);
-      });
-
-      // Store the unsubscribe function to remove the listener later
-      // when the chat document is no longer needed
-      // Make sure to store the unsubscribe function in a state variable or ref
-      // so that it can be accessed and called later when needed
-      // For example, you can use the 'useState' hook to store the unsubscribe function:
-      // setUnsubscribeFunctions((prevState) => [...prevState, unsubscribe]);
-    } catch (error) {
-      console.log('Error fetching data:', error);
-    }
-  };
+        // Store the unsubscribe function to remove the listener later
+        // when the chat document is no longer needed
+        // Make sure to store the unsubscribe function in a state variable or ref
+        // so that it can be accessed and called later when needed
+        // For example, you can use the 'useState' hook to store the unsubscribe function:
+        // setUnsubscribeFunctions((prevState) => [...prevState, unsubscribe]);
+      } catch (error) {
+        console.log('Error fetching data:', error);
+      }
+    },
+    [chatInfo?.chatId]
+  );
 
   console.log('messages', messages);
+
   useEffect(() => {
     if (chatInfo && !router.pathname.includes('messaging')) {
       fetchChat(chatInfo);
@@ -86,6 +89,14 @@ const useCustomFirebaseHook = () => {
 
     // Clean up the listeners when the component unmounts
   }, [chatInfo, activeChat]);
+
+  const resetValues = useCallback(() => {
+    setMessages([]);
+
+    setMyChatList([]);
+    setActiveChat('');
+    setNewMessage('');
+  }, [chatInfo]);
 
   const getMyChatList = async (senderId) => {
     try {
@@ -139,8 +150,9 @@ const useCustomFirebaseHook = () => {
           let otherUserId = chat[index]?.chatInfo?.participants.filter(
             (id) => id != loggedInUser?.id
           );
-          let user = chat[index]?.chatInfo.userData[otherUserId[0]];
+          let user = chat[index]?.chatInfo.userData;
 
+          console.log('user', user);
           const student = {
             courseId: chatId,
             name: loggedInUser?.firstName,
@@ -151,13 +163,32 @@ const useCustomFirebaseHook = () => {
           const instructor = {
             ...user,
           };
+
+          let users = [];
+          Object.keys(user).map((item) => {
+            users.push(user[item]);
+          });
+          console.log('users0000', users);
+          console.log('loggedinuser', loggedInUser);
+
+          let body = {};
+          if (loggedInUser.userType === 'Student') {
+            body['sender'] = {
+              ...users[1],
+            };
+            body['receiver_user'] = {
+              ...users[0],
+            };
+          } else {
+            body['sender'] = {
+              ...users[0],
+            };
+            body['receiver_user'] = {
+              ...users[1],
+            };
+          }
           setChatInfo({
-            sender: {
-              ...student,
-            },
-            receiver_user: {
-              ...instructor,
-            },
+            ...body,
             course_id: chatId,
           });
 
@@ -165,51 +196,6 @@ const useCustomFirebaseHook = () => {
           setActiveChat(chatId);
         }
       });
-
-      //   mergedSnapshot.docs.forEach(async (chatDoc) => {
-      //     console.log("chat", chatDoc.data());
-
-      //     const messageSubcollectionRef = collection(chatDoc.ref, "messages");
-
-      //     // Query and fetch messages from the subcollection
-      //     const messageSnapshot = await getDocs(messageSubcollectionRef);
-      //     let messages = [];
-      //     messageSnapshot.forEach((messageDoc) => {
-      //       console.log("message", messageDoc.data());
-      //       messages.push(messageDoc.data());
-      //       // Add your logic to process the messages here
-      //     });
-      //     console.log("messages88", messages);
-      //     chat.push({
-      //       chatId: chatDoc.id,
-      //       chatInfo: { ...chatDoc.data() },
-      //       messages,
-      //     });
-      //   });
-      //   console.log("chat list", chat);
-      //   setMyChatList(chat);
-      //   let chatId = chat[0]?.chatId;
-      //   setActiveChat(chatId);
-      // });
-
-      // if (documentSnapshot.exists()) {
-      //   // Document exists
-      //   const documentData = documentSnapshot.data();
-
-      //   setMyChatList(documentData?.chatHistory);
-      //   let chatId = documentData?.chatHistory[0].chatId;
-      //   setActiveChat(chatId);
-
-      //   // Subscribe to real-time updates on the user document
-      //   onSnapshot(documentRef, (doc) => {
-      //     const updatedData = doc.data();
-      //     setMyChatList(updatedData?.chatHistory);
-      //     let chatId = updatedData?.chatHistory[0].chatId;
-      //     setActiveChat(chatId);
-
-      //     // Handle real-time updates here
-      //   });
-      // }
     } catch (err) {
       console.log('Error:', err);
     }
@@ -242,7 +228,7 @@ const useCustomFirebaseHook = () => {
       console.log('Error:', err);
     }
   };
-
+  console.log('chatinfo', chatInfo);
   const sendMessage = async (props) => {
     try {
       console.log('props chat', props);
@@ -258,10 +244,8 @@ const useCustomFirebaseHook = () => {
       //   JSON.stringify("event" + "-" + props?.chatId)
       // );
       const chatDocSnapshot = await getDoc(collectionDocRef);
-      console.log('after snapshot');
-      if (chatDocSnapshot.exists()) {
-        console.log('ift');
 
+      if (chatDocSnapshot.exists()) {
         // Document exists
         const userData = chatDocSnapshot.data();
         await updateDoc(collectionDocRef, {
@@ -425,6 +409,7 @@ const useCustomFirebaseHook = () => {
     activeChat,
     setActiveChat,
     setMessages,
+    resetValues,
   };
 };
 

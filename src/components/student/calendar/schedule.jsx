@@ -62,7 +62,6 @@ const StudentSchedule = (props) => {
     id: loggedInUser?.id,
   };
 
-  console.log('loggesinduser', loggedInUser);
   const openChat = (chatId) => {
     setChatInfo({
       sender: {
@@ -97,82 +96,84 @@ const StudentSchedule = (props) => {
         >
           <table style={{ width: '100%' }}>
             <tbody>
+              {props.schedule.length === 0 && (
+                <tr>
+                  <td className="p-0 m-0 flex-fill fw-bold flex-fill">
+                    No Events Found For This Day
+                  </td>
+                </tr>
+              )}
+              {props.schedule &&
+                props.schedule.map((el) => {
+                  // Define the specific event time as a Date object
+                  var specificEventTime = new Date(el.start);
 
-            
-            {props.schedule.length === 0 && (
-              <tr>
-                <td className="p-0 m-0 flex-fill fw-bold flex-fill">
-                  No Events Found For This Day
-                </td>
-              </tr>
-            )}
-            {props.schedule &&
-              props.schedule.map((el) => {
-                // Define the specific event time as a Date object
-                var specificEventTime = new Date(el.start);
+                  // Get the current time as a Date object
+                  var currentTime = new Date();
 
-                // Get the current time as a Date object
-                var currentTime = new Date();
+                  // Calculate the time difference in milliseconds
+                  var timeDifference = specificEventTime - currentTime;
 
-                // Calculate the time difference in milliseconds
-                var timeDifference = specificEventTime - currentTime;
+                  // Calculate the time difference in minutes
+                  var minutesDifference = Math.floor(
+                    timeDifference / (1000 * 60)
+                  );
+                  var past = specificEventTime <= currentTime;
+                  return (
+                    <tr>
+                      <td className="p-0 m-0 flex-fill fw-bold flex-fill">
+                        {el.instructorName}
+                      </td>
+                      <td className="p-0 m-0 flex-fill fw-bold flex-fill">
+                        {el.start.split(' ')[1]}
+                      </td>
+                      <td className="p-0 m-0 flex-fill fw-bold flex-fill">
+                        {el.courseName +
+                          (el.eventInterview ? ' (INTERVIEW)' : '')}
+                      </td>
+                      <td>
+                        <BsFillChatFill
+                          style={{ fill: 'blue', cursor: 'pointer' }}
+                          className="p-0 m-0 flex-fill h4"
+                          data-bs-toggle="modal"
+                          data-bs-target="#exampleModal2"
+                          onClick={() => setActiveChat(el)}
+                        />
+                      </td>
 
-                // Calculate the time difference in minutes
-                var minutesDifference = Math.floor(
-                  timeDifference / (1000 * 60)
-                );
-                var past = specificEventTime <= currentTime;
-                return (
-                  <tr>
-                    <td className="p-0 m-0 flex-fill fw-bold flex-fill">
-                      {el.instructorName}
-                    </td>
-                    <td className="p-0 m-0 flex-fill fw-bold flex-fill">
-                      {el.start.split(' ')[1]}
-                    </td>
-                    <td className="p-0 m-0 flex-fill fw-bold flex-fill">
-                      {el.courseName +
-                        (el.eventInterview ? ' (INTERVIEW)' : '')}
-                    </td>
-                    <td>
-                      <BsFillChatFill
-                        style={{ fill: 'blue', cursor: 'pointer' }}
-                        className="p-0 m-0 flex-fill h4"
-                        data-bs-toggle="modal"
-                        data-bs-target="#exampleModal2"
-                        onClick={() => setActiveChat(el)}
-                      />
-                    </td>
-
-                    <td>
-                      <GoDeviceCameraVideo
-                        style={{
-                          fill:
-                            minutesDifference >= 10 || past ? 'gray' : 'green',
-                          cursor: 'pointer',
-                        }}
-                        className="p-0 m-0 flex-fill h4 flex-fill"
-                        onClick={() => {
-                          if (minutesDifference >= 10 || past) {
-                            null;
-                          } else {
-                            navigation.push(`/student/video?${el?.courseName}`);
-                          }
-                        }}
-                      />
-                    </td>
-                    <td>
-                      <RiDeleteBin6Line
-                        style={{ cursor: 'pointer' }}
-                        fill="gray"
-                        className="p-0 m-0 h4 flex-fill"
-                        onClick={handleDeleteButtonClick}
-                      />
-                    </td>
-                  </tr>
-                );
-              })}
-              </tbody>
+                      <td>
+                        <GoDeviceCameraVideo
+                          style={{
+                            fill:
+                              minutesDifference >= 10 || past
+                                ? 'gray'
+                                : 'green',
+                            cursor: 'pointer',
+                          }}
+                          className="p-0 m-0 flex-fill h4 flex-fill"
+                          onClick={() => {
+                            if (minutesDifference >= 10 || past) {
+                              null;
+                            } else {
+                              navigation.push(
+                                `/student/video?${el?.courseName}`
+                              );
+                            }
+                          }}
+                        />
+                      </td>
+                      <td>
+                        <RiDeleteBin6Line
+                          style={{ cursor: 'pointer' }}
+                          fill="gray"
+                          className="p-0 m-0 h4 flex-fill"
+                          onClick={handleDeleteButtonClick}
+                        />
+                      </td>
+                    </tr>
+                  );
+                })}
+            </tbody>
           </table>
         </div>
       </div>

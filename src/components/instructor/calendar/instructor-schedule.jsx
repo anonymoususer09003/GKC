@@ -1,15 +1,15 @@
-import { useEffect, useState, useCallback } from "react";
-import styles from "../../../styles/Home.module.css";
-import { BsFillChatFill, BsFillSendFill } from "react-icons/bs";
-import { IconContext } from "react-icons";
-import { GoDeviceCameraVideo } from "react-icons/go";
-import { RiDeleteBin6Line } from "react-icons/ri";
-import { useRouter } from "next/router";
-import moment from "moment";
-import FirebaseChat from "../../../hooks/firebase-chat";
-import axios from "axios";
-import { useSelector } from "react-redux";
-import GetUserByid from "@/services/user/GetUserByid";
+import { useEffect, useState, useCallback, useRef } from 'react';
+import styles from '../../../styles/Home.module.css';
+import { BsFillChatFill, BsFillSendFill } from 'react-icons/bs';
+import { IconContext } from 'react-icons';
+import { GoDeviceCameraVideo } from 'react-icons/go';
+import { RiDeleteBin6Line } from 'react-icons/ri';
+import { useRouter } from 'next/router';
+import moment from 'moment';
+import FirebaseChat from '../../../hooks/firebase-chat';
+import axios from 'axios';
+import { useSelector } from 'react-redux';
+import GetUserByid from '@/services/user/GetUserByid';
 const InstructorSchedule = (props) => {
   const router = useRouter();
   const loggedInUser = useSelector((state) => state.user.userInfo);
@@ -21,12 +21,14 @@ const InstructorSchedule = (props) => {
     setNewMessage,
     newMessage,
     setMessages,
+    resetValues,
   } = FirebaseChat();
   const [student, setStudent] = useState();
+  const [activeChat, setActiveChat] = useState(null);
   const [chat, setChat] = useState([]);
 
   const [enabledCamera, setEnabledCamera] = useState(false);
-  console.log("props", props);
+  console.log('props', props);
   useEffect(() => {
     setChat([...chat, messages]);
   }, [messages]);
@@ -70,85 +72,103 @@ const InstructorSchedule = (props) => {
   //   parentId: 4,
   // };
   const getParticipantsDetail = async (id) => {
-    if( loggedInUser?.id !== undefined){
+    if (loggedInUser?.id !== undefined) {
       try {
         const res = await GetUserByid(loggedInUser?.id);
         setStudent({
           courseId: props?.eventId,
           name: res.data?.fullName,
           id: res.data?.userId,
-          parentId: res.data?.parents?.length > 0 ? res.data.parents[0]?.id : "",
+          parentId:
+            res.data?.parents?.length > 0 ? res.data.parents[0]?.id : '',
         });
-        console.log("res------", res.data);
+        console.log('res------', res.data);
       } catch (err) {
-        console.log("err", err);
+        console.log('err', err);
       }
     }
   };
-  console.log("student", student);
+  console.log('student', student);
   useEffect(() => {
     getParticipantsDetail(props?.studentId);
   }, [props?.eventId]);
 
-  const openChat = useCallback(
-    (chatId) => {
-      setChatInfo({
-        sender: {
-          ...student,
-        },
-        receiver_user: {
-          ...instructor,
-        },
-        chatId,
-      });
-    },
-    [student, loggedInUser]
-  );
-  console.log("logged in user,", loggedInUser);
+  const openChat = (chatId) => {
+    console.log('chatinfo', {
+      sender: {
+        id: activeChat?.studentId,
+        name: activeChat?.studentName,
+      },
+      receiver_user: {
+        id: activeChat?.instructorId,
+        name: activeChat?.instructorName,
+      },
+      chatId,
+    });
+
+    setChatInfo({
+      sender: {
+        id: activeChat?.instructorId,
+        name: activeChat?.instructorName,
+      },
+      receiver_user: {
+        id: activeChat?.studentId,
+        name: activeChat?.studentName,
+      },
+      chatId,
+    });
+  };
+  console.log('activechat', activeChat);
+
+  useEffect(() => {
+    if (activeChat)
+      openChat(activeChat?.instructorId + '-' + activeChat?.studentId);
+  }, [activeChat]);
+  console.log('logged in user,', loggedInUser);
   const handleTextChange = (e) => {
     setNewMessage(e.target.value);
   };
 
-  console.log("message", messages);
-  console.log("props", props.eventId);
   return (
     <>
       <div className="col-12 col-lg-6">
         <h3 className={`text-center ${styles.scheduleHeader}`}>Schedule</h3>
         <div
           className={`shadow p-5 bg-white rounded ${styles.scheduleBox}`}
-          style={{ minHeight: "400px", maxHeight:620, overflow:'scroll', overflowX:'hidden' }}
+          style={{
+            minHeight: '400px',
+            maxHeight: 620,
+            overflow: 'scroll',
+            overflowX: 'hidden',
+          }}
         >
-          <table
-                style={{width:'100%'}}
-          >
+          <table style={{ width: '100%' }}>
             <tbody>
-          {
-            props.schedule.length === 0 &&
-            <tr>
-              <td className="p-0 m-0 flex-fill fw-bold flex-fill">
-                No Events Found For This Day
-              </td>
-            </tr>
-          }
-          {
-            props.schedule && props.schedule.map((el)=>{
-              // Define the specific event time as a Date object
-              var specificEventTime = new Date(el.start);
+              {props.schedule.length === 0 && (
+                <tr>
+                  <td className="p-0 m-0 flex-fill fw-bold flex-fill">
+                    No Events Found For This Day
+                  </td>
+                </tr>
+              )}
+              {props.schedule &&
+                props.schedule.map((el) => {
+                  // Define the specific event time as a Date object
+                  var specificEventTime = new Date(el.start);
 
-              // Get the current time as a Date object
-              var currentTime = new Date();
+                  // Get the current time as a Date object
+                  var currentTime = new Date();
 
-              // Calculate the time difference in milliseconds
-              var timeDifference = specificEventTime - currentTime;
+                  // Calculate the time difference in milliseconds
+                  var timeDifference = specificEventTime - currentTime;
 
-              // Calculate the time difference in minutes
-              var minutesDifference = Math.floor(timeDifference / (1000 * 60));
-              var past = specificEventTime <= currentTime
-              return (
-
-
-                      <tr>
+                  // Calculate the time difference in minutes
+                  var minutesDifference = Math.floor(
+                    timeDifference / (1000 * 60)
+                  );
+                  var past = specificEventTime <= currentTime;
+                  return (
+                    <tr>
                       <td className="p-0 m-0 flex-fill fw-bold flex-fill">
                         {el.studentName}
                       </td>
@@ -156,47 +176,52 @@ const InstructorSchedule = (props) => {
                         {el.start && el.start.split(' ')[1]}
                       </td>
                       <td className="p-0 m-0 flex-fill fw-bold flex-fill">
-                        {el.courseName + (el.eventInterview ? ' (INTERVIEW)': '')}
+                        {el.courseName +
+                          (el.eventInterview ? ' (INTERVIEW)' : '')}
                       </td>
-                        <td>
+                      <td>
                         <BsFillChatFill
-                          style={{fill:'blue', cursor:'pointer'}}
+                          style={{ fill: 'blue', cursor: 'pointer' }}
                           className="p-0 m-0 flex-fill h4"
                           data-bs-toggle="modal"
                           data-bs-target="#exampleModal2"
+                          onClick={() => setActiveChat(el)}
                         />
-                        </td>
-      
-                        <td>
-                          <GoDeviceCameraVideo
-                            style={{fill: minutesDifference >= 10 || past ? 'gray' : 'green', cursor:'pointer'}}
+                      </td>
 
-                            className="p-0 m-0 flex-fill h4 flex-fill"
-                            onClick={() =>
-                              {
-                                if(minutesDifference >= 10 || past){
-                                  null
-                                }else{
-                                  navigation.push(`/student/video?${el?.courseName}`)
-                                }
-                              }
+                      <td>
+                        <GoDeviceCameraVideo
+                          style={{
+                            fill:
+                              minutesDifference >= 10 || past
+                                ? 'gray'
+                                : 'green',
+                            cursor: 'pointer',
+                          }}
+                          className="p-0 m-0 flex-fill h4 flex-fill"
+                          onClick={() => {
+                            if (minutesDifference >= 10 || past) {
+                              null;
+                            } else {
+                              navigation.push(
+                                `/student/video?${el?.courseName}`
+                              );
                             }
-                          />
-                        </td>
-                        <td>
+                          }}
+                        />
+                      </td>
+                      <td>
                         <RiDeleteBin6Line
-                        style={{cursor:'pointer'}}
+                          style={{ cursor: 'pointer' }}
                           fill="gray"
                           className="p-0 m-0 h4 flex-fill"
                           onClick={handleDeleteButtonClick}
                         />
-                        </td>
-
-                      </tr>
-              )
-            })
-          }
-          </tbody>
+                      </td>
+                    </tr>
+                  );
+                })}
+            </tbody>
           </table>
         </div>
       </div>
@@ -217,7 +242,7 @@ const InstructorSchedule = (props) => {
                 <h5 className="modal-title" id="exampleModal2Label"></h5>
                 <button
                   onClick={() => {
-                    setMessages([]);
+                    resetValues();
                   }}
                   type="button"
                   className="btn-close"
@@ -233,7 +258,7 @@ const InstructorSchedule = (props) => {
                       <div
                         key={index}
                         className={`py-1 ${
-                          item?.user?.id == parent?.id ? 'text-end' : ''
+                          item?.user?.id == loggedInUser?.id ? 'text-end' : ''
                         }`}
                       >
                         <p className="p-0 m-0 fw-bold">{item.message}</p>
@@ -258,7 +283,13 @@ const InstructorSchedule = (props) => {
                   />{' '}
                   <BsFillSendFill
                     onClick={() =>
-                      sendMessage({ type: 'instructor', chatId: props.eventId })
+                      sendMessage({
+                        type: 'instructor',
+                        chatId:
+                          activeChat?.instructorId +
+                          '-' +
+                          activeChat?.studentId,
+                      })
                     }
                     className="h3 p-0 m-0"
                   />

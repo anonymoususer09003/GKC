@@ -1,29 +1,31 @@
-import React, { useEffect } from "react";
-import Head from "next/head";
-import { TutorNavbar, Footer } from "../../../components";
-import { BsFillSendFill } from "react-icons/bs";
-import firebaseChatHook from "../../../hooks/firebase-chat";
-import moment from "moment";
-import { withRole } from "../../../utils/withAuthorization";
-import { useSelector } from "react-redux";
-import { fetchUser } from "@/store/actions/userActions";
-import { useDispatch } from "react-redux";
+import React, { useEffect } from 'react';
+import Head from 'next/head';
+import { TutorNavbar, Footer } from '../../../components';
+import { BsFillSendFill } from 'react-icons/bs';
+import firebaseChatHook from '../../../hooks/firebase-chat';
+import moment from 'moment';
+import { withRole } from '../../../utils/withAuthorization';
+import { useSelector } from 'react-redux';
+import { fetchUser } from '@/store/actions/userActions';
+import { useDispatch } from 'react-redux';
 import { useRouter } from 'next/router';
 
 function InstructorMessaging() {
-
   const {
     sendMessage,
     messages,
     getMyChatList,
     myChatList,
     setActiveChat,
+    chatInfo,
     activeChat,
     setNewMessage,
     newMessage,
     setChatInfo,
     setMessages,
+    resetValues,
   } = firebaseChatHook();
+
   const loggedInUser = useSelector((state) => state.user?.userInfo);
   const dispatch = useDispatch();
 
@@ -33,7 +35,7 @@ function InstructorMessaging() {
 
   useEffect(() => {
     if (loggedInUser) {
-      console.log("loggedinuser", loggedInUser);
+      console.log('loggedinuser', loggedInUser);
       getMyChatList(loggedInUser?.id || 51);
     }
   }, [loggedInUser]);
@@ -48,7 +50,10 @@ function InstructorMessaging() {
         <title>Instructor Messaging</title>
         <meta name="description" content="Where kids learn to code" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="https://gkc-images.s3.amazonaws.com/favicon.ico" />
+        <link
+          rel="icon"
+          href="https://gkc-images.s3.amazonaws.com/favicon.ico"
+        />
       </Head>
       <TutorNavbar isLogin={true} />
       <main className="container">
@@ -56,9 +61,9 @@ function InstructorMessaging() {
         <br />
         <br />
 
-        <div className="row" style={{ minHeight: "90vh" }}>
+        <div className="row" style={{ minHeight: '90vh' }}>
           <div className="col-12 col-lg-3">
-            <ul className="p-0 m-0" style={{ listStyle: "none" }}>
+            <ul className="p-0 m-0" style={{ listStyle: 'none' }}>
               {myChatList?.map((item, index) => {
                 let otherUserId = item.chatInfo.participants.filter(
                   (id) => id != loggedInUser?.id
@@ -89,24 +94,24 @@ function InstructorMessaging() {
           <div className="col-12 col-lg-9">
             <div
               className=" border d-flex flex-column justify-content-between p-3 rounded"
-              style={{ height: "600px" }}
+              style={{ height: '600px' }}
             >
-              <div className=" p-3" style={{ minHeight: "400px" }}>
+              <div className=" p-3" style={{ minHeight: '400px' }}>
                 {messages.map((item, index) => {
                   let date = item.timestamp.seconds * 1000;
                   return (
                     <div
                       key={index}
                       className={`py-1 ${
-                        item?.user?.id == loggedInUser?.id ? "text-end" : ""
+                        item?.user?.id == loggedInUser?.id ? 'text-end' : ''
                       }`}
                     >
                       <p className="p-0 m-0 fw-bold">{item.message}</p>
                       <small className="p-0 m-0">
                         {`${item?.user?.name}  ${moment(date).format(
-                          "DD/MM/YY"
-                        )}`}{" "}
-                        {moment(date).format("hh:mm a")}
+                          'DD/MM/YY'
+                        )}`}{' '}
+                        {moment(date).format('hh:mm a')}
                       </small>
                     </div>
                   );
@@ -120,9 +125,9 @@ function InstructorMessaging() {
                   type="text"
                   placeholde=""
                   className="border  p-2 rounded flex-fill"
-                />{" "}
+                />{' '}
                 <BsFillSendFill
-                  onClick={() => sendMessage({ chatId: parseInt(activeChat) })}
+                  onClick={() => sendMessage({ chatId: chatInfo?.course_id })}
                   className="h3 p-0 m-0"
                 />
               </div>
@@ -135,4 +140,4 @@ function InstructorMessaging() {
   );
 }
 
-export default withRole(InstructorMessaging, ["Instructor"]);
+export default withRole(InstructorMessaging, ['Instructor']);
