@@ -217,7 +217,7 @@ function ParentLandingPage() {
         {goScheduleFromSignIn ? (
         <div style={{position:'fixed', zIndex: 1, left:0,top:0, width:'100%', height:'100%',overflow:'auto', background: 'rgba(0, 0, 0, 0.4)'}}>
           <div style={{background: 'white', margin: '500px auto', padding:20,width:'380px'}}>
-            <p style={{width: 350, margin: 'auto', textAlign:'center', fontSize:18}}>We noticed that you attempted to schedule a class. Would you like to go back to the page where you were?</p>
+            <p style={{width: 350, margin: 'auto', textAlign:'center', fontSize:18}}>We noticed that you attempted to schedule a class. Would you like to continue?</p>
             <div
             style={{display:'flex', gap:10, justifyContent:'center'}}>
             <button 
