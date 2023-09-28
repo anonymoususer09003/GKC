@@ -159,7 +159,7 @@ const Tutorcard = ({ data, key }) => {
           {data?.video && (
             <div
               className="d-flex justify-conntent-between align-items-end"
-              style={{ position: 'relative', left: 160, top: 10 }}
+              style={{ position: 'relative', left: 160, top: 10, width: 40 }}
             >
               <div
                 onClick={() => {
