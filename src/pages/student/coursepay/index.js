@@ -78,7 +78,6 @@ function StudentRegistrationCCPay() {
   };
 
   const sendEmailToWhoPays = async () => {
-
     try {
       const ress = await apiClient.get(`user/details/?userEmail=${whoPaysId}`)
       const res = await SendEmailToParents({
@@ -96,11 +95,6 @@ function StudentRegistrationCCPay() {
     }
     finally{
       try{
-        const responce = await apiClient.post('/stripe/one-time-payment-intent',{
-          instructorId: instructorId,
-          durationInHours: durationInHours
-        })
-        console.log(responce)
         setSuccess(true)
       } catch(err){
         setErr('You have signed wrong data.')
