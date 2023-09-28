@@ -30,8 +30,7 @@ function EditCalandar({ loading, error, fetchUser }) {
   const [err, setErr] = useState('')
   // const [dates, setDates] = useState([])
   const [weekDays, setWeekDays] = useState([])// {available, startTime, endTime, dayOfTheWeek}
-  const [ifChoseAnotherWeek, setIfChoseAnotherWeek] = useState(false)
-  const [ifChoseAnotherWeek1, setIfChoseAnotherWeek1] = useState(false)
+
   const [undo, setUndo] = useState(true)
   const weekDay = [];
   const disabledDates = []
@@ -234,7 +233,6 @@ function EditCalandar({ loading, error, fetchUser }) {
 
       disabledDates.push(new Date(clickedDate).toLocaleDateString('en-US', {timezone: timezone}))
 
-      // setDD([...disabledDates, ])
        console.log(disabledDates)
   };
 
@@ -306,10 +304,12 @@ function EditCalandar({ loading, error, fetchUser }) {
       const day = (parseInt(new Date(el).toISOString().slice(8, 10)) + 1)
       .toString()
       .padStart(2, "0");
+      
 
-      const modifiedClickedDate = `${year}-${month}-${day}`;
+      const modifiedClickedDate = `${year}-${day === 32 ? month+1 : month}-${day === 32 ? day-31 : day}`;
       dates.push(modifiedClickedDate)
   })
+  setDD(dd.concat(dates))
   let requestDates = []
   dates.forEach((el)=>{
     requestDates.push(
@@ -405,14 +405,13 @@ function EditCalandar({ loading, error, fetchUser }) {
         console.log(responce.data)
         responce.data.forEach((el)=>{
           let time = el.start;
-          disabledDates.push(new Date(time))
+          disabledDates.push(time)
         })
       setDD(disabledDates)
       console.log(disabledDates) 
       }catch (err) {
         console.log(err)
       }
-
 
     }
     fetchUnavailableDates()
@@ -484,7 +483,8 @@ function EditCalandar({ loading, error, fetchUser }) {
 
                       return new Date(date).getFullYear() === new Date(disabledDate).getFullYear() &&
                       new Date(date).getMonth() === new Date(disabledDate).getMonth() &&
-                      new Date(date).getDate() === new Date(disabledDate).getDate()}
+                      new Date(date).getDate() === new Date(disabledDate).getDate()
+                      }
                       ) : () => false}
                   /> :
                   <Calendar
@@ -498,7 +498,8 @@ function EditCalandar({ loading, error, fetchUser }) {
                       { 
                       return new Date(date).getFullYear() === new Date(disabledDate).getFullYear() &&
                       new Date(date).getMonth() === new Date(disabledDate).getMonth() &&
-                      new Date(date).getDate() === new Date(disabledDate).getDate()}
+                      new Date(date).getDate() === new Date(disabledDate).getDate()
+                      }
                       ) : () => false}
                   />
                 }
