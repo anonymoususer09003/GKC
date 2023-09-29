@@ -220,20 +220,35 @@ function EditCalandar({ loading, error, fetchUser }) {
   // }
   //calendar
   const handleDateChange = (clickedDate) => {
-    console.log(clickedDate)
-    // console.log(disabledDates)
 
-      //  const year = clickedDate.toISOString().slice(0, 4);
-      //  const month = clickedDate.toISOString().slice(5, 7);
-      //  const day = (parseInt(clickedDate.toISOString().slice(8, 10)) + 1)
-      //  .toString()
-      //  .padStart(2, "0");
+    const year = clickedDate.getFullYear();
+    const month = (parseInt(clickedDate.getMonth()+1))// we use +1 because array starts from 0. Which is why january starts from 0.
+    .toString()
+    .padStart(2, "0");
+    const day = (parseInt(clickedDate.getDate()))
+    .toString()
+    .padStart(2, "0");
+   //  console.log(`${year}-${month}-${day}T00:00:00`)
+    disabledDates.push(`${year}-${month}-${day}T00:00:00`)
+    console.log(disabledDates)
+ 
 
-      //  const modifiedClickedDate = `${year}-${month}-${day}`;
+    // let date = clickedDate.toJSON().slice(0,16)
+    // console.log('clidcked date',date)
+    // // console.log(disabledDates)
 
-      disabledDates.push(new Date(clickedDate).toLocaleDateString('en-US', {timezone: timezone}))
+    //   //  const year = clickedDate.toISOString().slice(0, 4);
+    //   //  const month = clickedDate.toISOString().slice(5, 7);
+    //   //  const day = (parseInt(clickedDate.toISOString().slice(8, 10)) + 1)
+    //   //  .toString()
+    //   //  .padStart(2, "0");
 
-       console.log(disabledDates)
+    //   //  const modifiedClickedDate = `${year}-${month}-${day}`;
+    //   let actualDay = new Date(date).toJSON()
+    //   console.log('ad', actualDay)
+    //   disabledDates.push(actualDay.slice(0, 19))
+
+    //   console.log(disabledDates)
   };
 
 
@@ -298,17 +313,10 @@ function EditCalandar({ loading, error, fetchUser }) {
   setUnavailableSuccess(true)
   let dates = []
   disabledDates.forEach((el)=>{
-    
-      const year = new Date(el).toISOString().slice(0, 4);
-      const month = new Date(el).toISOString().slice(5, 7);
-      const day = (parseInt(new Date(el).toISOString().slice(8, 10)) + 1)
-      .toString()
-      .padStart(2, "0");
-      
-
-      const modifiedClickedDate = `${year}-${day === 32 ? month+1 : month}-${day === 32 ? day-31 : day}`;
+      const modifiedClickedDate = el.slice(0,10);
       dates.push(modifiedClickedDate)
   })
+  console.log(dates)
   setDD(dd.concat(dates))
   let requestDates = []
   dates.forEach((el)=>{
@@ -339,7 +347,7 @@ function EditCalandar({ loading, error, fetchUser }) {
   })
   weekDay = weekDays;
   try {
-    const res = await apiClient.post("/instructor/week-schedule", weekDay);
+    const res = await apiClient.post("/instructor/week-schedule", weekDay)
     console.log(res)
   }
 
@@ -350,7 +358,18 @@ function EditCalandar({ loading, error, fetchUser }) {
  }
 
  const handleDisabledTile = (value, event) => {
-    console.log(value)
+       const year = value.getFullYear();
+       const month = (parseInt(value.getMonth()+1))// we use +1 because array starts from 0. Which is why january starts from 0.
+       .toString()
+       .padStart(2, "0");
+       const day = (parseInt(value.getDate()))
+       .toString()
+       .padStart(2, "0");
+      //  console.log(`${year}-${month}-${day}T00:00:00`)
+       disabledDates.push(`${year}-${month}-${day}T00:00:00`)
+       console.log(disabledDates)
+    
+    console.log('solution?',month)
  }
 
  const iCalendar = async () => {
@@ -472,12 +491,7 @@ function EditCalandar({ loading, error, fetchUser }) {
                 {
                   undo ?
                   <Calendar
-                  // style={calendarStyles}
                     onChange={handleDateChange}
-                    // onClickDay={}
-                    value={selectedDate}
-                    // selectRange={true}
-                    onClickDay={handleDisabledTile}
                     tileDisabled={dd.length !== 0 ? ({date, view})=> view === 'month' && dd.concat(disabledDates).some(disabledDate =>
                       { 
 
@@ -488,12 +502,7 @@ function EditCalandar({ loading, error, fetchUser }) {
                       ) : () => false}
                   /> :
                   <Calendar
-                  // style={calendarStyles}
                     onChange={handleDateChange}
-                    // onClickDay={}
-                    value={selectedDate}
-                    // selectRange={true}
-                    onClickDay={handleDisabledTile}
                     tileDisabled={dd.length !== 0 ? ({date, view})=> view === 'month' && dd.concat(disabledDates).some(disabledDate =>
                       { 
                       return new Date(date).getFullYear() === new Date(disabledDate).getFullYear() &&

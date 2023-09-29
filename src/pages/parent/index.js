@@ -223,8 +223,9 @@ function ParentLandingPage() {
             style={{display:'flex', gap:10, justifyContent:'center'}}>
             <button 
             onClick={()=>{
-              window.localStorage.removeItem('goScheduleFromSignIn');
-              nav.push(`/parent/scheduleclass/${
+              nav.push(`/${
+                JSON.parse(window.localStorage.getItem('gkcAuth')).role.toLowerCase()
+              }/scheduleclass/${
                 JSON.parse(window.localStorage.getItem('goScheduleFromSignIn'))
               }`)
             }}

@@ -14,7 +14,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
 import GetUnConfirmedEventById from '@/services/events/GetUnConfirmedEventById';
 import Modal from '@/components/parent/modal/Modal';
-function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
+function ParentScheduleClass({ userInfo, loading, error }) {
   const router = useRouter();
   console.log(router);
   console.log('uuuser', userInfo);
@@ -105,9 +105,6 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
       setPaymentSubmit(false)
     } ;
   }, [eventId]);
-  useEffect(() => {
-    fetchUser();
-  }, []);
 
   useEffect(() => {
     const getUnavailableDate = async () => {
@@ -204,14 +201,17 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
     if (instructorId) run();
 
     if (typeof window !== 'undefined') {
-      window.localStorage.setItem(
-        'goBackSchedule',
-        JSON.stringify({ event: eventId, id: instructorId })
-      );
-      if (
-        JSON.parse(window.localStorage.getItem('gkcAuth'))?.role === undefined
-      ) {
-        setIfSignedUser(true);
+      window.localStorage.removeItem('goScheduleFromSignIn');
+      if(eventId !== undefined){
+        window.localStorage.setItem(
+          'goBackSchedule',
+          JSON.stringify({ event: eventId, id: instructorId })
+        );
+        if (
+          JSON.parse(window.localStorage.getItem('gkcAuth'))?.role === undefined
+        ) {
+          setIfSignedUser(true);
+        }
       }
     }
   }, [instructorId]);
@@ -580,7 +580,6 @@ function ParentScheduleClass({ userInfo, loading, error, fetchUser }) {
             )}
             <Calendar
               onChange={handleDateChange}
-              value={selectedDate}
               tileClassName={tileClassName}
               // tileDisabled={unavailableDates.length >1 ? ({date, view})=> view === 'month' && unavailableDates.some(disabledDate =>
               //   new Date(date).getFullYear() === new Date(disabledDate).getFullYear() &&

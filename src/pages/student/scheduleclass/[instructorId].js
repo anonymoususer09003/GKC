@@ -227,6 +227,9 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
 
   useEffect(() => {
     getCourses();
+    if(typeof window !== 'undefined'){
+      window.localStorage.removeItem('goScheduleFromSignIn');
+    }
   }, []);
 
   const handleSlotClick = (slot) => {
@@ -313,7 +316,6 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
               >Calendar for {selectedInstructor?.firstName} {selectedInstructor?.lastName}</h3>
             }
             <Calendar
-              value={selectedDate}
               onChange={handleDateChange}
               tileClassName={tileClassName}
               // tileDisabled={unavailableDates.length >1 ? ({date, view})=> view === 'month' && 
