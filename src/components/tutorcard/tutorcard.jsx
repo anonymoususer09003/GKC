@@ -348,7 +348,7 @@ const Tutorcard = ({ data, key }) => {
           </div>
         </div>
       )}
-      {console.log('showchat', showChat)}
+
       {showChat && (
         <ChatModal
           student={activeStudent}

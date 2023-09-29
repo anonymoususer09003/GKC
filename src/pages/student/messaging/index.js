@@ -75,11 +75,13 @@ function StudentMessaging() {
                     onClick={() => {
                       if (item?.chatId != activeChat) {
                         setActiveChat(item.chatId);
-                        let filterchat = myChatList?.filter(
-                          (chat) => chat.chatId === item.chatId
-                        );
 
-                        setMessages(filterchat[0]?.messages);
+                        fetchChat({ chatId: item?.chatId });
+                        // let filterchat = myChatList?.filter(
+                        //   (chat) => chat.chatId === item.chatId
+                        // );
+
+                        // setMessages(filterchat[0]?.messages);
                       }
                     }}
                     key={index}
@@ -97,7 +99,10 @@ function StudentMessaging() {
               className=" border d-flex flex-column justify-content-between p-3 rounded"
               style={{ height: '600px' }}
             >
-              <div className=" p-3" style={{ minHeight: '400px' }}>
+              <div
+                className=" p-3"
+                style={{ minHeight: '400px', overflow: 'scroll' }}
+              >
                 {messages?.map((item, index) => {
                   let date = item.timestamp.seconds * 1000;
                   return (
