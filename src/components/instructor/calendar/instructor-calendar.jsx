@@ -138,7 +138,7 @@ function InstructorCalendar() {
             events.push(event);
             dates.push(event.DTSTART);
           });
-          setEvents(events);
+          
         }
       } catch (error) {
         console.log('Error fetching iCalendar data:', error);

@@ -345,10 +345,12 @@ function StudentRegistrationCCPay() {
                       if(whoPaysId !== 'Select'){
                         console.log('parents')
                         sendEmailToWhoPays()
+                        setErr('✅ You successfully bought class.')
                       } else{
                         if(savedCCSelected){
                           console.log('saved cc')
                           scheduleSaved()
+                          setErr('✅ You successfully bought class.')
                         }else{
                           if(isCardValid) {
                               console.log('do save valid unsaved cc')
@@ -360,9 +362,9 @@ function StudentRegistrationCCPay() {
                           }
                         }
                       }
-                      // whoPaysId === "Select"
-                      //   ? setConfirmPayment(true)
-                      //   : sendEmailToWhoPays();
+                      setTimeout(() => {
+                        navigation.push('/student/calandar')
+                      }, 3000)
                     }}
                   >
                     Pay
