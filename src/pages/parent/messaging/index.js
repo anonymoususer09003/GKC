@@ -67,7 +67,12 @@ function ParentMessaging() {
                   (id) => id != loggedInUser?.id
                 );
                 let user = item.chatInfo.userData[otherUserId[0]];
-
+                let chatName = '';
+                Object?.keys(item?.chatInfo?.userData).map((key) => {
+                  chatName = chatName
+                    ? chatName + '-' + item.chatInfo.userData[key].name
+                    : item.chatInfo.userData[key].name;
+                });
                 return (
                   <li
                     onClick={() => {
@@ -84,7 +89,7 @@ function ParentMessaging() {
                     key={index}
                     className="p-0 m-0 fw-bold bg-light p-3 my-3 rounded "
                   >
-                    {user?.name}
+                    {chatName}
                   </li>
                 );
               })}

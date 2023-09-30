@@ -5,6 +5,7 @@ import {
   BsCheck2Circle,
   BsFillCameraVideoFill,
   BsFillChatFill,
+  BsFillSendFill,
 } from 'react-icons/bs';
 import { BiMessageAlt } from 'react-icons/bi';
 import { FaFileVideo } from 'react-icons/fa';
@@ -13,8 +14,19 @@ import { useRouter } from 'next/router';
 import { apiClient } from '../../api/client';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchUser } from '@/store/actions/userActions';
+import moment from 'moment';
+import FirebaseChat from '../../hooks/firebase-chat';
 import ChatModal from '../chat';
 const Tutorcard = ({ data, key }) => {
+  const {
+    sendMessage,
+    messages,
+    setChatInfo,
+    setNewMessage,
+    newMessage,
+    setMessages,
+    resetValues,
+  } = FirebaseChat();
   const navigation = useRouter();
   const dispatch = useDispatch();
   const loggedInUser = useSelector((state) => state.user?.userInfo);
@@ -28,6 +40,8 @@ const Tutorcard = ({ data, key }) => {
   const [activeStudent, setActiveStudent] = useState(0);
   const [activeInstructor, setActiveInstructor] = useState(0);
   const [showChat, setShowChat] = useState(false);
+  const [activeChat, setActiveChat] = useState(null);
+
   let string =
     'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.';
 
@@ -40,7 +54,10 @@ const Tutorcard = ({ data, key }) => {
         typeof window !== 'undefined' &&
         window.localStorage.getItem('gkcAuth') == null
       ) {
-        window.localStorage.setItem('goScheduleFromSignIn', JSON.stringify(data.id));
+        window.localStorage.setItem(
+          'goScheduleFromSignIn',
+          JSON.stringify(data.id)
+        );
         navigation.push('/auth/signin');
       } else {
         navigation.push(
@@ -54,7 +71,10 @@ const Tutorcard = ({ data, key }) => {
         typeof window !== 'undefined' &&
         window.localStorage.getItem('gkcAuth') == null
       ) {
-        window.localStorage.setItem('goScheduleFromSignIn', JSON.stringify(data.id));
+        window.localStorage.setItem(
+          'goScheduleFromSignIn',
+          JSON.stringify(data.id)
+        );
         navigation.push('/auth/signin');
       } else {
         navigation.push(
@@ -88,6 +108,30 @@ const Tutorcard = ({ data, key }) => {
   useEffect(() => {
     dispatch(fetchUser());
   }, []);
+
+  const openChat = (chatId) => {
+    setChatInfo({
+      sender: {
+        id: activeChat?.instructorId,
+        name: activeChat?.instructorName,
+      },
+      receiver_user: {
+        id: activeChat?.studentId,
+        name: activeChat?.studentName,
+      },
+      chatId,
+    });
+  };
+  console.log('activechat', activeChat);
+
+  useEffect(() => {
+    if (activeChat)
+      openChat(activeChat?.instructorId + '-' + activeChat?.studentId);
+  }, [activeChat]);
+  console.log('logged in user,', loggedInUser);
+  const handleTextChange = (e) => {
+    setNewMessage(e.target.value);
+  };
 
   return (
     <>
@@ -305,7 +349,7 @@ const Tutorcard = ({ data, key }) => {
           </div>
         </div>
       </div>
-      {console.log('loggedin user', loggedInUser)}
+
       {showChildrenListModel && (
         <div className="d-flex justify-content-center align-items-center">
           <div className="modal" tabIndex="-1" role="dialog">
@@ -313,11 +357,24 @@ const Tutorcard = ({ data, key }) => {
               className="modal-dialog modal-dialog-centered modal-lg"
               role="document"
             >
-              <div className="modal-content p-2">
-                <div className="d-flex justify-content-between">
-                  <h5 className="modal-title" id="exampleModalLabel"></h5>
-                  <button
-                    type="button"
+              <div className="modal-content p-2" style={{ borderRadius: 20 }}>
+                <div className="d-flex justify-content-between ">
+                  <p
+                    style={{
+                      textAlign: 'center',
+                      color: '#5A5A5A',
+                      fontWeight: 'bold',
+                      width: '100%',
+                    }}
+                    className="modal-title"
+                    id="exampleModalLabel"
+                  >
+                    {' '}
+                    You are contacting tutor on behalf of:
+                  </p>
+
+                  <img
+                    src="https://cdn-icons-png.flaticon.com/128/5368/5368396.png"
                     style={{
                       background:
                         'https://cdn-icons-png.flaticon.com/128/5368/5368396.png',
@@ -325,7 +382,7 @@ const Tutorcard = ({ data, key }) => {
                     onClick={() => {
                       setShowChildrenListModel(true);
                     }}
-                  ></button>
+                  />
                 </div>
                 <div className="modal-body">
                   {loggedInUser?.dependents?.map((item) => {
@@ -335,8 +392,26 @@ const Tutorcard = ({ data, key }) => {
                           setActiveStudent(item);
                           setShowChildrenListModel(false);
                           setShowChat(true);
+                          setActiveChat({
+                            instructorId: activeInstructor?.id,
+                            instructorName:
+                              activeInstructor?.firstName +
+                              ' ' +
+                              activeInstructor?.lastName,
+                            studentId: item?.id,
+                            studentName: item?.firstName + ' ' + item?.lastName,
+                          });
                         }}
-                        className="my-2 p-0 p-md-3 small tw-line-clamp-1 tw-truncate"
+                        style={{
+                          padding: '10px',
+                          // paddingBottom: '10px',
+                          width: '100%',
+
+                          border: '3px solid #f48343',
+                          borderRadius: 10,
+                          color: '#5A5A5A',
+                          cursor: 'pointer',
+                        }}
                       >
                         {item?.firstName + ' ' + item?.lastName}
                       </p>
@@ -349,16 +424,6 @@ const Tutorcard = ({ data, key }) => {
         </div>
       )}
 
-      {showChat && (
-        <ChatModal
-          student={activeStudent}
-          instructor={activeInstructor}
-          onClose={() => {
-            setActiveStudent('');
-            setActiveInstructor('');
-          }}
-        />
-      )}
       {showModal && (
         <div className="d-flex justify-content-center align-items-center">
           <div className="modal" tabIndex="-1" role="dialog">
@@ -581,7 +646,8 @@ const Tutorcard = ({ data, key }) => {
                                   </div>
                                   <p className="m-0 p-0">
                                     Stars{' '}
-                                    {reviewver?.totalRating?.toFixed(2) ?? 0}/5
+                                    {reviewver?.totalRating?.toFixed(2) ?? 0}
+                                    /5
                                   </p>
                                 </div>
                               </div>
@@ -630,27 +696,92 @@ const Tutorcard = ({ data, key }) => {
         </div>
       )}
 
-      <div tabIndex="-1" role="dialog">
-        <div className="modal-dialog modal-dialog-centered modal-lg">
-          <div className="modal-content p-2">
-            <div className="d-flex justify-content-between">
-              <h5 className="modal-title" id="exampleModal2Label"></h5>
-              <button
-                onClick={() => {
-                  props.onClose();
-                  setShowModal(false); // Close the modal when the close button is clicked
-                }}
-                type="button"
-                className="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              ></button>
+      {showChat && (
+        <div className="d-flex justify-content-center align-items-center">
+          <div className="modal " tabIndex="-1" role="dialog">
+            <div className="modal-dialog modal-dialog-centered modal-lg ">
+              <div className="modal-content p-2 " style={{ left: '50%' }}>
+                <div className="d-flex justify-content-between">
+                  <h5 className="modal-title" id="exampleModal2Label"></h5>
+                  <img
+                    src="https://cdn-icons-png.flaticon.com/128/5368/5368396.png"
+                    style={{
+                      width: '30px', // Set the width of the button as needed
+                      height: '30px',
+                      cursor: 'pointer',
+                    }}
+                    onClick={() => {
+                      setMessages([]);
+                      setShowChat(false);
+                    }}
+                  />
+                </div>
+                <div className="modal-body">
+                  <div
+                    className=" p-3"
+                    style={{
+                      height: '400px',
+                      width: '700px',
+                      overflow: 'scroll',
+                    }}
+                  >
+                    {messages.map((item, index) => {
+                      let date = item.timestamp.seconds * 1000;
+                      return (
+                        <div
+                          key={index}
+                          className={`py-1 ${
+                            item?.user?.id == loggedInUser?.id ? 'text-end' : ''
+                          }`}
+                        >
+                          <p className="p-0 m-0 fw-bold">{item.message}</p>
+                          <small className="p-0 m-0">
+                            {`${item?.user?.name}  ${moment(date).format(
+                              'd/MM/YY'
+                            )}`}{' '}
+                            {moment(date).format('hh:mm a')}
+                          </small>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  <div className=" d-flex align-items-center px-2 gap-2">
+                    <input
+                      autoFocus={true}
+                      value={newMessage}
+                      onChange={handleTextChange}
+                      type="text"
+                      placeholde=""
+                      className="border  p-2 rounded flex-fill"
+                    />{' '}
+                    <BsFillSendFill
+                      onClick={() =>
+                        sendMessage({
+                          type: 'parent',
+                          chatId:
+                            activeChat?.instructorId +
+                            '-' +
+                            activeChat?.studentId,
+                          parentInfo: {
+                            id: loggedInUser?.id,
+                            name:
+                              loggedInUser?.firstName +
+                              ' ' +
+                              loggedInUser?.lastName,
+                          },
+                        })
+                      }
+                      className="h3 p-0 m-0"
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
             <div className="modal-body">{/* Modal content here */}</div>
           </div>
         </div>
-      </div>
-
+      )}
       <style jsx>{`
         .modal {
           position: fixed;

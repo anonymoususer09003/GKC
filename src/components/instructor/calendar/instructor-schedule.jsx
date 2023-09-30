@@ -94,18 +94,6 @@ const InstructorSchedule = (props) => {
   }, [props?.eventId]);
 
   const openChat = (chatId) => {
-    console.log('chatinfo', {
-      sender: {
-        id: activeChat?.studentId,
-        name: activeChat?.studentName,
-      },
-      receiver_user: {
-        id: activeChat?.instructorId,
-        name: activeChat?.instructorName,
-      },
-      chatId,
-    });
-
     setChatInfo({
       sender: {
         id: activeChat?.instructorId,

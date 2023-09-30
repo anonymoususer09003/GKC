@@ -111,7 +111,7 @@ const useCustomFirebaseHook = () => {
     setActiveChat('');
     setNewMessage('');
   }, [chatInfo]);
-
+  console.log('mychatlist', myChatList);
   const getMyChatList = async (senderId) => {
     try {
       const chatCollectionRef = collection(firestore, 'chat');
