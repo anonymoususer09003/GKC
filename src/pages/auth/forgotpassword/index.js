@@ -1,26 +1,23 @@
-import React, { useState } from "react";
-import Head from "next/head";
-import Image from "next/image";
-import Link from "next/link";
-import { Footer } from "../../../components";
-import { RiArrowGoBackLine } from "react-icons/ri";
-import axios from "axios";
-import { useRouter } from "next/router";
-
+import React, { useState } from 'react';
+import Head from 'next/head';
+import Image from 'next/image';
+import Link from 'next/link';
+import { Footer } from '../../../components';
+import { RiArrowGoBackLine } from 'react-icons/ri';
+import axios from 'axios';
+import { useRouter } from 'next/router';
+import { apiClient } from '@/api/client';
 export default function ForgotPassword() {
   const navigation = useRouter();
 
-  const [email, setEmail] = useState("");
-  const [code, setCode] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("")
+  const [email, setEmail] = useState('');
+  const [code, setCode] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [isSent, setIsSent] = useState(false);
-  const [err, setErr] = useState('')
+  const [err, setErr] = useState('');
 
-  let isValid =
-  password == '' && confirmPassword == ''
-    ? true
-    : false
+  let isValid = password == '' && confirmPassword == '' ? true : false;
 
   const isEmailValid = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(
     email
@@ -28,9 +25,7 @@ export default function ForgotPassword() {
 
   const handleSubmit = async () => {
     try {
-      const response = await axios.get(
-        `https://staging-api.geekkidscode.com/auth/code?email=${email}`
-      );
+      const response = await apiClient.get(`/auth/code?email=${email}`);
       console.log(response);
       setIsSent(true);
     } catch (error) {
@@ -39,28 +34,25 @@ export default function ForgotPassword() {
   };
 
   const changePassword = async () => {
-    if(password === confirmPassword) {
+    if (password === confirmPassword) {
       try {
-        const response = await axios.post(
-          `https://staging-api.geekkidscode.com/user/forgot-password`,
-          {
-            email: email,
-            password: password,
-            code: code,
-          }
-        );
+        const response = await apiClient.post(`/user/forgot-password`, {
+          email: email,
+          password: password,
+          code: code,
+        });
         console.log(response);
-  
-        navigation.push("/auth/signin");
+
+        navigation.push('/auth/signin');
       } catch (error) {
         console.error(error);
-        if(error.response.status === 400){
-          console.log('lil')
-          setErr('Verification code is not correct.')
+        if (error.response.status === 400) {
+          console.log('lil');
+          setErr('Verification code is not correct.');
         }
       }
-    } else{
-      setErr('Password and New password mismatch.')
+    } else {
+      setErr('Password and New password mismatch.');
     }
   };
 
@@ -76,14 +68,14 @@ export default function ForgotPassword() {
         <Link
           href="/"
           className="text-decoration-none p-4 d-flex gap-2 align-items-center text-dark"
-          style={{cursor:'pointer'}}
+          style={{ cursor: 'pointer' }}
         >
           <RiArrowGoBackLine />
           <p className="fw-bold m-0 p-0 ">Back to home</p>
         </Link>
         <div className="row">
           <div className="col-12 col-lg-6 d-flex justify-content-center align-items-center ">
-            <div style={{ maxWidth: "380px", width: "100%" }}>
+            <div style={{ maxWidth: '380px', width: '100%' }}>
               <div className="d-flex justify-content-center mb-5">
                 <Image
                   src="https://gkc-images.s3.amazonaws.com/logo.png"
@@ -104,7 +96,10 @@ export default function ForgotPassword() {
                     className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
                     placeholder="Your Email"
                     value={email}
-                    onChange={(e) => {setEmail(e.target.value); setErr('')}}
+                    onChange={(e) => {
+                      setEmail(e.target.value);
+                      setErr('');
+                    }}
                   />
                   {isSent && (
                     <input
@@ -113,7 +108,10 @@ export default function ForgotPassword() {
                       placeholder="Enter Confirmation Code"
                       name="code"
                       value={code}
-                      onChange={(e) =>{setCode(e.target.value); setErr('')}}
+                      onChange={(e) => {
+                        setCode(e.target.value);
+                        setErr('');
+                      }}
                     />
                   )}
                   {isSent && (
@@ -123,46 +121,50 @@ export default function ForgotPassword() {
                         name="password"
                         className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
                         placeholder="Enter New Password"
-                        onChange={(e) => {setPassword(e.target.value); setErr('')}}
+                        onChange={(e) => {
+                          setPassword(e.target.value);
+                          setErr('');
+                        }}
                       />
                       <input
-                      type="password"
-                      name="password"
-                      className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
-                      placeholder="Confirm New Password"
-                      onChange={(e) => {setConfirmPassword(e.target.value); setErr('')}}
+                        type="password"
+                        name="password"
+                        className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
+                        placeholder="Confirm New Password"
+                        onChange={(e) => {
+                          setConfirmPassword(e.target.value);
+                          setErr('');
+                        }}
                       />
-                  </>
-
+                    </>
                   )}
                   {isSent && (
                     <p className="text-secondary fw-bold py-2 text-center">
                       Check Email for Confirmation Code
                     </p>
                   )}
-                  {
-                    err && (
-                      <p 
+                  {err && (
+                    <p
                       className="fw-bold py-2 text-center"
-                      style={{color:'red'}}
-                      >
-                        {err}
-                      </p>
-                    )
-                  }
+                      style={{ color: 'red' }}
+                    >
+                      {err}
+                    </p>
+                  )}
                   {isSent ? (
                     <button
                       className={`w-100 text-light p-2 rounded fw-bold mt-3 bg-gray-300 ${
-                        isValid ? "btn_disabled" : "btn_primary"
+                        isValid ? 'btn_disabled' : 'btn_primary'
                       }`}
                       onClick={() => changePassword()}
                       disabled={isValid}
-                    >Update Password
+                    >
+                      Update Password
                     </button>
                   ) : (
                     <button
                       className={`w-100 text-light p-2 rounded fw-bold mt-3 bg-gray-300 ${
-                        !isEmailValid ? "btn_disabled" : "btn_primary"
+                        !isEmailValid ? 'btn_disabled' : 'btn_primary'
                       }`}
                       disabled={!isEmailValid}
                       onClick={() => handleSubmit()}
@@ -178,12 +180,12 @@ export default function ForgotPassword() {
             className="col-12 col-lg-6 position-relative d-none d-md-block"
             style={{
               backgroundImage: 'url("/assets/auth_2.png")',
-              height: "100vh",
-              backgroundRepeat: "no-repeat",
-              backgroundSize: "100% 100%",
+              height: '100vh',
+              backgroundRepeat: 'no-repeat',
+              backgroundSize: '100% 100%',
             }}
           >
-            <div style={{ position: "absolute", right: "0%", bottom: "7%" }}>
+            <div style={{ position: 'absolute', right: '0%', bottom: '7%' }}>
               <img
                 src="/assets/auth_boy_1.png"
                 alt="Vercel Logo"

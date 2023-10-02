@@ -22,6 +22,7 @@ function StudentMessaging() {
     newMessage,
     setChatInfo,
     setMessages,
+    fetchChat,
   } = firebaseChatHook();
 
   const dispatch = useDispatch();
@@ -30,7 +31,7 @@ function StudentMessaging() {
   }, [dispatch]);
 
   const loggedInUser = useSelector((state) => state.user?.userInfo);
-
+  console.log('loggedin user', loggedInUser);
   useEffect(() => {
     if (loggedInUser) {
       getMyChatList(loggedInUser?.id || 51);
@@ -40,6 +41,20 @@ function StudentMessaging() {
   const handleTextChange = (e) => {
     setNewMessage(e.target.value);
   };
+
+  function handleKeyPress(event) {
+    if (event.key === 'Enter') {
+      // Call your function here
+      setNewMessage(event.target.value);
+      setTimeout(() => {
+        sendMessage({
+          type: 'student',
+          chatId: activeChat,
+          parentInfo: loggedInUser?.parents,
+        });
+      }, 10);
+    }
+  }
 
   return (
     <>
@@ -69,13 +84,13 @@ function StudentMessaging() {
                   (id) => id != loggedInUser?.id
                 );
                 let user = item.chatInfo.userData[otherUserId[0]];
-                console.log('item99', item);
+
                 return (
                   <li
                     onClick={() => {
                       if (item?.chatId != activeChat) {
                         setActiveChat(item.chatId);
-
+                        setNewMessage('');
                         fetchChat({ chatId: item?.chatId });
                         // let filterchat = myChatList?.filter(
                         //   (chat) => chat.chatId === item.chatId
@@ -125,14 +140,23 @@ function StudentMessaging() {
               </div>
               <div className=" d-flex align-items-center px-2 gap-2">
                 <input
+                  autoFocus={true}
                   value={newMessage}
                   onChange={handleTextChange}
                   type="text"
                   placeholde=""
                   className="border  p-2 rounded flex-fill"
+                  onKeyDown={handleKeyPress}
                 />{' '}
                 <BsFillSendFill
-                  onClick={() => sendMessage({ chatId: activeChat })}
+                  style={{ cursor: 'pointer' }}
+                  onClick={() =>
+                    sendMessage({
+                      type: 'student',
+                      chatId: activeChat,
+                      parentInfo: loggedInUser?.parents,
+                    })
+                  }
                   className="h3 p-0 m-0"
                 />
               </div>

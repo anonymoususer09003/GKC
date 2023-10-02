@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import { RiArrowGoBackLine } from 'react-icons/ri';
 import Link from 'next/link';
 import axios from 'axios';
-
+import { apiClient } from '@/api/client';
 export default function RegistrationGrade() {
   const navigation = useRouter();
   const [grades, setGrades] = useState([]);
@@ -30,9 +30,7 @@ export default function RegistrationGrade() {
 
   const getGrades = async () => {
     try {
-      const response = await axios.get(
-        `https://staging-api.geekkidscode.com/public/register/get-all-grades`
-      );
+      const response = await apiClient.get(`/public/register/get-all-grades`);
       setGrades(response.data);
       console.log(response.data);
     } catch (error) {
@@ -50,18 +48,16 @@ export default function RegistrationGrade() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="container-fluid"
-      >
+      <main className="container-fluid">
         <div
-          onClick={()=>navigation.back()}
+          onClick={() => navigation.back()}
           className="text-decoration-none p-4 d-flex gap-2 align-items-center text-dark"
-          style={{cursor:'pointer'}}
+          style={{ cursor: 'pointer' }}
         >
           <RiArrowGoBackLine />
           <p className="fw-bold m-0 p-0 ">Back</p>
         </div>
-        <div className="py-5 "
-      >
+        <div className="py-5 ">
           <h5 className="text-secondary fw-bold text-center py-4">
             Which grade/s do you wish to tutor?
           </h5>
@@ -196,8 +192,8 @@ export default function RegistrationGrade() {
             </button>
           </div>
         </div>
-        <div style={{position:'fixed',bottom:0, width:'100vw'}}>
-        <Footer />
+        <div style={{ position: 'fixed', bottom: 0, width: '100vw' }}>
+          <Footer />
         </div>
       </main>
     </>

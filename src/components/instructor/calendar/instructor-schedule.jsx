@@ -10,6 +10,7 @@ import FirebaseChat from '../../../hooks/firebase-chat';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 import GetUserByid from '@/services/user/GetUserByid';
+import { apiClient } from '@/api/client';
 const InstructorSchedule = (props) => {
   const router = useRouter();
   const loggedInUser = useSelector((state) => state.user.userInfo);
@@ -34,8 +35,8 @@ const InstructorSchedule = (props) => {
   }, [messages]);
   const deleteSingleOccurrence = async (eventId, dateToCancel) => {
     try {
-      const response = await axios.delete(
-        'https://staging-api.geekkidscode.com/event/delete-single-occurrence',
+      const response = await apiClient.delete(
+        '/event/delete-single-occurrence',
         {
           data: {
             eventId: eventId,
@@ -116,6 +117,18 @@ const InstructorSchedule = (props) => {
   const handleTextChange = (e) => {
     setNewMessage(e.target.value);
   };
+  function handleKeyPress(event) {
+    if (event.key === 'Enter') {
+      // Call your function here
+      setNewMessage(event.target.value);
+      setTimeout(() => {
+        sendMessage({
+          type: 'instructor',
+          chatId: activeChat?.instructorId + '-' + activeChat?.studentId,
+        });
+      }, 10);
+    }
+  }
 
   return (
     <>
@@ -173,7 +186,10 @@ const InstructorSchedule = (props) => {
                           className="p-0 m-0 flex-fill h4"
                           data-bs-toggle="modal"
                           data-bs-target="#exampleModal2"
-                          onClick={() => setActiveChat(el)}
+                          onClick={() => {
+                            setNewMessage('');
+                            setActiveChat(el);
+                          }}
                         />
                       </td>
 
@@ -236,7 +252,15 @@ const InstructorSchedule = (props) => {
                   className="btn-close"
                   data-bs-dismiss="modal"
                   aria-label="Close"
-                ></button>
+                >
+                  <img
+                    src="https://cdn-icons-png.flaticon.com/128/5368/5368396.png"
+                    style={{
+                      height: '25px',
+                      width: '25px',
+                    }}
+                  />
+                </button>
               </div>
               <div className="modal-body">
                 <div className=" p-3" style={{ minHeight: '400px' }}>
@@ -263,13 +287,16 @@ const InstructorSchedule = (props) => {
 
                 <div className=" d-flex align-items-center px-2 gap-2">
                   <input
+                    autoFocus={true}
                     value={newMessage}
                     onChange={handleTextChange}
                     type="text"
                     placeholde=""
                     className="border  p-2 rounded flex-fill"
+                    onKeyDown={handleKeyPress}
                   />{' '}
                   <BsFillSendFill
+                    style={{ cursor: 'pointer' }}
                     onClick={() =>
                       sendMessage({
                         type: 'instructor',

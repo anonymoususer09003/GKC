@@ -8,7 +8,7 @@ import { RiArrowGoBackLine } from 'react-icons/ri';
 import { useRouter } from 'next/router';
 import axios from 'axios';
 import OtpInput from 'react-otp-input';
-
+import { apiClient } from '@/api/client';
 export default function ActivateCode() {
   const navigation = useRouter();
   const [otp, setOtp] = useState('');
@@ -23,13 +23,10 @@ export default function ActivateCode() {
       const code = otp;
       var stored = JSON.parse(window.localStorage.getItem('registrationForm'));
 
-      const response = await axios.post(
-        `https://staging-api.geekkidscode.com/auth/code`,
-        {
-          email: stored.email,
-          code: code,
-        }
-      );
+      const response = await apiClient.post(`/auth/code`, {
+        email: stored.email,
+        code: code,
+      });
 
       setIsVerified(true);
 
@@ -49,10 +46,7 @@ export default function ActivateCode() {
 
   const onResendCode = async () => {
     try {
-      var stored = JSON.parse(window.localStorage.getItem('registrationForm'));
-      const response = await axios.get(
-        `https://staging-api.geekkidscode.com/auth/code?email=${stored.email}`
-      );
+      const response = await apiClient.get(`/auth/code?email=${stored.email}`);
       console.log(response);
       setIsResent(true);
     } catch (error) {

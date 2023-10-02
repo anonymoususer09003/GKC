@@ -41,7 +41,7 @@ function ParentScheduleClass({ userInfo, loading, error }) {
   const [open, setOpen] = useState(false);
   const [date, setDate] = useState(null);
   const eventId = router?.query?.eventId;
-  console.log('eventid', eventId);
+
   let dur = null;
   let eventStartTimeslot = undefined;
   let ca = [];
@@ -51,9 +51,7 @@ function ParentScheduleClass({ userInfo, loading, error }) {
   //Get Courses
   const getCourses = async () => {
     try {
-      const response = await axios.get(
-        `https://staging-api.geekkidscode.com/public/course/with-instructors`
-      );
+      const response = await apiClient.get(`/public/course/with-instructors`);
 
       var coursesArray = [];
 
@@ -99,11 +97,11 @@ function ParentScheduleClass({ userInfo, loading, error }) {
 
   useEffect(() => {
     getCourses();
-    if (eventId){
-      getEventDetail()
+    if (eventId) {
+      getEventDetail();
     } else {
-      setPaymentSubmit(false)
-    } ;
+      setPaymentSubmit(false);
+    }
   }, [eventId]);
 
   useEffect(() => {
@@ -154,13 +152,8 @@ function ParentScheduleClass({ userInfo, loading, error }) {
       const getInstructorData = async () => {
         try {
           var typ = JSON.parse(window.localStorage.getItem('gkcAuth'));
-          const response = await axios.get(
-            `https://staging-api.geekkidscode.com/instructor/details-for-scheduling?instructorId=${instructorId}`,
-            {
-              headers: {
-                Authorization: `Bearer ${typ.accessToken}`,
-              },
-            }
+          const response = await apiClient.get(
+            `/instructor/details-for-scheduling?instructorId=${instructorId}`
           );
           setInstructorData(response.data);
         } catch (error) {
@@ -202,7 +195,7 @@ function ParentScheduleClass({ userInfo, loading, error }) {
 
     if (typeof window !== 'undefined') {
       window.localStorage.removeItem('goScheduleFromSignIn');
-      if(eventId !== undefined){
+      if (eventId !== undefined) {
         window.localStorage.setItem(
           'goBackSchedule',
           JSON.stringify({ event: eventId, id: instructorId })
@@ -399,10 +392,28 @@ function ParentScheduleClass({ userInfo, loading, error }) {
         </div>
       )}
       {paymentSubmit ? (
-        <div style={{position:'fixed', zIndex: 1, left:0,top:0, width:'100%', height:'100%',overflow:'hidden', background: 'white', fontSize: 20}}>
-          <div style={{background: 'white', margin: '200px auto', padding:20,width:'500px'}}>
-            <div style={{display:'flex', justifyContent:'flex-end'}}>
-            </div>
+        <div
+          style={{
+            position: 'fixed',
+            zIndex: 1,
+            left: 0,
+            top: 0,
+            width: '100%',
+            height: '100%',
+            overflow: 'hidden',
+            background: 'white',
+            fontSize: 20,
+          }}
+        >
+          <div
+            style={{
+              background: 'white',
+              margin: '200px auto',
+              padding: 20,
+              width: '500px',
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'flex-end' }}></div>
             <p
               style={{
                 width: 'auto',
@@ -474,58 +485,92 @@ function ParentScheduleClass({ userInfo, loading, error }) {
                 Review and Approve
               </button>
             </div>
-            <div style={{display:'flex', justifyContent:'center'}}>
-            <button className="fw-bold mt-3" style={{width: '180px', position: 'relative', border:'none', background:'none'}}
-            onClick={()=>{setPaymentSubmit(false)}}
-            ><u>Go to main page</u></button>
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
+              <button
+                className="fw-bold mt-3"
+                style={{
+                  width: '180px',
+                  position: 'relative',
+                  border: 'none',
+                  background: 'none',
+                }}
+                onClick={() => {
+                  setPaymentSubmit(false);
+                }}
+              >
+                <u>Go to main page</u>
+              </button>
             </div>
-            <p style={{width: 'auto', display:'flex', justifyContent:'center', textAlign:'center'}}> {loggedInUser && loggedInUser.dependents?.find(el=>el.id === studentId)?.firstName + ' ' + loggedInUser.dependents?.find(el=>el.id === studentId)?.lastName } has requested that you review, approve and pay for the following class:</p>
-            <div style={{display:"flex", justifyContent:'center', margin:'60px 0'}}>
-            <ul style={{listStyleType:'none', width:200, padding:0, textAlign:'center'}}>
-              <li>
-                Tutor
-              </li>
-              <li>
-                Course
-              </li>
-              <li>
-                Cost/hr
-              </li>
-              <li>
-                # of hours
-              </li>
-              <li>
-                Date
-              </li>
-              <li>
-                Mode
-              </li>
-            </ul>
-            <ul style={{listStyleType:'none', width:200, padding:0, textAlign:'center'}}>
-              <li>
-                {instructorData !== undefined ? instructorData.firstName +' '+ instructorData.lastName : ''}
-              </li>
-              <li>
-                {courseId !== 0 ? courseId : ''}
-              </li>
-              <li>
-                {instructorData.hourlyRate ?? ''}
-              </li>
-              <li>
-                {duration/2}
-              </li>
-              <li>
-                {date}
-              </li>
-              <li>
-                {selectedMode}
-              </li>
-            </ul>
+            <p
+              style={{
+                width: 'auto',
+                display: 'flex',
+                justifyContent: 'center',
+                textAlign: 'center',
+              }}
+            >
+              {' '}
+              {loggedInUser &&
+                loggedInUser.dependents?.find((el) => el.id === studentId)
+                  ?.firstName +
+                  ' ' +
+                  loggedInUser.dependents?.find((el) => el.id === studentId)
+                    ?.lastName}{' '}
+              has requested that you review, approve and pay for the following
+              class:
+            </p>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'center',
+                margin: '60px 0',
+              }}
+            >
+              <ul
+                style={{
+                  listStyleType: 'none',
+                  width: 200,
+                  padding: 0,
+                  textAlign: 'center',
+                }}
+              >
+                <li>Tutor</li>
+                <li>Course</li>
+                <li>Cost/hr</li>
+                <li># of hours</li>
+                <li>Date</li>
+                <li>Mode</li>
+              </ul>
+              <ul
+                style={{
+                  listStyleType: 'none',
+                  width: 200,
+                  padding: 0,
+                  textAlign: 'center',
+                }}
+              >
+                <li>
+                  {instructorData !== undefined
+                    ? instructorData.firstName + ' ' + instructorData.lastName
+                    : ''}
+                </li>
+                <li>{courseId !== 0 ? courseId : ''}</li>
+                <li>{instructorData.hourlyRate ?? ''}</li>
+                <li>{duration / 2}</li>
+                <li>{date}</li>
+                <li>{selectedMode}</li>
+              </ul>
             </div>
-            <div style={{display:'flex', justifyContent:'center'}}>
-            <button className="btn_primary text-light p-2 rounded fw-bold mt-3" style={{width: '300px', position: 'relative'}}
-            onClick={()=>{setPaymentSubmit(false)}}
-            >Review and Approve</button>
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
+              <button
+                className="btn_primary text-light p-2 rounded fw-bold mt-3"
+                style={{ width: '300px', position: 'relative' }}
+                onClick={() => {
+                  setPaymentSubmit(false);
+                }}
+              >
+                Review and Approve
+              </button>
             </div>
           </div>
         </div>
@@ -621,32 +666,41 @@ function ParentScheduleClass({ userInfo, loading, error }) {
                   </p>
                   <p>{err}</p>
                   <div
-                  style={{height:500, overflow:'hidden', overflowY: 'auto', width:200}}>
-                  {availableTime &&
-                    availableTime.map((slot, index) => (
-                      <li
-                        key={index}
-                        className={`m-03 py-1 fw-bold list-unstyled ${
-                          selectedSlots.some(
-                            (selectedSlot) =>
-                              selectedSlot.start.getTime() ===
-                                slot.start.getTime() &&
-                              selectedSlot.end.getTime() === slot.end.getTime()
-                          )
-                            ? 'bg-secondary text-white'
-                            : ''
-                        } ${eventslotsexists ? 'bg-secondary text-white' : ''}`}
-                        onClick={() => handleSlotClick(slot)}
-                      >
-                        {`${slot.start.toLocaleTimeString(undefined, {
-                          hour: '2-digit',
-                          minute: '2-digit',
-                        })} - ${slot.end.toLocaleTimeString(undefined, {
-                          hour: '2-digit',
-                          minute: '2-digit',
-                        })}`}
-                      </li>
-                    ))}
+                    style={{
+                      height: 500,
+                      overflow: 'hidden',
+                      overflowY: 'auto',
+                      width: 200,
+                    }}
+                  >
+                    {availableTime &&
+                      availableTime.map((slot, index) => (
+                        <li
+                          key={index}
+                          className={`m-03 py-1 fw-bold list-unstyled ${
+                            selectedSlots.some(
+                              (selectedSlot) =>
+                                selectedSlot.start.getTime() ===
+                                  slot.start.getTime() &&
+                                selectedSlot.end.getTime() ===
+                                  slot.end.getTime()
+                            )
+                              ? 'bg-secondary text-white'
+                              : ''
+                          } ${
+                            eventslotsexists ? 'bg-secondary text-white' : ''
+                          }`}
+                          onClick={() => handleSlotClick(slot)}
+                        >
+                          {`${slot.start.toLocaleTimeString(undefined, {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          })} - ${slot.end.toLocaleTimeString(undefined, {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          })}`}
+                        </li>
+                      ))}
                   </div>
                 </div>
 
@@ -781,13 +835,14 @@ function ParentScheduleClass({ userInfo, loading, error }) {
                       onChange={handleModeChange}
                     >
                       <option value="">Select</option>
-                      {selectedInstructor && selectedInstructor?.deliveryModes.map((mode) => {
-                        return (
-                          <option key={mode.id} value={mode.name}>
-                            {mode.name}
-                          </option>
-                        );
-                      })}
+                      {selectedInstructor &&
+                        selectedInstructor?.deliveryModes.map((mode) => {
+                          return (
+                            <option key={mode.id} value={mode.name}>
+                              {mode.name}
+                            </option>
+                          );
+                        })}
                     </select>
                   </div>
 

@@ -7,7 +7,7 @@ import { RiArrowGoBackLine } from 'react-icons/ri';
 import { useRouter } from 'next/router';
 import { base_url } from '@/api/client';
 import axios from 'axios';
-
+import { apiClient } from '@/api/client';
 export default function Home() {
   const navigation = useRouter();
   const [email, setEmail] = useState('');
@@ -32,18 +32,16 @@ export default function Home() {
 
   const handleSubmit = async () => {
     try {
-      const response = await axios.get(
-        `https://staging-api.geekkidscode.com/auth/code?email=${email}`
-      );
+      const response = await apiClient.get(`/auth/code?email=${email}`);
       console.log(response);
       if (email) {
         typeof window !== 'undefined' &&
-        window.localStorage.setItem(
-          'registrationForm',
-          JSON.stringify({
-            email,
-          })
-        );
+          window.localStorage.setItem(
+            'registrationForm',
+            JSON.stringify({
+              email,
+            })
+          );
         navigation.push('/auth/activatecode');
       }
     } catch (error) {
@@ -56,13 +54,16 @@ export default function Home() {
         <title>Auth | Register Email</title>
         <meta name="description" content="Where kids learn to code" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="https://gkc-images.s3.amazonaws.com/favicon.ico" />
+        <link
+          rel="icon"
+          href="https://gkc-images.s3.amazonaws.com/favicon.ico"
+        />
       </Head>
       <main className="container-fluid d-flex flex-column justify-content-between  min-vh-100">
         <Link
           href="/"
           className="text-decoration-none p-4 d-flex gap-2 align-items-center text-dark"
-          style={{cursor:'pointer'}}
+          style={{ cursor: 'pointer' }}
         >
           <RiArrowGoBackLine />
           <p className="fw-bold m-0 p-0 ">Back to home</p>
@@ -83,7 +84,13 @@ export default function Home() {
               <div>
                 <div className="d-flex justify-content-center mb-3">
                   <h4 className="text-secondary fw-bold">
-                    {typeof window !== 'undefined' ? window.localStorage.getItem('DoesParentCreateNewStudent') === null ?  'Register Your Email' : 'Register your child\'s email' : null}
+                    {typeof window !== 'undefined'
+                      ? window.localStorage.getItem(
+                          'DoesParentCreateNewStudent'
+                        ) === null
+                        ? 'Register Your Email'
+                        : "Register your child's email"
+                      : null}
                   </h4>
                 </div>
                 <div>
@@ -114,13 +121,11 @@ export default function Home() {
                 <div className="d-flex flex-column justify-content-center align-items-center mt-3">
                   <hr className="w-25" />
                   <button className="w-50 btn_secondary text-light p-2 rounded fw-bold">
-                  <Link
-                  href="/auth/signin"
-                  >
-                  <div className='text-light p-2 rounded fw-bold '>
-                  Login
-                  </div>
-                  </Link>
+                    <Link href="/auth/signin">
+                      <div className="text-light p-2 rounded fw-bold ">
+                        Login
+                      </div>
+                    </Link>
                   </button>
                 </div>
               </div>

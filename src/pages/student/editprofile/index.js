@@ -13,7 +13,6 @@ import styles from '../../../styles/Home.module.css';
 import { apiClient } from '../../../api/client';
 
 function EditProfile({ userInfo, loading, error, fetchUser }) {
-
   const [selected, setSelected] = useState([]);
   const [grade, setGrade] = useState('');
   const [parent1, setParent1] = useState('');
@@ -127,8 +126,8 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
 
   const getLang = async () => {
     try {
-      const response = await axios.get(
-        `https://staging-api.geekkidscode.com/public/register/get-all-languages`
+      const response = await apiClient.get(
+        `/public/register/get-all-languages`
       );
       var arr = [];
       console.log(response.data);
@@ -143,9 +142,7 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
 
   const getCourses = async () => {
     try {
-      const response = await axios.get(
-        `https://staging-api.geekkidscode.com/public/course/get-all-courses`
-      );
+      const response = await apiClient.get(`/public/course/get-all-courses`);
 
       var technologyList = [];
 
@@ -269,7 +266,10 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
         <title>Profile Edit Page</title>
         <meta name="description" content="Where kids learn to code" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="https://gkc-images.s3.amazonaws.com/favicon.ico" />
+        <link
+          rel="icon"
+          href="https://gkc-images.s3.amazonaws.com/favicon.ico"
+        />
       </Head>
       <Navbar isLogin={true} />
       <main className="container-fluid">
@@ -407,10 +407,10 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
                       hasSelectAll={false}
                       overrideStrings={{
                         // selectSomeItems: "Select Some items...",
-                        allItemsAreSelected: "All proficiencies selected",
+                        allItemsAreSelected: 'All proficiencies selected',
                         // selectAll: "Select All",
                         // search: "Search",
-                    }}
+                      }}
                     />
 
                     <ul className="m-0 primary-list">
@@ -436,10 +436,10 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
                     hasSelectAll={false}
                     overrideStrings={{
                       // selectSomeItems: "Select Some items...",
-                      allItemsAreSelected: "All proficiencies selected",
+                      allItemsAreSelected: 'All proficiencies selected',
                       // selectAll: "Select All",
                       // search: "Search",
-                  }}
+                    }}
                   />
                 </div>
 

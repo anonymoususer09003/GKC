@@ -111,7 +111,7 @@ const useCustomFirebaseHook = () => {
     setActiveChat('');
     setNewMessage('');
   }, [chatInfo]);
-  console.log('mychatlist', myChatList);
+
   const getMyChatList = async (senderId) => {
     try {
       const chatCollectionRef = collection(firestore, 'chat');
@@ -119,7 +119,8 @@ const useCustomFirebaseHook = () => {
         // Create separate queries for each 'array-contains' condition
         const query1 = query(
           chatCollectionRef,
-          where('participants', 'array-contains', senderId)
+          where('participants', 'array-contains', senderId),
+          orderBy('timestamp', 'desc')
         );
 
         // Execute each query and merge the results
@@ -258,8 +259,16 @@ const useCustomFirebaseHook = () => {
         if (props.type === 'parent') {
           participantsArray.push(props?.parentInfo?.id);
         }
+
+        if (props.type === 'student') {
+          props?.parentInfo.map((item) => {
+            participantsArray.push(item?.id);
+          });
+        }
+
         await updateDoc(collectionDocRef, {
           participants: arrayUnion(...participantsArray),
+          timestamp: Timestamp.fromDate(new Date()),
           userData: {
             ...userData.userData,
             [chatInfo?.sender?.id]: { ...chatInfo?.sender },
@@ -294,9 +303,16 @@ const useCustomFirebaseHook = () => {
         if (props.type === 'parent') {
           participants.push(props?.parentInfo?.id);
         }
+        if (props.type === 'student') {
+          props?.parentInfo.map((item) => {
+            participants.push(item?.id);
+          });
+        }
+
         const chatData = {
           participants: participants,
 
+          timestamp: Timestamp.fromDate(new Date()),
           userData: {
             [chatInfo?.sender?.id]: { ...chatInfo?.sender },
             [chatInfo?.receiver_user?.id]: { ...chatInfo?.receiver_user },
@@ -315,92 +331,7 @@ const useCustomFirebaseHook = () => {
           user: props?.type === 'parent' ? props?.parentInfo : chatInfo.sender,
         });
       }
-      // Create separate queries for each 'array-contains' condition
-      // const query1 = query(
-      //   chatRef,
-      //   where("participants", "array-contains", chatInfo?.sender?.id)
-      // );
 
-      // const query2 = query(
-      //   chatRef,
-      //   where("participants", "array-contains", chatInfo?.receiver_user?.id)
-      // );
-
-      // // Execute each query and merge the results
-      // const [querySnapshot1, querySnapshot2] = await Promise.all([
-      //   getDocs(query1),
-      //   getDocs(query2),
-      // ]);
-
-      // const mergedSnapshot = {
-      //   empty: querySnapshot1.empty && querySnapshot2.empty,
-      //   docs: [...querySnapshot1.docs, ...querySnapshot2.docs],
-      // };
-
-      // if (mergedSnapshot.empty) {
-      //   const chatRef = firestoreCollection(firestore, "chat");
-      //   const newChatRef = await addDoc(chatRef, {
-      //     participants: [chatInfo?.sender?.id, chatInfo?.receiver_user?.id],
-      //   });
-
-      //   const messageReference = firestoreCollection(
-      //     firestore,
-      //     "chat",
-      //     newChatRef.id,
-      //     "messages"
-      //   );
-
-      //   await addDoc(messageReference, {
-      //     message: newMessage,
-      //     timestamp: Timestamp.fromDate(new Date()),
-      //     _id: newChatRef.id,
-      //     user: props?.type == "parent" ? props?.parentInfo : chatInfo.sender,
-      //   });
-
-      //   await createUserCollection(
-      //     newChatRef.id,
-      //     chatInfo.sender,
-      //     chatInfo?.receiver_user
-      //   );
-      //   await createUserCollection(
-      //     newChatRef.id,
-      //     chatInfo?.receiver_user,
-      //     chatInfo.sender
-      //   );
-      // } else {
-      //   const chatRef = firestoreCollection(firestore, "chat");
-      //   const firstDocument = mergedSnapshot.docs[0];
-      //   const chatDocId = firstDocument.id;
-      //   const chatDocRef = doc(chatRef, chatDocId);
-      //   await updateDoc(chatDocRef, {
-      //     participants: arrayUnion(
-      //       chatInfo?.sender?.id,
-      //       chatInfo?.receiver_user?.id
-      //     ),
-      //   });
-      //   const messageReference = firestoreCollection(
-      //     firestore,
-      //     "chat",
-      //     chatDocId,
-      //     "messages"
-      //   );
-      //   await addDoc(messageReference, {
-      //     message: newMessage,
-      //     timestamp: Timestamp.fromDate(new Date()),
-      //     _id: chatDocId,
-      //     user: props?.type == "parent" ? props?.parentInfo : chatInfo.sender,
-      //   });
-      //   await createUserCollection(
-      //     chatDocId,
-      //     chatInfo.sender,
-      //     chatInfo?.receiver_user
-      //   );
-      //   await createUserCollection(
-      //     chatDocId,
-      //     chatInfo?.receiver_user,
-      //     chatInfo.sender
-      //   );
-      // }
       setNewMessage('');
     } catch (error) {
       console.log('Error sending message:', error);
