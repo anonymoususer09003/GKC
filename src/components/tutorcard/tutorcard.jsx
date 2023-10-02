@@ -45,8 +45,6 @@ const Tutorcard = ({ data, key }) => {
   let string =
     'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.';
 
-  console.log('data', data);
-
   const handleOpenModal = (ifClass) => {
     // setShowModal(true);
     if (ifClass) {
@@ -122,16 +120,35 @@ const Tutorcard = ({ data, key }) => {
       chatId,
     });
   };
-  console.log('activechat', activeChat);
 
   useEffect(() => {
     if (activeChat)
       openChat(activeChat?.instructorId + '-' + activeChat?.studentId);
   }, [activeChat]);
-  console.log('logged in user,', loggedInUser);
+
   const handleTextChange = (e) => {
     setNewMessage(e.target.value);
   };
+
+  function handleKeyPress(event) {
+    if (event.key === 'Enter') {
+      // Call your function here
+      setNewMessage(event.target.value);
+      setTimeout(() => {
+        sendMessage({
+          type: loggedInUser?.userType === 'Student' ? 'student' : 'parent',
+          chatId: activeChat?.instructorId + '-' + activeChat?.studentId,
+          parentInfo:
+            loggedInUser?.userType === 'Student'
+              ? loggedInUser?.parents
+              : {
+                  id: loggedInUser?.id,
+                  name: loggedInUser?.firstName + ' ' + loggedInUser?.lastName,
+                },
+        });
+      }, 0);
+    }
+  }
 
   return (
     <>
@@ -244,6 +261,7 @@ const Tutorcard = ({ data, key }) => {
                 </div>
                 <p className="m-0 p-0">Stars {data?.averageRating ?? 0}/5</p>
               </div>
+
               {loggedInUser?.userType != 'Instructor' && loggedInUser?.id && (
                 <BsFillChatFill
                   style={{ fill: 'blue', cursor: 'pointer' }}
@@ -251,7 +269,7 @@ const Tutorcard = ({ data, key }) => {
                   onClick={() => {
                     setNewMessage('');
                     if (loggedInUser?.userType === 'Student') {
-                      setActiveInstructor({
+                      setActiveChat({
                         instructorId: data?.id,
                         instructorName: data?.firstName + ' ' + data?.lastName,
                         studentId: loggedInUser?.id,
@@ -769,6 +787,7 @@ const Tutorcard = ({ data, key }) => {
                       type="text"
                       placeholde=""
                       className="border  p-2 rounded flex-fill"
+                      onKeyDown={handleKeyPress}
                     />{' '}
                     <BsFillSendFill
                       style={{ cursor: 'pointer' }}

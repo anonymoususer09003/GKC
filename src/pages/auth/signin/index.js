@@ -51,7 +51,7 @@ export default function SignIn() {
       }
     } catch (error) {
       if (
-        error.response.data.message ===
+        error?.response?.data?.message ===
         'This user does not exist. Create an account to get started'
       ) {
         setIsWrongEmail(true);

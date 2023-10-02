@@ -86,7 +86,7 @@ export default function Review({ role }) {
 
   useEffect(() => {
     const run = async () => {
-      const res = await apiClient('/user/logged-user-details');
+      const res = await apiClient.get('/user/logged-user-details');
       // console.log(res.data)
       setUserInfo(res.data);
     };
