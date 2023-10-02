@@ -1,33 +1,32 @@
-import React, { useState, useEffect } from "react";
-import Head from "next/head";
-import { Navbar, Footer } from "../../../components";
-import Calendar from "react-calendar";
-import { withRole } from "../../../utils/withAuthorization";
-import { useRouter } from "next/router";
-import { connect } from "react-redux";
-import calendarStyles from "../../../styles/Calendar.module.css";
-import axios from "axios";
-import styles from "../../../styles/Home.module.css";
-import { RRule } from "rrule";
-import { fetchUser } from "../../../store/actions/userActions";
-import { apiClient } from "@/api/client";
-import { useDispatch } from "react-redux";
+import React, { useState, useEffect } from 'react';
+import Head from 'next/head';
+import { Navbar, Footer } from '../../../components';
+import Calendar from 'react-calendar';
+import { withRole } from '../../../utils/withAuthorization';
+import { useRouter } from 'next/router';
+import { connect } from 'react-redux';
+import calendarStyles from '../../../styles/Calendar.module.css';
+import axios from 'axios';
+import styles from '../../../styles/Home.module.css';
+import { RRule } from 'rrule';
+import { fetchUser } from '../../../store/actions/userActions';
+import { apiClient } from '@/api/client';
+import { useDispatch } from 'react-redux';
 
 function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
-
   const router = useRouter();
   const { instructorId } = router.query;
   const status = router.isReady;
 
-  console.log("router query", router.query);
+  console.log('router query', router.query);
   const [instructorCourses, setInstructorCourses] = useState([]);
-  const [selectedInstructor, setSelectedInstructor] = useState(null)
-  const [selectedMode, setSelectedMode] = useState("");
+  const [selectedInstructor, setSelectedInstructor] = useState(null);
+  const [selectedMode, setSelectedMode] = useState('');
   const [instId, setInstId] = useState(instructorId);
   const [instructorData, setInstructorData] = useState();
   const [courseDuration, setCourseDuration] = useState(null);
   const [courseId, setCourseId] = useState(null);
-  const [classFrequency, setClassFrequency] = useState("");
+  const [classFrequency, setClassFrequency] = useState('');
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [unavailableDates, setUnavailableDates] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -35,49 +34,49 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
   const [selectedSlots, setSelectedSlots] = useState([]);
   const [time, setTime] = useState();
   const [duration, setDuration] = useState(0);
-  const [err, setErr] = useState('')
+  const [err, setErr] = useState('');
 
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if(status){
+    if (status) {
       fetchUser();
       const fetchUnavailableDates = async () => {
-        const disabledDates = []
-        try{
-          const responce = await apiClient(`/instructor/unavailable-days-in-UTC-TimeZone?instructorId=${instructorId}`) //hardcoded
-          console.log(responce.data)
-          responce.data.forEach((el)=>{
-            disabledDates.push(new Date(el.end))
-          })
-        console.log(disabledDates)
-        setUnavailableDates(disabledDates)
-        }catch (err) {
-          console.log(err)
+        const disabledDates = [];
+        try {
+          const responce = await apiClient(
+            `/instructor/unavailable-days-in-UTC-TimeZone?instructorId=${instructorId}`
+          ); //hardcoded
+          console.log(responce.data);
+          responce.data.forEach((el) => {
+            disabledDates.push(new Date(el.end));
+          });
+          console.log(disabledDates);
+          setUnavailableDates(disabledDates);
+        } catch (err) {
+          console.log(err);
         }
-  
-  
-      }
-      fetchUnavailableDates()
+      };
+      fetchUnavailableDates();
       const fetchInstructorData = async () => {
-        try{
-          const responce = await apiClient(`/instructor/details-for-scheduling?instructorId=${instructorId}`) //hardcoded
-          console.log(responce.data)
-          setSelectedInstructor(responce.data)
-        }catch (err) {
-          console.log(err)
+        try {
+          const responce = await apiClient(
+            `/instructor/details-for-scheduling?instructorId=${instructorId}`
+          ); //hardcoded
+          console.log(responce.data);
+          setSelectedInstructor(responce.data);
+        } catch (err) {
+          console.log(err);
         }
-      }
-      fetchInstructorData()
+      };
+      fetchInstructorData();
     }
   }, [instructorId]);
 
   //Get Courses
   const getCourses = async () => {
     try {
-      const response = await axios.get(
-        `https://staging-api.geekkidscode.com/public/course/with-instructors`
-      );
+      const response = await apiClient.get(`/public/course/with-instructors`);
 
       var coursesArray = [];
 
@@ -101,15 +100,10 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
   useEffect(() => {
     const getInstructorData = async () => {
       try {
-        var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
+        var typ = JSON.parse(window.localStorage.getItem('gkcAuth'));
 
-        const response = await axios.get(
-          `https://staging-api.geekkidscode.com/instructor/details-for-scheduling?instructorId=${instructorId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${typ.accessToken}`,
-            },
-          }
+        const response = await apiClient.get(
+          `/instructor/details-for-scheduling?instructorId=${instructorId}`
         );
         setInstructorData(response.data);
       } catch (error) {
@@ -148,11 +142,11 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
 
   //apply styles for unavailableDate
   const tileClassName = ({ date, view }) => {
-    if (view === "month") {
+    if (view === 'month') {
       if (isDateUnavailable(date)) {
         return {
-          backgroundColor: "gray",
-          color: "black",
+          backgroundColor: 'gray',
+          color: 'black',
         };
       }
     }
@@ -170,28 +164,27 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
   const handleDateChange = async (clickedDate) => {
     const dateObj = new Date(clickedDate);
     const year = dateObj.getFullYear();
-    const month = String(dateObj.getMonth() + 1).padStart(2, "0");
-    const day = String(dateObj.getDate()).padStart(2, "0");
-    const hours = String(dateObj.getHours()).padStart(2, "0");
-    const minutes = String(dateObj.getMinutes()).padStart(2, "0");
+    const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+    const day = String(dateObj.getDate()).padStart(2, '0');
+    const hours = String(dateObj.getHours()).padStart(2, '0');
+    const minutes = String(dateObj.getMinutes()).padStart(2, '0');
     const formattedDateStr = `${year}-${month}-${day}`;
-    setDuration(0)
+    setDuration(0);
 
     setSelectedDate(formattedDateStr);
-    console.log(formattedDateStr)
+    console.log(formattedDateStr);
     try {
       const response = await apiClient.get(
         `/instructor/available-time-slots-from-date?instructorId=${instructorId}&date=${formattedDateStr}`
       );
-      
+
       const timeSlots = response.data.map((slot) => ({
         start: new Date(slot.start),
         end: new Date(slot.end),
       }));
-      console.log(timeSlots)
-      const isOnHalfHour = (date) => date.getMinutes() === 0 || date.getMinutes() === 30;
-
-
+      console.log(timeSlots);
+      const isOnHalfHour = (date) =>
+        date.getMinutes() === 0 || date.getMinutes() === 30;
 
       // Create half-hour intervals for each time slot
       const formattedTimeSlots = [];
@@ -213,13 +206,13 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
       });
 
       setAvailableTime(formattedTimeSlots);
-      if(formattedTimeSlots.length>0){
-        setErr('')
-      } else{
-        setErr('Tutor unavailable')
+      if (formattedTimeSlots.length > 0) {
+        setErr('');
+      } else {
+        setErr('Tutor unavailable');
       }
-      
-      console.log(formattedTimeSlots, "formatted time slots");
+
+      console.log(formattedTimeSlots, 'formatted time slots');
     } catch (error) {
       console.log(error);
     }
@@ -227,7 +220,7 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
 
   useEffect(() => {
     getCourses();
-    if(typeof window !== 'undefined'){
+    if (typeof window !== 'undefined') {
       window.localStorage.removeItem('goScheduleFromSignIn');
     }
   }, []);
@@ -262,7 +255,7 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
           const formattedDateStr = date
             .toISOString()
             .slice(0, 16)
-            .replace("T", " ");
+            .replace('T', ' ');
 
           setTime(formattedDateStr);
         }
@@ -273,19 +266,18 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
   };
 
   const handleContinue = () => {
-
     const data = {
       start: time,
-      durationInHours: duration/2,
+      durationInHours: duration / 2,
       classFrequency: classFrequency,
-      courseId: instructorCourses.find(el => el.label === courseId).value,
+      courseId: instructorCourses.find((el) => el.label === courseId).value,
       studentId: userInfo.id,
       instructorId: instructorId,
-      eventInPerson: selectedMode == "In-Person" ? true : false
+      eventInPerson: selectedMode == 'In-Person' ? true : false,
     };
-    console.log("class frequency", data);
+    console.log('class frequency', data);
     router.push({
-      pathname: "/student/coursepay",
+      pathname: '/student/coursepay',
       query: data,
     });
   };
@@ -296,7 +288,10 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
         <title>Student Schedule Class</title>
         <meta name="description" content="Where kids learn to code" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="https://gkc-images.s3.amazonaws.com/favicon.ico" />
+        <link
+          rel="icon"
+          href="https://gkc-images.s3.amazonaws.com/favicon.ico"
+        />
       </Head>
       <Navbar isLogin={true} />
       {isLoading && (
@@ -305,20 +300,22 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
         </div>
       )}
       <main className="container-fluid">
-        <div className="row" style={{ minHeight: "90vh" }}>
+        <div className="row" style={{ minHeight: '90vh' }}>
           <div className="col-12 col-lg-6 pt-5">
-            {
-              selectedInstructor &&
+            {selectedInstructor && (
               <h3
-              style={{
-                textAlign:'center'
-              }}
-              >Calendar for {selectedInstructor?.firstName} {selectedInstructor?.lastName}</h3>
-            }
+                style={{
+                  textAlign: 'center',
+                }}
+              >
+                Calendar for {selectedInstructor?.firstName}{' '}
+                {selectedInstructor?.lastName}
+              </h3>
+            )}
             <Calendar
               onChange={handleDateChange}
               tileClassName={tileClassName}
-              // tileDisabled={unavailableDates.length >1 ? ({date, view})=> view === 'month' && 
+              // tileDisabled={unavailableDates.length >1 ? ({date, view})=> view === 'month' &&
               // unavailableDates.some(disabledDate =>
               //   new Date(date).getFullYear() === new Date(disabledDate).getFullYear() &&
               //   new Date(date).getMonth() === new Date(disabledDate).getMonth() &&
@@ -331,32 +328,51 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
             <div className="shadow rounded py-5">
               <div
                 className="d-flex flex-sm-nowrap flex-wrap justify-content-between gap-4 px-5"
-                style={{ minHeight: "400px" }}
+                style={{ minHeight: '400px' }}
               >
-                <div className="w-100 "
-                >
-                  <p className="p-0 m-0 fw-bold pb-2">{ duration > 0 ? <>You selected {duration/2} hours</> : <>Select time</>}</p>
+                <div className="w-100 ">
+                  <p className="p-0 m-0 fw-bold pb-2">
+                    {duration > 0 ? (
+                      <>You selected {duration / 2} hours</>
+                    ) : (
+                      <>Select time</>
+                    )}
+                  </p>
                   <p>{err}</p>
                   <div
-                  style={{height:500, overflow:'hidden', overflowY: 'auto', width:200}}>
-                  {availableTime && availableTime.map((slot, index) => (
-                      <li
-                        key={index}
-                        className={`m-03 py-1 fw-bold list-unstyled ${
-                          selectedSlots.some(
-                            (selectedSlot) =>
-                              selectedSlot.start.getTime() ===
-                                slot.start.getTime() &&
-                              selectedSlot.end.getTime() === slot.end.getTime()
-                          )
-                            ? "bg-secondary text-white"
-                            : ""
-                        }`}
-                        onClick={() => handleSlotClick(slot)}
-                      >
-                        {`${slot.start.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })} - ${slot.end.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}`}
-                      </li>
-                    ))}
+                    style={{
+                      height: 500,
+                      overflow: 'hidden',
+                      overflowY: 'auto',
+                      width: 200,
+                    }}
+                  >
+                    {availableTime &&
+                      availableTime.map((slot, index) => (
+                        <li
+                          key={index}
+                          className={`m-03 py-1 fw-bold list-unstyled ${
+                            selectedSlots.some(
+                              (selectedSlot) =>
+                                selectedSlot.start.getTime() ===
+                                  slot.start.getTime() &&
+                                selectedSlot.end.getTime() ===
+                                  slot.end.getTime()
+                            )
+                              ? 'bg-secondary text-white'
+                              : ''
+                          }`}
+                          onClick={() => handleSlotClick(slot)}
+                        >
+                          {`${slot.start.toLocaleTimeString(undefined, {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          })} - ${slot.end.toLocaleTimeString(undefined, {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          })}`}
+                        </li>
+                      ))}
                   </div>
                 </div>
                 <div className=" w-100">
@@ -371,7 +387,7 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
                         name="flexRadioDefault"
                         id="flexRadioDefault1"
                         value="ONETIME"
-                        checked={classFrequency == "ONETIME"}
+                        checked={classFrequency == 'ONETIME'}
                         onChange={(e) => setClassFrequency(e.target.value)}
                       />
                       <label
@@ -388,7 +404,7 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
                         name="flexRadioDefault"
                         id="flexRadioDefault2"
                         value="WEEKLY"
-                        checked={classFrequency == "WEEKLY"}
+                        checked={classFrequency == 'WEEKLY'}
                         onChange={(e) => setClassFrequency(e.target.value)}
                       />
                       <label
@@ -405,7 +421,7 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
                         name="flexRadioDefault"
                         id="flexRadioDefault3"
                         value="BIWEEKLY"
-                        checked={classFrequency == "BIWEEKLY"}
+                        checked={classFrequency == 'BIWEEKLY'}
                         onChange={(e) => setClassFrequency(e.target.value)}
                       />
                       <label
@@ -422,7 +438,7 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
                         name="flexRadioDefault"
                         id="flexRadioDefault4"
                         vale="MONTHLY"
-                        checked={classFrequency == "MONTHLY"}
+                        checked={classFrequency == 'MONTHLY'}
                         onChange={(e) => setClassFrequency(e.target.value)}
                       />
                       <label
@@ -439,17 +455,25 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
 
                     <select
                       className="w-25 p-2 rounded outline-0 border border_gray"
-                      onChange={(event)=>{handleCourseId(event)}}
+                      onChange={(event) => {
+                        handleCourseId(event);
+                      }}
                       value={courseId}
                     >
                       <option>Select</option>
-                      {selectedInstructor && selectedInstructor?.coursesToTutorAndProficiencies.map((course) => {
-                        return (
-                          <option key={course.course.id} value={course.course.name}>
-                            {course.course.name}
-                          </option>
-                        );
-                      })}
+                      {selectedInstructor &&
+                        selectedInstructor?.coursesToTutorAndProficiencies.map(
+                          (course) => {
+                            return (
+                              <option
+                                key={course.course.id}
+                                value={course.course.name}
+                              >
+                                {course.course.name}
+                              </option>
+                            );
+                          }
+                        )}
                     </select>
                   </div>
 
@@ -462,13 +486,14 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
                       onChange={handleModeChange}
                     >
                       <option value="">Select</option>
-                      {selectedInstructor && selectedInstructor?.deliveryModes.map((mode) => {
-                        return (
-                          <option key={mode.id} value={mode.name}>
-                            {mode.name}
-                          </option>
-                        );
-                      })}
+                      {selectedInstructor &&
+                        selectedInstructor?.deliveryModes.map((mode) => {
+                          return (
+                            <option key={mode.id} value={mode.name}>
+                              {mode.name}
+                            </option>
+                          );
+                        })}
                     </select>
                   </div>
 
@@ -483,15 +508,19 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
                   <div className="py-2 d-flex align-items-start gap-4">
                     <h6 className="text-dark fw-bold m-0 p-0">Grade:</h6>
                     <div>
-                      {
-                        instructorData && instructorData?.gradesToTutor.map((el)=>{
-                          return <>
-                          <h6 key={el.id}  className="text-dark fw-bold m-0 p-0">
-                            {el.description}
-                          </h6>   
-                          </>
-                        })
-                      }
+                      {instructorData &&
+                        instructorData?.gradesToTutor.map((el) => {
+                          return (
+                            <>
+                              <h6
+                                key={el.id}
+                                className="text-dark fw-bold m-0 p-0"
+                              >
+                                {el.description}
+                              </h6>
+                            </>
+                          );
+                        })}
                     </div>
                   </div>
                 </div>
@@ -499,7 +528,7 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
               <div className="d-flex gap-2 justify-content-center pt-5">
                 <button
                   className={`w-25 text-light p-2 rounded fw-bold  ${
-                    !classFrequency || !time ? "btn_disabled" : "btn_primary"
+                    !classFrequency || !time ? 'btn_disabled' : 'btn_primary'
                   }`}
                   disabled={!classFrequency || !time ? true : false}
                   onClick={() => handleContinue()}
@@ -524,5 +553,5 @@ const mapStateToProps = (state) => ({
 
 export default withRole(
   connect(mapStateToProps, { fetchUser })(StudentScheduleClass),
-  ["Student"]
+  ['Student']
 );

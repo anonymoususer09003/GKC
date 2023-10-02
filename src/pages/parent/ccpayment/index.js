@@ -1,18 +1,17 @@
-import React, { useEffect, useState } from "react";
-import Head from "next/head";
-import { Navbar, Footer } from "../../../components";
-import { useRouter } from "next/router";
-import PaymentForm from "@/components/stripe/PaymentForm";
-import { withRole } from "../../../utils/withAuthorization";
-import axios from "axios";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchUser } from "@/store/actions/userActions";
-
+import React, { useEffect, useState } from 'react';
+import Head from 'next/head';
+import { Navbar, Footer } from '../../../components';
+import { useRouter } from 'next/router';
+import PaymentForm from '@/components/stripe/PaymentForm';
+import { withRole } from '../../../utils/withAuthorization';
+import axios from 'axios';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchUser } from '@/store/actions/userActions';
+import { apiClient } from '@/api/client';
 function ParentRegistrationCCPay() {
-
   const navigation = useRouter();
   const dispatch = useDispatch();
-  console.log("navigation query", navigation.query);
+  console.log('navigation query', navigation.query);
   const {
     start,
     durationInHours,
@@ -28,9 +27,9 @@ function ParentRegistrationCCPay() {
   const [confirmPayment, setConfirmPayment] = useState(false);
   const [isCardValid, setIsCardValid] = useState(false);
   const userInfo = useSelector((state) => state?.user?.userInfo);
-  const [paymentStatus, setPaymentStatus] = useState("");
+  const [paymentStatus, setPaymentStatus] = useState('');
 
-  const [nameCard, setNameCard] = useState("");
+  const [nameCard, setNameCard] = useState('');
 
   useEffect(() => {
     dispatch(fetchUser());
@@ -38,9 +37,8 @@ function ParentRegistrationCCPay() {
 
   const scheduleSaved = async () => {
     try {
-      var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
-      const res = await axios.post(
-        `https://staging-api.geekkidscode.com/event/create-class-saved-payment-method`,
+      const res = await apiClient.post(
+        `/event/create-class-saved-payment-method`,
         {
           start: start,
           durationInHours: durationInHours,
@@ -50,23 +48,17 @@ function ParentRegistrationCCPay() {
           whoPaysId: studentId,
           instructorId: instructorId,
           eventInPerson: eventInPerson,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${typ.accessToken}`,
-          },
         }
       );
     } catch (error) {
-      console.error("Error fetching profile data:", error);
+      console.error('Error fetching profile data:', error);
     }
   };
 
   const scheduleNoSaved = async (data) => {
     try {
-      var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
-      const res = await axios.post(
-        `https://staging-api.geekkidscode.com/event/create-class-no-saved-payment-method`,
+      const res = await apiClient.post(
+        `/event/create-class-no-saved-payment-method`,
         {
           classDto: {
             start: start,
@@ -82,15 +74,10 @@ function ParentRegistrationCCPay() {
             paymentIntentId: data?.paymentIntentId,
             paymentStatus: data?.status,
           },
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${typ.accessToken}`,
-          },
         }
       );
     } catch (error) {
-      console.error("Error fetching profile data:", error);
+      console.error('Error fetching profile data:', error);
     }
   };
 
@@ -99,12 +86,12 @@ function ParentRegistrationCCPay() {
     // Do something with the value in the parent component
   };
   const handlePaymentRequest = (data) => {
-    console.log("data", data);
-    if (data.status === "succeeded") {
+    console.log('data', data);
+    if (data.status === 'succeeded') {
       // scheduleSaved();
       scheduleNoSaved(data);
     } else {
-      alert("Payment Failed");
+      alert('Payment Failed');
     }
     setPaymentStatus(data.status);
     setConfirmPayment(false);
@@ -120,7 +107,10 @@ function ParentRegistrationCCPay() {
         <title>Auth | CC Info</title>
         <meta name="description" content="Where kids learn to code" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="https://gkc-images.s3.amazonaws.com/favicon.ico" />
+        <link
+          rel="icon"
+          href="https://gkc-images.s3.amazonaws.com/favicon.ico"
+        />
       </Head>
       <main className="container-fluid d-flex flex-column justify-content-between  min-vh-100">
         <Navbar isLogin={true} />
@@ -129,9 +119,9 @@ function ParentRegistrationCCPay() {
             className="col-12 col-lg-5 position-relative d-none d-lg-block"
             style={{
               backgroundImage: 'url("/assets/register_group.png")',
-              height: "100vh",
-              backgroundRepeat: "no-repeat",
-              backgroundSize: "100% 100%",
+              height: '100vh',
+              backgroundRepeat: 'no-repeat',
+              backgroundSize: '100% 100%',
             }}
           ></div>
           <div className="col-12 col-lg-7 d-flex justify-content-center align-items-center ">
@@ -200,7 +190,7 @@ function ParentRegistrationCCPay() {
                 <div className="d-flex gap-2 justify-content-center mt-3">
                   <button
                     className={`w-50 btn_primary text-light p-2 rounded fw-bold bg-gray-300 ${
-                      !nameCard || !isCardValid ? "btn_disabled" : "btn_primary"
+                      !nameCard || !isCardValid ? 'btn_disabled' : 'btn_primary'
                     }`}
                     disabled={!nameCard || !isCardValid}
                     onClick={() => setConfirmPayment(true)}
@@ -219,4 +209,4 @@ function ParentRegistrationCCPay() {
   );
 }
 
-export default withRole(ParentRegistrationCCPay, ["Parent"]);
+export default withRole(ParentRegistrationCCPay, ['Parent']);

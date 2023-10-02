@@ -99,7 +99,22 @@ const StudentSchedule = (props) => {
   const handleTextChange = (e) => {
     setNewMessage(e.target.value);
   };
-  console.log('props', loggedInUser);
+
+  function handleKeyPress(event) {
+    if (event.key === 'Enter') {
+      // Call your function here
+      setNewMessage(event.target.value);
+      sendMessage({
+        type: 'parent',
+        chatId: activeChat?.instructorId + '-' + activeChat?.studentId,
+        parentInfo: {
+          id: loggedInUser?.id,
+          name: loggedInUser?.firstName + ' ' + loggedInUser?.lastName,
+        },
+      });
+    }
+  }
+
   return (
     <>
       <div className="col-12 col-lg-6">
@@ -156,7 +171,10 @@ const StudentSchedule = (props) => {
                           className="p-0 m-0 flex-fill h4"
                           data-bs-toggle="modal"
                           data-bs-target="#exampleModal2"
-                          onClick={() => setActiveChat(el)}
+                          onClick={() => {
+                            setNewMessage('');
+                            setActiveChat(el);
+                          }}
                         />
                       </td>
 
@@ -211,14 +229,20 @@ const StudentSchedule = (props) => {
               <div className="d-flex justify-content-between">
                 <h5 className="modal-title" id="exampleModal2Label"></h5>
                 <button
-                  onClick={() => {
-                    setMessages([]);
-                  }}
                   type="button"
                   className="btn-close"
                   data-bs-dismiss="modal"
                   aria-label="Close"
-                ></button>
+                >
+                  <img
+                    src="https://cdn-icons-png.flaticon.com/128/5368/5368396.png"
+                    style={{
+                      height: '25px',
+                      width: '25px',
+                    }}
+                    onClick={() => {}}
+                  />
+                </button>
               </div>
               <div className="modal-body">
                 <div className=" p-3" style={{ minHeight: '400px' }}>
@@ -245,13 +269,16 @@ const StudentSchedule = (props) => {
 
                 <div className=" d-flex align-items-center px-2 gap-2">
                   <input
+                    autoFocus={true}
                     value={newMessage}
                     onChange={handleTextChange}
                     type="text"
                     placeholde=""
                     className="border  p-2 rounded flex-fill"
+                    onKeyDown={handleKeyPress}
                   />{' '}
                   <BsFillSendFill
+                    style={{ cursor: 'pointer' }}
                     onClick={() =>
                       sendMessage({
                         type: 'parent',
@@ -261,7 +288,10 @@ const StudentSchedule = (props) => {
                           activeChat?.studentId,
                         parentInfo: {
                           id: loggedInUser?.id,
-                          name: loggedInUser?.firstName,
+                          name:
+                            loggedInUser?.firstName +
+                            ' ' +
+                            loggedInUser?.lastName,
                         },
                       })
                     }

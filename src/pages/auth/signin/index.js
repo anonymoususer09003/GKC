@@ -16,23 +16,6 @@ export default function SignIn() {
   const [isWrongPassword, setIsWrongPassword] = useState(false);
   const [isWrongEmail, setIsWrongEmail] = useState(false);
 
-  // useEffect(() => {
-  //   const onLogin = async () => {
-  //     try {
-  //       const response = await axios.post("https://staging-api.geekkidscode.com/auth/login", {
-  //         email: "nitsapath@gmail.com",
-  //         password: test123,
-  //       });
-  //       const accessToken = response.data.accessToken;
-  //       console.log(accessToken);
-  //     } catch (error) {
-  //       console.error(error);
-  //     }
-  //   };
-
-  //   onLogin();
-  // });
-
   const onLogin = async () => {
     try {
       const response = await axios.post(`${base_url}/auth/login`, {
@@ -94,13 +77,16 @@ export default function SignIn() {
         <title>Auth | Sign In</title>
         <meta name="description" content="Where kids learn to code" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="https://gkc-images.s3.amazonaws.com/favicon.ico" />
+        <link
+          rel="icon"
+          href="https://gkc-images.s3.amazonaws.com/favicon.ico"
+        />
       </Head>
       <main className="container-fluid d-flex flex-column justify-content-between  min-vh-100">
         <Link
           href="/"
           className="text-decoration-none p-4 d-flex gap-2 align-items-center text-dark"
-          style={{cursor:'pointer'}}
+          style={{ cursor: 'pointer' }}
         >
           <RiArrowGoBackLine />
           <p className="fw-bold m-0 p-0 ">Back to home</p>

@@ -244,13 +244,28 @@ const Tutorcard = ({ data, key }) => {
                 </div>
                 <p className="m-0 p-0">Stars {data?.averageRating ?? 0}/5</p>
               </div>
-              {loggedInUser?.userType === 'Parent' && (
+              {loggedInUser?.userType != 'Instructor' && loggedInUser?.id && (
                 <BsFillChatFill
                   style={{ fill: 'blue', cursor: 'pointer' }}
                   className="p-0 m-0 flex-fill h4"
                   onClick={() => {
-                    setShowChildrenListModel(true);
-                    setActiveInstructor(data);
+                    setNewMessage('');
+                    if (loggedInUser?.userType === 'Student') {
+                      setActiveInstructor({
+                        instructorId: data?.id,
+                        instructorName: data?.firstName + ' ' + data?.lastName,
+                        studentId: loggedInUser?.id,
+                        studentName:
+                          loggedInUser?.firstName +
+                          ' ' +
+                          loggedInUser?.lastName,
+                      });
+
+                      setShowChat(true);
+                    } else {
+                      setShowChildrenListModel(true);
+                      setActiveInstructor(data);
+                    }
                   }}
                 />
               )}
@@ -376,11 +391,11 @@ const Tutorcard = ({ data, key }) => {
                   <img
                     src="https://cdn-icons-png.flaticon.com/128/5368/5368396.png"
                     style={{
-                      background:
-                        'https://cdn-icons-png.flaticon.com/128/5368/5368396.png',
+                      height: '25px',
+                      width: '25px',
                     }}
                     onClick={() => {
-                      setShowChildrenListModel(true);
+                      setShowChildrenListModel(false);
                     }}
                   />
                 </div>
@@ -756,20 +771,27 @@ const Tutorcard = ({ data, key }) => {
                       className="border  p-2 rounded flex-fill"
                     />{' '}
                     <BsFillSendFill
+                      style={{ cursor: 'pointer' }}
                       onClick={() =>
                         sendMessage({
-                          type: 'parent',
+                          type:
+                            loggedInUser?.userType === 'Student'
+                              ? 'student'
+                              : 'parent',
                           chatId:
                             activeChat?.instructorId +
                             '-' +
                             activeChat?.studentId,
-                          parentInfo: {
-                            id: loggedInUser?.id,
-                            name:
-                              loggedInUser?.firstName +
-                              ' ' +
-                              loggedInUser?.lastName,
-                          },
+                          parentInfo:
+                            loggedInUser?.userType === 'Student'
+                              ? loggedInUser?.parents
+                              : {
+                                  id: loggedInUser?.id,
+                                  name:
+                                    loggedInUser?.firstName +
+                                    ' ' +
+                                    loggedInUser?.lastName,
+                                },
                         })
                       }
                       className="h3 p-0 m-0"

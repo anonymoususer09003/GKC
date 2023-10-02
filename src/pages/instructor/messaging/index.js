@@ -8,7 +8,6 @@ import { withRole } from '../../../utils/withAuthorization';
 import { useSelector } from 'react-redux';
 import { fetchUser } from '@/store/actions/userActions';
 import { useDispatch } from 'react-redux';
-import { useRouter } from 'next/router';
 
 function InstructorMessaging() {
   const {
@@ -44,6 +43,15 @@ function InstructorMessaging() {
   const handleTextChange = (e) => {
     setNewMessage(e.target.value);
   };
+  function handleKeyPress(event) {
+    if (event.key === 'Enter') {
+      // Call your function here
+      setNewMessage(event.target.value);
+      setTimeout(() => {
+        sendMessage({ chatId: chatInfo?.course_id });
+      }, 10);
+    }
+  }
 
   return (
     <>
@@ -75,6 +83,7 @@ function InstructorMessaging() {
                     onClick={() => {
                       if (item?.chatId != activeChat) {
                         setActiveChat(item.chatId);
+                        setNewMessage('');
                         setMessages([]);
                         fetchChat({ chatId: item?.chatId });
                         let filterchat = myChatList?.filter(
@@ -124,13 +133,16 @@ function InstructorMessaging() {
 
               <div className=" d-flex align-items-center px-2 gap-2">
                 <input
+                  autoFocus={true}
                   value={newMessage}
                   onChange={handleTextChange}
                   type="text"
                   placeholde=""
                   className="border  p-2 rounded flex-fill"
+                  onKeyDown={handleKeyPress}
                 />{' '}
                 <BsFillSendFill
+                  style={{ cursor: 'pointer' }}
                   onClick={() => sendMessage({ chatId: chatInfo?.course_id })}
                   className="h3 p-0 m-0"
                 />

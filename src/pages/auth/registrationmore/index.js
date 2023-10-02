@@ -104,8 +104,8 @@ export default function InstructorRegistrationMore() {
 
   const getDeliveryModes = async () => {
     try {
-      const response = await axios.get(
-        `https://staging-api.geekkidscode.com/public/register/get-all-delivery-modes`
+      const response = await apiClient.get(
+        `/public/register/get-all-delivery-modes`
       );
       var arr = [];
       response.data.map((v) => {
