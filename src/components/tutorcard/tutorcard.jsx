@@ -109,14 +109,26 @@ const Tutorcard = ({ data, key }) => {
 
   const openChat = (chatId) => {
     setChatInfo({
-      sender: {
-        id: activeChat?.instructorId,
-        name: activeChat?.instructorName,
-      },
-      receiver_user: {
-        id: activeChat?.studentId,
-        name: activeChat?.studentName,
-      },
+      sender:
+        loggedInUser?.userType === 'Student'
+          ? {
+              id: activeChat?.studentId,
+              name: activeChat?.studentName,
+            }
+          : {
+              id: activeChat?.instructorId,
+              name: activeChat?.instructorName,
+            },
+      receiver_user:
+        loggedInUser?.userType === 'Student'
+          ? {
+              id: activeChat?.studentId,
+              name: activeChat?.studentName,
+            }
+          : {
+              id: activeChat?.instructorId,
+              name: activeChat?.instructorName,
+            },
       chatId,
     });
   };
@@ -417,7 +429,10 @@ const Tutorcard = ({ data, key }) => {
                     }}
                   />
                 </div>
-                <div className="modal-body">
+                <div
+                  className="modal-body"
+                  style={{ maxHeight: '350px', overflow: 'scroll' }}
+                >
                   {loggedInUser?.dependents?.map((item) => {
                     return (
                       <p
