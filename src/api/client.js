@@ -1,8 +1,8 @@
 import axios from 'axios';
-// export const base_url = 'https://staging-api.geekkidscode.com';
+export const base_url = 'https://staging-api.geekkidscode.com';
 
 //-----------live url -------------------
-export const base_url = 'https://live-api.geekkidscode.com';
+//export const base_url = 'https://live-api.geekkidscode.com';
 
 const apiClient = axios.create({
   baseURL: base_url,
