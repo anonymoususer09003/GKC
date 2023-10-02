@@ -41,6 +41,24 @@ function ParentMessaging() {
   const handleTextChange = (e) => {
     setNewMessage(e.target.value);
   };
+
+  function handleKeyPress(event) {
+    if (event.key === 'Enter') {
+      // Call your function here
+      setNewMessage(event.target.value);
+      setTimeout(() => {
+        sendMessage({
+          chatId: activeChat,
+          parentInfo: {
+            id: loggedInUser?.id,
+            name: loggedInUser?.firstName,
+          },
+          type: 'parent',
+        });
+      }, 10);
+    }
+  }
+
   console.log('logs---', myChatList);
   return (
     <>
@@ -81,7 +99,7 @@ function ParentMessaging() {
                         let filterchat = myChatList?.filter(
                           (chat) => chat.chatId === item.chatId
                         );
-
+                        setNewMessage('');
                         setMessages([]);
                         fetchChat({ chatId: item?.chatId });
                       }
@@ -127,14 +145,17 @@ function ParentMessaging() {
               </div>
               <div className=" d-flex align-items-center px-2 gap-2">
                 <input
+                  autoFocus={true}
                   value={newMessage}
                   onChange={handleTextChange}
                   type="text"
                   placeholde=""
                   className="border  p-2 rounded flex-fill"
+                  onKeyDown={handleKeyPress}
                 />{' '}
                 {console.log('activ chat', activeChat)}
                 <BsFillSendFill
+                  style={{ cursor: 'pointer' }}
                   onClick={() =>
                     sendMessage({
                       chatId: activeChat,

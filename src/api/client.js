@@ -1,8 +1,11 @@
 import axios from 'axios';
-export const base_url = 'https://staging-api.geekkidscode.com';
-// Create an instance of Axios with a base URL
+// export const base_url = 'https://staging-api.geekkidscode.com';
+
+//-----------live url -------------------
+export const base_url = 'https://live-api.geekkidscode.com';
+
 const apiClient = axios.create({
-  baseURL: 'https://staging-api.geekkidscode.com',
+  baseURL: base_url,
 });
 
 // Add a request interceptor
