@@ -8,14 +8,13 @@ import {
   ArrowLongLeftIcon,
   ArrowLongRightIcon,
 } from '@heroicons/react/20/solid';
-
+import useDebounce from '@/hooks/use-debounce';
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
 }
 
 const ContactUs = () => {
-
-
+  const [search, setSearch] = useState('');
   const [users, setUsers] = useState([]);
   const [selectedUserId, setSelectedUserId] = useState();
   const [selectedUserData, setSelectedUserData] = useState();
@@ -24,6 +23,7 @@ const ContactUs = () => {
   const [adminResponseMessage, setAdminResponseMessage] = useState();
   const adminResponseMessageRef = useRef(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const debouncedInputValue = useDebounce(search, 300); // Adjust the delay as needed
 
   const handleReplyCheckboxChange = (event, message) => {
     const isChecked = event.target.checked;
@@ -77,11 +77,14 @@ const ContactUs = () => {
   useEffect(() => {
     getUsersWithSentMessages();
   }, [currentPage]);
+  useEffect(() => {
+    getUsersWithSentMessages(debouncedInputValue);
+  }, [debouncedInputValue]);
 
-  const getUsersWithSentMessages = async () => {
+  const getUsersWithSentMessages = async (debouncedInputValue) => {
     try {
       const body = {
-        // name: 'Sant',
+        name: debouncedInputValue || '',
         page: currentPage - 1,
         size: 20,
         sort: ['ASC'],
@@ -107,11 +110,15 @@ const ContactUs = () => {
           <label htmlFor="search-field" className="tw-sr-only">
             Search
           </label>
-          <MagnifyingGlassIcon
-            className="tw-pointer-events-none tw-absolute tw-inset-y-0 tw-right-1 tw-h-full tw-w-5 tw-text-gray-400"
-            aria-hidden="true"
-          />
+          {!search && (
+            <MagnifyingGlassIcon
+              className="tw-pointer-events-none tw-absolute tw-inset-y-0 tw-right-1 tw-h-full tw-w-5 tw-text-gray-400"
+              aria-hidden="true"
+            />
+          )}
           <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
             id="tw-search-field"
             className="tw-block tw-h-full tw-w-full tw-border-0 tw-py-0 tw-pr-0 tw-text-gray-900 placeholder:tw-text-gray-400 focus:tw-ring-0 sm:tw-text-sm"
             placeholder="Search..."
@@ -334,7 +341,11 @@ const ContactUs = () => {
                 <div className="tw-flex tw-justify-end tw-mt-10">
                   <button
                     onClick={sendAdminResponseMessage}
-                    className="tw-bg-gray-500 tw-w-32 tw-p-1 tw-rounded-lg tw-text-white"
+                    className={`${
+                      adminResponseMessage && messageToReplyID
+                        ? 'tw-bg-orange-500'
+                        : 'tw-bg-gray-500'
+                    } tw-w-32 tw-p-1 tw-rounded-lg tw-text-white`}
                   >
                     Send Message
                   </button>

@@ -29,11 +29,9 @@ const intialTabs = [
   { name: 'Financials', href: '/internal/financials', current: false },
   { name: 'Variables', href: '/internal/variables', current: false },
   { name: 'Roles', href: '/internal/roles', current: false },
-  { name: 'Profile', href: '/internal/profile', current: false },
 ];
 
 export default function AdminHomePage() {
-
   const [currentTab, setCurrentTab] = useState('Contact Us');
   const [tabs, setTabs] = useState(intialTabs);
 
@@ -46,10 +44,9 @@ export default function AdminHomePage() {
     setTabs(updatedTabs);
   };
 
-
   return (
     <>
-        {/* {ifSignedUser ? (
+      {/* {ifSignedUser ? (
         <div style={{position:'fixed', zIndex: 1, left:0,top:0, width:'100%', height:'100%',overflow:'auto', background: 'rgba(0, 0, 0, 0.4)'}}>
           <div style={{background: 'white', margin: '500px auto', padding:20,width:'35%'}}>
             <p style={{width: 300, margin: 'auto'}}>Please sign in before schedule class.</p>

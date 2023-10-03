@@ -9,8 +9,6 @@ import { AiOutlineCalendar } from 'react-icons/ai';
 import { useRouter } from 'next/router';
 
 const Visitors = () => {
-
-
   const [countries, setCountries] = useState([]);
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
@@ -42,7 +40,34 @@ const Visitors = () => {
       console.error(error);
     }
   };
-
+  function generateChartData(dataArr) {
+    const chartData = {
+      labels: dataArr.map((item) => item.groupingFilterName),
+      datasets: [
+        {
+          data: dataArr.map((item) => item.count),
+          backgroundColor: [
+            'rgba(255, 99, 132, 0.2)',
+            'rgba(54, 162, 235, 0.2)',
+            'rgba(255, 206, 86, 0.2)',
+            'rgba(75, 192, 192, 0.2)',
+            'rgba(153, 102, 255, 0.2)',
+            'rgba(255, 159, 64, 0.2)',
+          ],
+          borderColor: [
+            'rgba(255, 99, 132, 1)',
+            'rgba(54, 162, 235, 1)',
+            'rgba(255, 206, 86, 0.2)',
+            'rgba(75, 192, 192, 0.2)',
+            'rgba(153, 102, 255, 0.2)',
+            'rgba(255, 159, 64, 0.2)',
+          ],
+          borderWidth: 1,
+        },
+      ],
+    };
+    return chartData;
+  }
   const getStates = async () => {
     try {
       const response = await axios.get(
@@ -158,7 +183,8 @@ const Visitors = () => {
       getCities();
     }
   }, [state]);
-
+  const languageCount = generateChartData(languageData);
+  let backgroundCount = 0;
   return (
     <>
       <div className="tw-cst-pf tw-flex tw-space-x-5 tw-my-4 tw-justify-center">
@@ -226,7 +252,7 @@ const Visitors = () => {
           Search
         </button>
       </div>
-      <div className="tw-grid tw-grid-cols-2">
+      <div style={{ display: 'flex' }}>
         <div>
           <VisitorsPieCharts
             ageGroupData={ageGroupData}
@@ -235,13 +261,50 @@ const Visitors = () => {
             languageData={languageData}
           />
         </div>
-        <div className="tw-cst-pf !tw-border-2 !tw-border-black tw-rounded-3xl">
-          <VisitorsCharts
-            studentsCountData={studentsCountData}
-            instructorsCountData={instructorsCountData}
-            classesCountData={classesCountData}
-            complaintsCountData={complaintsCountData}
-          />
+        <div style={{ display: 'flex' }}>
+          <div
+            style={{
+              height: '300px',
+              maxHeight: '300px',
+              overflow: 'scroll',
+              marginTop: '300px',
+              border: '2px solid black',
+              marginRight: 10,
+              borderRadius: 10,
+            }}
+          >
+            {languageCount?.labels?.map((label, index) => {
+              backgroundCount = backgroundCount > 4 ? 0 : backgroundCount + 1;
+
+              const backgroundColor =
+                languageCount?.datasets[0]?.backgroundColor[backgroundCount];
+              return (
+                <div
+                  key={index}
+                  style={{ display: 'flex', alignItems: 'center' }}
+                >
+                  {label}
+                  <div
+                    style={{
+                      marginLeft: '10px',
+                      border: `1px solid black`,
+                      backgroundColor: backgroundColor,
+                      width: '50px',
+                      height: '10px',
+                    }}
+                  />
+                </div>
+              );
+            })}
+          </div>
+          <div className="tw-cst-pf !tw-border-2 !tw-border-black tw-rounded-3xl">
+            <VisitorsCharts
+              studentsCountData={studentsCountData}
+              instructorsCountData={instructorsCountData}
+              classesCountData={classesCountData}
+              complaintsCountData={complaintsCountData}
+            />
+          </div>
         </div>
       </div>
     </>

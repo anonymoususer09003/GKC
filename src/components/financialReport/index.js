@@ -16,8 +16,8 @@ function FinancialReport({ role }) {
   const navigation = useRouter();
   const [financialData, setFinancialData] = useState([]);
   const [date, setDate] = useState({
-    start: null,
-    end: null,
+    start: '2023-09-01',
+    end: moment().format('YYYY-MM-DD'),
   });
 
   const onRequestRefund = () => {
@@ -28,9 +28,8 @@ function FinancialReport({ role }) {
     try {
       let res = null;
       let filter = null;
-      if (applyFilter)
-        filter = `?start=${date.start}&end=${date.end}`;
-      if (filter !== null){
+      if (applyFilter) filter = `?start=${date.start}&end=${date.end}`;
+      if (filter !== null) {
         switch (role) {
           case 'parent':
             res = await ParentFinancialReport({ filter });
@@ -42,10 +41,10 @@ function FinancialReport({ role }) {
             res = await InstructorFinancialReport({ filter });
         }
       }
-
+      console.log('res', res.data);
       setFinancialData(res?.data ?? []);
       console.log('res', res);
-      console.log(financialData)
+      console.log(financialData);
     } catch (err) {
       console.log('err', err);
     }
@@ -63,7 +62,8 @@ function FinancialReport({ role }) {
     }
   };
   const handleDateChange = (e) => {
-    console.log(e.target.value)
+    console.log('date', e.target.value);
+
     setDate({ ...date, [e.target.name]: e.target.value });
   };
   const handleReset = () => {
@@ -104,7 +104,7 @@ function FinancialReport({ role }) {
                     <div className=" d-flex align-items-center gap-3">
                       <p className="fw-bold m-0 p-0"> From </p>{' '}
                       <input
-                        value={date.start || new Date()}
+                        value={date.start || '2023-09-01'}
                         id="startDate"
                         className="form-control"
                         type="date"
@@ -178,34 +178,41 @@ function FinancialReport({ role }) {
                     </tr>{' '}
                   </thead>{' '}
                   <tbody>
-                    {financialData.length > 0 && financialData.map((item, index) => { return<tr key={index}>
-                        <th className="fw-bold" scope="row">
-                          {' '}
-                          {item?.createdAt.slice(0,10)}
-                        </th>{' '}
-                        <td className="fw-bold w-25">
-                          {' '}
-                          {role === 'instructor'
-                            ? item?.studentName
-                            : item?.instructorName}{' '}
-                        </td>{' '}
-                        {role === 'parent' && (
-                          <td className="fw-bold w-25">
-                            {' '}
-                            {item?.studentName}{' '}
-                          </td>
-                        )}
-                        <td className="fw-bold"> {item?.courseName} </td>{' '}
-                        <td className="fw-bold"> {item?.hoursScheduled} </td>{' '}
-                        <td className="fw-bold"> ${item?.hourlyRate} </td>{' '}
-                        <td className="fw-bold"> ${item?.feeAmount} </td>{' '}
-                        <td className="fw-bold d-flex justify-content-between align-items-center">
-                          {' '}
-                          ${item?.totalAmount}{' '}
-                          {/* <TbSpeakerphone onClick={() => onRequestRefund()} />{' '} */}
-                        </td>{' '}
-                      </tr>;
-                    })}
+                    {financialData.length > 0 &&
+                      financialData.map((item, index) => {
+                        return (
+                          <tr key={index}>
+                            <th className="fw-bold" scope="row">
+                              {' '}
+                              {item?.createdAt.slice(0, 10)}
+                            </th>{' '}
+                            <td className="fw-bold w-25">
+                              {' '}
+                              {role === 'instructor'
+                                ? item?.studentName
+                                : item?.instructorName}{' '}
+                            </td>{' '}
+                            {role === 'parent' && (
+                              <td className="fw-bold w-25">
+                                {' '}
+                                {item?.studentName}{' '}
+                              </td>
+                            )}
+                            <td className="fw-bold"> {item?.courseName} </td>{' '}
+                            <td className="fw-bold">
+                              {' '}
+                              {item?.hoursScheduled}{' '}
+                            </td>{' '}
+                            <td className="fw-bold"> ${item?.hourlyRate} </td>{' '}
+                            <td className="fw-bold"> ${item?.feeAmount} </td>{' '}
+                            <td className="fw-bold d-flex justify-content-between align-items-center">
+                              {' '}
+                              ${item?.totalAmount}{' '}
+                              {/* <TbSpeakerphone onClick={() => onRequestRefund()} />{' '} */}
+                            </td>{' '}
+                          </tr>
+                        );
+                      })}
                   </tbody>{' '}
                 </table>
               </div>
