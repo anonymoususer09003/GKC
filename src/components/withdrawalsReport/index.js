@@ -1,21 +1,40 @@
 import { apiClient } from '@/api/client';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import WithdrawDropdown from './Dropdown';
 import ValueInput from './valueInput';
 import format from 'date-fns/format';
 import 'tailwindcss/tailwind.css';
 
 export default function Withdrawals() {
+  const tbodyRef = useRef(null);
+  const prevScrollTopRef = useRef(0);
   const [withdrawals, setWithdrawals] = useState([]);
   const [availableBalance, setavailableBalance] = useState();
   const [paymentMethod, setPaymentMethod] = useState('');
   const [transferAmount, setTransferAmount] = useState(0);
-
+  const [reachedEnd, setReachedEnd] = useState(false);
+  const [page, setPage] = useState(0);
+  const [size, setSize] = useState(20);
+  const [totalRecords, setTotalRecods] = useState(0);
   const getAllwithdrawals = async () => {
-    let url = `/financial/logged-instructor-withdrawals`;
+    let url = `/financial/logged-instructor-withdrawals?${page}&size=${size}`;
     try {
       const response = await apiClient.get(url);
-      setWithdrawals(response.data);
+      setWithdrawals(response?.data?.content);
+      setTotalRecods(res?.data?.totalElements);
+      setPage((prev) => prev + 1);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getMoreAllwithdrawals = async () => {
+    let url = `/financial/logged-instructor-withdrawals?${page}&size=${size}`;
+    try {
+      const response = await apiClient.get(url);
+      setWithdrawals((prev) => [...prev, ...response?.data?.content]);
+      setTotalRecods(res?.data?.totalElements);
+      setPage((prev) => prev + 1);
     } catch (error) {
       console.log(error);
     }
@@ -51,6 +70,38 @@ export default function Withdrawals() {
       console.log(error);
     }
   };
+
+  const handleScroll = () => {
+    const tbody = tbodyRef.current;
+    if (tbody) {
+      const scrollableHeight = tbody.scrollHeight - tbody.clientHeight;
+      const scrollPosition = tbody.scrollTop;
+
+      if (!reachedEnd && scrollPosition >= prevScrollTopRef.current) {
+        // You have reached the end of the scroll and haven't triggered the action yet
+        // Call your function or perform any desired action
+        // Example: YourFunctionToLoadMoreData();
+
+        if (financialData.length < totalRecords) getMoreAllwithdrawals();
+        setReachedEnd(true); // Set the flag to true to prevent multiple triggers
+      } else if (scrollPosition < prevScrollTopRef.current) {
+        // Reset the flag when scrolling back up to allow the action to trigger again
+        setReachedEnd(false);
+      }
+
+      // Update the previous scroll position
+      prevScrollTopRef.current = scrollPosition;
+    }
+  };
+  useEffect(() => {
+    // Attach the scroll event listener to the tbody element
+    tbodyRef?.current?.addEventListener('scroll', handleScroll);
+
+    // Remove the event listener when the component unmounts
+    return () => {
+      tbodyRef?.current?.removeEventListener('scroll', handleScroll);
+    };
+  }, [reachedEnd]);
 
   useEffect(() => {
     getAllwithdrawals();

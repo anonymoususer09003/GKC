@@ -56,7 +56,7 @@ export default function WithdrawDropdown({
                 </a>
               )}
             </Menu.Item>
-            <Menu.Item>
+            {/* <Menu.Item>
               {({ active }) => (
                 <a
                   href="#"
@@ -74,7 +74,7 @@ export default function WithdrawDropdown({
                   Payoneer
                 </a>
               )}
-            </Menu.Item>
+            </Menu.Item> */}
           </div>
         </Menu.Items>
       </Transition>

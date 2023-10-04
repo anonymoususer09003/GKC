@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Head from 'next/head';
 import { Inter } from 'next/font/google';
 import { Navbar, Footer } from '../';
@@ -14,7 +14,14 @@ import moment from 'moment';
 
 function FinancialReport({ role }) {
   const navigation = useRouter();
+  const tbodyRef = useRef(null);
+  const prevScrollTopRef = useRef(0);
   const [financialData, setFinancialData] = useState([]);
+  const [reachedEnd, setReachedEnd] = useState(false);
+  const [page, setPage] = useState(0);
+  const [size, setSize] = useState(20);
+  const [totalRecords, setTotalRecods] = useState(0);
+
   const [date, setDate] = useState({
     start: '2023-09-01',
     end: moment().format('YYYY-MM-DD'),
@@ -28,7 +35,13 @@ function FinancialReport({ role }) {
     try {
       let res = null;
       let filter = null;
-      if (applyFilter) filter = `?start=${date.start}&end=${date.end}`;
+
+      let endDate = moment(date?.end, 'YYYY-MM-DD');
+
+      // Add one day to the date
+      const newDate = endDate.add(1, 'days').format('YYYY-MM-DD');
+      if (applyFilter)
+        filter = `?start=${date.start}&end=${newDate}&page=${page}&size=${size}`;
       if (filter !== null) {
         switch (role) {
           case 'parent':
@@ -41,10 +54,37 @@ function FinancialReport({ role }) {
             res = await InstructorFinancialReport({ filter });
         }
       }
-      console.log('res', res.data);
-      setFinancialData(res?.data ?? []);
-      console.log('res', res);
-      console.log(financialData);
+      console.log('re--00s', res.data);
+      setFinancialData(res?.data?.content ?? []);
+      setTotalRecods(res?.data?.totalElements);
+      setPage((prev) => prev + 1);
+    } catch (err) {
+      console.log('err', err);
+    }
+  };
+
+  const fetchMoreReports = async (applyFilter) => {
+    try {
+      let res = null;
+      let filter = null;
+      if (applyFilter)
+        filter = `?start=${date.start}&end=${date.end}&page=${page}&size=${size}`;
+      if (filter !== null) {
+        switch (role) {
+          case 'parent':
+            res = await ParentFinancialReport({ filter });
+            break;
+          case 'student':
+            res = await StudentFinancialReport({ filter });
+            break;
+          default:
+            res = await InstructorFinancialReport({ filter });
+        }
+      }
+      console.log('re--00s', res.data);
+      setFinancialData((prev) => [...prev, ...res?.data?.content]);
+      setTotalRecods(res?.data?.totalElements);
+      setPage((prev) => prev + 1);
     } catch (err) {
       console.log('err', err);
     }
@@ -67,6 +107,8 @@ function FinancialReport({ role }) {
     setDate({ ...date, [e.target.name]: e.target.value });
   };
   const handleReset = () => {
+    setPage(0);
+
     setDate({
       start: null,
       end: null,
@@ -79,6 +121,39 @@ function FinancialReport({ role }) {
   useEffect(() => {
     if (date.start && date.end) fetchReports(true);
   }, [date]);
+
+  const handleScroll = () => {
+    const tbody = tbodyRef.current;
+    if (tbody) {
+      const scrollableHeight = tbody.scrollHeight - tbody.clientHeight;
+      const scrollPosition = tbody.scrollTop;
+
+      if (!reachedEnd && scrollPosition >= prevScrollTopRef.current) {
+        // You have reached the end of the scroll and haven't triggered the action yet
+        // Call your function or perform any desired action
+        // Example: YourFunctionToLoadMoreData();
+
+        if (financialData.length < totalRecords)
+          fetchMoreReports(date.start && date.end ? true : false);
+        setReachedEnd(true); // Set the flag to true to prevent multiple triggers
+      } else if (scrollPosition < prevScrollTopRef.current) {
+        // Reset the flag when scrolling back up to allow the action to trigger again
+        setReachedEnd(false);
+      }
+
+      // Update the previous scroll position
+      prevScrollTopRef.current = scrollPosition;
+    }
+  };
+  useEffect(() => {
+    // Attach the scroll event listener to the tbody element
+    tbodyRef?.current?.addEventListener('scroll', handleScroll);
+
+    // Remove the event listener when the component unmounts
+    return () => {
+      tbodyRef?.current?.removeEventListener('scroll', handleScroll);
+    };
+  }, [reachedEnd]);
 
   return (
     <>
@@ -95,8 +170,13 @@ function FinancialReport({ role }) {
               </p>
             ) : null}
             <div
+              ref={tbodyRef}
               className="border rounded p-4 my-4"
-              style={{ minHeight: '400px' }}
+              style={{
+                minHeight: '400px',
+                maxHeight: '400px',
+                overflow: 'scroll',
+              }}
             >
               <div className="w-50 m-auto pb-4">
                 <div className="row">
@@ -135,7 +215,9 @@ function FinancialReport({ role }) {
               </div>
 
               <div
-                style={{ minWidth: '400px', overflowY: 'auto' }}
+                style={{
+                  minWidth: '400px',
+                }}
                 className={styles['report-table-wrapper']}
               >
                 <table className="table ">

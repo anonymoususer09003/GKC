@@ -12,14 +12,14 @@ const Visitors = () => {
   const [countries, setCountries] = useState([]);
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
-  const [country, setCountry] = useState();
-  const [state, setState] = useState('');
-  const [city, setCity] = useState('');
+  const [country, setCountry] = useState('Select Country');
+  const [state, setState] = useState('Select State');
+  const [city, setCity] = useState('Select City');
   const [startDate, setStartDate] = useState();
   const [endDate, setEndDate] = useState();
   const [coursesWithInstructors, setCoursesWithInstructors] = useState([]);
-  const [selectedCourse, setSelectedCourse] = useState();
-  const [selectedCourseId, setSelectedCourseId] = useState('');
+  const [selectedCourse, setSelectedCourse] = useState('Select Course');
+  const [selectedCourseId, setSelectedCourseId] = useState('Select Course');
   const [ageGroupData, setAgeGroupData] = useState([]);
   const [skillLevelData, setSkillLevelData] = useState([]);
   const [deliveryModeData, setDeliveryModeData] = useState([]);
@@ -36,6 +36,7 @@ const Visitors = () => {
         `${base_url}/public/location/get-countries`
       );
       setCountries(response.data);
+      setState('Select State');
     } catch (error) {
       console.error(error);
     }
@@ -73,16 +74,19 @@ const Visitors = () => {
       const response = await axios.get(
         `${base_url}/public/location/get-states?countryName=${country}`
       );
+      setCity('Select City');
       setStates(response.data);
     } catch (error) {
       console.error(error);
     }
   };
+  console.log('states', states);
   const getCities = async () => {
     try {
       const response = await axios.get(
         `${base_url}/public/location/get-cities?countryName=${country}&stateName=${state}`
       );
+
       setCities(response.data);
     } catch (error) {
       console.error(error);
@@ -99,15 +103,20 @@ const Visitors = () => {
       console.error(error);
     }
   };
-
+  console.log('stte', state);
+  console.log('selected course', selectedCourseId);
   const getFilterData = async () => {
     try {
       const pieQueryParams = new URLSearchParams({
-        courseId: selectedCourseId,
-        // country,
+        // courseId: selectedCourseId,
         // state,
         // city,
       });
+      country !== 'Select Country' && pieQueryParams.append('country', country);
+      selectedCourseId != 'Select Course' &&
+        pieQueryParams.append('courseId', selectedCourseId);
+      state !== 'Select State' && pieQueryParams.append('state', state);
+      city !== 'Select City' && pieQueryParams.append('city', city);
       const lineQueryParams = new URLSearchParams({
         // courseId: selectedCourseId,
         // country,
@@ -116,6 +125,16 @@ const Visitors = () => {
         // startDate,
         // endDate,
       });
+
+      country !== 'Select Country' &&
+        lineQueryParams.append('country', country);
+      state !== 'Select State' && lineQueryParams.append('state', state);
+      city !== 'Select City' && lineQueryParams.append('city', city);
+      selectedCourseId != 'Select Course' &&
+        lineQueryParams.append('courseId', selectedCourseId);
+      startDate && lineQueryParams.append('startDate', startDate);
+      endDate && lineQueryParams.append('endDate', endDate);
+
       const ageGroupResponse = await apiClient.get(
         `${base_url}/admin/visitor/count-students-registered-by-age-group?${pieQueryParams.toString()}`
       );
@@ -155,11 +174,16 @@ const Visitors = () => {
 
   const handleCourseChange = (e) => {
     const newSelectedCourse = e.target.value;
-    setSelectedCourse(newSelectedCourse);
-    const selectedCourseObject = coursesWithInstructors.find(
-      (course) => course.name === newSelectedCourse
-    );
-    setSelectedCourseId(selectedCourseObject.id);
+    if (newSelectedCourse != 'Select Course') {
+      setSelectedCourse(newSelectedCourse);
+      const selectedCourseObject = coursesWithInstructors.find(
+        (course) => course.name === newSelectedCourse
+      );
+      setSelectedCourseId(selectedCourseObject.id);
+    } else {
+      setSelectedCourse('Select Course');
+      setSelectedCourseId('Select Course');
+    }
   };
 
   useEffect(() => {
@@ -185,23 +209,34 @@ const Visitors = () => {
   }, [state]);
   const languageCount = generateChartData(languageData);
   let backgroundCount = 0;
+  console.log('cty', city);
   return (
     <>
       <div className="tw-cst-pf tw-flex tw-space-x-5 tw-my-4 tw-justify-center">
-        <select value={country} onChange={(e) => setCountry(e.target.value)}>
-          <option disabled selected>
-            Select Country
-          </option>
+        <select
+          value={country}
+          onChange={(e) => {
+            setCountry(e.target.value);
+            setState('Select State');
+            setCity('Select City');
+          }}
+        >
+          <option selected>Select Country</option>
           {countries.map((country, index) => (
             <option value={country.name} key={index}>
               {country.name}
             </option>
           ))}
         </select>
-        <select value={state} onChange={(e) => setState(e.target.value)}>
-          <option disabled selected>
-            Select State
-          </option>
+        <select
+          value={state}
+          onChange={(e) => {
+            setState(e.target.value);
+
+            setCity('Select City');
+          }}
+        >
+          <option>Select State</option>
           {states.map((state, index) => (
             <option value={state.name} key={index}>
               {state.name}
@@ -209,9 +244,7 @@ const Visitors = () => {
           ))}
         </select>
         <select value={city} onChange={(e) => setCity(e.target.value)}>
-          <option disabled selected>
-            Select City
-          </option>
+          <option>Select City</option>
           {cities.map((city, index) => (
             <option value={city.name} key={index}>
               {city.name}
@@ -219,9 +252,7 @@ const Visitors = () => {
           ))}
         </select>
         <select value={selectedCourse} onChange={handleCourseChange}>
-          <option disabled selected>
-            Select Course
-          </option>
+          <option selected>Select Course</option>
           {coursesWithInstructors.map((course, index) => (
             <option key={index} value={course.name}>
               {course.name}
