@@ -127,6 +127,7 @@ const Financials = () => {
 
   useEffect(() => {
     getCountries();
+    getFilterData();
   }, []);
 
   useEffect(() => {
@@ -211,7 +212,7 @@ const Financials = () => {
       </div>
       <div className="tw-p-2 tw-rounded-3xl ">
         <FinancialsChart
-          grossRevenue={filteredDataTest}
+          grossRevenue={grossRevenue}
           netRevenue={netRevenue}
           totalPayout={totalPayout}
           taxTracking={taxTracking}
