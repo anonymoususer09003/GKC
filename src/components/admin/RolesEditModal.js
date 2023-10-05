@@ -21,12 +21,14 @@ export default function RolesEditModal({ setOpen, open, getAllAdmins, admin }) {
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [authorities, setAuthorities] = useState([]);
+  const [status, setStatus] = useState('Select Status');
 
   useEffect(() => {
     setFirstName(admin.firstName);
     setLastName(admin.lastName);
     setEmail(admin.email);
     setAuthorities(admin.authorities);
+    setStatus(admin.adminStatus === 'ACTIVE' ? 'Active' : 'In Active');
   }, []);
 
   const handleCheckboxChange = (event) => {
@@ -47,7 +49,7 @@ export default function RolesEditModal({ setOpen, open, getAllAdmins, admin }) {
         firstName,
         lastName,
         email,
-        status: admin.adminStatus,
+        status: status === 'Active' ? 'ACTIVE' : 'SUSPENDED',
         authorities,
       };
       const response = await apiClient.put(
@@ -59,6 +61,12 @@ export default function RolesEditModal({ setOpen, open, getAllAdmins, admin }) {
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const handleStatus = (e) => {
+    let { value } = e.target;
+    setAuthorities(value === 'Active' ? admin.authorities : []);
+    setStatus(value);
   };
   return (
     <Transition.Root show={open} as={Fragment}>
@@ -138,6 +146,27 @@ export default function RolesEditModal({ setOpen, open, getAllAdmins, admin }) {
                         className="tw-block tw-w-full tw-rounded-md tw-border-0 tw-py-1.5 tw-text-gray-900 tw-shadow-sm tw-ring-1 tw-ring-inset tw-ring-gray-300 placeholder:tw-text-gray-400 focus:tw-ring-2 focus:tw-ring-inset focus:tw-ring-indigo-600 sm:tw-text-sm sm:tw-leading-6"
                         placeholder="Email"
                       />
+                    </div>
+                  </div>
+
+                  <div className="tw-flex tw-items-center tw-justify-between">
+                    <label
+                      htmlFor="email"
+                      className="tw-block tw-text-sm tw-font-medium tw-leading-6 tw-text-gray-900"
+                    >
+                      Status
+                    </label>
+                    <div className="tw-mt-2 tw-w-60">
+                      <select
+                        style={{ width: '240px' }}
+                        value={status}
+                        onChange={handleStatus}
+                      >
+                        <option>Select Status</option>
+                        {['Active', 'In Active'].map((status, index) => (
+                          <option key={index}>{status}</option>
+                        ))}
+                      </select>
                     </div>
                   </div>
                   <div className="tw-flex tw-mt-3 tw-justify-between">

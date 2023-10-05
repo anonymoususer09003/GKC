@@ -1,10 +1,11 @@
-import { apiClient } from '@/api/client';
+import axios from 'axios';
+import { base_url } from '@/api/client';
 import { useEffect, useState, useRef } from 'react';
 import WithdrawDropdown from './Dropdown';
 import ValueInput from './valueInput';
 import format from 'date-fns/format';
 import 'tailwindcss/tailwind.css';
-
+import { apiClient } from '@/api/client';
 export default function Withdrawals() {
   const tbodyRef = useRef(null);
   const prevScrollTopRef = useRef(0);
@@ -17,11 +18,11 @@ export default function Withdrawals() {
   const [size, setSize] = useState(20);
   const [totalRecords, setTotalRecods] = useState(0);
   const getAllwithdrawals = async () => {
-    let url = `/financial/logged-instructor-withdrawals?${page}&size=${size}`;
+    let url = `/financial/logged-instructor-withdrawals?page=${page}&size=${size}sort=DESC`;
     try {
       const response = await apiClient.get(url);
       setWithdrawals(response?.data?.content);
-      setTotalRecods(res?.data?.totalElements);
+      setTotalRecods(response?.data?.totalElements);
       setPage((prev) => prev + 1);
     } catch (error) {
       console.log(error);
@@ -29,7 +30,7 @@ export default function Withdrawals() {
   };
 
   const getMoreAllwithdrawals = async () => {
-    let url = `/financial/logged-instructor-withdrawals?${page}&size=${size}`;
+    let url = `/financial/logged-instructor-withdrawals?${page}&size=${size}&sort=DESC`;
     try {
       const response = await apiClient.get(url);
       setWithdrawals((prev) => [...prev, ...response?.data?.content]);
@@ -65,7 +66,31 @@ export default function Withdrawals() {
   const downloadWithDrawalsReport = async () => {
     let url = `/financial/logged-instructor-withdrawals-pdf-report`;
     try {
-      const response = await apiClient.post(url);
+      const token = window.localStorage.getItem('gkcAuth');
+      const res = await axios({
+        method: 'get',
+        url: base_url + url,
+        responseType: 'arraybuffer', // Set the response type to 'arraybuffer' for binary data
+        headers: {
+          Authorization: 'Bearer ' + JSON.parse(token)?.accessToken,
+        },
+      });
+
+      let pdfData = res.data;
+      if (pdfData) {
+        const blob = new Blob([pdfData], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+
+        // Create a link element and trigger a download
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'financial_report.pdf';
+        a.style.display = 'none';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
     } catch (error) {
       console.log(error);
     }

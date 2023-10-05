@@ -41,17 +41,25 @@ function FinancialReport({ role }) {
       // Add one day to the date
       const newDate = endDate.add(1, 'days').format('YYYY-MM-DD');
       if (applyFilter)
-        filter = `?start=${date.start}&end=${newDate}&page=${page}&size=${size}`;
+        filter = `start=${date.start}&end=${newDate}&page=${page}&size=${size}`;
+
+      const body = {
+        start: date.start,
+        end: date.end,
+        size,
+        sort: ['DESC'],
+      };
+      const queryString = new URLSearchParams(body).toString();
       if (filter !== null) {
         switch (role) {
           case 'parent':
-            res = await ParentFinancialReport({ filter });
+            res = await ParentFinancialReport({ filter: queryString });
             break;
           case 'student':
-            res = await StudentFinancialReport({ filter });
+            res = await StudentFinancialReport({ filter: queryString });
             break;
           default:
-            res = await InstructorFinancialReport({ filter });
+            res = await InstructorFinancialReport({ filter: queryString });
         }
       }
       console.log('re--00s', res.data);
@@ -69,16 +77,22 @@ function FinancialReport({ role }) {
       let filter = null;
       if (applyFilter)
         filter = `?start=${date.start}&end=${date.end}&page=${page}&size=${size}`;
+      const body = {
+        start: date.start,
+        end: date.end,
+        size,
+        sort: ['DESC'],
+      };
       if (filter !== null) {
         switch (role) {
           case 'parent':
-            res = await ParentFinancialReport({ filter });
+            res = await ParentFinancialReport({ filter: queryString });
             break;
           case 'student':
-            res = await StudentFinancialReport({ filter });
+            res = await StudentFinancialReport({ filter: queryString });
             break;
           default:
-            res = await InstructorFinancialReport({ filter });
+            res = await InstructorFinancialReport({ filter: queryString });
         }
       }
       console.log('re--00s', res.data);
@@ -96,7 +110,22 @@ function FinancialReport({ role }) {
         filter = `?start=${date.start}&end=${date.end}`;
       }
       let res = await DownloadFinancialReport({ filter });
-      console.log('download report ', res);
+      console.log('res', res.data);
+      let pdfData = res.data;
+      if (pdfData) {
+        const blob = new Blob([pdfData], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+
+        // Create a link element and trigger a download
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'financial_report.pdf';
+        a.style.display = 'none';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
     } catch (err) {
       console.log('err', err);
     }

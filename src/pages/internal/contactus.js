@@ -23,6 +23,9 @@ const ContactUs = () => {
   const [adminResponseMessage, setAdminResponseMessage] = useState();
   const adminResponseMessageRef = useRef(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+  const [page, setPage] = useState(0);
+  const size = 20;
   const debouncedInputValue = useDebounce(search, 300); // Adjust the delay as needed
 
   const handleReplyCheckboxChange = (event, message) => {
@@ -75,33 +78,38 @@ const ContactUs = () => {
   };
 
   useEffect(() => {
-    getUsersWithSentMessages();
-  }, [currentPage]);
-  useEffect(() => {
     getUsersWithSentMessages(debouncedInputValue);
-  }, [debouncedInputValue]);
+  }, [debouncedInputValue, currentPage]);
 
   const getUsersWithSentMessages = async (debouncedInputValue) => {
     try {
       const body = {
-        name: debouncedInputValue || '',
+        // name: debouncedInputValue || '',
         page: currentPage - 1,
-        size: 20,
+        size,
         sort: ['ASC'],
       };
-      const queryString = new URLSearchParams(body).toString();
-      const url = `${base_url}/contactus/admin/users-list-with-contact-us/?${queryString}`;
+      const queryString = new URLSearchParams(body);
+      debouncedInputValue && queryString.append('name', debouncedInputValue);
+      // ?${queryString}?page=${page}&size=${size}
+      const url = `${base_url}/contactus/admin/users-list-with-contact-us/?${queryString.toString()}`;
+
       const response = await apiClient.get(url);
+      setPage((prev) => prev + 1);
+
+      const totalRecords = response?.data?.totalElements; // Replace with the actual total number of records
+      const recordsPerPage = size; // Replace with the number of records shown on each page
+
+      const totalPages = Math.ceil(totalRecords / recordsPerPage);
+
+      setTotalCount(totalPages);
       console.log(response.data);
-      setUsers(response.data);
+
+      setUsers(response.data.content);
     } catch (error) {
       console.log(error);
     }
   };
-
-  useEffect(() => {
-    getUsersWithSentMessages();
-  }, []);
 
   return (
     <div className="tw-divide-y tw-p-3 tw-w-full tw-h-full tw-divide-gray-200 tw-overflow-hidden tw-rounded-lg  tw-shadow sm:tw-grid sm:tw-grid-cols-5 tw-gap-x-5 sm:tw-divide-y-0">
@@ -127,7 +135,7 @@ const ContactUs = () => {
           />
         </div>
         <div className="!tw-border-2 tw-relative tw-cst-pf tw-overflow-y-auto tw-h-[80vh] tw-w-full !tw-border-gray-500">
-          {users.map((user) => (
+          {users?.map((user) => (
             <ul className="!tw-flex tw-text-lg tw-mt-2 !tw-list-disc tw-mb-0">
               <li
                 onClick={() => handleSelectedUser(user)}
@@ -144,21 +152,23 @@ const ContactUs = () => {
           ))}
           <nav className="tw-absolute tw-bottom-4 tw-w-full tw-border-t tw-border-gray-200 tw-px-4 sm:tw-px-0">
             <div className="tw-hidden md:tw--mt-px md:tw-flex">
-              <div className="tw--mt-px tw-flex tw-w-0 tw-flex-1">
-                <a className="tw-inline-flex tw-cursor-pointer tw-items-center tw-cst-pf !tw-border-t-2 !tw-border-transparent tw-pr-1 tw-pt-4 tw-text-sm tw-font-medium tw-text-gray-500 hover:tw-border-gray-300 hover:tw-text-gray-700">
-                  <ArrowLongLeftIcon
-                    className="tw-mr-3 tw-h-5 tw-w-5 tw-text-gray-400"
-                    aria-hidden="true"
-                    onClick={() =>
-                      currentPage >= 2
-                        ? setCurrentPage((prevCurr) => prevCurr - 1)
-                        : null
-                    }
-                  />
-                  {/* Previous */}
-                </a>
-              </div>
-              {Array.from({ length: 5 }, (_, index) => (
+              {totalCount > 1 && (
+                <div className="tw--mt-px tw-flex tw-w-0 tw-flex-1">
+                  <a className="tw-inline-flex tw-cursor-pointer tw-items-center tw-cst-pf !tw-border-t-2 !tw-border-transparent tw-pr-1 tw-pt-4 tw-text-sm tw-font-medium tw-text-gray-500 hover:tw-border-gray-300 hover:tw-text-gray-700">
+                    <ArrowLongLeftIcon
+                      className="tw-mr-3 tw-h-5 tw-w-5 tw-text-gray-400"
+                      aria-hidden="true"
+                      onClick={() =>
+                        currentPage >= 2
+                          ? setCurrentPage((prevCurr) => prevCurr - 1)
+                          : null
+                      }
+                    />
+                    {/* Previous */}
+                  </a>
+                </div>
+              )}
+              {Array.from({ length: totalCount }, (_, index) => (
                 <a
                   onClick={() => setCurrentPage(index + 1)}
                   className={classNames(
@@ -172,20 +182,22 @@ const ContactUs = () => {
                 </a>
               ))}
 
-              <div className="tw--mt-px tw-flex tw-w-0 tw-flex-1 tw-justify-end">
-                <a className="tw-inline-flex tw-cursor-pointer tw-items-center tw-cst-pf !tw-border-t-2 !tw-border-transparent tw-pl-1 tw-pt-4 tw-text-sm tw-font-medium tw-text-gray-500 hover:tw-border-gray-300 hover:tw-text-gray-700">
-                  {/* Next */}
-                  <ArrowLongRightIcon
-                    className="tw-ml-3 tw-h-5 tw-w-5 tw-text-gray-400"
-                    aria-hidden="true"
-                    onClick={() =>
-                      currentPage <= 4
-                        ? setCurrentPage((prevCurr) => prevCurr + 1)
-                        : null
-                    }
-                  />
-                </a>
-              </div>
+              {totalCount > 1 && (
+                <div className="tw--mt-px tw-flex tw-w-0 tw-flex-1 tw-justify-end">
+                  <a className="tw-inline-flex tw-cursor-pointer tw-items-center tw-cst-pf !tw-border-t-2 !tw-border-transparent tw-pl-1 tw-pt-4 tw-text-sm tw-font-medium tw-text-gray-500 hover:tw-border-gray-300 hover:tw-text-gray-700">
+                    {/* Next */}
+                    <ArrowLongRightIcon
+                      className="tw-ml-3 tw-h-5 tw-w-5 tw-text-gray-400"
+                      aria-hidden="true"
+                      onClick={() =>
+                        currentPage <= 4
+                          ? setCurrentPage((prevCurr) => prevCurr + 1)
+                          : null
+                      }
+                    />
+                  </a>
+                </div>
+              )}
             </div>
           </nav>
         </div>
