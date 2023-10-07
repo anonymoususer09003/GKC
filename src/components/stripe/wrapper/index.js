@@ -1,8 +1,8 @@
-import { Elements } from "@stripe/react-stripe-js";
-import { loadStripe } from "@stripe/stripe-js";
+import { Elements } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
 
 const stripePromise = loadStripe(
-  "pk_test_51L9vs2JJ9lJUrkO5jZFlA7HSWO0r8dYbnHplnQeSxuMYts0JFWQkamKrpqmP4Y5eUFDKFx116F8Sv1crhu2SKMPD00yOLQHeJB"
+  'pk_live_51J3XIEHpP2GPUgoko3NIF9po8yOlaCzmspoAJNICnVU46PQFPW0nsJy6lsI0EFQossiQFO97ay5jn5c6xvhsoTXd00pP8etsw6'
 );
 
 const StripeComponent = ({ children }) => {
