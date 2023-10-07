@@ -170,6 +170,7 @@ function StudentRegistrationCCPay() {
     const getTaxesFees = async () => {
       try {
         const res = await apiClient('/event/get-platform-fees');
+        console.log('res tex fees', res.data);
         setTaxesFeesInfo(res.data);
       } catch (err) {
         console.log(err);

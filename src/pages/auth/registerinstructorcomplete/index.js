@@ -11,9 +11,11 @@ import styles from '../../../styles/Home.module.css';
 import { BsPersonCircle } from 'react-icons/bs';
 import { useSelector, useDispatch } from 'react-redux';
 import { saveImage } from '@/store/actions/filesActions';
-
+import { CountryCodes } from '@/utils/countryCodes';
+import { useScreenSize } from '@/hooks/mobile-devices';
 export default function RegisterInstructor() {
   const navigation = useRouter();
+  const { isLargeScreen } = useScreenSize();
   const [countries, setCountries] = useState([]);
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
@@ -27,6 +29,7 @@ export default function RegisterInstructor() {
   const [state, setState] = useState('');
   const [city, setCity] = useState('');
   const [zipCode, setZipCode] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [termsAgree, setTermsAgree] = useState(false);
@@ -83,8 +86,11 @@ export default function RegisterInstructor() {
     if (password == confirmPassword) {
       var stored = JSON.parse(window.localStorage.getItem('registrationForm'));
       let timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-
+      let dial_code = CountryCodes.find(
+        (item) => item.name === country
+      ).dial_code;
       console.log('stor', stored);
+      stored.phoneNumber = dial_code + '-' + phoneNumber;
       stored.email = email;
       stored.firstName = firstName;
       stored.lastName = lastName;
@@ -335,6 +341,42 @@ export default function RegisterInstructor() {
                     />
                   </div>
 
+                  <div style={{ display: 'flex' }}>
+                    <div style={{ display: 'flex' }}>
+                      <input
+                        type="text"
+                        style={{ width: '22%', marginRight: 10 }}
+                        className="p-2 rounded outline-0 border border_gray   mb-3"
+                        placeholder="CountryCode"
+                        name="countryCode"
+                        value={
+                          country
+                            ? CountryCodes.find((item) => item.name === country)
+                                .dial_code
+                            : ''
+                        }
+                        readOnly
+                      />
+                      <input
+                        type="text"
+                        style={{ width: !isLargeScreen ? '100%' : '73%' }}
+                        className=" p-2 rounded outline-0 border border_gray   mb-3"
+                        placeholder="Phone Number"
+                        name="phoneNumber"
+                        value={phoneNumber}
+                        onChange={(e) => setPhoneNumber(e.target.value)}
+                      />
+                    </div>
+                    {isLargeScreen && (
+                      <div
+                        style={{
+                          width: '50%',
+                          // border: '1px solid black',
+                          height: '50px',
+                        }}
+                      />
+                    )}
+                  </div>
                   <div className="d-flex flex-wrap gap-2 justify-content-between mt-3">
                     <button
                       className={`w-50 text-light p-2 rounded fw-bold  bg-gray-300 ${

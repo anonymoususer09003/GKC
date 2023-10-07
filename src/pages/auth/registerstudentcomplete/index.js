@@ -8,9 +8,14 @@ import { RiArrowGoBackLine } from 'react-icons/ri';
 import axios from 'axios';
 import styles from '../../../styles/Home.module.css';
 import { base_url } from '../../../api/client';
+import { CountryCodes } from '@/utils/countryCodes';
+import { useScreenSize } from '@/hooks/mobile-devices';
 export default function RegisterStudent() {
+  const { isLargeScreen } = useScreenSize();
+
   const router = useRouter();
   const navigation = useRouter();
+
   const [countries, setCountries] = useState([]);
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
@@ -21,6 +26,7 @@ export default function RegisterStudent() {
   const [firstname, setFirstname] = useState('');
   const [lastname, setLastname] = useState('');
   const [address1, setAddress1] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
   const [address2, setAddress2] = useState('');
   const [country, setCountry] = useState('');
   const [state, setState] = useState('');
@@ -32,20 +38,23 @@ export default function RegisterStudent() {
   const [isInitialRender, setIsInitialRender] = useState(true);
   const [guardian1Exists, setGuardian1Exists] = useState(true);
   const [guardian2Exists, setGuardian2Exists] = useState(true);
-  const [parenmail, setParentmail] = useState('')
+  const [parenmail, setParentmail] = useState('');
 
   let isValidForm =
     (guardianEmail1.length == 0 || guardian1Exists) &&
     (guardianEmail2.length == 0 || guardian2Exists) &&
     country &&
     state &&
-    city &&
-    zipCode;
+    city;
 
   const onContinue = () => {
     var stored = JSON.parse(window.localStorage.getItem('registrationForm'));
+    let dial_code = CountryCodes.find(
+      (item) => item.name === country
+    ).dial_code;
     console.log(stored);
     let timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    stored.phoneNumber = dial_code + '-' + phoneNumber;
 
     stored.email = email;
     stored.firstName = firstname;
@@ -153,13 +162,11 @@ export default function RegisterStudent() {
       getCities();
     }
 
-    if(window !== 'undefined'){
+    if (window !== 'undefined') {
       let stor = JSON.parse(window.localStorage.getItem('parentData'));
-      setGuardianEmail1(stor?.email ?? '')
+      setGuardianEmail1(stor?.email ?? '');
     }
   }, [state]);
-
-
 
   const handleBack = () => {
     router.push('/auth/registerstudent');
@@ -170,13 +177,16 @@ export default function RegisterStudent() {
         <title>Auth | Student Registration</title>
         <meta name="description" content="Where kids learn to code" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="https://gkc-images.s3.amazonaws.com/favicon.ico" />
+        <link
+          rel="icon"
+          href="https://gkc-images.s3.amazonaws.com/favicon.ico"
+        />
       </Head>
       <main className="container-fluid d-flex flex-column justify-content-between  min-vh-100">
         <div
           className="text-decoration-none p-4 d-flex gap-2 align-items-center text-dark"
-          onClick={()=>navigation.back()}
-          style={{cursor:'pointer'}}
+          onClick={() => navigation.back()}
+          style={{ cursor: 'pointer' }}
         >
           <RiArrowGoBackLine />
           <p className="fw-bold m-0 p-0 ">Back</p>
@@ -328,6 +338,43 @@ export default function RegisterStudent() {
                       value={zipCode}
                       onChange={(e) => setZipCode(e.target.value)}
                     />
+                  </div>
+                  <div style={{ display: 'flex' }}>
+                    <div style={{ display: 'flex' }}>
+                      <input
+                        type="text"
+                        style={{ width: '17%', marginRight: 10 }}
+                        className="p-2 rounded outline-0 border border_gray   mb-3"
+                        placeholder="CountryCode"
+                        name="countryCode"
+                        value={
+                          country
+                            ? CountryCodes.find((item) => item.name === country)
+                                .dial_code
+                            : ''
+                        }
+                        readOnly
+                      />
+
+                      <input
+                        type="text"
+                        style={{ width: !isLargeScreen ? '100%' : '73%' }}
+                        className=" p-2 rounded outline-0 border border_gray   mb-3"
+                        placeholder="Phone Number"
+                        name="phoneNumber"
+                        value={phoneNumber}
+                        onChange={(e) => setPhoneNumber(e.target.value)}
+                      />
+                    </div>
+                    {isLargeScreen && (
+                      <div
+                        style={{
+                          width: '50%',
+                          // border: '1px solid black',
+                          height: '50px',
+                        }}
+                      />
+                    )}
                   </div>
                   {/* <div className="d-flex  flex-md-nowrap flex-wrap gap-2">
                     <input

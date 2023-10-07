@@ -1,31 +1,33 @@
-import React, { useState, useEffect } from "react";
-import Head from "next/head";
-import Link from "next/link";
-import { Navbar, Footer } from "../../../components";
-import { BsCheck2Circle } from "react-icons/bs";
-import { useRouter } from "next/router";
-import { RiArrowGoBackLine } from "react-icons/ri";
-import axios from "axios";
-import { apiClient, base_url } from "../../../api/client";
-
+import React, { useState, useEffect } from 'react';
+import Head from 'next/head';
+import Link from 'next/link';
+import { Navbar, Footer } from '../../../components';
+import { BsCheck2Circle } from 'react-icons/bs';
+import { useRouter } from 'next/router';
+import { RiArrowGoBackLine } from 'react-icons/ri';
+import axios from 'axios';
+import { apiClient, base_url } from '../../../api/client';
+import { CountryCodes } from '@/utils/countryCodes';
+import { useScreenSize } from '@/hooks/mobile-devices';
 export default function RegisterStudent() {
   const navigation = useRouter();
+  const { isLargeScreen } = useScreenSize();
   const [countries, setCountries] = useState([]);
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
-  const [userType, setUserType] = useState("");
-
-  const [email, setEmail] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [address1, setAddress1] = useState("");
-  const [address2, setAddress2] = useState("");
-  const [country, setCountry] = useState("");
-  const [state, setState] = useState("");
-  const [city, setCity] = useState("");
-  const [zipCode, setZipCode] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [userType, setUserType] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [email, setEmail] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [address1, setAddress1] = useState('');
+  const [address2, setAddress2] = useState('');
+  const [country, setCountry] = useState('');
+  const [state, setState] = useState('');
+  const [city, setCity] = useState('');
+  const [zipCode, setZipCode] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [termsAgree, setTermsAgree] = useState(false);
   const [isInitialRender, setIsInitialRender] = useState(true);
 
@@ -42,10 +44,14 @@ export default function RegisterStudent() {
     termsAgree;
 
   const onContinue = () => {
+    let dial_code = CountryCodes.find(
+      (item) => item.name === country
+    ).dial_code;
     // window.localStorage.setItem("gkcAuth", JSON.stringify(true));
-    var stored = JSON.parse(window.localStorage.getItem("registrationForm"));
+    var stored = JSON.parse(window.localStorage.getItem('registrationForm'));
     let timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    console.log(stored);
+
+    stored.phoneNumber = dial_code + '-' + phoneNumber;
     stored.email = email;
     stored.firstName = firstName;
     stored.lastName = lastName;
@@ -59,12 +65,12 @@ export default function RegisterStudent() {
     stored.savePaymentFutureUse = true;
     stored.timeZoneId = timezone;
     console.log(stored);
-    window.localStorage.setItem("registrationForm", JSON.stringify(stored));
+    window.localStorage.setItem('registrationForm', JSON.stringify(stored));
 
     if (password == confirmPassword) {
-      navigation.push("/auth/parentbankinfo");
+      navigation.push('/auth/parentbankinfo');
     } else {
-      alert("password not matched");
+      alert('password not matched');
     }
   };
 
@@ -101,8 +107,8 @@ export default function RegisterStudent() {
   };
 
   useEffect(() => {
-    const value = JSON.parse(window.localStorage.getItem("userType"));
-    var stored = JSON.parse(window.localStorage.getItem("registrationForm"));
+    const value = JSON.parse(window.localStorage.getItem('userType'));
+    var stored = JSON.parse(window.localStorage.getItem('registrationForm'));
     setEmail(stored.email);
     setUserType(value);
     getCountries();
@@ -129,13 +135,16 @@ export default function RegisterStudent() {
         <title>Auth | Parent Registration</title>
         <meta name="description" content="Where kids learn to code" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="https://gkc-images.s3.amazonaws.com/favicon.ico" />
+        <link
+          rel="icon"
+          href="https://gkc-images.s3.amazonaws.com/favicon.ico"
+        />
       </Head>
       <main className="container-fluid d-flex flex-column justify-content-between  min-vh-100">
         <div
-          onClick={()=>navigation.back()}
+          onClick={() => navigation.back()}
           className="text-decoration-none p-4 d-flex gap-2 align-items-center text-dark"
-          style={{cursor:'pointer'}}
+          style={{ cursor: 'pointer' }}
         >
           <RiArrowGoBackLine />
           <p className="fw-bold m-0 p-0 ">Back</p>
@@ -145,9 +154,9 @@ export default function RegisterStudent() {
             className="col-12 col-lg-6 position-relative  d-none d-md-block "
             style={{
               backgroundImage: 'url("/assets/register_group.png")',
-              height: "100vh",
-              backgroundRepeat: "no-repeat",
-              backgroundSize: "100% 100%",
+              height: '100vh',
+              backgroundRepeat: 'no-repeat',
+              backgroundSize: '100% 100%',
             }}
           ></div>
           <div className="col-12 col-lg-6 d-flex justify-content-center align-items-center ">
@@ -158,7 +167,7 @@ export default function RegisterStudent() {
                     Parent
                   </h4>
                   <p className="bg_secondary text-white p-2 rounded d-flex align-items-center gap-2 fw-bold">
-                    <BsCheck2Circle style={{ fontSize: "22px" }} />
+                    <BsCheck2Circle style={{ fontSize: '22px' }} />
                     {email}
                   </p>
                 </div>
@@ -248,6 +257,43 @@ export default function RegisterStudent() {
                       onChange={(e) => setZipCode(e.target.value)}
                     />
                   </div>
+                  <div style={{ display: 'flex' }}>
+                    <div style={{ display: 'flex' }}>
+                      <input
+                        type="text"
+                        style={{ width: '22%', marginRight: 10 }}
+                        className="p-2 rounded outline-0 border border_gray   mb-3"
+                        placeholder="CountryCode"
+                        name="countryCode"
+                        value={
+                          country
+                            ? CountryCodes.find((item) => item.name === country)
+                                .dial_code
+                            : ''
+                        }
+                        readOnly
+                      />
+                      <input
+                        type="text"
+                        style={{ width: !isLargeScreen ? '100%' : '61%' }}
+                        className=" p-2 rounded outline-0 border border_gray   mb-3"
+                        placeholder="Phone Number"
+                        name="phoneNumber"
+                        value={phoneNumber}
+                        onChange={(e) => setPhoneNumber(e.target.value)}
+                      />
+                    </div>
+
+                    {isLargeScreen && (
+                      <div
+                        style={{
+                          width: '50%',
+                          // border: '1px solid black',
+                          height: '50px',
+                        }}
+                      />
+                    )}
+                  </div>
                   <div className="d-flex  flex-md-nowrap flex-wrap gap-2">
                     <input
                       type="password"
@@ -275,29 +321,29 @@ export default function RegisterStudent() {
                       onChange={() => setTermsAgree(!termsAgree)}
                     />
                     <label className="form-check-label" for="flexCheckDefault">
-                      I agree to the{" "}
+                      I agree to the{' '}
                       <Link
                         href="/terms-of-use"
                         className="fw-bold no-underline hover:text_secondary text_secondary"
                       >
-                        {" "}
+                        {' '}
                         Terms of Use
-                      </Link>{" "}
-                      and{" "}
+                      </Link>{' '}
+                      and{' '}
                       <Link
                         href="/privacy-policy"
                         className="fw-bold no-underline hover:text_secondary text_secondary"
                       >
-                        {" "}
-                        Privacy Policy{" "}
-                      </Link>{" "}
+                        {' '}
+                        Privacy Policy{' '}
+                      </Link>{' '}
                       of GeekKidsCode.com
                     </label>
                   </div>
                   <div className="d-flex flex-wrap gap-2 justify-content-between mt-3">
                     <button
                       className={`w-50 text-light p-2 rounded fw-bold  bg-gray-300 ${
-                        isValidForm ? "btn_primary" : "btn_disabled "
+                        isValidForm ? 'btn_primary' : 'btn_disabled '
                       }`}
                       disabled={!isValidForm}
                       onClick={onContinue}

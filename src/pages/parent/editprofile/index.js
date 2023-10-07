@@ -8,9 +8,8 @@ import { connect } from 'react-redux';
 import { fetchUser } from '../../../store/actions/userActions';
 import { useRouter } from 'next/router';
 import { apiClient } from '../../../api/client';
-
+import { CountryCodes } from '@/utils/countryCodes';
 function EditProfile({ userInfo, loading, error, fetchUser }) {
-
   const navigation = useRouter();
 
   const [updated, setUpdated] = useState(false);
@@ -31,21 +30,25 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
   const [dependentsEmails, setDependentsEmails] = useState([]);
   const [dependentsEmailsAfterDelete, setDependentsEmailsAfterDelete] =
     useState([]);
+  const [phoneNumber, setPhoneNumber] = useState('');
 
   const handleSubmit = async () => {
     try {
+      let dial_code = CountryCodes.find(
+        (item) => item.name === selectedCountry
+      ).dial_code;
       const response = await apiClient.put('/user/parent/update', {
         userId: userInfo.id,
         firstName: firstName,
         lastName: lastName,
-        email: userInfo.email,
         address1: address1,
         address2: address2,
         country: selectedCountry,
         state: selectedState,
         city: selectedCity,
         zipCode: zipCode,
-        dependentsId: dependents,
+        dependentsEmail: userInfo?.dependents?.map((item) => item.email) || [],
+        phoneNumber: dial_code + '-' + phoneNumber,
       });
       console.log(response);
       navigation.push('/parent/settingprofile');
@@ -102,6 +105,9 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
       setSelectedCity(userInfo.city);
       setZipCode(userInfo.zipCode);
       setDependents(userInfo.dependents);
+      setPhoneNumber(
+        userInfo.phoneNumber?.split('-')[0] || userInfo?.phoneNumber || ''
+      );
     }
   }, [userInfo]);
 
@@ -203,7 +209,10 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
         <title>Profile Edit Page</title>
         <meta name="description" content="Where kids learn to code" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="https://gkc-images.s3.amazonaws.com/favicon.ico" />
+        <link
+          rel="icon"
+          href="https://gkc-images.s3.amazonaws.com/favicon.ico"
+        />
       </Head>
       <ParentNavbar isLogin={true} />
       <main className="container-fluid">
@@ -257,34 +266,34 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
                     value={address2}
                     onChange={(e) => setAddress2(e.target.value)}
                   />
-                    <select
-                      className="w-25 flex-fill p-2 rounded outline-0 border border_gray "
-                      value={selectedCountry}
-                      onChange={(e) => setSelectedCountry(e.target.value)}
-                    >
-                      <option>Select Country</option>
-                      {countries.map((v, i) => {
-                        return (
-                          <option value={v.name} key={i}>
-                            {v.name}
-                          </option>
-                        );
-                      })}
-                    </select>
-                    <select
-                      className="w-25 flex-fill p-2 rounded outline-0 border border_gray "
-                      value={selectedState}
-                      onChange={(e) => setSelectedState(e.target.value)}
-                    >
-                      <option>Select State</option>
-                      {states.map((v, i) => {
-                        return (
-                          <option value={v.name} key={i}>
-                            {v.name}
-                          </option>
-                        );
-                      })}
-                    </select>
+                  <select
+                    className="w-25 flex-fill p-2 rounded outline-0 border border_gray "
+                    value={selectedCountry}
+                    onChange={(e) => setSelectedCountry(e.target.value)}
+                  >
+                    <option>Select Country</option>
+                    {countries.map((v, i) => {
+                      return (
+                        <option value={v.name} key={i}>
+                          {v.name}
+                        </option>
+                      );
+                    })}
+                  </select>
+                  <select
+                    className="w-25 flex-fill p-2 rounded outline-0 border border_gray "
+                    value={selectedState}
+                    onChange={(e) => setSelectedState(e.target.value)}
+                  >
+                    <option>Select State</option>
+                    {states.map((v, i) => {
+                      return (
+                        <option value={v.name} key={i}>
+                          {v.name}
+                        </option>
+                      );
+                    })}
+                  </select>
                   <div className="d-flex align-items-center gap-3 py-2">
                     <select
                       className="w-25 flex-fill p-2 rounded outline-0 border border_gray "
@@ -307,6 +316,32 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
                       placeholder="Zip/State Code"
                       value={zipCode}
                       onChange={(e) => setZipCode(e.target.value)}
+                    />
+                  </div>
+
+                  <div style={{ display: 'flex' }}>
+                    <input
+                      type="text"
+                      style={{ width: '100px', marginRight: 10 }}
+                      className="p-2 rounded outline-0 border border_gray   mb-3"
+                      placeholder="CountryCode"
+                      name="countryCode"
+                      value={
+                        selectedCountry
+                          ? CountryCodes.find(
+                              (item) => item.name === selectedCountry
+                            ).dial_code
+                          : ''
+                      }
+                      readOnly
+                    />
+                    <input
+                      type="text"
+                      className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
+                      placeholder="Phone Number"
+                      name="phoneNumber"
+                      value={phoneNumber}
+                      onChange={(e) => setPhoneNumber(e.target.value)}
                     />
                   </div>
 

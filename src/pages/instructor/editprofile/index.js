@@ -11,28 +11,34 @@ import { connect } from 'react-redux';
 import { fetchUser } from '../../../store/actions/userActions';
 import { apiClient } from '../../../api/client';
 import { AiOutlineEdit } from 'react-icons/ai';
-
+import { CountryCodes } from '@/utils/countryCodes';
 function EditProfile({ userInfo, loading, error, fetchUser }) {
-    //protection starts
-    const nav = useRouter()
-    // checking if user logged in starts
-      if(typeof window !== 'undefined'){ // here we check if global object successfully loaded
-        console.log('lol')
-        useEffect(()=>{
+  //protection starts
+  const nav = useRouter();
+  // checking if user logged in starts
+  if (typeof window !== 'undefined') {
+    // here we check if global object successfully loaded
 
-          if(JSON.parse(window.localStorage.getItem('gkcAuth')).role === undefined) { //here we check if user signed in
-            nav.push('/') 
-          } else{
-            if(JSON.parse(window.localStorage.getItem('gkcAuth')).role !== 'Instructor') { //here we check if user has role Instructor
-              nav.push('/')
-            }
-          }
-
-        },[])
+    useEffect(() => {
+      if (
+        JSON.parse(window.localStorage.getItem('gkcAuth')).role === undefined
+      ) {
+        //here we check if user signed in
+        nav.push('/');
+      } else {
+        if (
+          JSON.parse(window.localStorage.getItem('gkcAuth')).role !==
+          'Instructor'
+        ) {
+          //here we check if user has role Instructor
+          nav.push('/');
+        }
       }
-    // checking if user logged in ends
+    }, []);
+  }
+  // checking if user logged in ends
 
-    //protection ends
+  //protection ends
   const navigation = useRouter();
   const [selected, setSelected] = useState([]);
   const [firstName, setFirstName] = useState('');
@@ -56,10 +62,17 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
   const fileInputRef = useRef(null);
   const videoFileInputRef = useRef(null);
   const videoEditInputRef = useRef(null);
+  const [countries, setCountries] = useState([]);
+  const [states, setStates] = useState([]);
+  const [cities, setCities] = useState([]);
+  const [selectedCountry, setSelectedCountry] = useState('');
+  const [selectedState, setSelectedState] = useState('');
+  const [selectedCity, setSelectedCity] = useState('');
   const [isImageTooLarge, setIsImageTooLarge] = useState(false);
   const [isVideoTooLarge, setIsVideoTooLarge] = useState(false);
   const [image, setImage] = useState('');
   const [video, setVideo] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
 
   const defaultImage =
     'https://img.freepik.com/premium-photo/top-view-abstract-paper-texture-background_225709-2718.jpg?w=2000';
@@ -67,6 +80,56 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
   const onContinue = () => {
     navigation.push('/instructor/settingprofile');
   };
+
+  const getCountries = async () => {
+    try {
+      const response = await apiClient.get('/public/location/get-countries');
+      console.log(response.data);
+      setCountries(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const getStates = async () => {
+    try {
+      const response = await apiClient.get(
+        `/public/location/get-states?countryName=${selectedCountry}`
+      );
+      setStates(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const getCities = async () => {
+    try {
+      const response = await apiClient.get(
+        `/public/location/get-cities?countryName=${selectedCountry}&stateName=${selectedState}`
+      );
+      setCities(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    if (selectedCountry) {
+      getStates();
+    }
+  }, [selectedCountry]);
+
+  useEffect(() => {
+    if (selectedCountry && selectedState) {
+      getCities();
+    }
+  }, [selectedState]);
+
+  useEffect(() => {
+    getCountries();
+    getStates();
+    getCities();
+  }, []);
 
   const handleLangSelectChange = (selected) => {
     setSelectedLang(
@@ -80,13 +143,16 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
   };
 
   const handleSelectCourseChange = (selected) => {
-    console.log(selected)
+    console.log(selected);
     setSelectedCourses(
       selected &&
         selected.map((option) => ({
           label: option.label,
           value: option.value,
-          proficiencies: option?.proficiencies !== undefined ? [...option.proficiencies] : [{ value: 1, label: 'Beginner' }],
+          proficiencies:
+            option?.proficiencies !== undefined
+              ? [...option.proficiencies]
+              : [{ value: 1, label: 'Beginner' }],
         }))
     );
   };
@@ -180,10 +246,10 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
       email: userInfo.email,
       address1: address1,
       address2: address2,
-      country: userInfo.country,
-      state: userInfo.state,
-      city: userInfo.city,
-      zipCode: userInfo.zipCode,
+      country: selectedCountry,
+      state: selectedState,
+      city: selectedCity,
+      zipCode: zipCode,
       instructorBio: bio,
       hourlyRate: hourlyRate,
       acceptInterviewRequest: acceptInterviewRequest == 'Yes' ? true : false,
@@ -192,7 +258,11 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
       languagesIdPreference: langs,
       courseToTeachAndProficiency: course,
     });
+
     try {
+      let dial_code = CountryCodes.find(
+        (item) => item.name === selectedCountry
+      ).dial_code;
       var typ = JSON.parse(window.localStorage.getItem('gkcAuth'));
       const response = await apiClient.put('/user/instructor/update', {
         userId: userInfo.id,
@@ -212,6 +282,7 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
         gradesIdToTutor: gradess,
         languagesIdPreference: langs,
         courseToTeachAndProficiency: course,
+        phoneNumber: dial_code + '-' + phoneNumber,
       });
       {
       }
@@ -324,15 +395,18 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
         });
         courseArr.push({ value: avalue, label: alabel, proficiencies: prof });
       });
+      setPhoneNumber(
+        userInfo.phoneNumber?.split('-')[0] || userInfo?.phoneNumber
+      );
 
       setSelectedCourses(courseArr);
       setFirstName(userInfo.firstName);
       setLastName(userInfo.lastName);
       setAddress1(userInfo.address1);
       setAddress2(userInfo.address2);
-      setCity(userInfo.city);
-      setState(userInfo.state);
-      setCountry(userInfo.country);
+      setSelectedCity(userInfo.city);
+      setSelectedState(userInfo.state);
+      setSelectedCountry(userInfo.country);
       setZipCode(userInfo.zipCode);
       setImage(userInfo.instructorPhoto);
       setVideo(userInfo.video);
@@ -599,38 +673,96 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
                     value={address1}
                     onChange={(e) => setAddress1(e.target.value)}
                   />
-
-                  <label>City</label>
-                  <input
-                    type="text"
-                    className="border-0 border-bottom w-100 mb-2"
-                    value={city}
-                    onChange={(e) => setCity(e.target.value)}
-                  />
-
-                  <label>State</label>
-                  <input
-                    type="text"
-                    className="border-0 border-bottom w-100 mb-2"
-                    value={state}
-                    onChange={(e) => setCity(e.target.value)}
-                  />
-
-                  <label>Country</label>
-                  <input
-                    type="text"
-                    className="border-0 border-bottom w-100 mb-2"
-                    value={country}
-                    onChange={(e) => setCity(e.target.value)}
-                  />
+                  <div className="d-flex align-items-center gap-3 py-2">
+                    <select
+                      className="w-25 flex-fill p-2 rounded outline-0 border border_gray "
+                      value={selectedCountry}
+                      onChange={(e) => {
+                        setSelectedCountry(e.target.value);
+                        setSelectedState('');
+                        setSelectedCity('');
+                      }}
+                    >
+                      <option>Select Country</option>
+                      {countries.map((v, i) => {
+                        return (
+                          <option value={v.name} key={i}>
+                            {v.name}
+                          </option>
+                        );
+                      })}
+                    </select>
+                  </div>
+                  <div className="d-flex align-items-center gap-3 py-2">
+                    <select
+                      className="w-25 flex-fill p-2 rounded outline-0 border border_gray "
+                      value={selectedState}
+                      onChange={(e) => {
+                        setSelectedCity('');
+                        setSelectedState(e.target.value);
+                      }}
+                    >
+                      <option>Select State</option>
+                      {states.map((v, i) => {
+                        return (
+                          <option value={v.name} key={i}>
+                            {v.name}
+                          </option>
+                        );
+                      })}
+                    </select>
+                  </div>
+                  <div className="d-flex align-items-center gap-3 py-2">
+                    <select
+                      className="w-25 flex-fill p-2 rounded outline-0 border border_gray "
+                      value={selectedCity}
+                      onChange={(e) => setSelectedCity(e.target.value)}
+                    >
+                      <option>Select City</option>
+                      {cities.map((v, i) => {
+                        return (
+                          <option value={v.name} key={i}>
+                            {v.name}
+                          </option>
+                        );
+                      })}
+                    </select>
+                  </div>
 
                   <label>Zip Code</label>
                   <input
                     type="text"
                     className="border-0 border-bottom w-100 mb-2"
                     value={zipCode}
-                    onChange={(e) => setCity(e.target.value)}
+                    onChange={(e) => setZipCode(e.target.value)}
                   />
+
+                  <div style={{ display: 'flex' }}>
+                    <input
+                      type="text"
+                      style={{ width: '100px', marginRight: 10 }}
+                      className="p-2 rounded outline-0 border border_gray   mb-3"
+                      placeholder="CountryCode"
+                      name="countryCode"
+                      value={
+                        selectedCountry
+                          ? CountryCodes.find(
+                              (item) => item.name === selectedCountry
+                            )?.dial_code
+                          : ''
+                      }
+                      readOnly
+                    />
+                    <input
+                      type="text"
+                      className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
+                      placeholder="Phone Number"
+                      name="phoneNumber"
+                      value={phoneNumber}
+                      onChange={(e) => setPhoneNumber(e.target.value)}
+                    />
+                  </div>
+
                   <hr className="bg_secondary" />
                   <h4 className="p-0 m-0 py-2 fw-bold">Bio</h4>
                   <div>
@@ -794,10 +926,10 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
                         hasSelectAll={false}
                         overrideStrings={{
                           // selectSomeItems: "Select Some items...",
-                          allItemsAreSelected: "All proficiencies selected",
+                          allItemsAreSelected: 'All proficiencies selected',
                           // selectAll: "Select All",
                           // search: "Search",
-                      }}
+                        }}
                       />
                     </div>
                     <div className="w-50">
@@ -872,10 +1004,10 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
                     isCreatable={true}
                     overrideStrings={{
                       // selectSomeItems: "Select Some items...",
-                      allItemsAreSelected: "All proficiencies selected",
+                      allItemsAreSelected: 'All proficiencies selected',
                       // selectAll: "Select All",
                       // search: "Search",
-                  }}
+                    }}
                   />
                 </div>
 
@@ -907,10 +1039,10 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
                             isCreatable={true}
                             overrideStrings={{
                               // selectSomeItems: "Select Some items...",
-                              allItemsAreSelected: "All proficiencies selected",
+                              allItemsAreSelected: 'All proficiencies selected',
                               // selectAll: "Select All",
                               // search: "Search",
-                          }}
+                            }}
                           />
                         </div>
                       </div>

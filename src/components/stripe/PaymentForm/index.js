@@ -41,7 +41,6 @@ const PaymentForm = ({
   };
 
   const handleElementChange = (event) => {
-    
     const elementType = event.elementType;
     const isElementValid = event.complete && !event.error;
     elementType === 'cardNumber'
@@ -84,7 +83,7 @@ const PaymentForm = ({
       });
       let res = null;
       paymentMethodId = responce?.paymentMethod?.id;
-      
+
       if (oneTimePayment) {
         handleOneTimePayment(paymentMethodId);
         // const { error } = await stripe.confirmCardPayment(paymentIntentId, {
@@ -118,7 +117,7 @@ const PaymentForm = ({
   const handleOneTimePayment = async (paymentMethodId) => {
     try {
       let res = await OneTimePayment(data);
-
+      console.log('res---------', res);
       const { error, paymentIntent } = await stripe.confirmCardPayment(
         res.data,
         {

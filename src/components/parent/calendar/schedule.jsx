@@ -158,6 +158,10 @@ const StudentSchedule = (props) => {
                       <td className="p-0 m-0 flex-fill fw-bold flex-fill">
                         {el.instructorName}
                       </td>
+
+                      <td className="p-0 m-0 flex-fill fw-bold flex-fill">
+                        {el?.studentName}
+                      </td>
                       <td className="p-0 m-0 flex-fill fw-bold flex-fill">
                         {el.start.split(' ')[1]}
                       </td>

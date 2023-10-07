@@ -11,7 +11,7 @@ import { fetchUser } from '../../../store/actions/userActions';
 import axios from 'axios';
 import styles from '../../../styles/Home.module.css';
 import { apiClient } from '../../../api/client';
-
+import { CountryCodes } from '@/utils/countryCodes';
 function EditProfile({ userInfo, loading, error, fetchUser }) {
   const [selected, setSelected] = useState([]);
   const [grade, setGrade] = useState('');
@@ -19,6 +19,9 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
   const [parent2, setParent2] = useState('');
   const [courses, setCourses] = useState([]);
   const [lang, setLang] = useState([]);
+  const [countries, setCountries] = useState([]);
+  const [states, setStates] = useState([]);
+  const [cities, setCities] = useState([]);
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [address1, setAddress1] = useState('');
@@ -31,6 +34,7 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
   const [dependents, setDependents] = useState([]);
   const [selectedLang, setSelectedLang] = useState([]);
   const [proficiency, setProficiency] = useState([]);
+  const [phoneNumber, setPhoneNumber] = useState('');
 
   let isValidForm =
     selectedCourses.length > 0 && selectedLang.length > 0 && grade;
@@ -54,17 +58,20 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
       aa.push({ courseId: v.value, proficiencyId: v.proficiencyId.id });
     });
     try {
+      let dial_code = CountryCodes.find(
+        (item) => item.name === selectedCountry
+      ).dial_code;
       const response = await apiClient.put('/user/student/update', {
         userId: userInfo.id,
         email: userInfo.email,
         firstName: userInfo.firstName,
         lastName: userInfo.lastName,
-        address1: userInfo.address1,
-        address2: userInfo.address2,
-        country: userInfo.country,
-        state: userInfo.state,
-        city: userInfo.city,
-        zipCode: userInfo.zipCode,
+        address1: address1,
+        address2: address2,
+        country: selectedCountry,
+        state: selectedState,
+        city: selectedCity,
+        zipCode: zipCode,
         savePaymentFutureUse: userInfo.savePaymentFutureUse,
         // Here is hardcoded
         whoPaysEmail: userInfo.email,
@@ -73,6 +80,7 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
         gradeId: grade,
         courseOfInterestAndProficiency: aa,
         languagePreferencesId: ln,
+        phoneNumber: dial_code + '-' + phoneNumber,
       });
       console.log(response);
       // setCountries(response.data);
@@ -93,6 +101,38 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
     );
   };
 
+  const getCountries = async () => {
+    try {
+      const response = await apiClient.get('/public/location/get-countries');
+      console.log(response.data);
+      setCountries(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const getStates = async () => {
+    try {
+      const response = await apiClient.get(
+        `/public/location/get-states?countryName=${selectedCountry}`
+      );
+      setStates(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const getCities = async () => {
+    try {
+      const response = await apiClient.get(
+        `/public/location/get-cities?countryName=${selectedCountry}&stateName=${selectedState}`
+      );
+      setCities(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   // const handleCourseSelectChange = (selected) => {
   //   setSelectedCourses(
   //     selected &&
@@ -103,6 +143,18 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
   //       }))
   //   );
   // };
+
+  useEffect(() => {
+    if (selectedCountry) {
+      getStates();
+    }
+  }, [selectedCountry]);
+
+  useEffect(() => {
+    if (selectedCountry && selectedState) {
+      getCities();
+    }
+  }, [selectedState]);
 
   const handleCourseSelectChange = (selected) => {
     setSelectedCourses((prevSelectedCourses) =>
@@ -121,8 +173,11 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
     );
   };
 
-  console.log(selectedCourses);
-  console.log(selectedLang);
+  useEffect(() => {
+    getCountries();
+    getStates();
+    getCities();
+  }, []);
 
   const getLang = async () => {
     try {
@@ -186,7 +241,9 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
       });
       setSelectedCourses(courseOfInterestAndProficiencyArr);
       // console.log(courseOfInterestAndProficiencyArr)
-
+      setPhoneNumber(
+        userInfo.phoneNumber?.split('-')[0] || userInfo?.phoneNumber
+      );
       setFirstName(userInfo.firstName);
       setLastName(userInfo.lastName);
       setAddress1(userInfo.address1);
@@ -306,6 +363,109 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
                     value={parent2}
                     onChange={(e) => setParent2(e.target.value)}
                   />
+
+                  <p className="p-0 m-0 py-2 fw-bold">Address 1</p>
+
+                  <input
+                    type="text"
+                    className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
+                    placeholder="1234, Smith Street"
+                    value={address1}
+                    onChange={(e) => setAddress1(e.target.value)}
+                  />
+                  <p className="p-0 m-0 py-2 fw-bold">Address 2</p>
+                  <input
+                    type="text"
+                    className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
+                    placeholder="Apt. 2"
+                    value={address2}
+                    onChange={(e) => setAddress2(e.target.value)}
+                  />
+                  <select
+                    className="w-25 flex-fill p-2 rounded outline-0 border border_gray "
+                    value={selectedCountry}
+                    onChange={(e) => {
+                      setSelectedCountry(e.target.value);
+                      setSelectedState('');
+                      setSelectedCity('');
+                    }}
+                  >
+                    <option>Select Country</option>
+                    {countries.map((v, i) => {
+                      return (
+                        <option value={v.name} key={i}>
+                          {v.name}
+                        </option>
+                      );
+                    })}
+                  </select>
+                  <select
+                    className="w-25 flex-fill p-2 rounded outline-0 border border_gray "
+                    value={selectedState}
+                    onChange={(e) => {
+                      setSelectedCity('');
+                      setSelectedState(e.target.value);
+                    }}
+                  >
+                    <option>Select State</option>
+                    {states.map((v, i) => {
+                      return (
+                        <option value={v.name} key={i}>
+                          {v.name}
+                        </option>
+                      );
+                    })}
+                  </select>
+                  <div className="d-flex align-items-center gap-3 py-2">
+                    <select
+                      className="w-25 flex-fill p-2 rounded outline-0 border border_gray "
+                      value={selectedCity}
+                      onChange={(e) => setSelectedCity(e.target.value)}
+                    >
+                      <option>Select City</option>
+                      {cities.map((v, i) => {
+                        return (
+                          <option value={v.name} key={i}>
+                            {v.name}
+                          </option>
+                        );
+                      })}
+                    </select>
+                    <input
+                      type="text"
+                      className="w-25 flex-fill p-2 rounded outline-0 border border_gray "
+                      placeholder="Zip/State Code"
+                      value={zipCode}
+                      onChange={(e) => setZipCode(e.target.value)}
+                    />
+                  </div>
+
+                  <div style={{ display: 'flex' }}>
+                    <input
+                      type="text"
+                      style={{ width: '100px', marginRight: 10 }}
+                      className="p-2 rounded outline-0 border border_gray   mb-3"
+                      placeholder="CountryCode"
+                      name="countryCode"
+                      value={
+                        selectedCountry
+                          ? CountryCodes.find(
+                              (item) => item.name === selectedCountry
+                            )?.dial_code
+                          : ''
+                      }
+                      readOnly
+                    />
+                    <input
+                      type="text"
+                      className="w-100 p-2 rounded outline-0 border border_gray   mb-3"
+                      placeholder="Phone Number"
+                      name="phoneNumber"
+                      value={phoneNumber}
+                      onChange={(e) => setPhoneNumber(e.target.value)}
+                    />
+                  </div>
+
                   <hr className="bg_secondary" />
 
                   <div></div>
@@ -314,10 +474,17 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
                     <button
                       className="px-4 btn btn-success text-light p-2 rounded fw-bold d-flex align-items-center justify-content-center gap-2"
                       onClick={() => handleSubmit()}
-                      disabled={!isValidForm}
+                      // disabled={!isValidForm}
                     >
                       <BsCheck2Circle className="h3 m-0 p-0" /> Save Profile
                     </button>
+                    <a
+                      href="/student/settingprofile"
+                      className="px-4 btn btn-dark text-light p-2 rounded fw-bold d-flex align-items-center justify-content-center gap-2"
+                      onClick={() => handleSubmit()}
+                    >
+                      Exit
+                    </a>
                   </div>
                 </div>
               </div>

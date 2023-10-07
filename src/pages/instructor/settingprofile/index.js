@@ -8,13 +8,12 @@ import { useRouter } from 'next/router';
 import { withRole } from '../../../utils/withAuthorization';
 import { connect } from 'react-redux';
 import { fetchUser } from '../../../store/actions/userActions';
-
+import { CountryCodes } from '@/utils/countryCodes';
 import styles from '../../../styles/Home.module.css';
 
 function SettingProfile({ userInfo, loading, error, fetchUser }) {
-
   const navigation = useRouter();
-  const [showVideoPopuo, setShowVideoPopup] = useState(false)
+  const [showVideoPopuo, setShowVideoPopup] = useState(false);
   const onContinue = () => {
     navigation.push('/instructor/editprofile');
   };
@@ -36,36 +35,64 @@ function SettingProfile({ userInfo, loading, error, fetchUser }) {
         <title>Profile Setting</title>
         <meta name="description" content="Where kids learn to code" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="https://gkc-images.s3.amazonaws.com/favicon.ico" />
+        <link
+          rel="icon"
+          href="https://gkc-images.s3.amazonaws.com/favicon.ico"
+        />
       </Head>
       <TutorNavbar isLogin={true} />
       {showVideoPopuo ? (
-        <div style={{position:'fixed', zIndex: 1, left:0,top:0, width:'100%', height:'100%',overflow:'auto', background: 'rgba(0, 0, 0, 0.4)', zIndex: 3}}>
-          <div style={{background: 'white', margin: '200px auto', padding:20, width:'50%', zIndex: 5}}
+        <div
+          style={{
+            position: 'fixed',
+            zIndex: 1,
+            left: 0,
+            top: 0,
+            width: '100%',
+            height: '100%',
+            overflow: 'auto',
+            background: 'rgba(0, 0, 0, 0.4)',
+            zIndex: 3,
+          }}
+        >
+          <div
+            style={{
+              background: 'white',
+              margin: '200px auto',
+              padding: 20,
+              width: '50%',
+              zIndex: 5,
+            }}
           >
-            <div 
-            style={{width: "100%", display:'flex', justifyContent:'flex-end', cursor: 'pointer'}}>
+            <div
+              style={{
+                width: '100%',
+                display: 'flex',
+                justifyContent: 'flex-end',
+                cursor: 'pointer',
+              }}
+            >
               <img
-              style={{width:40, height: 40}}
-              src='https://cdn-icons-png.flaticon.com/128/5368/5368396.png'
-              onClick={()=>{setShowVideoPopup(false)}}
+                style={{ width: 40, height: 40 }}
+                src="https://cdn-icons-png.flaticon.com/128/5368/5368396.png"
+                onClick={() => {
+                  setShowVideoPopup(false);
+                }}
               />
             </div>
-                {
-                  userInfo?.video && (
-                    <video
-                    width="100%"
-                    height="500px"
-                    muted
-                    controls
-                    loop
-                    src={userInfo?.video}
-                  ></video>
-                  )
-                }
+            {userInfo?.video && (
+              <video
+                width="100%"
+                height="500px"
+                muted
+                controls
+                loop
+                src={userInfo?.video}
+              ></video>
+            )}
           </div>
         </div>
-        ) : null}
+      ) : null}
       <main className="container-fluid">
         <div
           className={`p-5 ${styles.instructorProfile}`}
@@ -93,7 +120,10 @@ function SettingProfile({ userInfo, loading, error, fetchUser }) {
                       }}
                     >
                       <img
-                        src={userInfo?.instructorPhoto ?? 'https://cdn-icons-png.flaticon.com/128/847/847969.png'}
+                        src={
+                          userInfo?.instructorPhoto ??
+                          'https://cdn-icons-png.flaticon.com/128/847/847969.png'
+                        }
                         unoptimized={true}
                         alt="profile image"
                         width={100}
@@ -101,17 +131,21 @@ function SettingProfile({ userInfo, loading, error, fetchUser }) {
                         className="rounded-circle bg-light"
                       />
                     </div>
+
                     <div className="tw-flex tw-gap-2 tw-flex-col tw-items-end">
                       <p className="bg_secondary m-0 text-white p-1 rounded fw-bold">
                         <MdEmail style={{ fontSize: '20px' }} />
                         {userInfo?.email}
                       </p>
                       {userInfo?.video && (
-                        <div className="tw-mx-auto"
-                        onClick={()=>{setShowVideoPopup(true)}}
-                        style={{
-                          cursor:'pointer'
-                        }}
+                        <div
+                          className="tw-mx-auto"
+                          onClick={() => {
+                            setShowVideoPopup(true);
+                          }}
+                          style={{
+                            cursor: 'pointer',
+                          }}
                         >
                           <div className="tw-relative">
                             <video
@@ -120,11 +154,18 @@ function SettingProfile({ userInfo, loading, error, fetchUser }) {
                               muted
                               loop
                               src={userInfo?.video}
-
                             ></video>
                             <img
-                            src={'https://cdn-icons-png.flaticon.com/128/109/109197.png'}
-                            style={{position:'relative', width: 60, height: 60, left: -130, top: -55}}
+                              src={
+                                'https://cdn-icons-png.flaticon.com/128/109/109197.png'
+                              }
+                              style={{
+                                position: 'relative',
+                                width: 60,
+                                height: 60,
+                                left: -130,
+                                top: -55,
+                              }}
                             />
                           </div>
                         </div>
@@ -138,11 +179,25 @@ function SettingProfile({ userInfo, loading, error, fetchUser }) {
                   <div className="d-flex gap-1 gap-2 pb-3 ">
                     <MdLocationOn className="h5 p-0 m-0" />
                     <small>
-                      {userInfo?.address1}, {userInfo?.city},{' '}
-                      {userInfo?.state} <br />
+                      {userInfo?.address1}, {userInfo?.city}, {userInfo?.state}{' '}
+                      <br />
                       {userInfo?.zipCode}, {userInfo?.country}
                     </small>
                   </div>
+
+                  <p className="p-0 m-0 py-2 fw-bold">Phone Number</p>
+                  {userInfo?.phoneNumber && (
+                    <p className="p-0 m-0 py-2 ">
+                      {userInfo?.country
+                        ? CountryCodes.find(
+                            (item) => item.name === userInfo?.country
+                          ).dial_code +
+                          ' ' +
+                          userInfo?.phoneNumber.split('-')[1]
+                        : ''}
+                    </p>
+                  )}
+
                   <hr className="bg_secondary" />
                   <h4 className="p-0 m-0 py-2 fw-bold">Bio</h4>
                   <div>{userInfo?.instructorBio} </div>
