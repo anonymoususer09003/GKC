@@ -16,6 +16,7 @@ function ParentCalendar() {
   const [events, setEvents] = useState([]);
   const [bookedEvents, setBookedEvent] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedDate, setSelectedDate] = useState(null);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -51,6 +52,8 @@ function ParentCalendar() {
       .toString()
       .padStart(2, "0");
     const modifiedClickedDate = `${year}-${month}-${day}`;
+    console.log(modifiedClickedDate)
+    setSelectedDate(modifiedClickedDate)
     const eventsArray = []
     bookedEvents.map(el =>
       el.start.slice(0,10) === modifiedClickedDate ? eventsArray.push(el) : null
@@ -60,6 +63,14 @@ function ParentCalendar() {
     setEvents(eventsArray)
   };
 
+  useEffect(()=>{
+    var currentDate = new Date();
+    if(new Date().toString().includes('GMT+')){
+      currentDate.setDate(currentDate.getDate() - 1)
+    }
+
+    handleCalendarClick(currentDate)
+  },[])
 
   return (
     <>
@@ -75,6 +86,7 @@ function ParentCalendar() {
             <Calendar
               onClickDay={handleCalendarClick}
               className={calendarStyles.reactCalendar}
+              value={selectedDate}
             />
           </div>
           <ParentSchedule
