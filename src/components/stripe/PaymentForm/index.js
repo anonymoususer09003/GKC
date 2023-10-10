@@ -97,7 +97,7 @@ const PaymentForm = ({
       } else {
         res = await CreateCustomer({
           paymentMethodId: paymentMethodId,
-        });
+        })
         onPaymentRequest(true);
       }
       if (savePaymentFutureUse) {
@@ -116,7 +116,10 @@ const PaymentForm = ({
 
   const handleOneTimePayment = async (paymentMethodId) => {
     try {
-      let res = await OneTimePayment(data);
+      let res = await OneTimePayment({
+        instructorId: data?.instructorId,
+        durationInHours: data?.durationInHours
+      });
       console.log('res---------', res);
       const { error, paymentIntent } = await stripe.confirmCardPayment(
         res.data,

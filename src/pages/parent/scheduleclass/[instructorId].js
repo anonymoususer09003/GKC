@@ -82,7 +82,12 @@ function ParentScheduleClass({ userInfo, loading, error }) {
       // console.log("dependent", loggedInUser.dependents.find(el=>el.id === sid));
       // setDependent(loggedInUser.dependents.find(el=>el.id === sid))
       setStudentId(data?.studentId);
-      setTime(moment(data?.start).format('YYYY-MM-DD HH:mm'));
+      const date = new Date(data?.start);
+      const formattedDateStr = date
+        .toISOString()
+        .slice(0, 16)
+        .replace('T', ' ');
+      setTime(formattedDateStr);
       setDuration(data.durationInHours);
       setDate(data.start.slice(0, 10));
       setClassFrequency(data.classFrequency);
@@ -324,9 +329,9 @@ function ParentScheduleClass({ userInfo, loading, error }) {
             selectedSlot.start.getTime() !== slot.start.getTime() ||
             selectedSlot.end.getTime() !== slot.end.getTime()
         );
-
+        console.log(updatedSelectedSlots[0])
         setTime(
-          updatedSelectedSlots.length > 0 ? updatedSelectedSlots[0] : null
+          updatedSelectedSlots.length > 0 ? updatedSelectedSlots[0].start : null
         );
 
         return updatedSelectedSlots;
@@ -334,13 +339,13 @@ function ParentScheduleClass({ userInfo, loading, error }) {
         setDuration((prevDuration) => prevDuration + 1);
 
         if (!time) {
-          const date = new Date(slot.start);
+          const date = new Date(slot.start)
           const formattedDateStr = date
             .toISOString()
             .slice(0, 16)
             .replace('T', ' ');
 
-          setTime(formattedDateStr);
+          setTime(formattedDateStr)
         }
 
         return [...prevSelectedSlots, slot];

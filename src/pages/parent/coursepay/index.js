@@ -118,7 +118,7 @@ function StudentRegistrationCCPay() {
         `/event/create-class-no-saved-payment-method`,
         {
           classDto: {
-            start: start || '2023-11-11 23:59',
+            start: start,
             durationInHours: parseInt(
               durationInHours === 0 ? 1 : durationInHours
             ),
@@ -355,13 +355,15 @@ function StudentRegistrationCCPay() {
                           );
                         }
                       }
+                      // console.log(start)
                       setTimeout(() => {
                         navigation.push('/parent/calandar');
                       }, 3000);
                       // whoPaysId === "Select"
                       //   ? setConfirmPayment(true)
                       //   : sendEmailToWhoPays();
-                    }}
+                    }
+                  }
                   >
                     Pay
                   </button>
