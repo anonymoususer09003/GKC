@@ -11,7 +11,6 @@ import axios from 'axios';
 import { useSelector } from 'react-redux';
 
 const StudentSchedule = (props) => {
-  console.log('props', props);
   const navigation = useRouter();
   const loggedInUser = useSelector((state) => state.user.userInfo);
   const {
@@ -147,11 +146,13 @@ const StudentSchedule = (props) => {
 
                   // Calculate the time difference in milliseconds
                   var timeDifference = specificEventTime - currentTime;
-
+                  console.log('specific time difference', specificEventTime);
                   // Calculate the time difference in minutes
                   var minutesDifference = Math.floor(
                     timeDifference / (1000 * 60)
                   );
+
+                  console.log('minutes differnce', minutesDifference);
                   var past = specificEventTime <= currentTime;
                   return (
                     <tr>

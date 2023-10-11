@@ -396,7 +396,7 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
         courseArr.push({ value: avalue, label: alabel, proficiencies: prof });
       });
       setPhoneNumber(
-        userInfo.phoneNumber?.split('-')[0] || userInfo?.phoneNumber
+        userInfo.phoneNumber?.split('-')[1] || userInfo?.phoneNumber
       );
 
       setSelectedCourses(courseArr);

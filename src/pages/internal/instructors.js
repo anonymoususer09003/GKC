@@ -239,12 +239,19 @@ const Instructors = () => {
         // startDate,
         // endDate,
       };
+      const queryParams = new URLSearchParams({
+        // courseId: selectedCourseId,
+        // state,
+        // city,
+      });
+      startDate && queryParams.append('startDate', startDate);
+      endDate && queryParams.append('endDate', endDate);
       fetchDailyClasses();
       const dailyRevenueResponse = await apiClient.get(
-        `${base_url}/admin/instructor/net-revenue/${selectedInstructorId}`
+        `${base_url}/admin/instructor/net-revenue/${selectedInstructorId}?${queryParams.toString()}`
       );
       const weekyPaymentsResponse = await apiClient.get(
-        `${base_url}/admin/instructor/weekly-withdrawal-amount/${selectedInstructorId}`
+        `${base_url}/admin/instructor/weekly-withdrawal-amount/${selectedInstructorId}?${queryParams.toString()}`
       );
       const complaintsCountResponse = await apiClient.get(
         `${base_url}/admin/count-complaints`
@@ -263,6 +270,7 @@ const Instructors = () => {
     getLanguagesWithInstructors();
     getAllGrades();
     getAllProficiencies();
+    getFilterData();
   }, []);
 
   useEffect(() => {

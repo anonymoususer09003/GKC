@@ -1,16 +1,16 @@
-import React, { useState, useEffect } from "react";
-import Head from "next/head";
-import { Navbar, Footer } from "../../../components";
-import Calendar from "react-calendar";
-import { useRouter } from "next/router";
-import { withRole } from "../../../utils/withAuthorization";
-import axios from "axios";
-import calendarStyles from "../../../styles/Calendar.module.css";
-import styles from "../../../styles/Home.module.css";
-import ParentSchedule from "./schedule";
-import { apiClient, base_url } from "../../../api/client";
-import { fetchUser } from "@/store/actions/userActions";
-import { useDispatch } from "react-redux";
+import React, { useState, useEffect } from 'react';
+import Head from 'next/head';
+import { Navbar, Footer } from '../../../components';
+import Calendar from 'react-calendar';
+import { useRouter } from 'next/router';
+import { withRole } from '../../../utils/withAuthorization';
+import axios from 'axios';
+import calendarStyles from '../../../styles/Calendar.module.css';
+import styles from '../../../styles/Home.module.css';
+import ParentSchedule from './schedule';
+import { apiClient, base_url } from '../../../api/client';
+import { fetchUser } from '@/store/actions/userActions';
+import { useDispatch } from 'react-redux';
 
 function ParentCalendar() {
   const [events, setEvents] = useState([]);
@@ -33,11 +33,11 @@ function ParentCalendar() {
   useEffect(() => {
     const fetchEventData = async () => {
       try {
-        const response = await apiClient.get("/event/logged-user-events");
+        const response = await apiClient.get('/event/logged-user-events');
         // console.log('EVENT DATAAAA',response.data)
         setBookedEvent(response.data);
       } catch (error) {
-        console.log("Error fetching iCalendar data:", error);
+        console.log('Error fetching iCalendar data:', error);
       }
     };
     fetchEventData();
@@ -49,17 +49,18 @@ function ParentCalendar() {
     const month = clickedDate.toISOString().slice(5, 7);
     const day = (parseInt(clickedDate.toISOString().slice(8, 10)) + 1)
       .toString()
-      .padStart(2, "0");
+      .padStart(2, '0');
     const modifiedClickedDate = `${year}-${month}-${day}`;
-    const eventsArray = []
-    bookedEvents.map(el =>
-      el.start.slice(0,10) === modifiedClickedDate ? eventsArray.push(el) : null
-    )
+    const eventsArray = [];
+    bookedEvents?.map((el) =>
+      el.start.slice(0, 10) === modifiedClickedDate
+        ? eventsArray.push(el)
+        : null
+    );
 
-    console.log(eventsArray)
-    setEvents(eventsArray)
+    console.log(eventsArray);
+    setEvents(eventsArray);
   };
-
 
   return (
     <>
@@ -77,14 +78,12 @@ function ParentCalendar() {
               className={calendarStyles.reactCalendar}
             />
           </div>
-          <ParentSchedule
-            schedule={events}
-          />
+          <ParentSchedule schedule={events} />
         </div>
       </main>
       <Footer />
     </>
-  )
+  );
 }
 
-export default withRole(ParentCalendar, ["Parent"]);
+export default withRole(ParentCalendar, ['Parent']);

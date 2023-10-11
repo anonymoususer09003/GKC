@@ -12,13 +12,13 @@ import { RRule } from 'rrule';
 import { fetchUser } from '../../../store/actions/userActions';
 import { apiClient } from '@/api/client';
 import { useDispatch } from 'react-redux';
-
+import { useScreenSize } from '@/hooks/mobile-devices';
 function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
   const router = useRouter();
+  const { isLargeScreen } = useScreenSize();
   const { instructorId } = router.query;
   const status = router.isReady;
 
-  console.log('router query', router.query);
   const [instructorCourses, setInstructorCourses] = useState([]);
   const [selectedInstructor, setSelectedInstructor] = useState(null);
   const [selectedMode, setSelectedMode] = useState('');
@@ -34,8 +34,8 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
   const [selectedSlots, setSelectedSlots] = useState([]);
   const [time, setTime] = useState();
   const [duration, setDuration] = useState(0);
+  const [slectedValues, setSelectedValues] = useState([]);
   const [err, setErr] = useState('');
-
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -281,7 +281,7 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
       query: data,
     });
   };
-
+  const calculateDifference = (number1, number2) => Math.abs(number1 - number2);
   return (
     <>
       <Head>
@@ -303,14 +303,31 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
         <div className="row" style={{ minHeight: '90vh' }}>
           <div className="col-12 col-lg-6 pt-5">
             {selectedInstructor && (
-              <h3
-                style={{
-                  textAlign: 'center',
-                }}
-              >
-                Calendar for {selectedInstructor?.firstName}{' '}
-                {selectedInstructor?.lastName}
-              </h3>
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <div>
+                  {isLargeScreen && (
+                    <p
+                      style={{
+                        color: 'red',
+                        fontSize: 18,
+                        textAlign: 'center',
+                      }}
+                    >
+                      Step 1: Pick Date
+                    </p>
+                  )}
+                </div>
+                <div>
+                  <h3
+                    style={{
+                      textAlign: 'center',
+                    }}
+                  >
+                    Calendar for {selectedInstructor?.firstName}{' '}
+                    {selectedInstructor?.lastName}{' '}
+                  </h3>
+                </div>
+              </div>
             )}
             <Calendar
               onChange={handleDateChange}
@@ -325,6 +342,23 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
           </div>
           <div className="col-12 col-lg-6 pt-5">
             <p className="fw-bold text-center text-white">I</p>
+            {isLargeScreen && (
+              <div
+                style={{
+                  width: '100%',
+                  justifyContent: 'space-between',
+                  display: 'flex',
+                  paddingRight: '150px',
+                }}
+              >
+                <p style={{ fontSize: 18 }}>
+                  <span style={{ color: 'red' }}>Step 2: Pick Time</span>
+                </p>
+                <p style={{ fontSize: 18 }}>
+                  <span style={{ color: 'red' }}>Step 3: Select Details</span>
+                </p>
+              </div>
+            )}
             <div className="shadow rounded py-5">
               <div
                 className="d-flex flex-sm-nowrap flex-wrap justify-content-between gap-4 px-5"
@@ -362,7 +396,78 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
                               ? 'bg-secondary text-white'
                               : ''
                           }`}
-                          onClick={() => handleSlotClick(slot)}
+                          onClick={() => {
+                            let temp = [...slectedValues];
+
+                            if (
+                              index >= slectedValues[0] &&
+                              index <= slectedValues[1]
+                            ) {
+                              if (
+                                index == slectedValues[0] ||
+                                index == slectedValues[1]
+                              ) {
+                                if (duration > 2) {
+                                  slectedValues.map((item, index1) => {
+                                    if (item == index) temp[index1] = item - 1;
+                                  });
+                                  setSelectedValues([...temp]);
+                                  handleSlotClick(slot);
+                                } else {
+                                  let filterArr = slectedValues.filter(
+                                    (item) => item != index
+                                  );
+                                  setSelectedValues(filterArr);
+                                  handleSlotClick(slot);
+                                }
+                              }
+                            } else {
+                              if (slectedValues.length === 0) {
+                                temp.push(index);
+                                setSelectedValues([...temp]);
+                                handleSlotClick(slot);
+                              } else if (slectedValues.length > 0) {
+                                if (
+                                  calculateDifference(
+                                    slectedValues[0],
+                                    index
+                                  ) === 1 ||
+                                  calculateDifference(
+                                    slectedValues[1],
+                                    index
+                                  ) === 1
+                                ) {
+                                  const isSlotSelected = selectedSlots.some(
+                                    (selectedSlot) =>
+                                      selectedSlot.start.getTime() ===
+                                        slot.start.getTime() &&
+                                      selectedSlot.end.getTime() ===
+                                        slot.end.getTime()
+                                  );
+
+                                  if (slectedValues.length < 2) {
+                                    !isSlotSelected && temp.push(index);
+                                  } else {
+                                    temp.map((item, index1) => {
+                                      if (
+                                        calculateDifference(item, index) === 1
+                                      ) {
+                                        temp[index1] = index;
+                                      }
+                                    });
+                                  }
+
+                                  setSelectedValues([...temp]);
+                                  handleSlotClick(slot);
+                                } else {
+                                  if (slectedValues[0] === index) {
+                                    setSelectedValues([]);
+                                    handleSlotClick(slot);
+                                  }
+                                }
+                              }
+                            }
+                          }}
                         >
                           {`${slot.start.toLocaleTimeString(undefined, {
                             hour: '2-digit',
@@ -505,7 +610,7 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
                     </h6>
                   </div>
 
-                  <div className="py-2 d-flex align-items-start gap-4">
+                  {/* <div className="py-2 d-flex align-items-start gap-4">
                     <h6 className="text-dark fw-bold m-0 p-0">Grade:</h6>
                     <div>
                       {instructorData &&
@@ -522,7 +627,7 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
                           );
                         })}
                     </div>
-                  </div>
+                  </div> */}
                 </div>
               </div>
               <div className="d-flex gap-2 justify-content-center pt-5">
