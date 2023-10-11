@@ -11,28 +11,34 @@ import {
   ArrowLongLeftIcon,
   ArrowLongRightIcon,
 } from '@heroicons/react/20/solid';
-
+import useDebounce from '@/hooks/use-debounce';
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
 }
 
 const Students = () => {
+  const [totalCount, setTotalCount] = useState(0);
+  const [page, setPage] = useState(0);
+  const size = 30;
+  const [search, setSearch] = useState('');
+  const debouncedInputValue = useDebounce(search, 300); //
   const [countries, setCountries] = useState([]);
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
-  const [country, setCountry] = useState();
-  const [state, setState] = useState('');
-  const [city, setCity] = useState('');
+  const [country, setCountry] = useState('Select Country');
+  const [state, setState] = useState('Select State');
+  const [city, setCity] = useState('Select City');
   const [currentPage, setCurrentPage] = useState(1);
   const [students, setStudents] = useState([]);
   const [selectedStudentId, setSelectedStudentId] = useState();
   const [selectedUserData, setSelectedUserData] = useState();
   const [languagesWithInstructors, setLanguagesWithInstructors] = useState([]);
-  const [selectedLanguage, setSelectedLanguage] = useState();
+  const [selectedLanguage, setSelectedLanguage] = useState('Select Language');
   const [allGrades, setAllGrades] = useState([]);
-  const [selectedGrade, setSelectedGrade] = useState();
+  const [selectedGrade, setSelectedGrade] = useState('Select Grade');
   const [allSkillLevels, setAllSkillLevels] = useState([]);
-  const [selectedSkillLevel, setSelectedSkillLevel] = useState();
+  const [selectedSkillLevel, setSelectedSkillLevel] =
+    useState('Select Skill Level');
   const [selectedStudentCourses, setSelectedStudentCourses] = useState([]);
   const [classesByCourses, setClassesByCourses] = useState([]);
   const [dailyExpenses, setDailyExpenses] = useState([]);
@@ -41,8 +47,6 @@ const Students = () => {
   const [isInitialRender, setIsInitialRender] = useState(true);
 
   const handleSelectedStudent = (student) => {
-
-
     setSelectedStudentId(student.id);
   };
 
@@ -52,6 +56,7 @@ const Students = () => {
         `${base_url}/public/location/get-countries`
       );
       setCountries(response.data);
+      setState('Select State');
     } catch (error) {
       console.error(error);
     }
@@ -62,6 +67,7 @@ const Students = () => {
       const response = await axios.get(
         `${base_url}/public/location/get-states?countryName=${country}`
       );
+      setCity('Select City');
       setStates(response.data);
     } catch (error) {
       console.error(error);
@@ -128,20 +134,27 @@ const Students = () => {
   };
 
   useEffect(() => {
-    getAllStudents();
-  }, [currentPage]);
+    getAllStudents(debouncedInputValue);
+  }, [currentPage, debouncedInputValue]);
 
-  const getAllStudents = async () => {
+  const getAllStudents = async (debouncedInputValue) => {
     try {
       const body = {
         page: currentPage - 1,
         size: 20,
         sort: ['ASC'],
       };
-      const queryString = new URLSearchParams(body).toString();
-      const url = `${base_url}/admin/student/get-all?${queryString}`;
+      const queryString = new URLSearchParams(body);
+      debouncedInputValue && queryString.append('name', debouncedInputValue);
+      const url = `${base_url}/admin/student/get-all?${queryString.toString()}`;
       const response = await apiClient.get(url);
       setStudents(response.data.content);
+      const totalRecords = response?.data?.totalElements; // Replace with the actual total number of records
+      const recordsPerPage = size; // Replace with the number of records shown on each page
+
+      const totalPages = Math.ceil(totalRecords / recordsPerPage);
+
+      setTotalCount(totalPages);
       console.log('res', response.data);
     } catch (error) {
       console.log(error);
@@ -243,20 +256,30 @@ const Students = () => {
   return (
     <div>
       <div className="tw-flex tw-justify-center tw-space-x-5">
-        <select value={country} onChange={(e) => setCountry(e.target.value)}>
-          <option disabled selected>
-            Select Country
-          </option>
+        <select
+          value={country}
+          onChange={(e) => {
+            setCountry(e.target.value);
+            setState('Select State');
+            setCity('Select City');
+          }}
+        >
+          <option>Select Country</option>
           {countries.map((country, index) => (
             <option value={country.name} key={index}>
               {country.name}
             </option>
           ))}
         </select>
-        <select value={state} onChange={(e) => setState(e.target.value)}>
-          <option disabled selected>
-            Select State
-          </option>
+        <select
+          value={state}
+          onChange={(e) => {
+            setState(e.target.value);
+
+            setCity('Select City');
+          }}
+        >
+          <option>Select State</option>
           {states.map((state, index) => (
             <option value={state.name} key={index}>
               {state.name}
@@ -264,9 +287,7 @@ const Students = () => {
           ))}
         </select>
         <select value={city} onChange={(e) => setCity(e.target.value)}>
-          <option disabled selected>
-            Select City
-          </option>
+          <option>Select City</option>
           {cities.map((city, index) => (
             <option value={city.name} key={index}>
               {city.name}
@@ -274,25 +295,19 @@ const Students = () => {
           ))}
         </select>
         <select value={selectedLanguage} onChange={handleLanguageChange}>
-          <option disabled selected>
-            Select language
-          </option>
+          <option>Select language</option>
           {languagesWithInstructors.map((language, index) => (
             <option key={index}>{language.name}</option>
           ))}
         </select>
         <select value={selectedGrade} onChange={handleGradeChange}>
-          <option disabled selected>
-            Select Grade
-          </option>
+          <option>Select Grade</option>
           {allGrades.map((grade, index) => (
             <option key={index}>{grade.name}</option>
           ))}
         </select>
         <select value={selectedSkillLevel} onChange={handleProficiencyChange}>
-          <option disabled selected>
-            Select Skill Level
-          </option>
+          <option>Select Skill Level</option>
           {allSkillLevels.map((skill, index) => (
             <option key={index}>{skill.name}</option>
           ))}
@@ -311,16 +326,20 @@ const Students = () => {
             <label htmlFor="search-field" className="tw-sr-only">
               Search
             </label>
-            <MagnifyingGlassIcon
-              className="tw-pointer-events-none tw-absolute tw-inset-y-0 tw-right-1 tw-h-full tw-w-5 tw-text-gray-400"
-              aria-hidden="true"
-            />
+            {!search && (
+              <MagnifyingGlassIcon
+                className="tw-pointer-events-none tw-absolute tw-inset-y-0 tw-right-1 tw-h-full tw-w-5 tw-text-gray-400"
+                aria-hidden="true"
+              />
+            )}
             <input
               id="tw-search-field"
               className="tw-block tw-h-full tw-w-full tw-border-0 tw-py-0 tw-pr-0 tw-text-gray-900 placeholder:tw-text-gray-400 focus:tw-ring-0 sm:tw-text-sm"
               placeholder="Search..."
               type="search"
               name="search"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
             />
           </div>
           <div className="tw-relative tw-pb-10 tw-cst-pf !tw-border-2 !tw-border-gray-500">
@@ -346,21 +365,23 @@ const Students = () => {
             </div>
             <nav className="tw-absolute tw-bottom-4 tw-w-full tw-border-t tw-border-gray-200 tw-px-4 sm:tw-px-0">
               <div className="tw-hidden md:tw--mt-px md:tw-flex">
-                <div className="tw--mt-px tw-flex tw-w-0 tw-flex-1">
-                  <a className="tw-inline-flex tw-cursor-pointer tw-items-center tw-cst-pf !tw-border-t-2 !tw-border-transparent tw-pr-1 tw-pt-4 tw-text-sm tw-font-medium tw-text-gray-500 hover:tw-border-gray-300 hover:tw-text-gray-700">
-                    <ArrowLongLeftIcon
-                      className="tw-mr-3 tw-h-5 tw-w-5 tw-text-gray-400"
-                      aria-hidden="true"
-                      onClick={() =>
-                        currentPage >= 2
-                          ? setCurrentPage((prevCurr) => prevCurr - 1)
-                          : null
-                      }
-                    />
-                    {/* Previous */}
-                  </a>
-                </div>
-                {Array.from({ length: 5 }, (_, index) => (
+                {totalCount > 1 && (
+                  <div className="tw--mt-px tw-flex tw-w-0 tw-flex-1">
+                    <a className="tw-inline-flex tw-cursor-pointer tw-items-center tw-cst-pf !tw-border-t-2 !tw-border-transparent tw-pr-1 tw-pt-4 tw-text-sm tw-font-medium tw-text-gray-500 hover:tw-border-gray-300 hover:tw-text-gray-700">
+                      <ArrowLongLeftIcon
+                        className="tw-mr-3 tw-h-5 tw-w-5 tw-text-gray-400"
+                        aria-hidden="true"
+                        onClick={() =>
+                          currentPage >= 2
+                            ? setCurrentPage((prevCurr) => prevCurr - 1)
+                            : null
+                        }
+                      />
+                      {/* Previous */}
+                    </a>
+                  </div>
+                )}
+                {Array.from({ length: totalCount }, (_, index) => (
                   <a
                     onClick={() => setCurrentPage(index + 1)}
                     className={classNames(
@@ -374,20 +395,22 @@ const Students = () => {
                   </a>
                 ))}
 
-                <div className="tw--mt-px tw-flex tw-w-0 tw-flex-1 tw-justify-end">
-                  <a className="tw-inline-flex tw-cursor-pointer tw-items-center tw-cst-pf !tw-border-t-2 !tw-border-transparent tw-pl-1 tw-pt-4 tw-text-sm tw-font-medium tw-text-gray-500 hover:tw-border-gray-300 hover:tw-text-gray-700">
-                    {/* Next */}
-                    <ArrowLongRightIcon
-                      className="tw-ml-3 tw-h-5 tw-w-5 tw-text-gray-400"
-                      aria-hidden="true"
-                      onClick={() =>
-                        currentPage <= 4
-                          ? setCurrentPage((prevCurr) => prevCurr + 1)
-                          : null
-                      }
-                    />
-                  </a>
-                </div>
+                {totalCount > 1 && (
+                  <div className="tw--mt-px tw-flex tw-w-0 tw-flex-1 tw-justify-end">
+                    <a className="tw-inline-flex tw-cursor-pointer tw-items-center tw-cst-pf !tw-border-t-2 !tw-border-transparent tw-pl-1 tw-pt-4 tw-text-sm tw-font-medium tw-text-gray-500 hover:tw-border-gray-300 hover:tw-text-gray-700">
+                      {/* Next */}
+                      <ArrowLongRightIcon
+                        className="tw-ml-3 tw-h-5 tw-w-5 tw-text-gray-400"
+                        aria-hidden="true"
+                        onClick={() =>
+                          currentPage <= 4
+                            ? setCurrentPage((prevCurr) => prevCurr + 1)
+                            : null
+                        }
+                      />
+                    </a>
+                  </div>
+                )}
               </div>
             </nav>
           </div>

@@ -106,7 +106,7 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
       setZipCode(userInfo.zipCode);
       setDependents(userInfo.dependents);
       setPhoneNumber(
-        userInfo.phoneNumber?.split('-')[0] || userInfo?.phoneNumber || ''
+        userInfo.phoneNumber?.split('-')[1] || userInfo?.phoneNumber || ''
       );
     }
   }, [userInfo]);

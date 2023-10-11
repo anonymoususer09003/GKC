@@ -73,14 +73,7 @@ export default function RegisterInstructor() {
   };
 
   let isValidForm =
-    email &&
-    firstName &&
-    lastName &&
-    address1 &&
-    country &&
-    state &&
-    city &&
-    zipCode;
+    email && firstName && lastName && address1 && country && state && city;
 
   const onContinue = () => {
     if (password == confirmPassword) {

@@ -71,6 +71,12 @@ export default function ParentRegistrationCCInfo() {
           role: res.data,
         })
       );
+
+      await apiClient.post(
+        '/instructor/week-schedule',
+        userInfo?.weeklySchedule
+      );
+
       setTimeout(() => {
         navigation.push('/instructor');
       }, 1400);

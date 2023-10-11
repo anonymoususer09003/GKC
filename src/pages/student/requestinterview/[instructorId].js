@@ -8,10 +8,11 @@ import axios from 'axios';
 import { connect } from 'react-redux';
 import { fetchUser } from '../../../store/actions/userActions';
 import { apiClient } from '@/api/client';
-
+import { useScreenSize } from '@/hooks/mobile-devices';
 function RequestInterview({ userInfo, loading, error, fetchUser }) {
   const router = useRouter();
   const { instructorId } = router.query;
+  const { isLargeScreen } = useScreenSize();
   const [time, setTime] = useState(null);
   const [courseId, setCourseId] = useState(null);
   const [mode, setMode] = useState(null);
@@ -165,11 +166,11 @@ function RequestInterview({ userInfo, loading, error, fetchUser }) {
         start.setSeconds(0); // Set seconds to 0
         start.setMilliseconds(0); // Set milliseconds to 0
 
-        while (start.getMinutes() % 15 !== 0) {
-          start.setTime(start.getTime() + 15 * 60 * 1000); // Move to the next 15-minute interval
+        while (start.getMinutes() % 30 !== 0) {
+          start.setTime(start.getTime() + 30 * 60 * 1000); // Move to the next 30-minute interval
         }
 
-        const end = new Date(start.getTime() + 15 * 60 * 1000);
+        const end = new Date(start.getTime() + 30 * 60 * 1000);
         end.setSeconds(0); // Set seconds to 0
         end.setMilliseconds(0); // Set milliseconds to 0
 
@@ -236,35 +237,67 @@ function RequestInterview({ userInfo, loading, error, fetchUser }) {
       <main className="container-fluid">
         <div className="row" style={{ minHeight: '90vh' }}>
           <div className="col-12 col-lg-6 pt-5">
-            <p className="fw-bold text-center">
-              Schedule Interview with{' '}
-              {selectedInstructor?.firstName +
-                ' ' +
-                selectedInstructor?.lastName}
-            </p>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <div>
+                {isLargeScreen && (
+                  <p
+                    style={{
+                      color: 'red',
+                      fontSize: 18,
+                      textAlign: 'center',
+                    }}
+                  >
+                    Step 1: Pick Date
+                  </p>
+                )}
+              </div>
+              <p className="fw-bold text-center">
+                Schedule Interview with{' '}
+                {selectedInstructor?.firstName +
+                  ' ' +
+                  selectedInstructor?.lastName}
+              </p>
+            </div>
             <Calendar
               onChange={handleDateChange}
               value={selectedDate}
               // tileDisabled={tileDisabled}
-              tileDisabled={
-                unavailableDates.length > 1
-                  ? ({ date, view }) =>
-                      view === 'month' &&
-                      unavailableDates.some(
-                        (disabledDate) =>
-                          new Date(date).getFullYear() ===
-                            new Date(disabledDate).getFullYear() &&
-                          new Date(date).getMonth() ===
-                            new Date(disabledDate).getMonth() &&
-                          new Date(date).getDate() ===
-                            new Date(disabledDate).getDate()
-                      )
-                  : () => false
-              }
+              // tileDisabled={
+              //   unavailableDates.length > 1
+              //     ? ({ date, view }) =>
+              //         view === 'month' &&
+              //         unavailableDates.some(
+              //           (disabledDate) =>
+              //             new Date(date).getFullYear() ===
+              //               new Date(disabledDate).getFullYear() &&
+              //             new Date(date).getMonth() ===
+              //               new Date(disabledDate).getMonth() &&
+              //             new Date(date).getDate() ===
+              //               new Date(disabledDate).getDate()
+              //         )
+              //     : () => false
+              // }
             />
           </div>
           <div className="col-12 col-lg-6 pt-5">
             <p className="fw-bold text-center text-white">I</p>
+            {isLargeScreen && (
+              <div
+                style={{
+                  width: '100%',
+                  justifyContent: 'space-between',
+                  display: 'flex',
+                  paddingRight: '150px',
+                }}
+              >
+                <p style={{ fontSize: 18 }}>
+                  <span style={{ color: 'red' }}>Step 2: Pick Time</span>
+                </p>
+                <p style={{ fontSize: 18 }}>
+                  <span style={{ color: 'red' }}>Step 3: Select Details</span>
+                </p>
+              </div>
+            )}
             <div className="shadow rounded py-5">
               <div
                 className="d-flex justify-content-between gap-4 px-3"
@@ -378,7 +411,7 @@ function RequestInterview({ userInfo, loading, error, fetchUser }) {
                   {/* <h6 className="text-dark fw-bold">Skill:</h6> */}
 
                   <p className="text-dark fw-bold py-2"></p>
-
+                  {/* 
                   <div className="py-2 d-flex align-items-start gap-4">
                     <h6 className="text-dark fw-bold m-0 p-0">Grade:</h6>
                     <div>
@@ -396,7 +429,7 @@ function RequestInterview({ userInfo, loading, error, fetchUser }) {
                           );
                         })}
                     </div>
-                  </div>
+                  </div> */}
                 </div>
               </div>
               <div className="d-flex gap-2 justify-content-center pt-5">

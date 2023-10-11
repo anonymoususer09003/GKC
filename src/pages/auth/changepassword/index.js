@@ -132,7 +132,7 @@ export default function ForgotPassword() {
       {userTyp == 'student' && <Navbar />}
       {userTyp == 'parent' && <ParentNavbar />}
       {userTyp == 'instructor' && <TutorNavbar isLogin={true} />}
-      <TutorNavbar />
+      {userTyp === 'admin' && <TutorNavbar />}
       <main className="container-fluid d-flex flex-column  min-vh-100">
         {/*             background-color: white;
             margin: 10% auto;

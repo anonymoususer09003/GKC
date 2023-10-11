@@ -242,7 +242,7 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
       setSelectedCourses(courseOfInterestAndProficiencyArr);
       // console.log(courseOfInterestAndProficiencyArr)
       setPhoneNumber(
-        userInfo.phoneNumber?.split('-')[0] || userInfo?.phoneNumber
+        userInfo.phoneNumber?.split('-')[1] || userInfo?.phoneNumber
       );
       setFirstName(userInfo.firstName);
       setLastName(userInfo.lastName);
