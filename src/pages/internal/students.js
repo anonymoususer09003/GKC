@@ -7,6 +7,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { AiOutlineCalendar } from 'react-icons/ai';
 import { useRouter } from 'next/router';
+import moment from 'moment';
 import {
   ArrowLongLeftIcon,
   ArrowLongRightIcon,
@@ -22,6 +23,8 @@ const Students = () => {
   const size = 30;
   const [search, setSearch] = useState('');
   const debouncedInputValue = useDebounce(search, 300); //
+  const [startDate, setStartDate] = useState(new Date('2023-09-01'));
+  const [endDate, setEndDate] = useState(new Date());
   const [countries, setCountries] = useState([]);
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
@@ -38,14 +41,14 @@ const Students = () => {
   const [selectedGrade, setSelectedGrade] = useState('Select Grade');
   const [allSkillLevels, setAllSkillLevels] = useState([]);
   const [selectedSkillLevel, setSelectedSkillLevel] =
-    useState('Select Skill Level');
+    useState('Select Proficiency');
   const [selectedStudentCourses, setSelectedStudentCourses] = useState([]);
   const [classesByCourses, setClassesByCourses] = useState([]);
   const [dailyExpenses, setDailyExpenses] = useState([]);
   const [weekyExpenses, setWeekyExpenses] = useState([]);
   const [complaintsCount, setComplaintsCount] = useState([]);
   const [isInitialRender, setIsInitialRender] = useState(true);
-
+  console.log('slected user data', selectedUserData);
   const handleSelectedStudent = (student) => {
     setSelectedStudentId(student.id);
   };
@@ -136,17 +139,45 @@ const Students = () => {
   useEffect(() => {
     getAllStudents(debouncedInputValue);
   }, [currentPage, debouncedInputValue]);
-
+  console.log(
+    'slected prof',
+    selectedGrade,
+    selectedLanguage,
+    selectedSkillLevel
+  );
   const getAllStudents = async (debouncedInputValue) => {
     try {
       const body = {
         page: currentPage - 1,
         size: 20,
         sort: ['ASC'],
+        startDate: moment(startDate).format('YYYY-MM-DD'),
+        endDate: moment(endDate).add(1, 'days').format('YYYY-MM-DD'),
       };
       const queryString = new URLSearchParams(body);
       debouncedInputValue && queryString.append('name', debouncedInputValue);
-      const url = `${base_url}/admin/student/get-all?${queryString.toString()}`;
+      country != 'Select Country' && queryString.append('country', country);
+      state != 'Select State' && queryString.append('state', state);
+      city != 'Select City' && queryString.append('city', city);
+      selectedLanguage &&
+        queryString.append(
+          'languageId',
+          languagesWithInstructors.find(
+            (item) => (item.name = selectedLanguage)
+          )?.id
+        );
+      selectedSkillLevel &&
+        queryString.append(
+          'proficiencyId',
+          allSkillLevels.find((item) => (item.name = selectedSkillLevel))?.id
+        );
+      selectedGrade &&
+        queryString.append(
+          'gradeId',
+          allGrades.find((item) => (item.name = selectedGrade))?.id
+        );
+
+      const url = `${base_url}/admin/student/?${queryString.toString()}`;
       const response = await apiClient.get(url);
       setStudents(response.data.content);
       const totalRecords = response?.data?.totalElements; // Replace with the actual total number of records
@@ -184,43 +215,106 @@ const Students = () => {
     }
   };
 
+  useEffect(() => {
+    if (selectedStudentId) fetchDailyClasses();
+  }, [selectedStudentCourses, startDate, endDate, selectedStudentId]);
+
   const fetchDailyClasses = async () => {
     const responses = [];
-    for (const selectedStudentCourse of selectedStudentCourses) {
-      try {
-        const response = await apiClient.get(
-          `${base_url}/admin/student/count-classes/${selectedStudentId}/${selectedStudentCourse.id}`
+    let temp = {};
+
+    try {
+      let startdate = moment(startDate).format('YYYY-MM-DD');
+      const enddate = moment(endDate).add(1, 'days').format('YYYY-MM-DD');
+      let url = `${base_url}/admin/student/count-classes/${selectedStudentId}?&startDate=${startdate}&endDate=${enddate}`;
+      selectedStudentCourses.map((item, index) => {
+        url = url + `&coursesId=${item?.id}`;
+      });
+
+      // coursesId=8&coursesId=9
+      const response = await apiClient.get(url);
+
+      response?.data?.map((item, index) => {
+        let course = selectedStudentCourses?.find(
+          (item1) => item1.id == item.courseId
         );
-        const responseDataWithCourseName = {
-          className: selectedStudentCourse.name,
-          classData: response.data,
-        };
-        responses.push(responseDataWithCourseName);
-      } catch (error) {
-        console.error(
-          `Error fetching data for course ${selectedStudentCourse.name}:`,
-          error
-        );
-      }
+
+        if (temp[item?.courseId]) {
+          let tempValue = { ...temp[item?.courseId] };
+          tempValue.classData = [...tempValue?.classData, item];
+          temp[item?.courseId] = tempValue;
+        } else {
+          temp[item?.courseId] = {
+            className: course?.name,
+            classData: [item],
+          };
+        }
+      });
+      selectedStudentCourses.map((item) => {
+        if (!temp[item?.id]) {
+          temp[item?.id] = {
+            className: item?.name,
+            classData: [],
+          };
+        }
+      });
+
+      const responseDataWithCourseName = {
+        className: selectedStudentCourses.name,
+        classData: response.data,
+      };
+      responses.push(responseDataWithCourseName);
+      let tempArr = [];
+      Object.keys(temp).map((key) => {
+        tempArr.push(temp[key]);
+      });
+      setClassesByCourses(tempArr);
+    } catch (error) {
+      console.error(
+        `Error fetching data for course ${selectedStudentCourses.name}:`,
+        error
+      );
     }
-    setClassesByCourses(responses);
   };
+
+  // const fetchDailyClasses = async () => {
+  //   const responses = [];
+  //   for (const selectedStudentCourse of selectedStudentCourses) {
+  //     try {
+  //       const response = await apiClient.get(
+  //         `${base_url}/admin/student/count-classes/${selectedStudentId}/${selectedStudentCourse.id}`
+  //       );
+  //       const responseDataWithCourseName = {
+  //         className: selectedStudentCourse.name,
+  //         classData: response.data,
+  //       };
+  //       responses.push(responseDataWithCourseName);
+  //     } catch (error) {
+  //       console.error(
+  //         `Error fetching data for course ${selectedStudentCourse.name}:`,
+  //         error
+  //       );
+  //     }
+  //   }
+  //   setClassesByCourses(responses);
+  // };
 
   const getFilterData = async () => {
     try {
       const filterData = {
-        // startDate,
-        // endDate,
+        startDate: moment(startDate).format('YYYY-MM-DD'),
+        endDate: moment(endDate).add(1, 'days').format('YYYY-MM-DD'),
       };
-      fetchDailyClasses();
+      const queryParams = new URLSearchParams(filterData);
+
       const dailyExpensesResponse = await apiClient.get(
-        `${base_url}/admin/student/daily-expense-amount/${selectedStudentId}`
+        `${base_url}/admin/student/daily-expense-amount/${selectedStudentId}/?${queryParams.toString()}`
       );
       const weekyExpensesResponse = await apiClient.get(
-        `${base_url}/admin/student/weekly-expense-amount/${selectedStudentId}`
+        `${base_url}/admin/student/weekly-expense-amount/${selectedStudentId}/?${queryParams.toString()}`
       );
       const complaintsCountResponse = await apiClient.get(
-        `${base_url}/admin/count-complaints`
+        `${base_url}/admin/count-complaints/?${queryParams.toString()}`
       );
       setDailyExpenses(dailyExpensesResponse.data);
       setWeekyExpenses(weekyExpensesResponse.data);
@@ -253,6 +347,11 @@ const Students = () => {
       getCities();
     }
   }, [state]);
+
+  useEffect(() => {
+    if (true || selectedStudentId) getFilterData();
+  }, [startDate, endDate, selectedStudentId]);
+
   return (
     <div>
       <div className="tw-flex tw-justify-center tw-space-x-5">
@@ -307,13 +406,13 @@ const Students = () => {
           ))}
         </select>
         <select value={selectedSkillLevel} onChange={handleProficiencyChange}>
-          <option>Select Skill Level</option>
+          <option>Select Proficiency</option>
           {allSkillLevels.map((skill, index) => (
             <option key={index}>{skill.name}</option>
           ))}
         </select>
         <button
-          onClick={getFilterData}
+          onClick={() => getAllStudents()}
           type="button"
           className="tw-block tw-w-28  !tw-bg-[#f48342] tw-rounded-md  tw-px-3 tw-py-1.5 tw-text-center tw-text-sm tw-font-semibold tw-leading-6 tw-text-white tw-shadow-sm hover:tw-bg-indigo-500 focus-visible:tw-outline focus-visible:tw-outline-2 focus-visible:tw-outline-offset-2 focus-visible:tw-outline-indigo-600"
         >
@@ -358,7 +457,7 @@ const Students = () => {
                       '!tw-cst-pf mt-1 tw-w-[50%] tw-cursor-pointer'
                     )}
                   >
-                    {student.fullName}
+                    {student?.firstName} {student?.lastName}
                   </li>
                 </ul>
               ))}
@@ -421,7 +520,13 @@ const Students = () => {
               <div className="tw-flex tw-justify-between tw-col-span-3">
                 <div className="tw-space-y-2">
                   <p className="tw-cst-pf"> Email: {selectedUserData.email}</p>
-                  <p className="tw-cst-pf">Parent1</p>
+                  <p className="tw-cst-pf">
+                    Parent1:{' '}
+                    {selectedUserData?.parents?.length > 0 &&
+                      selectedUserData?.parents[0]?.firstName +
+                        ' ' +
+                        selectedUserData?.parents[0]?.lastName}
+                  </p>
                   <p className="tw-cst-pf">
                     Country: {selectedUserData.country}
                   </p>
@@ -430,17 +535,29 @@ const Students = () => {
                   </p>
                 </div>
                 <div className="tw-space-y-2">
-                  <p className="tw-cst-pf">Parent1 Email</p>
+                  <p className="tw-cst-pf">
+                    Parent1 Email:{' '}
+                    {selectedUserData?.parents?.length > 0 &&
+                      selectedUserData?.parents[0]?.email}
+                  </p>
                   <p className="tw-cst-pf">State: {selectedUserData.state}</p>
-                  <p className="tw-cst-pf">Skill</p>
                 </div>
                 <div className="tw-space-y-2">
-                  <p className="tw-cst-pf">Parent2</p>
+                  <p className="tw-cst-pf">
+                    Parent2:{' '}
+                    {selectedUserData?.parents?.length > 1 &&
+                      selectedUserData?.parents[1]?.firstName +
+                        ' ' +
+                        selectedUserData?.parents[1]?.lastName}
+                  </p>
                   <p className="tw-cst-pf">City: {selectedUserData.city}</p>
-                  <p className="tw-cst-pf">Delivery Mode</p>
                 </div>
                 <div className="tw-space-y-2">
-                  <p className="tw-cst-pf">Parent2 Email</p>
+                  <p className="tw-cst-pf">
+                    Parent2 Email:{' '}
+                    {selectedUserData?.parents?.length > 1 &&
+                      selectedUserData?.parents[1]?.email}
+                  </p>
                   <div className="tw-flex">
                     <label className="tw-cst-pf">Languages:</label>
                     {selectedUserData.languagePreference?.map(
@@ -471,6 +588,10 @@ const Students = () => {
               </ul>
             </div>
             <StudentsCharts
+              startDate={startDate}
+              setStartDate={setStartDate}
+              endDate={endDate}
+              setEndDate={setEndDate}
               classesByCourses={classesByCourses}
               dailyExpenses={dailyExpenses}
               weekyExpenses={weekyExpenses}

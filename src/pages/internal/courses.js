@@ -5,30 +5,34 @@ import { apiClient, base_url } from '@/api/client';
 import axios from 'axios';
 import { CourseChart } from '@/components/admin/CoursesChart';
 import { useRouter } from 'next/router';
+import moment from 'moment';
+import useDebounce from '@/hooks/use-debounce';
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
 }
 
 const Courses = () => {
-
-
+  const [search, setSearch] = useState('');
+  const debouncedInputValue = useDebounce(search, 300); //
   const [countries, setCountries] = useState([]);
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
-  const [country, setCountry] = useState();
-  const [state, setState] = useState('');
-  const [city, setCity] = useState('');
-  const [startDate, setStartDate] = useState();
-  const [endDate, setEndDate] = useState();
+  const [country, setCountry] = useState('Select Country');
+  const [state, setState] = useState('Select State');
+  const [city, setCity] = useState('Select City');
+  const [startDate, setStartDate] = useState(new Date('2023-09-01'));
+  const [endDate, setEndDate] = useState(new Date());
   const [coursesWithInstructors, setCoursesWithInstructors] = useState([]);
-  const [selectedCourse, setSelectedCourse] = useState();
+  const [selectedCourse, setSelectedCourse] = useState('Select Course');
   const [languagesWithInstructors, setLanguagesWithInstructors] = useState([]);
-  const [selectedLanguage, setSelectedLanguage] = useState();
+  const [selectedLanguage, setSelectedLanguage] = useState('Select Language');
   const [allGrades, setAllGrades] = useState([]);
-  const [selectedGrade, setSelectedGrade] = useState();
+  const [selectedGrade, setSelectedGrade] = useState('Select Grades');
   const [allSkillLevels, setAllSkillLevels] = useState([]);
-  const [selectedSkillLevel, setSelectedSkillLevel] = useState();
+  const [selectedSkillLevel, setSelectedSkillLevel] =
+    useState('Select Proficiency');
   const [allCourses, setAllCourses] = useState([]);
+  const [allCoursesFiltered, setAllCoursesFiltered] = useState([]);
   const [isInitialRender, setIsInitialRender] = useState(true);
   const [newCourseName, setNewCourseName] = useState();
   const [selectedCourseFromListId, setSelectedCourseFromListId] = useState();
@@ -37,6 +41,18 @@ const Courses = () => {
   const [selectedGradeId, setSelectedGradeId] = useState();
   const [selectedSkillLevelId, setSelectedSkillLevelId] = useState();
   const [filteredData, setFilteredData] = useState([]);
+
+  const handleSearch = (e) => {
+    const searchTerm = e.target.value;
+    setSearch(searchTerm);
+    const filtered = allCourses.filter((item) =>
+      item?.name?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    if (searchTerm) {
+      setAllCoursesFiltered(filtered);
+    } else setAllCoursesFiltered([...allCourses]);
+  };
 
   useEffect(() => {
     getCountries();
@@ -53,6 +69,7 @@ const Courses = () => {
         `${base_url}/public/location/get-countries`
       );
       setCountries(response.data);
+      setState('Select State');
     } catch (error) {
       console.error(error);
     }
@@ -109,6 +126,7 @@ const Courses = () => {
         `${base_url}/public/course/get-all-courses`
       );
       setAllCourses(response.data);
+      setAllCoursesFiltered(response.data);
     } catch (error) {
       console.error(error);
     }
@@ -120,6 +138,7 @@ const Courses = () => {
         `${base_url}/public/location/get-states?countryName=${country}`
       );
       setStates(response.data);
+      setCity('Select City');
     } catch (error) {
       console.error(error);
     }
@@ -158,7 +177,7 @@ const Courses = () => {
     const selectedObject = dataArray.find(
       (item) => item.name === newSelectedValue
     );
-    idSetter(selectedObject.id);
+    idSetter(selectedObject?.id);
   };
 
   const handleCourseChange = (e) => {
@@ -206,19 +225,23 @@ const Courses = () => {
 
   const getFilterData = async () => {
     try {
+      // Add one day to the date
+      const newDate = moment(endDate).add(1, 'days').format('YYYY-MM-DD');
       const filterData = {
-        country,
-        state,
-        city,
-        gradeId: selectedGradeId,
-        languageId: selectedLanguageId,
-        proficiencyId: selectedSkillLevelId,
-        courseId: selectedCourseId,
-        startDate,
-        endDate,
+        startDate: moment(startDate).format('YYYY-MM-DD'),
+        endDate: newDate,
       };
+      const queryString = new URLSearchParams(filterData);
+      country != 'Select Country' && queryString.append('country', country);
+      state != 'Select State' && queryString.append('state', state);
+      city != 'Select City' && queryString.append('city', city);
+      selectedGradeId && queryString.append('gradeId', selectedGradeId);
+      selectedLanguageId &&
+        queryString.append('languageId', selectedLanguageId);
+      selectedCourseId && queryString.append('courseId', selectedCourseId);
+
       const response = await apiClient.get(
-        `${base_url}/admin/course/count-of-classes`,
+        `${base_url}/admin/course/count-of-classes?${queryString.toString()}`,
         filterData
       );
       setFilteredData(response.data);
@@ -250,66 +273,85 @@ const Courses = () => {
   return (
     <div>
       <div className="tw-flex tw-space-x-5">
-        <select value={country} onChange={(e) => setCountry(e.target.value)}>
-          <option disabled selected>
-            Select Country
-          </option>
-          {countries.map((country, index) => (
-            <option value={country.name} key={index}>
-              {country.name}
-            </option>
-          ))}
-        </select>
-        <select value={state} onChange={(e) => setState(e.target.value)}>
-          <option disabled selected>
-            Select State
-          </option>
-          {states.map((state, index) => (
-            <option value={state.name} key={index}>
-              {state.name}
-            </option>
-          ))}
-        </select>
-        <select value={city} onChange={(e) => setCity(e.target.value)}>
-          <option disabled selected>
-            Select City
-          </option>
-          {cities.map((city, index) => (
-            <option value={city.name} key={index}>
-              {city.name}
-            </option>
-          ))}
-        </select>
         <select value={selectedCourse} onChange={handleCourseChange}>
-          <option disabled selected>
-            Select Course
-          </option>
+          <option>Select Course</option>
           {coursesWithInstructors.map((course, index) => (
             <option key={index} value={course.name}>
               {course.name}
             </option>
           ))}
         </select>
-        <select value={selectedLanguage} onChange={handleLanguageChange}>
-          <option disabled selected>
-            Select language
-          </option>
+        <select
+          disabled={selectedCourseId ? false : true}
+          value={country}
+          onChange={(e) => {
+            setCountry(e.target.value);
+            setState('Select State');
+            setCity('Select City');
+          }}
+        >
+          <option>Select Country</option>
+          {countries.map((country, index) => (
+            <option value={country.name} key={index}>
+              {country.name}
+            </option>
+          ))}
+        </select>
+        <select
+          disabled={selectedCourseId ? false : true}
+          value={state}
+          onChange={(e) => {
+            setState(e.target.value);
+
+            setCity('Select City');
+          }}
+        >
+          <option>Select State</option>
+          {states.map((state, index) => (
+            <option value={state.name} key={index}>
+              {state.name}
+            </option>
+          ))}
+        </select>
+        <select
+          disabled={selectedCourseId ? false : true}
+          value={city}
+          onChange={(e) => setCity(e.target.value)}
+        >
+          <option>Select City</option>
+          {cities.map((city, index) => (
+            <option value={city.name} key={index}>
+              {city.name}
+            </option>
+          ))}
+        </select>
+
+        <select
+          disabled={selectedCourseId ? false : true}
+          value={selectedLanguage}
+          onChange={handleLanguageChange}
+        >
+          <option>Select language</option>
           {languagesWithInstructors.map((language, index) => (
             <option key={index}>{language.name}</option>
           ))}
         </select>
-        <select value={selectedGrade} onChange={handleGradeChange}>
-          <option disabled selected>
-            Select Grade
-          </option>
+        <select
+          disabled={selectedCourseId ? false : true}
+          value={selectedGrade}
+          onChange={handleGradeChange}
+        >
+          <option>Select Grade</option>
           {allGrades.map((grade, index) => (
             <option key={index}>{grade.name}</option>
           ))}
         </select>
-        <select value={selectedSkillLevel} onChange={handleProficiencyChange}>
-          <option disabled selected>
-            Select Skill Level
-          </option>
+        <select
+          disabled={selectedCourseId ? false : true}
+          value={selectedSkillLevel}
+          onChange={handleProficiencyChange}
+        >
+          <option>Select Proficiency</option>
           {allSkillLevels.map((skill, index) => (
             <option key={index}>{skill.name}</option>
           ))}
@@ -321,16 +363,20 @@ const Courses = () => {
             <label htmlFor="search-field" className="tw-sr-only">
               Search
             </label>
-            <MagnifyingGlassIcon
-              className="tw-pointer-events-none tw-absolute tw-inset-y-0 tw-right-1 tw-h-full tw-w-5 tw-text-gray-400"
-              aria-hidden="true"
-            />
+            {!search && (
+              <MagnifyingGlassIcon
+                className="tw-pointer-events-none tw-absolute tw-inset-y-0 tw-right-1 tw-h-full tw-w-5 tw-text-gray-400"
+                aria-hidden="true"
+              />
+            )}
             <input
               id="tw-search-field"
               className="tw-block tw-h-full tw-w-full tw-border-0 tw-py-0 tw-pr-0 tw-text-gray-900 placeholder:tw-text-gray-400 focus:tw-ring-0 sm:tw-text-sm"
               placeholder="Search..."
               type="search"
               name="search"
+              value={search}
+              onChange={(e) => handleSearch(e)}
             />
           </div>
           <RiDeleteBin6Line
@@ -338,7 +384,7 @@ const Courses = () => {
             className="tw-flex tw-justify-end tw-ml-auto tw-h-5 tw-w-5 tw-cursor-pointer tw-my-1"
           />
           <div className="!tw-border-2 tw-cst-pf tw-overflow-y-auto tw-h-[80vh] tw-w-full !tw-border-gray-500">
-            {allCourses.map((course) => (
+            {allCoursesFiltered.map((course) => (
               <ul className="!tw-flex tw-text-lg tw-mt-2 !tw-list-disc tw-mb-0">
                 <li
                   onClick={() => handleSelectedCourseFromList(course)}

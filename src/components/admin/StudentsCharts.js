@@ -130,6 +130,10 @@ export function StudentsCharts({
   dailyExpenses,
   weekyExpenses,
   complaintsCount,
+  startDate,
+  setStartDate,
+  endDate,
+  setEndDate,
 }) {
   const filteredDataTest1 = [
     {
@@ -217,8 +221,6 @@ export function StudentsCharts({
   const weekyExpensesData = generateData(weekyExpenses);
   const complaintsCountData = generateData(complaintsCount);
 
-  const [startDate, setStartDate] = useState();
-  const [endDate, setEndDate] = useState();
   return (
     <>
       <div>

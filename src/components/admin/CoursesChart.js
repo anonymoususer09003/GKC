@@ -81,7 +81,7 @@ export function CourseChart({
     },
   ];
 
-  const chartData = filteredDataTest.map((item) => ({
+  const chartData = filteredData.map((item) => ({
     x: new Date(item.date).toLocaleDateString(),
     y: item.count,
   }));

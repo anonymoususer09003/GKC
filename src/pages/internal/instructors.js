@@ -10,6 +10,7 @@ import {
   ArrowLongRightIcon,
 } from '@heroicons/react/20/solid';
 import useDebounce from '@/hooks/use-debounce';
+import moment from 'moment';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
@@ -27,9 +28,10 @@ const Instructors = () => {
   const [country, setCountry] = useState('Select Country');
   const [state, setState] = useState('Select State');
   const [city, setCity] = useState('Select City');
-  const [startDate, setStartDate] = useState();
+
   const [currentPage, setCurrentPage] = useState(1);
-  const [endDate, setEndDate] = useState();
+  const [startDate, setStartDate] = useState(new Date('2023-09-01'));
+  const [endDate, setEndDate] = useState(new Date());
   const [instructors, setInstructors] = useState([]);
   const [selectedInstructorId, setSelectedInstructorId] = useState();
   const [selectedUserData, setSelectedUserData] = useState();
@@ -134,7 +136,7 @@ const Instructors = () => {
     const selectedObject = dataArray.find(
       (item) => item.name === newSelectedValue
     );
-    idSetter(selectedObject.id);
+    idSetter(selectedObject?.id);
   };
 
   const handleLanguageChange = (e) => {
@@ -164,17 +166,39 @@ const Instructors = () => {
   }, [debouncedInputValue, currentPage]);
 
   const getAllInstructors = async (debouncedInputValue) => {
-    console.log('deboune', debouncedInputValue);
     try {
       const body = {
         page: currentPage - 1,
         size,
         sort: ['ASC'],
+        startDate: moment(startDate).format('YYYY-MM-DD'),
+        endDate: moment(endDate).add(1, 'days').format('YYYY-MM-DD'),
       };
       const queryString = new URLSearchParams(body);
       debouncedInputValue && queryString.append('name', debouncedInputValue);
-      const url = `${base_url}/admin/instructor/get-all?${queryString.toString()}`;
+      country != 'Select Country' && queryString.append('country', country);
+      state != 'Select State' && queryString.append('state', state);
+      city != 'Select City' && queryString.append('city', city);
+      selectedLanguage &&
+        queryString.append(
+          'languageId',
+          languagesWithInstructors.find(
+            (item) => (item.name = selectedLanguage)
+          )?.id
+        );
+      selectedSkillLevel &&
+        queryString.append(
+          'proficiencyId',
+          allSkillLevels.find((item) => (item.name = selectedSkillLevel))?.id
+        );
+      selectedGrade &&
+        queryString.append(
+          'gradeId',
+          allGrades.find((item) => (item.name = selectedGrade))?.id
+        );
+      const url = `${base_url}/admin/instructor/?${queryString.toString()}`;
       const response = await apiClient.get(url);
+
       setInstructors(response.data.content);
       setPage((prev) => prev + 1);
       const totalRecords = response?.data?.totalElements; // Replace with the actual total number of records
@@ -198,7 +222,6 @@ const Instructors = () => {
         `${base_url}/admin/instructor/${selectedInstructorId}`
       );
 
-      console.log('respomse', response.data);
       setSelectedUserData(response.data);
       setSelectedInstructorCourses(
         response.data.coursesToTutorAndProficiencies.map((item) => ({
@@ -211,42 +234,83 @@ const Instructors = () => {
     }
   };
 
+  useEffect(() => {
+    if (selectedInstructorId) fetchDailyClasses();
+  }, [selectedInstructorCourses, startDate, endDate, selectedInstructorId]);
+
+  useEffect(() => {
+    if (selectedInstructorId) getFilterData();
+  }, [startDate, endDate, selectedInstructorId]);
+
   const fetchDailyClasses = async () => {
     const responses = [];
-    for (const selectedInstructorCourse of selectedInstructorCourses) {
-      try {
-        const response = await apiClient.get(
-          `${base_url}/admin/instructor/count-classes/${selectedInstructorId}/${selectedInstructorCourse.id}`
+    let temp = {};
+
+    try {
+      let startdate = moment(startDate).format('YYYY-MM-DD');
+      const enddate = moment(endDate).add(1, 'days').format('YYYY-MM-DD');
+      let url = `${base_url}/admin/instructor/count-classes/${selectedInstructorId}?&startDate=${startdate}&endDate=${enddate}`;
+      selectedInstructorCourses.map((item, index) => {
+        url = url + `&coursesId=${item?.id}`;
+      });
+
+      // coursesId=8&coursesId=9
+      const response = await apiClient.get(url);
+
+      response?.data?.map((item, index) => {
+        let course = selectedInstructorCourses?.find(
+          (item1) => item1.id == item.courseId
         );
-        const responseDataWithCourseName = {
-          className: selectedInstructorCourse.name,
-          classData: response.data,
-        };
-        responses.push(responseDataWithCourseName);
-      } catch (error) {
-        console.error(
-          `Error fetching data for course ${selectedInstructorCourse.name}:`,
-          error
-        );
-      }
+
+        if (temp[item?.courseId]) {
+          let tempValue = { ...temp[item?.courseId] };
+          tempValue.classData = [...tempValue?.classData, item];
+          temp[item?.courseId] = tempValue;
+        } else {
+          temp[item?.courseId] = {
+            className: course?.name,
+            classData: [item],
+          };
+        }
+      });
+      selectedInstructorCourses.map((item) => {
+        if (!temp[item?.id]) {
+          temp[item?.id] = {
+            className: item?.name,
+            classData: [],
+          };
+        }
+      });
+
+      const responseDataWithCourseName = {
+        className: selectedInstructorCourses.name,
+        classData: response.data,
+      };
+      responses.push(responseDataWithCourseName);
+      let tempArr = [];
+      Object.keys(temp).map((key) => {
+        tempArr.push(temp[key]);
+      });
+      setClassesByCourses(tempArr);
+    } catch (error) {
+      console.error(
+        `Error fetching data for course ${selectedInstructorCourses.name}:`,
+        error
+      );
     }
-    setClassesByCourses(responses);
   };
 
   const getFilterData = async () => {
     try {
       const filterData = {
-        // startDate,
-        // endDate,
+        startDate: moment(startDate).format('YYYY-MM-DD'),
+        endDate: moment(endDate).add(1, 'days').format('YYYY-MM-DD'),
       };
-      const queryParams = new URLSearchParams({
-        // courseId: selectedCourseId,
-        // state,
-        // city,
-      });
-      startDate && queryParams.append('startDate', startDate);
-      endDate && queryParams.append('endDate', endDate);
-      fetchDailyClasses();
+      const queryParams = new URLSearchParams(filterData);
+
+      // selectedInstructorId && queryParams.append('instructorId', instruct);
+      // endDate && queryParams.append('endDate', endDate);
+      // fetchDailyClasses();
       const dailyRevenueResponse = await apiClient.get(
         `${base_url}/admin/instructor/net-revenue/${selectedInstructorId}?${queryParams.toString()}`
       );
@@ -254,7 +318,7 @@ const Instructors = () => {
         `${base_url}/admin/instructor/weekly-withdrawal-amount/${selectedInstructorId}?${queryParams.toString()}`
       );
       const complaintsCountResponse = await apiClient.get(
-        `${base_url}/admin/count-complaints`
+        `${base_url}/admin/count-complaints/?${queryParams.toString()}`
       );
       setDailyRevenue(dailyRevenueResponse.data);
       setWeekyPayments(weekyPaymentsResponse.data);
@@ -270,7 +334,6 @@ const Instructors = () => {
     getLanguagesWithInstructors();
     getAllGrades();
     getAllProficiencies();
-    getFilterData();
   }, []);
 
   useEffect(() => {
@@ -348,7 +411,9 @@ const Instructors = () => {
           ))}
         </select>
         <button
-          onClick={getFilterData}
+          onClick={() => {
+            getAllInstructors();
+          }}
           type="button"
           className="tw-block tw-w-28  !tw-bg-[#f48342] tw-rounded-md  tw-px-3 tw-py-1.5 tw-text-center tw-text-sm tw-font-semibold tw-leading-6 tw-text-white tw-shadow-sm hover:tw-bg-indigo-500 focus-visible:tw-outline focus-visible:tw-outline-2 focus-visible:tw-outline-offset-2 focus-visible:tw-outline-indigo-600"
         >
@@ -394,7 +459,7 @@ const Instructors = () => {
                       '!tw-cst-pf mt-1 tw-w-[50%] tw-cursor-pointer'
                     )}
                   >
-                    {instructor.fullName}
+                    {instructor.firstName} {instructor?.lastName}
                   </li>
                 </ul>
               ))}
@@ -524,7 +589,7 @@ const Instructors = () => {
               setStartDate={setStartDate}
               endDate={endDate}
               setEndDate={setEndDate}
-              classesByCourse={classesByCourses}
+              classesByCourses={classesByCourses}
               dailyRevenue={dailyRevenue}
               weekyPayments={weekyPayments}
               complaintsCount={complaintsCount}
