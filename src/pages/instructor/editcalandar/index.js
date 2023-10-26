@@ -12,7 +12,7 @@ import { TutorNavbar } from './../../../components';
 import { useRouter } from 'next/router';
 import axios from 'axios';
 import { RiArrowGoBackLine } from 'react-icons/ri';
-import { weekdays } from 'moment';
+import moment, { weekdays } from 'moment';
 
 function EditCalandar({ loading, error, fetchUser }) {
   const [value, onChange] = useState(new Date());
@@ -37,6 +37,118 @@ function EditCalandar({ loading, error, fetchUser }) {
   const [unavailableSuccess, setUnavailableSuccess] = useState(false);
   const [availableSuccess, setAvailableSuccess] = useState(null);
   const [timezone, setTimezone] = useState('');
+
+  const [weekdaysArr, setWeekDaysArr] = useState([
+    {
+      available: false,
+      dayOfTheWeek: 'MONDAY',
+      endTime: '00:00',
+      startTime: '00:00',
+    },
+
+    {
+      available: false,
+      dayOfTheWeek: 'TUESDAY',
+      endTime: '00:00',
+      startTime: '00:00',
+    },
+    {
+      available: false,
+      dayOfTheWeek: 'WEDNESDAY',
+      endTime: '00:00',
+      startTime: '00:00',
+    },
+    {
+      available: false,
+      dayOfTheWeek: 'THURSDAY',
+      endTime: '00:00',
+      startTime: '00:00',
+    },
+    {
+      available: false,
+      dayOfTheWeek: 'FRIDAY',
+      endTime: '00:00',
+      startTime: '00:00',
+    },
+    {
+      available: false,
+      dayOfTheWeek: 'SATURDAY',
+      endTime: '00:00',
+      startTime: '00:00',
+    },
+    {
+      available: false,
+      dayOfTheWeek: 'SUNDAY',
+      endTime: '00:00',
+      startTime: '00:00',
+    },
+  ]);
+
+  const [weekSArr, setWeeksArr] = useState([
+    {
+      label: 'mon',
+      value: 'MONDAY',
+      isChecked: false,
+    },
+
+    {
+      label: 'tue',
+      value: 'TUESDAY',
+      isChecked: false,
+    },
+    {
+      label: 'wed',
+      value: 'WEDNESDAY',
+      isChecked: false,
+    },
+    {
+      label: 'thurs',
+      value: 'THURSDAY',
+      isChecked: false,
+    },
+    {
+      label: 'fri',
+      value: 'FRIDAY',
+      isChecked: false,
+    },
+    {
+      label: 'sat',
+      value: 'SATURDAY',
+      isChecked: false,
+    },
+    {
+      label: 'sun',
+      value: 'SUNDAY',
+      isChecked: false,
+    },
+  ]);
+
+  const handleCheckedAvailable = (index) => {
+    let temp = [...weekSArr];
+    let tempValue = { ...temp[index] };
+    tempValue.isChecked = tempValue.isChecked ? false : true;
+    temp[index] = tempValue;
+
+    let temp1 = [...weekdaysArr];
+    let temp1Value = { ...temp1[index] };
+
+    if (temp[index].isChecked) {
+      temp1Value.startTime = moment().format('HH:00');
+      temp1Value.endTime = '23:00';
+      temp1Value.available = true;
+    } else {
+      temp1Value.startTime = '00:00';
+      temp1Value.endTime = '00:00';
+      temp1Value.available = false;
+    }
+
+    console.log('temp1value', temp1Value);
+    temp1[index] = temp1Value;
+    console.log('temp1', temp1);
+    setWeekDaysArr(temp1);
+    setWeeksArr(temp);
+  };
+
   let tz;
   let times = [
     '00:00',
@@ -360,7 +472,10 @@ function EditCalandar({ loading, error, fetchUser }) {
     });
     weekDay = weekDays;
     try {
-      const res = await apiClient.post('/instructor/week-schedule', weekDay);
+      const res = await apiClient.post(
+        '/instructor/week-schedule',
+        weekdaysArr
+      );
       console.log(res);
     } catch (error) {
       console.log(error);
@@ -633,131 +748,134 @@ function EditCalandar({ loading, error, fetchUser }) {
                   className="w-100"
                   style={{
                     display: 'flex',
+                    flexDirection: 'column',
                     justifyContent: 'space-between',
                     listStyle: 'none',
+                    overflow: 'scroll',
+                    maxHeight: '600px',
                   }}
                 >
-                  <li
-                    onClick={() => {
-                      handleDayClick('MONDAY');
-                      setIfChoseAnotherWeek(false);
-                      setIfChoseAnotherWeek1(false);
-                    }}
-                    style={{
-                      background: selectedDays.includes('MONDAY')
-                        ? 'gray'
-                        : 'none',
-                      color: selectedDays.includes('MONDAY')
-                        ? 'white'
-                        : 'black',
-                    }}
-                  >
-                    Mon
-                  </li>
-                  <li
-                    onClick={() => {
-                      handleDayClick('TUESDAY');
-                      setIfChoseAnotherWeek(false);
-                      setIfChoseAnotherWeek1(false);
-                    }}
-                    style={{
-                      background: selectedDays.includes('TUESDAY')
-                        ? 'gray'
-                        : 'none',
-                      color: selectedDays.includes('TUESDAY')
-                        ? 'white'
-                        : 'black',
-                    }}
-                  >
-                    Tue
-                  </li>
-                  <li
-                    onClick={() => {
-                      handleDayClick('WEDNESDAY');
-                      setIfChoseAnotherWeek(false);
-                      setIfChoseAnotherWeek1(false);
-                    }}
-                    style={{
-                      background: selectedDays.includes('WEDNESDAY')
-                        ? 'gray'
-                        : 'none',
-                      color: selectedDays.includes('WEDNESDAY')
-                        ? 'white'
-                        : 'black',
-                    }}
-                  >
-                    Wed
-                  </li>
-                  <li
-                    onClick={() => {
-                      handleDayClick('THURSDAY');
-                      setIfChoseAnotherWeek(false);
-                      setIfChoseAnotherWeek1(false);
-                    }}
-                    style={{
-                      background: selectedDays.includes('THURSDAY')
-                        ? 'gray'
-                        : 'none',
-                      color: selectedDays.includes('THURSDAY')
-                        ? 'white'
-                        : 'black',
-                    }}
-                  >
-                    Thur
-                  </li>
-                  <li
-                    onClick={() => {
-                      handleDayClick('FRIDAY');
-                      setIfChoseAnotherWeek(false);
-                      setIfChoseAnotherWeek1(false);
-                    }}
-                    style={{
-                      background: selectedDays.includes('FRIDAY')
-                        ? 'gray'
-                        : 'none',
-                      color: selectedDays.includes('FRIDAY')
-                        ? 'white'
-                        : 'black',
-                    }}
-                  >
-                    Fri
-                  </li>
-                  <li
-                    onClick={() => {
-                      handleDayClick('SATURDAY');
-                      setIfChoseAnotherWeek(false);
-                      setIfChoseAnotherWeek1(false);
-                    }}
-                    style={{
-                      background: selectedDays.includes('SATURDAY')
-                        ? 'gray'
-                        : 'none',
-                      color: selectedDays.includes('SATURDAY')
-                        ? 'white'
-                        : 'black',
-                    }}
-                  >
-                    Sat
-                  </li>
-                  <li
-                    onClick={() => {
-                      handleDayClick('SUNDAY');
-                      setIfChoseAnotherWeek(false);
-                      setIfChoseAnotherWeek1(false);
-                    }}
-                    style={{
-                      background: selectedDays.includes('SUNDAY')
-                        ? 'gray'
-                        : 'none',
-                      color: selectedDays.includes('SUNDAY')
-                        ? 'white'
-                        : 'black',
-                    }}
-                  >
-                    Sun
-                  </li>
+                  {weekSArr.map((item, index) => (
+                    <div style={{ flexDirection: 'row', display: 'flex' }}>
+                      <div style={{ marginRight: '90px' }}>
+                        <div></div>
+                        <li
+                          style={{
+                            marginTop: '65px',
+                            background: selectedDays.includes('MONDAY')
+                              ? 'gray'
+                              : 'none',
+                            color: selectedDays.includes('MONDAY')
+                              ? 'white'
+                              : 'black',
+                          }}
+                        >
+                          {item.label}
+                        </li>
+                      </div>
+
+                      <div
+                        style={{
+                          flexDirection: 'row',
+                          display: 'flex',
+                          width: '100%',
+                          justifyItems: 'center',
+                          alignItems: 'center',
+                        }}
+                      >
+                        <div
+                          style={{
+                            marginRight: '90px',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                          }}
+                        >
+                          <div>
+                            <p className="fw-bold"> Available: </p>{' '}
+                          </div>{' '}
+                          <div>
+                            <label>
+                              <input
+                                className="form-check-input"
+                                type="checkbox"
+                                checked={item.isChecked}
+                                onChange={() => {
+                                  handleCheckedAvailable(index);
+                                }}
+                              />
+                            </label>
+                          </div>
+                        </div>
+                        <div className="row" style={{ marginTop: '20px' }}>
+                          {/* <div className="col-4"></div> */}
+
+                          <>
+                            <div
+                              style={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                              }}
+                            >
+                              <div
+                                style={{ marginRight: '20px' }}
+                                className="pb-2"
+                              >
+                                <p className="col fw-bold"> From </p>{' '}
+                                <select
+                                  disabled={!item.isChecked}
+                                  value={weekdaysArr[index].startTime}
+                                  className="w-100 p-2 rounded outline-0 border border_gray col"
+                                  onChange={(e) => {
+                                    let temp = [...weekdaysArr];
+                                    let tempValue = { ...temp[index] };
+                                    tempValue.startTime = e.target.value;
+                                    temp[index] = tempValue;
+                                    setWeekDaysArr(temp);
+                                  }}
+                                >
+                                  {times.map((time) => {
+                                    return (
+                                      <option key={time} value={time}>
+                                        {' '}
+                                        {time}{' '}
+                                      </option>
+                                    );
+                                  })}
+                                </select>
+                              </div>
+                              <div className="pb-2">
+                                <p className="col fw-bold"> To </p>{' '}
+                                <select
+                                  disabled={!item.isChecked}
+                                  value={weekdaysArr[index].endTime}
+                                  className="w-100 p-2 rounded outline-0 border border_gray col"
+                                  onChange={(e) => {
+                                    let temp = [...weekdaysArr];
+                                    let tempValue = { ...temp[index] };
+                                    tempValue.endTime = e.target.value;
+                                    temp[index] = tempValue;
+                                    setWeekDaysArr(temp);
+                                  }}
+                                >
+                                  {times.map((time) => {
+                                    return (
+                                      <option key={time} value={time}>
+                                        {' '}
+                                        {time}{' '}
+                                      </option>
+                                    );
+                                  })}
+                                </select>
+                              </div>
+                            </div>
+                          </>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                 </ul>
-                {!selectedDays && <p>Please select week day.</p>}
+                {/* {!selectedDays && <p>Please select week day.</p>}
                 {selectedDays && (
                   <>
                     <div className="row w-75 py-3 ">
@@ -835,7 +953,7 @@ function EditCalandar({ loading, error, fetchUser }) {
                       )}
                     </div>
                   </>
-                )}
+                )} */}
               </form>
               {err && <p>{err}</p>}
 

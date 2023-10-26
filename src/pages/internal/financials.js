@@ -6,7 +6,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { AiOutlineCalendar } from 'react-icons/ai';
 import { useRouter } from 'next/router';
-
+import moment from 'moment';
 const filteredDataTest = [
   {
     date: '2023-09-08T16:57:58.019Z',
@@ -32,16 +32,16 @@ const filteredDataTest = [
 
 const Financials = () => {
   //protection starts
-  const nav = useRouter()
+  const nav = useRouter();
 
   const [countries, setCountries] = useState([]);
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
-  const [country, setCountry] = useState();
-  const [state, setState] = useState('');
-  const [city, setCity] = useState('');
-  const [startDate, setStartDate] = useState();
-  const [endDate, setEndDate] = useState();
+  const [country, setCountry] = useState('Select Country');
+  const [state, setState] = useState('Select State');
+  const [city, setCity] = useState('Select City');
+  const [startDate, setStartDate] = useState(new Date('2023-09-01'));
+  const [endDate, setEndDate] = useState(new Date());
   const [grossRevenue, setGrossRevenue] = useState([]);
   const [netRevenue, setNetRevenue] = useState([]);
   const [totalPayout, setTotalPayout] = useState([]);
@@ -54,6 +54,7 @@ const Financials = () => {
         `${base_url}/public/location/get-countries`
       );
       setCountries(response.data);
+      setState('Select State');
     } catch (error) {
       console.error(error);
     }
@@ -64,6 +65,7 @@ const Financials = () => {
       const response = await axios.get(
         `${base_url}/public/location/get-states?countryName=${country}`
       );
+      setCity('Select City');
       setStates(response.data);
     } catch (error) {
       console.error(error);
@@ -82,29 +84,30 @@ const Financials = () => {
 
   const getFilterData = async () => {
     try {
-      console.log(country, state, city, startDate, endDate);
+      let date = moment(endDate, 'YYYY-MM-DD');
+
+      // Add one day to the date
+      const newendDate = date.add(1, 'days').format('YYYY-MM-DD');
       const filterData = {
-        country,
-        state,
-        city,
-        startDate,
-        endDate,
+        startDate: moment(startDate).format('YYYY-MM-DD'),
+        endDate: newendDate,
       };
+      const queryString = new URLSearchParams(filterData);
+      country !== 'Select Country' && queryString.append('country', country);
+      state !== 'Select State' && queryString.append('state', state);
+      city !== 'Select City' && queryString.append('city', city);
       const grossRevenueResponse = await apiClient.get(
-        `${base_url}/admin/financial/gross-revenue`,
+        `${base_url}/admin/financial/gross-revenue?`,
         filterData
       );
       const totalPayoutResponse = await apiClient.get(
-        `${base_url}/admin/financial/total-payout`,
-        filterData
+        `${base_url}/admin/financial/total-payout?` + queryString.toString()
       );
       const netRevenueResponse = await apiClient.get(
-        `${base_url}/admin/financial/net-revenue`,
-        filterData
+        `${base_url}/admin/financial/net-revenue?` + queryString.toString()
       );
       const taxTrackingResponse = await apiClient.get(
-        `${base_url}/admin/financial/tax-tracking`,
-        filterData
+        `${base_url}/admin/financial/tax-tracking?` + queryString.toString()
       );
       setGrossRevenue(grossRevenueResponse.data);
       setTotalPayout(totalPayoutResponse.data);
@@ -124,6 +127,7 @@ const Financials = () => {
 
   useEffect(() => {
     getCountries();
+    getFilterData();
   }, []);
 
   useEffect(() => {
@@ -144,20 +148,30 @@ const Financials = () => {
   return (
     <div>
       <div className="tw-flex tw-justify-center tw-pt-2 tw-space-x-5">
-        <select value={country} onChange={(e) => setCountry(e.target.value)}>
-          <option disabled selected>
-            Select Country
-          </option>
+        <select
+          value={country}
+          onChange={(e) => {
+            setCountry(e.target.value);
+            setState('Select State');
+            setCity('Select City');
+          }}
+        >
+          <option>Select Country</option>
           {countries.map((country, index) => (
             <option value={country.name} key={index}>
               {country.name}
             </option>
           ))}
         </select>
-        <select value={state} onChange={(e) => setState(e.target.value)}>
-          <option disabled selected>
-            Select State
-          </option>
+        <select
+          value={state}
+          onChange={(e) => {
+            setState(e.target.value);
+
+            setCity('Select City');
+          }}
+        >
+          <option>Select State</option>
           {states.map((state, index) => (
             <option value={state.name} key={index}>
               {state.name}
@@ -165,9 +179,7 @@ const Financials = () => {
           ))}
         </select>
         <select value={city} onChange={(e) => setCity(e.target.value)}>
-          <option disabled selected>
-            Select City
-          </option>
+          <option>Select City</option>
           {cities.map((city, index) => (
             <option value={city.name} key={index}>
               {city.name}
@@ -200,7 +212,7 @@ const Financials = () => {
       </div>
       <div className="tw-p-2 tw-rounded-3xl ">
         <FinancialsChart
-          grossRevenue={filteredDataTest}
+          grossRevenue={grossRevenue}
           netRevenue={netRevenue}
           totalPayout={totalPayout}
           taxTracking={taxTracking}

@@ -7,42 +7,49 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { AiOutlineCalendar } from 'react-icons/ai';
 import { useRouter } from 'next/router';
+import moment from 'moment';
 import {
   ArrowLongLeftIcon,
   ArrowLongRightIcon,
 } from '@heroicons/react/20/solid';
-
+import useDebounce from '@/hooks/use-debounce';
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
 }
 
 const Students = () => {
+  const [totalCount, setTotalCount] = useState(0);
+  const [page, setPage] = useState(0);
+  const size = 30;
+  const [search, setSearch] = useState('');
+  const debouncedInputValue = useDebounce(search, 300); //
+  const [startDate, setStartDate] = useState(new Date('2023-09-01'));
+  const [endDate, setEndDate] = useState(new Date());
   const [countries, setCountries] = useState([]);
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
-  const [country, setCountry] = useState();
-  const [state, setState] = useState('');
-  const [city, setCity] = useState('');
+  const [country, setCountry] = useState('Select Country');
+  const [state, setState] = useState('Select State');
+  const [city, setCity] = useState('Select City');
   const [currentPage, setCurrentPage] = useState(1);
   const [students, setStudents] = useState([]);
   const [selectedStudentId, setSelectedStudentId] = useState();
   const [selectedUserData, setSelectedUserData] = useState();
   const [languagesWithInstructors, setLanguagesWithInstructors] = useState([]);
-  const [selectedLanguage, setSelectedLanguage] = useState();
+  const [selectedLanguage, setSelectedLanguage] = useState('Select Language');
   const [allGrades, setAllGrades] = useState([]);
-  const [selectedGrade, setSelectedGrade] = useState();
+  const [selectedGrade, setSelectedGrade] = useState('Select Grade');
   const [allSkillLevels, setAllSkillLevels] = useState([]);
-  const [selectedSkillLevel, setSelectedSkillLevel] = useState();
+  const [selectedSkillLevel, setSelectedSkillLevel] =
+    useState('Select Proficiency');
   const [selectedStudentCourses, setSelectedStudentCourses] = useState([]);
   const [classesByCourses, setClassesByCourses] = useState([]);
   const [dailyExpenses, setDailyExpenses] = useState([]);
   const [weekyExpenses, setWeekyExpenses] = useState([]);
   const [complaintsCount, setComplaintsCount] = useState([]);
   const [isInitialRender, setIsInitialRender] = useState(true);
-
+  console.log('slected user data', selectedUserData);
   const handleSelectedStudent = (student) => {
-
-
     setSelectedStudentId(student.id);
   };
 
@@ -52,6 +59,7 @@ const Students = () => {
         `${base_url}/public/location/get-countries`
       );
       setCountries(response.data);
+      setState('Select State');
     } catch (error) {
       console.error(error);
     }
@@ -62,6 +70,7 @@ const Students = () => {
       const response = await axios.get(
         `${base_url}/public/location/get-states?countryName=${country}`
       );
+      setCity('Select City');
       setStates(response.data);
     } catch (error) {
       console.error(error);
@@ -128,20 +137,55 @@ const Students = () => {
   };
 
   useEffect(() => {
-    getAllStudents();
-  }, [currentPage]);
-
-  const getAllStudents = async () => {
+    getAllStudents(debouncedInputValue);
+  }, [currentPage, debouncedInputValue]);
+  console.log(
+    'slected prof',
+    selectedGrade,
+    selectedLanguage,
+    selectedSkillLevel
+  );
+  const getAllStudents = async (debouncedInputValue) => {
     try {
       const body = {
         page: currentPage - 1,
         size: 20,
         sort: ['ASC'],
+        startDate: moment(startDate).format('YYYY-MM-DD'),
+        endDate: moment(endDate).add(1, 'days').format('YYYY-MM-DD'),
       };
-      const queryString = new URLSearchParams(body).toString();
-      const url = `${base_url}/admin/student/get-all?${queryString}`;
+      const queryString = new URLSearchParams(body);
+      debouncedInputValue && queryString.append('name', debouncedInputValue);
+      country != 'Select Country' && queryString.append('country', country);
+      state != 'Select State' && queryString.append('state', state);
+      city != 'Select City' && queryString.append('city', city);
+      selectedLanguage &&
+        queryString.append(
+          'languageId',
+          languagesWithInstructors.find(
+            (item) => (item.name = selectedLanguage)
+          )?.id
+        );
+      selectedSkillLevel &&
+        queryString.append(
+          'proficiencyId',
+          allSkillLevels.find((item) => (item.name = selectedSkillLevel))?.id
+        );
+      selectedGrade &&
+        queryString.append(
+          'gradeId',
+          allGrades.find((item) => (item.name = selectedGrade))?.id
+        );
+
+      const url = `${base_url}/admin/student/?${queryString.toString()}`;
       const response = await apiClient.get(url);
       setStudents(response.data.content);
+      const totalRecords = response?.data?.totalElements; // Replace with the actual total number of records
+      const recordsPerPage = size; // Replace with the number of records shown on each page
+
+      const totalPages = Math.ceil(totalRecords / recordsPerPage);
+
+      setTotalCount(totalPages);
       console.log('res', response.data);
     } catch (error) {
       console.log(error);
@@ -171,43 +215,106 @@ const Students = () => {
     }
   };
 
+  useEffect(() => {
+    if (selectedStudentId) fetchDailyClasses();
+  }, [selectedStudentCourses, startDate, endDate, selectedStudentId]);
+
   const fetchDailyClasses = async () => {
     const responses = [];
-    for (const selectedStudentCourse of selectedStudentCourses) {
-      try {
-        const response = await apiClient.get(
-          `${base_url}/admin/student/count-classes/${selectedStudentId}/${selectedStudentCourse.id}`
+    let temp = {};
+
+    try {
+      let startdate = moment(startDate).format('YYYY-MM-DD');
+      const enddate = moment(endDate).add(1, 'days').format('YYYY-MM-DD');
+      let url = `${base_url}/admin/student/count-classes/${selectedStudentId}?&startDate=${startdate}&endDate=${enddate}`;
+      selectedStudentCourses.map((item, index) => {
+        url = url + `&coursesId=${item?.id}`;
+      });
+
+      // coursesId=8&coursesId=9
+      const response = await apiClient.get(url);
+
+      response?.data?.map((item, index) => {
+        let course = selectedStudentCourses?.find(
+          (item1) => item1.id == item.courseId
         );
-        const responseDataWithCourseName = {
-          className: selectedStudentCourse.name,
-          classData: response.data,
-        };
-        responses.push(responseDataWithCourseName);
-      } catch (error) {
-        console.error(
-          `Error fetching data for course ${selectedStudentCourse.name}:`,
-          error
-        );
-      }
+
+        if (temp[item?.courseId]) {
+          let tempValue = { ...temp[item?.courseId] };
+          tempValue.classData = [...tempValue?.classData, item];
+          temp[item?.courseId] = tempValue;
+        } else {
+          temp[item?.courseId] = {
+            className: course?.name,
+            classData: [item],
+          };
+        }
+      });
+      selectedStudentCourses.map((item) => {
+        if (!temp[item?.id]) {
+          temp[item?.id] = {
+            className: item?.name,
+            classData: [],
+          };
+        }
+      });
+
+      const responseDataWithCourseName = {
+        className: selectedStudentCourses.name,
+        classData: response.data,
+      };
+      responses.push(responseDataWithCourseName);
+      let tempArr = [];
+      Object.keys(temp).map((key) => {
+        tempArr.push(temp[key]);
+      });
+      setClassesByCourses(tempArr);
+    } catch (error) {
+      console.error(
+        `Error fetching data for course ${selectedStudentCourses.name}:`,
+        error
+      );
     }
-    setClassesByCourses(responses);
   };
+
+  // const fetchDailyClasses = async () => {
+  //   const responses = [];
+  //   for (const selectedStudentCourse of selectedStudentCourses) {
+  //     try {
+  //       const response = await apiClient.get(
+  //         `${base_url}/admin/student/count-classes/${selectedStudentId}/${selectedStudentCourse.id}`
+  //       );
+  //       const responseDataWithCourseName = {
+  //         className: selectedStudentCourse.name,
+  //         classData: response.data,
+  //       };
+  //       responses.push(responseDataWithCourseName);
+  //     } catch (error) {
+  //       console.error(
+  //         `Error fetching data for course ${selectedStudentCourse.name}:`,
+  //         error
+  //       );
+  //     }
+  //   }
+  //   setClassesByCourses(responses);
+  // };
 
   const getFilterData = async () => {
     try {
       const filterData = {
-        // startDate,
-        // endDate,
+        startDate: moment(startDate).format('YYYY-MM-DD'),
+        endDate: moment(endDate).add(1, 'days').format('YYYY-MM-DD'),
       };
-      fetchDailyClasses();
+      const queryParams = new URLSearchParams(filterData);
+
       const dailyExpensesResponse = await apiClient.get(
-        `${base_url}/admin/student/daily-expense-amount/${selectedStudentId}`
+        `${base_url}/admin/student/daily-expense-amount/${selectedStudentId}/?${queryParams.toString()}`
       );
       const weekyExpensesResponse = await apiClient.get(
-        `${base_url}/admin/student/weekly-expense-amount/${selectedStudentId}`
+        `${base_url}/admin/student/weekly-expense-amount/${selectedStudentId}/?${queryParams.toString()}`
       );
       const complaintsCountResponse = await apiClient.get(
-        `${base_url}/admin/count-complaints`
+        `${base_url}/admin/count-complaints/?${queryParams.toString()}`
       );
       setDailyExpenses(dailyExpensesResponse.data);
       setWeekyExpenses(weekyExpensesResponse.data);
@@ -240,23 +347,38 @@ const Students = () => {
       getCities();
     }
   }, [state]);
+
+  useEffect(() => {
+    if (true || selectedStudentId) getFilterData();
+  }, [startDate, endDate, selectedStudentId]);
+
   return (
     <div>
       <div className="tw-flex tw-justify-center tw-space-x-5">
-        <select value={country} onChange={(e) => setCountry(e.target.value)}>
-          <option disabled selected>
-            Select Country
-          </option>
+        <select
+          value={country}
+          onChange={(e) => {
+            setCountry(e.target.value);
+            setState('Select State');
+            setCity('Select City');
+          }}
+        >
+          <option>Select Country</option>
           {countries.map((country, index) => (
             <option value={country.name} key={index}>
               {country.name}
             </option>
           ))}
         </select>
-        <select value={state} onChange={(e) => setState(e.target.value)}>
-          <option disabled selected>
-            Select State
-          </option>
+        <select
+          value={state}
+          onChange={(e) => {
+            setState(e.target.value);
+
+            setCity('Select City');
+          }}
+        >
+          <option>Select State</option>
           {states.map((state, index) => (
             <option value={state.name} key={index}>
               {state.name}
@@ -264,9 +386,7 @@ const Students = () => {
           ))}
         </select>
         <select value={city} onChange={(e) => setCity(e.target.value)}>
-          <option disabled selected>
-            Select City
-          </option>
+          <option>Select City</option>
           {cities.map((city, index) => (
             <option value={city.name} key={index}>
               {city.name}
@@ -274,31 +394,25 @@ const Students = () => {
           ))}
         </select>
         <select value={selectedLanguage} onChange={handleLanguageChange}>
-          <option disabled selected>
-            Select language
-          </option>
+          <option>Select language</option>
           {languagesWithInstructors.map((language, index) => (
             <option key={index}>{language.name}</option>
           ))}
         </select>
         <select value={selectedGrade} onChange={handleGradeChange}>
-          <option disabled selected>
-            Select Grade
-          </option>
+          <option>Select Grade</option>
           {allGrades.map((grade, index) => (
             <option key={index}>{grade.name}</option>
           ))}
         </select>
         <select value={selectedSkillLevel} onChange={handleProficiencyChange}>
-          <option disabled selected>
-            Select Skill Level
-          </option>
+          <option>Select Proficiency</option>
           {allSkillLevels.map((skill, index) => (
             <option key={index}>{skill.name}</option>
           ))}
         </select>
         <button
-          onClick={getFilterData}
+          onClick={() => getAllStudents()}
           type="button"
           className="tw-block tw-w-28  !tw-bg-[#f48342] tw-rounded-md  tw-px-3 tw-py-1.5 tw-text-center tw-text-sm tw-font-semibold tw-leading-6 tw-text-white tw-shadow-sm hover:tw-bg-indigo-500 focus-visible:tw-outline focus-visible:tw-outline-2 focus-visible:tw-outline-offset-2 focus-visible:tw-outline-indigo-600"
         >
@@ -311,16 +425,20 @@ const Students = () => {
             <label htmlFor="search-field" className="tw-sr-only">
               Search
             </label>
-            <MagnifyingGlassIcon
-              className="tw-pointer-events-none tw-absolute tw-inset-y-0 tw-right-1 tw-h-full tw-w-5 tw-text-gray-400"
-              aria-hidden="true"
-            />
+            {!search && (
+              <MagnifyingGlassIcon
+                className="tw-pointer-events-none tw-absolute tw-inset-y-0 tw-right-1 tw-h-full tw-w-5 tw-text-gray-400"
+                aria-hidden="true"
+              />
+            )}
             <input
               id="tw-search-field"
               className="tw-block tw-h-full tw-w-full tw-border-0 tw-py-0 tw-pr-0 tw-text-gray-900 placeholder:tw-text-gray-400 focus:tw-ring-0 sm:tw-text-sm"
               placeholder="Search..."
               type="search"
               name="search"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
             />
           </div>
           <div className="tw-relative tw-pb-10 tw-cst-pf !tw-border-2 !tw-border-gray-500">
@@ -339,28 +457,30 @@ const Students = () => {
                       '!tw-cst-pf mt-1 tw-w-[50%] tw-cursor-pointer'
                     )}
                   >
-                    {student.fullName}
+                    {student?.firstName} {student?.lastName}
                   </li>
                 </ul>
               ))}
             </div>
             <nav className="tw-absolute tw-bottom-4 tw-w-full tw-border-t tw-border-gray-200 tw-px-4 sm:tw-px-0">
               <div className="tw-hidden md:tw--mt-px md:tw-flex">
-                <div className="tw--mt-px tw-flex tw-w-0 tw-flex-1">
-                  <a className="tw-inline-flex tw-cursor-pointer tw-items-center tw-cst-pf !tw-border-t-2 !tw-border-transparent tw-pr-1 tw-pt-4 tw-text-sm tw-font-medium tw-text-gray-500 hover:tw-border-gray-300 hover:tw-text-gray-700">
-                    <ArrowLongLeftIcon
-                      className="tw-mr-3 tw-h-5 tw-w-5 tw-text-gray-400"
-                      aria-hidden="true"
-                      onClick={() =>
-                        currentPage >= 2
-                          ? setCurrentPage((prevCurr) => prevCurr - 1)
-                          : null
-                      }
-                    />
-                    {/* Previous */}
-                  </a>
-                </div>
-                {Array.from({ length: 5 }, (_, index) => (
+                {totalCount > 1 && (
+                  <div className="tw--mt-px tw-flex tw-w-0 tw-flex-1">
+                    <a className="tw-inline-flex tw-cursor-pointer tw-items-center tw-cst-pf !tw-border-t-2 !tw-border-transparent tw-pr-1 tw-pt-4 tw-text-sm tw-font-medium tw-text-gray-500 hover:tw-border-gray-300 hover:tw-text-gray-700">
+                      <ArrowLongLeftIcon
+                        className="tw-mr-3 tw-h-5 tw-w-5 tw-text-gray-400"
+                        aria-hidden="true"
+                        onClick={() =>
+                          currentPage >= 2
+                            ? setCurrentPage((prevCurr) => prevCurr - 1)
+                            : null
+                        }
+                      />
+                      {/* Previous */}
+                    </a>
+                  </div>
+                )}
+                {Array.from({ length: totalCount }, (_, index) => (
                   <a
                     onClick={() => setCurrentPage(index + 1)}
                     className={classNames(
@@ -374,20 +494,22 @@ const Students = () => {
                   </a>
                 ))}
 
-                <div className="tw--mt-px tw-flex tw-w-0 tw-flex-1 tw-justify-end">
-                  <a className="tw-inline-flex tw-cursor-pointer tw-items-center tw-cst-pf !tw-border-t-2 !tw-border-transparent tw-pl-1 tw-pt-4 tw-text-sm tw-font-medium tw-text-gray-500 hover:tw-border-gray-300 hover:tw-text-gray-700">
-                    {/* Next */}
-                    <ArrowLongRightIcon
-                      className="tw-ml-3 tw-h-5 tw-w-5 tw-text-gray-400"
-                      aria-hidden="true"
-                      onClick={() =>
-                        currentPage <= 4
-                          ? setCurrentPage((prevCurr) => prevCurr + 1)
-                          : null
-                      }
-                    />
-                  </a>
-                </div>
+                {totalCount > 1 && (
+                  <div className="tw--mt-px tw-flex tw-w-0 tw-flex-1 tw-justify-end">
+                    <a className="tw-inline-flex tw-cursor-pointer tw-items-center tw-cst-pf !tw-border-t-2 !tw-border-transparent tw-pl-1 tw-pt-4 tw-text-sm tw-font-medium tw-text-gray-500 hover:tw-border-gray-300 hover:tw-text-gray-700">
+                      {/* Next */}
+                      <ArrowLongRightIcon
+                        className="tw-ml-3 tw-h-5 tw-w-5 tw-text-gray-400"
+                        aria-hidden="true"
+                        onClick={() =>
+                          currentPage <= 4
+                            ? setCurrentPage((prevCurr) => prevCurr + 1)
+                            : null
+                        }
+                      />
+                    </a>
+                  </div>
+                )}
               </div>
             </nav>
           </div>
@@ -398,7 +520,13 @@ const Students = () => {
               <div className="tw-flex tw-justify-between tw-col-span-3">
                 <div className="tw-space-y-2">
                   <p className="tw-cst-pf"> Email: {selectedUserData.email}</p>
-                  <p className="tw-cst-pf">Parent1</p>
+                  <p className="tw-cst-pf">
+                    Parent1:{' '}
+                    {selectedUserData?.parents?.length > 0 &&
+                      selectedUserData?.parents[0]?.firstName +
+                        ' ' +
+                        selectedUserData?.parents[0]?.lastName}
+                  </p>
                   <p className="tw-cst-pf">
                     Country: {selectedUserData.country}
                   </p>
@@ -407,17 +535,29 @@ const Students = () => {
                   </p>
                 </div>
                 <div className="tw-space-y-2">
-                  <p className="tw-cst-pf">Parent1 Email</p>
+                  <p className="tw-cst-pf">
+                    Parent1 Email:{' '}
+                    {selectedUserData?.parents?.length > 0 &&
+                      selectedUserData?.parents[0]?.email}
+                  </p>
                   <p className="tw-cst-pf">State: {selectedUserData.state}</p>
-                  <p className="tw-cst-pf">Skill</p>
                 </div>
                 <div className="tw-space-y-2">
-                  <p className="tw-cst-pf">Parent2</p>
+                  <p className="tw-cst-pf">
+                    Parent2:{' '}
+                    {selectedUserData?.parents?.length > 1 &&
+                      selectedUserData?.parents[1]?.firstName +
+                        ' ' +
+                        selectedUserData?.parents[1]?.lastName}
+                  </p>
                   <p className="tw-cst-pf">City: {selectedUserData.city}</p>
-                  <p className="tw-cst-pf">Delivery Mode</p>
                 </div>
                 <div className="tw-space-y-2">
-                  <p className="tw-cst-pf">Parent2 Email</p>
+                  <p className="tw-cst-pf">
+                    Parent2 Email:{' '}
+                    {selectedUserData?.parents?.length > 1 &&
+                      selectedUserData?.parents[1]?.email}
+                  </p>
                   <div className="tw-flex">
                     <label className="tw-cst-pf">Languages:</label>
                     {selectedUserData.languagePreference?.map(
@@ -448,6 +588,10 @@ const Students = () => {
               </ul>
             </div>
             <StudentsCharts
+              startDate={startDate}
+              setStartDate={setStartDate}
+              endDate={endDate}
+              setEndDate={setEndDate}
               classesByCourses={classesByCourses}
               dailyExpenses={dailyExpenses}
               weekyExpenses={weekyExpenses}

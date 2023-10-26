@@ -14,10 +14,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
 import GetUnConfirmedEventById from '@/services/events/GetUnConfirmedEventById';
 import Modal from '@/components/parent/modal/Modal';
+import { useScreenSize } from '@/hooks/mobile-devices';
 function ParentScheduleClass({ userInfo, loading, error }) {
   const router = useRouter();
   console.log(router);
   console.log('uuuser', userInfo);
+  const { isLargeScreen } = useScreenSize();
   const { instructorId } = router.query;
   const loggedInUser = useSelector((state) => state.user.userInfo);
   const [instructorData, setInstructorData] = useState({});
@@ -40,14 +42,15 @@ function ParentScheduleClass({ userInfo, loading, error }) {
   const [paymentSubmit, setPaymentSubmit] = useState(true);
   const [open, setOpen] = useState(false);
   const [date, setDate] = useState(null);
+  const [slectedValues, setSelectedValues] = useState([]);
   const eventId = router?.query?.eventId;
-
+  console.log('selected instructor', selectedInstructor);
   let dur = null;
   let eventStartTimeslot = undefined;
   let ca = [];
   let sid = null;
   const [dependent, setDependent] = useState(null);
-  console.log(loggedInUser, 'loggedinuser');
+
   //Get Courses
   const getCourses = async () => {
     try {
@@ -74,7 +77,7 @@ function ParentScheduleClass({ userInfo, loading, error }) {
       console.log('res', res);
       const { data } = res;
       eventStartTimeslot = data.start;
-      console.log(moment(data?.start).format('YYYY-MM-DD HH:mm'));
+
       // console.log(instructorCourses)
       // console.log(ca.find(el => el.value === data.courseId).label)
       dur = data?.durationInHours;
@@ -82,7 +85,12 @@ function ParentScheduleClass({ userInfo, loading, error }) {
       // console.log("dependent", loggedInUser.dependents.find(el=>el.id === sid));
       // setDependent(loggedInUser.dependents.find(el=>el.id === sid))
       setStudentId(data?.studentId);
-      setTime(moment(data?.start).format('YYYY-MM-DD HH:mm'));
+      const date = new Date(data?.start);
+      const formattedDateStr = date
+        .toISOString()
+        .slice(0, 16)
+        .replace('T', ' ');
+      setTime(formattedDateStr);
       setDuration(data.durationInHours);
       setDate(data.start.slice(0, 10));
       setClassFrequency(data.classFrequency);
@@ -147,7 +155,6 @@ function ParentScheduleClass({ userInfo, loading, error }) {
   };
 
   useEffect(() => {
-    console.log(instructorId, 'id');
     const run = () => {
       const getInstructorData = async () => {
         try {
@@ -324,9 +331,9 @@ function ParentScheduleClass({ userInfo, loading, error }) {
             selectedSlot.start.getTime() !== slot.start.getTime() ||
             selectedSlot.end.getTime() !== slot.end.getTime()
         );
-
+        console.log(updatedSelectedSlots[0]);
         setTime(
-          updatedSelectedSlots.length > 0 ? updatedSelectedSlots[0] : null
+          updatedSelectedSlots.length > 0 ? updatedSelectedSlots[0].start : null
         );
 
         return updatedSelectedSlots;
@@ -366,6 +373,8 @@ function ParentScheduleClass({ userInfo, loading, error }) {
       query: data,
     });
   };
+
+  const calculateDifference = (number1, number2) => Math.abs(number1 - number2);
 
   return (
     <>
@@ -614,14 +623,28 @@ function ParentScheduleClass({ userInfo, loading, error }) {
         <div className="row" style={{ minHeight: '90vh' }}>
           <div className="col-12 col-lg-6 pt-5">
             {selectedInstructor && (
-              <h3
-                style={{
-                  textAlign: 'center',
-                }}
-              >
-                Calendar for {selectedInstructor?.firstName}{' '}
-                {selectedInstructor?.lastName}
-              </h3>
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                {isLargeScreen && (
+                  <p
+                    style={{
+                      color: 'red',
+                      fontSize: 18,
+                      textAlign: 'center',
+                    }}
+                  >
+                    Step 1: Pick Date
+                  </p>
+                )}
+                <h3
+                  style={{
+                    textAlign: 'center',
+                  }}
+                >
+                  Calendar for {selectedInstructor?.firstName}{' '}
+                  {selectedInstructor?.lastName}
+                  {` (GMT ${selectedInstructor?.timeZoneOffset})`}
+                </h3>
+              </div>
             )}
             <Calendar
               onChange={handleDateChange}
@@ -651,6 +674,24 @@ function ParentScheduleClass({ userInfo, loading, error }) {
                 Modal
               </Modal>
             </div>
+
+            {isLargeScreen && (
+              <div
+                style={{
+                  width: '100%',
+                  justifyContent: 'space-between',
+                  display: 'flex',
+                  paddingRight: '150px',
+                }}
+              >
+                <p style={{ fontSize: 18 }}>
+                  <span style={{ color: 'red' }}>Step 2: Pick Time</span>
+                </p>
+                <p style={{ fontSize: 18 }}>
+                  <span style={{ color: 'red' }}>Step 3: Select Details</span>
+                </p>
+              </div>
+            )}
             <div className="shadow rounded py-5">
               <div
                 className="d-flex flex-sm-nowrap flex-wrap justify-content-between gap-4 px-3"
@@ -690,7 +731,78 @@ function ParentScheduleClass({ userInfo, loading, error }) {
                           } ${
                             eventslotsexists ? 'bg-secondary text-white' : ''
                           }`}
-                          onClick={() => handleSlotClick(slot)}
+                          onClick={() => {
+                            let temp = [...slectedValues];
+
+                            if (
+                              index >= slectedValues[0] &&
+                              index <= slectedValues[1]
+                            ) {
+                              if (
+                                index == slectedValues[0] ||
+                                index == slectedValues[1]
+                              ) {
+                                if (duration > 2) {
+                                  slectedValues.map((item, index1) => {
+                                    if (item == index) temp[index1] = item - 1;
+                                  });
+                                  setSelectedValues([...temp]);
+                                  handleSlotClick(slot);
+                                } else {
+                                  let filterArr = slectedValues.filter(
+                                    (item) => item != index
+                                  );
+                                  setSelectedValues(filterArr);
+                                  handleSlotClick(slot);
+                                }
+                              }
+                            } else {
+                              if (slectedValues.length === 0) {
+                                temp.push(index);
+                                setSelectedValues([...temp]);
+                                handleSlotClick(slot);
+                              } else if (slectedValues.length > 0) {
+                                if (
+                                  calculateDifference(
+                                    slectedValues[0],
+                                    index
+                                  ) === 1 ||
+                                  calculateDifference(
+                                    slectedValues[1],
+                                    index
+                                  ) === 1
+                                ) {
+                                  const isSlotSelected = selectedSlots.some(
+                                    (selectedSlot) =>
+                                      selectedSlot.start.getTime() ===
+                                        slot.start.getTime() &&
+                                      selectedSlot.end.getTime() ===
+                                        slot.end.getTime()
+                                  );
+
+                                  if (slectedValues.length < 2) {
+                                    !isSlotSelected && temp.push(index);
+                                  } else {
+                                    temp.map((item, index1) => {
+                                      if (
+                                        calculateDifference(item, index) === 1
+                                      ) {
+                                        temp[index1] = index;
+                                      }
+                                    });
+                                  }
+
+                                  setSelectedValues([...temp]);
+                                  handleSlotClick(slot);
+                                } else {
+                                  if (slectedValues[0] === index) {
+                                    setSelectedValues([]);
+                                    handleSlotClick(slot);
+                                  }
+                                }
+                              }
+                            }
+                          }}
                         >
                           {`${slot.start.toLocaleTimeString(undefined, {
                             hour: '2-digit',

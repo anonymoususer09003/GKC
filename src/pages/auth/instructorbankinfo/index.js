@@ -33,7 +33,7 @@ export default function ParentRegistrationCCInfo() {
           firstName: userInfo.firstName,
           lastName: userInfo.lastName,
           instructorEmail: userInfo.email,
-
+          phoneNumber: userInfo?.phoneNumber || '',
           address1: userInfo.address1,
           address2: userInfo.address2,
           country: userInfo.country,
@@ -54,14 +54,12 @@ export default function ParentRegistrationCCInfo() {
       const res = await apiClient(`/user/logged-user-role`);
 
       if (payPalEmail !== '') {
-        try{
+        try {
           const addPayPalEmail = await apiClient.post(
             `/instructor/set-payPal-email-logged-instructor?payPalEmail=${payPalEmail}`
           );
-          console.log(addPayPalEmail)
-        } catch (error) {
-          
-        }
+          console.log(addPayPalEmail);
+        } catch (error) {}
       }
       console.log(res.data);
       var stor = window.localStorage.getItem('gkcAuth');
@@ -73,6 +71,12 @@ export default function ParentRegistrationCCInfo() {
           role: res.data,
         })
       );
+
+      await apiClient.post(
+        '/instructor/week-schedule',
+        userInfo?.weeklySchedule
+      );
+
       setTimeout(() => {
         navigation.push('/instructor');
       }, 1400);
@@ -90,7 +94,7 @@ export default function ParentRegistrationCCInfo() {
       setUserInfo(stored);
       setUserType(typ);
     }
-    run()
+    run();
   }, []);
 
   return (
@@ -105,7 +109,7 @@ export default function ParentRegistrationCCInfo() {
         <Link
           href="/auth/proficiencytoteach"
           className="text-decoration-none p-4 d-flex gap-2 align-items-center text-dark"
-          style={{cursor:'pointer'}}
+          style={{ cursor: 'pointer' }}
         >
           <RiArrowGoBackLine />
           <p className="fw-bold m-0 p-0 ">Back</p>

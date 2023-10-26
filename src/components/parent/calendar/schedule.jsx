@@ -11,7 +11,6 @@ import axios from 'axios';
 import { useSelector } from 'react-redux';
 
 const StudentSchedule = (props) => {
-  console.log('props', props);
   const navigation = useRouter();
   const loggedInUser = useSelector((state) => state.user.userInfo);
   const {
@@ -140,23 +139,29 @@ const StudentSchedule = (props) => {
               {props.schedule &&
                 props.schedule.map((el) => {
                   // Define the specific event time as a Date object
-                  var specificEventTime = new Date(el.start);
+                  var specificEventTime = new Date(el.start.slice(0,19)+'Z');
 
                   // Get the current time as a Date object
                   var currentTime = new Date();
 
                   // Calculate the time difference in milliseconds
                   var timeDifference = specificEventTime - currentTime;
-
+                  console.log('specific time difference', specificEventTime);
                   // Calculate the time difference in minutes
                   var minutesDifference = Math.floor(
                     timeDifference / (1000 * 60)
                   );
+
+                  console.log('minutes differnce', minutesDifference);
                   var past = specificEventTime <= currentTime;
                   return (
                     <tr>
                       <td className="p-0 m-0 flex-fill fw-bold flex-fill">
                         {el.instructorName}
+                      </td>
+
+                      <td className="p-0 m-0 flex-fill fw-bold flex-fill">
+                        {el?.studentName}
                       </td>
                       <td className="p-0 m-0 flex-fill fw-bold flex-fill">
                         {el.start.split(' ')[1]}
@@ -179,25 +184,20 @@ const StudentSchedule = (props) => {
                       </td>
 
                       <td>
-                        <GoDeviceCameraVideo
+                      {
+                          minutesDifference >= 10 || minutesDifference <= -70 || past ? 
+                          <GoDeviceCameraVideo
                           style={{
-                            fill:
-                              minutesDifference >= 10 || past
-                                ? 'gray'
-                                : 'green',
-                            cursor: 'pointer',
+                            fill: 'gray'
                           }}
                           className="p-0 m-0 flex-fill h4 flex-fill"
-                          onClick={() => {
-                            if (minutesDifference >= 10 || past) {
-                              null;
-                            } else {
-                              navigation.push(
-                                `/student/video?${el?.courseName}`
-                              );
-                            }
-                          }}
                         />
+                        :
+                        <img src="https://cdn-icons-png.flaticon.com/512/4943/4943781.png " width={24} alt="click here to call"
+                        style={{cursor:'pointer'}}
+                        onClick={()=> navigation.push(`/student/video?${el?.courseName}`)}
+                        />
+                        }
                       </td>
                       <td>
                         <RiDeleteBin6Line

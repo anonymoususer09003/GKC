@@ -112,7 +112,7 @@ function dailyClassesChartData(dataArr) {
   return chartData;
 }
 
-function generateDailyClassesData(dataArr) {
+function generateDailyClassesData(dataArr = []) {
   return dailyClassesChartData(
     dataArr.flatMap((item) =>
       item.classData.map((data) => ({
@@ -194,7 +194,7 @@ export function InstructorsCharts({
     },
   ];
 
-  function generateChartData(dataArr) {
+  function generateChartData(dataArr = []) {
     const chartData = {
       labels: dataArr.map((item) => item.x),
       datasets: [
@@ -207,16 +207,16 @@ export function InstructorsCharts({
     return chartData;
   }
 
-  function generateData(dataArr) {
+  function generateData(dataArr = []) {
     return generateChartData(
-      dataArr.map((item) => ({
+      dataArr?.map((item) => ({
         x: new Date(item.date).toLocaleDateString(),
         y: item.count,
       }))
     );
   }
 
-  const dailyClassesData = generateDailyClassesData(filteredDataTest1);
+  const dailyClassesData = generateDailyClassesData(classesByCourses);
   const dailyRevenueData = generateData(dailyRevenue);
   const weekylPaymentsData = generateData(weekyPayments);
   const noOfComplaintsData = generateData(complaintsCount);

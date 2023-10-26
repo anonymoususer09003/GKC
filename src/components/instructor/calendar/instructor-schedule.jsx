@@ -155,7 +155,7 @@ const InstructorSchedule = (props) => {
               {props.schedule &&
                 props.schedule.map((el) => {
                   // Define the specific event time as a Date object
-                  var specificEventTime = new Date(el.start);
+                  var specificEventTime = new Date(el.start.slice(0,19)+'Z');
 
                   // Get the current time as a Date object
                   var currentTime = new Date();
@@ -194,25 +194,20 @@ const InstructorSchedule = (props) => {
                       </td>
 
                       <td>
-                        <GoDeviceCameraVideo
+                      {
+                          minutesDifference >= 10 || minutesDifference <= -70 || past ? 
+                          <GoDeviceCameraVideo
                           style={{
-                            fill:
-                              minutesDifference >= 10 || past
-                                ? 'gray'
-                                : 'green',
-                            cursor: 'pointer',
+                            fill: 'gray'
                           }}
                           className="p-0 m-0 flex-fill h4 flex-fill"
-                          onClick={() => {
-                            if (minutesDifference >= 10 || past) {
-                              null;
-                            } else {
-                              navigation.push(
-                                `/student/video?${el?.courseName}`
-                              );
-                            }
-                          }}
                         />
+                        :
+                        <img src="https://cdn-icons-png.flaticon.com/512/4943/4943781.png " width={24} alt="click here to call"
+                        style={{cursor:'pointer'}}
+                        onClick={()=> navigation.push(`/student/video?${el?.courseName}`)}
+                        />
+                        }
                       </td>
                       <td>
                         <RiDeleteBin6Line

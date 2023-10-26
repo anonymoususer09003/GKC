@@ -15,64 +15,79 @@ export default function StudentRegistrationCCInfo() {
   const [selectedParent, setSelectedParent] = useState('');
   const [nameCard, setNameCard] = useState('');
   const [cardFormValid, setCardFormValid] = useState(false);
-  const [emailParents, setEmailParents] = useState([])
-  const [showNewDependentPopup, setShowNewDependentPopup] = useState(false)
-  const [savePaymentFutureUse, setSavePaymentFutureUse] = useState(false)
-
+  const [emailParents, setEmailParents] = useState([]);
+  const [showNewDependentPopup, setShowNewDependentPopup] = useState(false);
+  const [savePaymentFutureUse, setSavePaymentFutureUse] = useState(false);
+  console.log('userinfo', userInfo);
   const onRegister = async ({ getPayment }) => {
-    var storreed = JSON.parse(window.localStorage.getItem('registrationForm'))
+    var storreed = JSON.parse(window.localStorage.getItem('registrationForm'));
     // setSavePaymentFutureUse(!savePaymentFutureUse)
     try {
-      const response = await axios.post(`${base_url}/auth/complete-student-registration`, {
-        firstName: userInfo.firstName,
-        lastName: userInfo.lastName,
-        studentEmail: userInfo.email || storreed.email,
-        password: userInfo.password,
-        address1: userInfo.address1,
-        address2: userInfo.address2,
-        country: userInfo.country,
-        state: userInfo.state,
-        city: userInfo.city,
-        zipCode: userInfo.zipCode,
-        savePaymentFutureUse: false,
-        emailParent1: userInfo.emailParent1,
-        emailParent2: userInfo.emailParent2,
-        whoPaysEmail: emailParents[parents.indexOf(selectedParent)] || userInfo.emailParent || userInfo.email,
-        gradeId: userInfo.gradeId,
-        courseOfInterestAndProficiency: userInfo.courseOfInterestAndProficiency,
-        languagePreferencesId: userInfo.languagePreferencesId,
-        // timeZoneId: userInfo.timeZoneId,
-      });
-      console.log(response)
-      if(window.localStorage.getItem("DoesParentCreateNewStudent") !== 'true'){
-      const res = await axios.get(`${base_url}/user/logged-user-role`, {
-        headers: {
-          Authorization: `Bearer ${response.data.accessToken ?? JSON.parse(window.localStorage.getItem('gkcAuth')).accessToken}`,
-        },
-      });
+      const response = await axios.post(
+        `${base_url}/auth/complete-student-registration`,
+        {
+          firstName: userInfo.firstName,
+          lastName: userInfo.lastName,
+          studentEmail: userInfo.email || storreed.email,
+          password: userInfo.password,
+          address1: userInfo.address1,
+          address2: userInfo.address2,
+          country: userInfo.country,
+          state: userInfo.state,
+          city: userInfo.city,
+          zipCode: userInfo.zipCode,
+          savePaymentFutureUse: false,
+          emailParent1: userInfo.emailParent1,
+          emailParent2: userInfo.emailParent2,
+          whoPaysEmail:
+            emailParents[parents.indexOf(selectedParent)] ||
+            userInfo.emailParent ||
+            userInfo.email,
+          gradeId: userInfo.gradeId,
+          courseOfInterestAndProficiency:
+            userInfo.courseOfInterestAndProficiency,
+          languagePreferencesId: userInfo.languagePreferencesId,
+          phoneNumber: userInfo?.phoneNumber,
+          // timeZoneId: userInfo.timeZoneId,
+        }
+      );
+      console.log(response);
+      if (
+        window.localStorage.getItem('DoesParentCreateNewStudent') !== 'true'
+      ) {
+        const res = await axios.get(`${base_url}/user/logged-user-role`, {
+          headers: {
+            Authorization: `Bearer ${
+              response.data.accessToken ??
+              JSON.parse(window.localStorage.getItem('gkcAuth')).accessToken
+            }`,
+          },
+        });
         if (res && response) {
           window.localStorage.setItem(
             'gkcAuth',
             JSON.stringify({
-              accessToken: JSON.parse(window.localStorage.getItem('gkcAuth')).accessToken,
+              accessToken: JSON.parse(window.localStorage.getItem('gkcAuth'))
+                .accessToken,
               role: res.data,
             })
           );
         }
-      
-      if (getPayment && selectedParent == '' || cardFormValid ) {
-        setConfirmPayment(true);
-        // navigation.push('/');
-      } else {
-        // navigation.push('/');
+        navigation.push('/');
+        if ((getPayment && selectedParent == '') || cardFormValid) {
+          setConfirmPayment(true);
+          // navigation.push('/');
+        } else {
+          // navigation.push('/');
+        }
       }
-    }
     } catch (error) {
       console.error(error);
-    }
-    finally{
-      if(window.localStorage.getItem("DoesParentCreateNewStudent") === 'true'){
-        setShowNewDependentPopup(true)  //popup for creating new student after parent completely registered
+    } finally {
+      if (
+        window.localStorage.getItem('DoesParentCreateNewStudent') === 'true'
+      ) {
+        setShowNewDependentPopup(true); //popup for creating new student after parent completely registered
       }
     }
   };
@@ -96,12 +111,12 @@ export default function StudentRegistrationCCInfo() {
 
     const uniqueSet = new Set(arr);
     const uniqueArray = Array.from(uniqueSet);
-    setEmailParents(uniqueArray)
+    setEmailParents(uniqueArray);
 
     // uniqueArray.map((i)=>{
     //   setParents([...parents, userDetailByEmail(i)])
     // })
-    userDetailByEmail(uniqueArray)
+    userDetailByEmail(uniqueArray);
     // console.log(uniqueArray)
     // let parentName1, parentName2;
     // if(uniqueArray[0] !== undefined){
@@ -128,27 +143,30 @@ export default function StudentRegistrationCCInfo() {
     //     parentNamnes[1] = value.data.fullName
     //   })
     // }
+  }, []);
 
-      }, []);
+  const userDetailByEmail = (element) => {
+    console.log(element);
 
-  const userDetailByEmail = (element) =>{
-    console.log(element)
-
-    element.map(async (i)=>{
-        const responce = await axios.get(`${base_url}/user/details/?userEmail=${i}`,{
+    element.map(async (i) => {
+      const responce = await axios.get(
+        `${base_url}/user/details/?userEmail=${i}`,
+        {
           headers: {
-            Accept: "application/json",
-            Authorization: `Bearer ${JSON.parse(window.localStorage.getItem('gkcAuth')).accessToken}`,
-            "Content-Type": 'Access-Control-Allow-Origin'
-  
-          }
-        })
-        console.log(responce.data)
-         setParents([...parents, responce.data.fullName])
-      })
-        
-    console.log(parents)
-  }
+            Accept: 'application/json',
+            Authorization: `Bearer ${
+              JSON.parse(window.localStorage.getItem('gkcAuth')).accessToken
+            }`,
+            'Content-Type': 'Access-Control-Allow-Origin',
+          },
+        }
+      );
+      console.log(responce.data);
+      setParents([...parents, responce.data.fullName]);
+    });
+
+    console.log(parents);
+  };
   const handlePaymentRequest = (status) => {
     window.localStorage.removeItem('registrationForm');
     window.localStorage.removeItem('userType');
@@ -160,40 +178,82 @@ export default function StudentRegistrationCCInfo() {
         <title> Auth | CC Info </title>
         <meta name="description" content="Where kids learn to code" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="https://gkc-images.s3.amazonaws.com/favicon.ico" />
+        <link
+          rel="icon"
+          href="https://gkc-images.s3.amazonaws.com/favicon.ico"
+        />
       </Head>
       <main className="container-fluid d-flex flex-column justify-content-between  min-vh-100">
-      {showNewDependentPopup ? (
-        <div style={{position:'fixed', zIndex: 1, left:0,top:0, width:'100%', height:'100%',overflow:'auto', background: 'rgba(0, 0, 0, 0.4)'}}>
-          <div style={{background: 'white', margin: '500px auto', padding:20, width:'500px'}}>
-            <p style={{width: 335, margin: 'auto'}}>Great! Do you want to add a dependent?</p>
+        {showNewDependentPopup ? (
+          <div
+            style={{
+              position: 'fixed',
+              zIndex: 1,
+              left: 0,
+              top: 0,
+              width: '100%',
+              height: '100%',
+              overflow: 'auto',
+              background: 'rgba(0, 0, 0, 0.4)',
+            }}
+          >
             <div
-            style={{display: 'flex', justifyContent:'center', gap:40}}
-            >
-            <Link
-              href="/auth/registeremail"
-              onClick={()=>{window.localStorage.setItem("userType", 'student');
-              window.localStorage.setItem("DoesParentCreateNewStudent", 'true')}}
-            >
-            <button className="btn_primary text-light p-2 rounded fw-bold mt-3" 
-            style={{width: 50, position: 'relative', margin: '0 42%'}}
-            >Yes</button>
-            </Link>
-
-            <Link
-              href="/"
-              onClick={()=>{
-                window.localStorage.removeItem("DoesParentCreateNewStudent");
-                window.localStorage.setItem("userType", 'parent');
+              style={{
+                background: 'white',
+                margin: '500px auto',
+                padding: 20,
+                width: '500px',
               }}
             >
-            <button className=" p-2 rounded fw-bold mt-3" 
-            style={{width: 50, position: 'relative', margin: '0 42%', border: 'none', background: 'white'}}
-            >No</button>
-            </Link>
+              <p style={{ width: 335, margin: 'auto' }}>
+                Great! Do you want to add a dependent?
+              </p>
+              <div
+                style={{ display: 'flex', justifyContent: 'center', gap: 40 }}
+              >
+                <Link
+                  href="/auth/registeremail"
+                  onClick={() => {
+                    window.localStorage.setItem('userType', 'student');
+                    window.localStorage.setItem(
+                      'DoesParentCreateNewStudent',
+                      'true'
+                    );
+                  }}
+                >
+                  <button
+                    className="btn_primary text-light p-2 rounded fw-bold mt-3"
+                    style={{ width: 50, position: 'relative', margin: '0 42%' }}
+                  >
+                    Yes
+                  </button>
+                </Link>
+
+                <Link
+                  href="/"
+                  onClick={() => {
+                    window.localStorage.removeItem(
+                      'DoesParentCreateNewStudent'
+                    );
+                    window.localStorage.setItem('userType', 'parent');
+                  }}
+                >
+                  <button
+                    className=" p-2 rounded fw-bold mt-3"
+                    style={{
+                      width: 50,
+                      position: 'relative',
+                      margin: '0 42%',
+                      border: 'none',
+                      background: 'white',
+                    }}
+                  >
+                    No
+                  </button>
+                </Link>
+              </div>
             </div>
           </div>
-        </div>
         ) : null}
         <Navbar isLogin={true} />
         <div className="row">
@@ -221,15 +281,11 @@ export default function StudentRegistrationCCInfo() {
                     }
                     value={selectedParent}
                   >
-                     <option> Select </option>
-                    {parents && parents?.map((v) => {
-                      return (
-                        <option>
-                          {' '}
-                          {v}
-                        </option>
-                      );
-                    })}
+                    <option> Select </option>
+                    {parents &&
+                      parents?.map((v) => {
+                        return <option> {v}</option>;
+                      })}
                   </select>
                   <h4 className="text-dark fw-bold p-0 m-0 text-center">
                     {' '}
@@ -249,10 +305,16 @@ export default function StudentRegistrationCCInfo() {
                 />
                 <div className="d-flex gap-2 justify-content-center mt-3">
                   <button
-                    className={`${ selectedParent || cardFormValid && nameCard.length > 0 ? 'btn_primary text-light' : 'bg-gray-600'} w-50 p-2 rounded fw-bold`}
+                    className={`${
+                      selectedParent || (cardFormValid && nameCard.length > 0)
+                        ? 'btn_primary text-light'
+                        : 'bg-gray-600'
+                    } w-50 p-2 rounded fw-bold`}
                     onClick={() => onRegister({ getPayment: true })}
                     disabled={
-                      selectedParent || cardFormValid && nameCard.length > 0 ? false : true 
+                      selectedParent || (cardFormValid && nameCard.length > 0)
+                        ? false
+                        : true
                     }
                   >
                     Continue

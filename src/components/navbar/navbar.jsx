@@ -7,18 +7,24 @@ import { FcCalendar } from 'react-icons/fc';
 import onSignOut from '@/utils/signOut';
 import LogoutTimer from '../common/signOutTimer';
 import { useDispatch, useSelector } from 'react-redux';
-
+import { useScreenSize } from '@/hooks/mobile-devices';
 const Navbar = ({ isLogin }) => {
   const [value, setValue] = useState(false);
   const [role, setRole] = useState('student');
   const dispatch = useDispatch();
-
+  const { isLargeScreen } = useScreenSize();
   useEffect(() => {
     const stored = localStorage.getItem('gkcAuth');
     let data = stored ? JSON.parse(stored) : 'student';
     setValue(stored ? JSON.parse(stored) : false);
 
-    setRole(localStorage.getItem('userType') !== null ? window.localStorage.getItem('userType').includes('"') ? JSON.parse(window.localStorage.getItem('userType')) : window.localStorage.getItem('userType') : data?.role?.toLowerCase());
+    setRole(
+      localStorage.getItem('userType') !== null
+        ? window.localStorage.getItem('userType').includes('"')
+          ? JSON.parse(window.localStorage.getItem('userType'))
+          : window.localStorage.getItem('userType')
+        : data?.role?.toLowerCase()
+    );
   }, []);
   console.log('role', role);
   return (
@@ -51,7 +57,13 @@ const Navbar = ({ isLogin }) => {
               {value && (
                 <>
                   <li className="nav-item">
-                    <a className="nav-link" href={role !== 'instructor' ? `/${role}/calandar` : 'instructor'}
+                    <a
+                      className="nav-link"
+                      href={
+                        role !== 'instructor'
+                          ? `/${role}/calandar`
+                          : 'instructor'
+                      }
                     >
                       <FcCalendar style={{ fontSize: '30px' }} />
                     </a>
@@ -63,7 +75,6 @@ const Navbar = ({ isLogin }) => {
                   className={`nav-link ${styles.homeLink}`}
                   aria-current="page"
                   href="/"
-                  
                 >
                   Home
                 </a>
@@ -77,7 +88,6 @@ const Navbar = ({ isLogin }) => {
                       className={`nav-link ${styles.homeLink}`}
                       aria-current="page"
                       href={`/${role}/messaging`}
-                      
                     >
                       Message
                     </a>
@@ -85,8 +95,10 @@ const Navbar = ({ isLogin }) => {
                 </>
               )}
             </ul>
-            <div className="d-flex align-items-center gap-2"
-            
+
+            <div
+              className="d-flex align-items-center gap-2"
+              style={{ justifyContent: 'flex-end' }}
             >
               {value || isLogin ? (
                 <div className={styles['burger-menu-wrapper']}>
@@ -138,25 +150,23 @@ const Navbar = ({ isLogin }) => {
                             </a>
                           </li>
                         )}
-                        {
-                          role === 'student' && (
-                            <li className="p-3">
+                        {role === 'student' && (
+                          <li className="p-3">
                             <a
                               href={
-                                role === "student"
+                                role === 'student'
                                   ? `/${role}/reportinstructor`
-                                  : role === "student"
+                                  : role === 'student'
                                   ? `/${role}/reportedstudentparents`
                                   : `/${role}/reportedinstructor`
                               }
                               className="nav-link fw-bold"
                             >
                               Report{' '}
-                              {role === "student" ? "Instructor" : "Students"}
+                              {role === 'student' ? 'Instructor' : 'Students'}
                             </a>
-                          </li> 
-                          )
-                        }
+                          </li>
+                        )}
 
                         <li className="p-3">
                           <a

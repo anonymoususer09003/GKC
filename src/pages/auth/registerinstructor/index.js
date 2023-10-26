@@ -35,7 +35,7 @@ export default function RegisterInstructor() {
   const [imageFile, setImageFile] = useState();
   const dispatch = useDispatch();
   const [isImageTooLarge, setIsImageTooLarge] = useState(false);
-  const [err, setErr] = useState('')
+  const [err, setErr] = useState('');
 
   const handleImageUpload = (e) => {
     const selectedFile = e.target.files[0];
@@ -55,42 +55,44 @@ export default function RegisterInstructor() {
 
   const registerInstructor = async (instructorDetails) => {
     try {
-      const responce = await axios.post(`${base_url}/auth/register-instructor`, instructorDetails)
+      const responce = await axios.post(
+        `${base_url}/auth/register-instructor`,
+        instructorDetails
+      );
       console.log(responce);
-      window.localStorage.setItem('gkcAuth',           
-      JSON.stringify({
-        accessToken: responce.data.accessToken,
-        role: responce.data,
-      }))
+      window.localStorage.setItem(
+        'gkcAuth',
+        JSON.stringify({
+          accessToken: responce.data.accessToken,
+          role: responce.data,
+        })
+      );
     } catch (err) {
-      console.log(err)
+      console.log(err);
     }
-  }
+  };
 
-  let isValidForm =
-    email &&
-    termsAgree;
+  let isValidForm = email && termsAgree;
 
   const onContinue = () => {
     if (password == confirmPassword) {
-    var stored = JSON.parse(window.localStorage.getItem('registrationForm'));
-    let timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      var stored = JSON.parse(window.localStorage.getItem('registrationForm'));
+      let timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-    console.log('stor', stored);
-    stored.email = email;
-    stored.password = password;
-    stored.timeZoneId = timezone;
+      console.log('stor', stored);
+      stored.email = email;
+      stored.password = password;
+      stored.timeZoneId = timezone;
 
+      registerInstructor(stored);
 
-    registerInstructor(stored);
+      window.localStorage.setItem('registrationForm', JSON.stringify(stored));
 
-    window.localStorage.setItem('registrationForm', JSON.stringify(stored));
-
-    setTimeout(() => {
-      navigation.push('/auth/registerinstructorcomplete');
-    }, 500);
+      setTimeout(() => {
+        navigation.push('/auth/registerinstructorcomplete');
+      }, 500);
     } else {
-      setErr('Password and new password mismatch')
+      setErr('Password and new password mismatch');
     }
   };
 
@@ -155,13 +157,16 @@ export default function RegisterInstructor() {
         <title>Auth | Instructor Registration</title>
         <meta name="description" content="Where kids learn to code" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="https://gkc-images.s3.amazonaws.com/favicon.ico" />
+        <link
+          rel="icon"
+          href="https://gkc-images.s3.amazonaws.com/favicon.ico"
+        />
       </Head>
       <main className="container-fluid d-flex flex-column justify-content-between  min-vh-100">
         <div
-          onClick={()=>navigation.back()}
+          onClick={() => navigation.back()}
           className="text-decoration-none p-4 d-flex gap-2 align-items-center text-dark"
-          style={{cursor:'pointer'}}
+          style={{ cursor: 'pointer' }}
         >
           <RiArrowGoBackLine />
           <p className="fw-bold m-0 p-0 ">Back</p>
@@ -179,7 +184,6 @@ export default function RegisterInstructor() {
           <div className="col-12 col-lg-6 d-flex justify-content-center align-items-center ">
             <div className="w-100 w-md-75 p-5">
               <div>
- 
                 <div
                   className={`d-flex justify-content-between align-items-center mb-3 ${styles.intructorTitle}`}
                 >
@@ -192,7 +196,6 @@ export default function RegisterInstructor() {
                   </p>
                 </div>
                 <div>
-
                   <div className="d-flex  flex-md-nowrap flex-wrap gap-2">
                     <input
                       type="password"
@@ -200,7 +203,10 @@ export default function RegisterInstructor() {
                       placeholder="Password"
                       name="password"
                       value={password}
-                      onChange={(e) => {setPassword(e.target.value); setErr('')}}
+                      onChange={(e) => {
+                        setPassword(e.target.value);
+                        setErr('');
+                      }}
                     />
                     <input
                       type="password"
@@ -208,21 +214,24 @@ export default function RegisterInstructor() {
                       placeholder="Confirm Password"
                       name="confirmpassword"
                       value={confirmPassword}
-                      onChange={(e) => {setConfirmPassword(e.target.value); setErr('')}}
+                      onChange={(e) => {
+                        setConfirmPassword(e.target.value);
+                        setErr('');
+                      }}
                     />
                   </div>
                   {err && (
                     <>
-                  <div>
-                    <p
-                      className="fw-bold py-2 text-center"
-                      style={{color:'red'}}
-                    >
-                      {err}
-                    </p>
-                  </div>
+                      <div>
+                        <p
+                          className="fw-bold py-2 text-center"
+                          style={{ color: 'red' }}
+                        >
+                          {err}
+                        </p>
+                      </div>
                     </>
-                  ) }
+                  )}
                   <div className="form-check">
                     <input
                       className="form-check-input"
@@ -242,7 +251,7 @@ export default function RegisterInstructor() {
                       </Link>{' '}
                       and{' '}
                       <Link
-                        href="/privicy-policy"
+                        href="/privacy-policy"
                         className="fw-bold no-underline hover:text_secondary text_secondary"
                       >
                         {' '}

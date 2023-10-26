@@ -38,7 +38,7 @@ export default function StudentRegistrationCourse() {
 
   const getCourses = async () => {
     try {
-      const response = await apiClient.get(`/public/course/with-instructors`);
+      const response = await apiClient.get(`/public/course/get-all-courses`);
 
       var technologyList = [];
 

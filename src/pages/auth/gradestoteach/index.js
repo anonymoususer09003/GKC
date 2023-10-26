@@ -192,9 +192,8 @@ export default function RegistrationGrade() {
             </button>
           </div>
         </div>
-        <div style={{ position: 'fixed', bottom: 0, width: '100vw' }}>
-          <Footer />
-        </div>
+
+        <Footer />
       </main>
     </>
   );

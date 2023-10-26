@@ -7,9 +7,8 @@ import { useRouter } from 'next/router';
 import { withRole } from '../../../utils/withAuthorization';
 import { connect } from 'react-redux';
 import { fetchUser } from '../../../store/actions/userActions';
-
+import { CountryCodes } from '@/utils/countryCodes';
 function ParentSettingProfile({ userInfo, loading, error, fetchUser }) {
-
   const navigation = useRouter();
   const onEditProfile = () => {
     navigation.push('/student/editprofile');
@@ -33,7 +32,10 @@ function ParentSettingProfile({ userInfo, loading, error, fetchUser }) {
         <title> Parent Setting Proflie </title>
         <meta name="description" content="Where kids learn to code" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="https://gkc-images.s3.amazonaws.com/favicon.ico" />
+        <link
+          rel="icon"
+          href="https://gkc-images.s3.amazonaws.com/favicon.ico"
+        />
       </Head>
       <ParentNavbar isLogin={true} />
       <main className="container-fluid">
@@ -53,12 +55,26 @@ function ParentSettingProfile({ userInfo, loading, error, fetchUser }) {
                     <MdEmail style={{ fontSize: '22px' }} />
                     {userInfo?.email}
                   </p>
+
+                  <p className="p-0 m-0 py-2 fw-bold">Phone Number</p>
+                  {userInfo?.phoneNumber && (
+                    <p className="p-0 m-0 py-2 ">
+                      {userInfo?.country
+                        ? CountryCodes.find(
+                            (item) => item.name === userInfo?.country
+                          ).dial_code +
+                          ' ' +
+                          userInfo?.phoneNumber.split('-')[1]
+                        : ''}
+                    </p>
+                  )}
+
                   <p className="p-0 m-0 py-2 fw-bold"> Address </p>
                   <div className="d-flex gap-1 gap-2 pb-3 ">
                     <MdLocationOn className="h5 p-0 m-0" />
                     <small>
-                      {userInfo?.address1}, {userInfo?.city},{' '}
-                      {userInfo?.state}<br />
+                      {userInfo?.address1}, {userInfo?.city}, {userInfo?.state}
+                      <br />
                       {userInfo?.zipCode}, {userInfo?.country}
                     </small>
                   </div>
@@ -92,7 +108,8 @@ function ParentSettingProfile({ userInfo, loading, error, fetchUser }) {
                       userInfo?.dependents.map((dep) => {
                         return (
                           <li className="fw-bold m-0 p-0 ps-4 py-2">
-                            {' '}{dep.firstName + ' ' + dep.lastName}{' '}
+                            {' '}
+                            {dep.firstName + ' ' + dep.lastName}{' '}
                           </li>
                         );
                       })

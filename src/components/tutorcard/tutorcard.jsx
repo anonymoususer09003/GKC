@@ -45,7 +45,7 @@ const Tutorcard = ({ data, key }) => {
   let string =
     'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.';
 
-  const handleOpenModal = (ifClass) => {
+  const handleOpenModal = (ifClass, type) => {
     // setShowModal(true);
     if (ifClass) {
       if (
@@ -61,7 +61,7 @@ const Tutorcard = ({ data, key }) => {
         navigation.push(
           `/${JSON.parse(
             window.localStorage.getItem('gkcAuth')
-          ).role.toLowerCase()}/scheduleclass/${data.id}`
+          ).role.toLowerCase()}/${type}/${data.id}`
         );
       }
     } else {
@@ -78,7 +78,7 @@ const Tutorcard = ({ data, key }) => {
         navigation.push(
           `/${JSON.parse(
             window.localStorage.getItem('gkcAuth')
-          ).role.toLowerCase()}/scheduleclass/${data.id}`
+          ).role.toLowerCase()}/${type}/${data.id}`
         );
       }
     }
@@ -371,26 +371,26 @@ const Tutorcard = ({ data, key }) => {
             </ul>
           </div>
           <div className="d-flex tw-flex-row tw-justify-between tw-gap-1">
+            <button
+              className={`d-flex btn_primary py-2 px-5 fw-bold text-white rounded tw-whitespace-nowrap`}
+              type="submit"
+              onClick={() => {
+                handleOpenModal(true, 'scheduleclass');
+              }}
+            >
+              Book a Class
+            </button>
             {data?.acceptInterviewRequest && (
               <button
                 className={`btn_primary py-2 px-5 fw-bold text-white rounded tw-whitespace-nowrap`}
                 type="submit"
                 onClick={() => {
-                  handleOpenModal(false);
+                  handleOpenModal(false.valueOf, 'requestinterview');
                 }}
               >
                 Request Interview
               </button>
             )}
-            <button
-              className={`d-flex btn_primary py-2 px-5 fw-bold text-white rounded tw-whitespace-nowrap`}
-              type="submit"
-              onClick={() => {
-                handleOpenModal(true);
-              }}
-            >
-              Book a Class
-            </button>
           </div>
         </div>
       </div>
@@ -717,7 +717,7 @@ const Tutorcard = ({ data, key }) => {
                       className={`btn_primary py-2 px-3 fw-bold text-white rounded text-decoration-none`}
                       type="submit"
                       onClick={() => {
-                        handleOpenModal(true);
+                        handleOpenModal(true, 'scheduleclass');
                       }}
                     >
                       Book a Class
@@ -730,7 +730,7 @@ const Tutorcard = ({ data, key }) => {
                         className={`btn_primary py-2 px-3 fw-bold text-white rounded text-decoration-none`}
                         type="submit"
                         onClick={() => {
-                          handleOpenModal(false);
+                          handleOpenModal(false, 'requestinterview');
                         }}
                       >
                         Request Interview

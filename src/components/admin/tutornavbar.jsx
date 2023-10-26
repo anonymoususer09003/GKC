@@ -21,7 +21,10 @@ const TutorNavbar = ({ isLogin }) => {
       <nav className="navbar navbar-expand-lg navbar-light bg-light p-3">
         <LogoutTimer logout={onSignOut} />
         <div className="container-fluid">
-          <div className="pe-4">
+          <div
+            className="pe-4"
+            style={{ display: 'flex', alignItems: 'center' }}
+          >
             <Image
               src="https://gkc-images.s3.amazonaws.com/logo.png"
               alt="Vercel Logo"
@@ -30,6 +33,13 @@ const TutorNavbar = ({ isLogin }) => {
               height={50}
               unoptimized
             />
+
+            <Link
+              href="/internal"
+              className={`text-decoration-none tw-cst-pf mt-1 tw-w-[50%] tw-cursor-pointer`}
+            >
+              <p style={{ marginLeft: 20, marginTop: 20 }}>Home</p>
+            </Link>
           </div>
           <button
             className="navbar-toggler"

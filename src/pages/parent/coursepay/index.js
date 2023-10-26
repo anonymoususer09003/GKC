@@ -118,7 +118,7 @@ function StudentRegistrationCCPay() {
         `/event/create-class-no-saved-payment-method`,
         {
           classDto: {
-            start: start || '2023-11-11 23:59',
+            start: start,
             durationInHours: parseInt(
               durationInHours === 0 ? 1 : durationInHours
             ),
@@ -182,7 +182,7 @@ function StudentRegistrationCCPay() {
     if (instructorId) getInstructorData();
     const checkIfUserHasSavedUserCard = async () => {
       try {
-        const res = await apiClient('/stripe/has-saved-payment-method');
+        const res = await apiClient.get('/stripe/has-saved-payment-method');
         setHasSavedCC(res.data);
       } catch (err) {
         console.log(err);
@@ -194,7 +194,7 @@ function StudentRegistrationCCPay() {
   useEffect(() => {
     const getTaxesFees = async () => {
       try {
-        const res = await apiClient('/event/get-platform-fees');
+        const res = await apiClient.get('/event/get-platform-fees');
         setTaxesFeesInfo(res.data);
       } catch (err) {
         console.log(err);
@@ -205,7 +205,7 @@ function StudentRegistrationCCPay() {
   useEffect(() => {
     const getCCdetails = async () => {
       try {
-        const res = await apiClient('/stripe/get-logged-user-card-details');
+        const res = await apiClient.get('/stripe/get-logged-user-card-details');
         setLoggedUserCCinfo(res.data);
       } catch (err) {
         console.log(err);
@@ -355,13 +355,15 @@ function StudentRegistrationCCPay() {
                           );
                         }
                       }
+                      // console.log(start)
                       setTimeout(() => {
                         navigation.push('/parent/calandar');
                       }, 3000);
                       // whoPaysId === "Select"
                       //   ? setConfirmPayment(true)
                       //   : sendEmailToWhoPays();
-                    }}
+                    }
+                  }
                   >
                     Pay
                   </button>

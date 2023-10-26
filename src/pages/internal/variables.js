@@ -5,7 +5,10 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 
 const Variables = () => {
-  const loggedUserEmail = typeof window === 'undefined' ? null : window?.localStorage.getItem('email');
+  const loggedUserEmail =
+    typeof window === 'undefined'
+      ? null
+      : window?.localStorage.getItem('email');
   const [loggedUserInfo, setLoggedUserInfo] = useState();
   const [taxValuePercentage, setTaxValuePercentage] = useState();
   const [feeValuePercentage, setFeeValuePercentage] = useState();
@@ -23,13 +26,11 @@ const Variables = () => {
   };
 
   const getProfileInfo = async () => {
-
-
-    if(
-      loggedUserEmail === null
-    ){
-      console.log('waiting till global object window will load, so we can parse email item.')
-    }else{
+    if (loggedUserEmail === null) {
+      console.log(
+        'waiting till global object window will load, so we can parse email item.'
+      );
+    } else {
       try {
         const response = await apiClient.get(
           `${base_url}/admin/${loggedUserEmail}`
@@ -115,11 +116,11 @@ const Variables = () => {
     }
   };
 
-    useEffect(() => {
-      getProfileInfo();
-      getVariables();
-      UpdateDates();
-    }, []);
+  useEffect(() => {
+    getProfileInfo();
+    getVariables();
+    UpdateDates();
+  }, []);
 
   return (
     <div className=" tw-w-[25%] tw-ml-[5%] tw-mt-[6%]">
@@ -172,8 +173,8 @@ const Variables = () => {
             type="number"
             name="Fee ($)"
             id="Fee ($)"
-            value={paypalAmount}
-            onChange={(e) => setPaypalAmount(e.target.value)}
+            value={additionalFeeAmount}
+            onChange={(e) => setAdditionalFeeAmount(e.target.value)}
             className="tw-block tw-w-full tw-rounded-md !tw-border tw-py-1.5 tw-text-gray-900 tw-shadow-sm tw-ring-1 tw-ring-inset tw-ring-gray-300 placeholder:tw-text-gray-400 focus:tw-ring-2 focus:tw-ring-inset focus:tw-ring-indigo-600 sm:tw-text-sm sm:tw-leading-6"
           />
         </div>
@@ -202,8 +203,8 @@ const Variables = () => {
             type="number"
             name="Paypal Fee ($)"
             id="Paypal Fee ($)"
-            value={additionalFeeAmount}
-            onChange={(e) => setAdditionalFeeAmount(e.target.value)}
+            value={paypalAmount}
+            onChange={(e) => setPaypalAmount(e.target.value)}
             className="tw-block tw-w-full tw-rounded-md !tw-border tw-py-1.5 tw-text-gray-900 tw-shadow-sm tw-ring-1 tw-ring-inset tw-ring-gray-300 placeholder:tw-text-gray-400 focus:tw-ring-2 focus:tw-ring-inset focus:tw-ring-indigo-600 sm:tw-text-sm sm:tw-leading-6"
           />
         </div>

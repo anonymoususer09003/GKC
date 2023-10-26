@@ -45,6 +45,8 @@ export const pie4 = {
   plugins: {
     legend: {
       position: 'right',
+
+      display: false, // Hide the legend
     },
     title: {
       display: true,
@@ -52,7 +54,6 @@ export const pie4 = {
     },
   },
 };
-
 export function VisitorsPieCharts({
   ageGroupData,
   skillLevelData,
@@ -92,7 +93,24 @@ export function VisitorsPieCharts({
   const skillLevelCount = generateChartData(skillLevelData);
   const deliveryModeDataCount = generateChartData(deliveryModeData);
   const languageCount = generateChartData(languageData);
+  const legendLabels = languageCount.labels || [];
+  const legendData = languageCount.datasets[0]?.data || [];
 
+  // Extract background colors for the legend
+  const legendColors = languageCount.datasets[0]?.backgroundColor || [];
+
+  // Create an array of div elements using map
+  const divElements = languageCount?.labels?.map((label, index) => {
+    const backgroundColor = languageCount?.datasets[0]?.backgroundColor[index];
+    return (
+      <div key={index} style={{ backgroundColor }}>
+        {label}
+      </div>
+    );
+  });
+
+  console.log('chart data', JSON.stringify(languageCount));
+  let backgroundCount = 0;
   return (
     <div className="tw-cst-pf tw-flex">
       <div>
@@ -101,7 +119,9 @@ export function VisitorsPieCharts({
       </div>
       <div>
         <Pie options={pie2} data={skillLevelCount} />
-        <Pie options={pie4} data={languageCount} />
+        <div style={{ height: '300px', width: '280px', display: 'flex' }}>
+          <Pie options={pie4} data={languageCount} />
+        </div>
       </div>
     </div>
   );

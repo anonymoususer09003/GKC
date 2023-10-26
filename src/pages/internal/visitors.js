@@ -9,19 +9,17 @@ import { AiOutlineCalendar } from 'react-icons/ai';
 import { useRouter } from 'next/router';
 
 const Visitors = () => {
-
-
   const [countries, setCountries] = useState([]);
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
-  const [country, setCountry] = useState();
-  const [state, setState] = useState('');
-  const [city, setCity] = useState('');
+  const [country, setCountry] = useState('Select Country');
+  const [state, setState] = useState('Select State');
+  const [city, setCity] = useState('Select City');
   const [startDate, setStartDate] = useState();
   const [endDate, setEndDate] = useState();
   const [coursesWithInstructors, setCoursesWithInstructors] = useState([]);
-  const [selectedCourse, setSelectedCourse] = useState();
-  const [selectedCourseId, setSelectedCourseId] = useState('');
+  const [selectedCourse, setSelectedCourse] = useState('Select Course');
+  const [selectedCourseId, setSelectedCourseId] = useState('Select Course');
   const [ageGroupData, setAgeGroupData] = useState([]);
   const [skillLevelData, setSkillLevelData] = useState([]);
   const [deliveryModeData, setDeliveryModeData] = useState([]);
@@ -38,26 +36,57 @@ const Visitors = () => {
         `${base_url}/public/location/get-countries`
       );
       setCountries(response.data);
+      setState('Select State');
     } catch (error) {
       console.error(error);
     }
   };
-
+  function generateChartData(dataArr) {
+    const chartData = {
+      labels: dataArr.map((item) => item.groupingFilterName),
+      datasets: [
+        {
+          data: dataArr.map((item) => item.count),
+          backgroundColor: [
+            'rgba(255, 99, 132, 0.2)',
+            'rgba(54, 162, 235, 0.2)',
+            'rgba(255, 206, 86, 0.2)',
+            'rgba(75, 192, 192, 0.2)',
+            'rgba(153, 102, 255, 0.2)',
+            'rgba(255, 159, 64, 0.2)',
+          ],
+          borderColor: [
+            'rgba(255, 99, 132, 1)',
+            'rgba(54, 162, 235, 1)',
+            'rgba(255, 206, 86, 0.2)',
+            'rgba(75, 192, 192, 0.2)',
+            'rgba(153, 102, 255, 0.2)',
+            'rgba(255, 159, 64, 0.2)',
+          ],
+          borderWidth: 1,
+        },
+      ],
+    };
+    return chartData;
+  }
   const getStates = async () => {
     try {
       const response = await axios.get(
         `${base_url}/public/location/get-states?countryName=${country}`
       );
+      setCity('Select City');
       setStates(response.data);
     } catch (error) {
       console.error(error);
     }
   };
+  console.log('states', states);
   const getCities = async () => {
     try {
       const response = await axios.get(
         `${base_url}/public/location/get-cities?countryName=${country}&stateName=${state}`
       );
+
       setCities(response.data);
     } catch (error) {
       console.error(error);
@@ -74,15 +103,20 @@ const Visitors = () => {
       console.error(error);
     }
   };
-
+  console.log('stte', state);
+  console.log('selected course', selectedCourseId);
   const getFilterData = async () => {
     try {
       const pieQueryParams = new URLSearchParams({
-        courseId: selectedCourseId,
-        // country,
+        // courseId: selectedCourseId,
         // state,
         // city,
       });
+      country !== 'Select Country' && pieQueryParams.append('country', country);
+      selectedCourseId != 'Select Course' &&
+        pieQueryParams.append('courseId', selectedCourseId);
+      state !== 'Select State' && pieQueryParams.append('state', state);
+      city !== 'Select City' && pieQueryParams.append('city', city);
       const lineQueryParams = new URLSearchParams({
         // courseId: selectedCourseId,
         // country,
@@ -91,6 +125,16 @@ const Visitors = () => {
         // startDate,
         // endDate,
       });
+
+      country !== 'Select Country' &&
+        lineQueryParams.append('country', country);
+      state !== 'Select State' && lineQueryParams.append('state', state);
+      city !== 'Select City' && lineQueryParams.append('city', city);
+      selectedCourseId != 'Select Course' &&
+        lineQueryParams.append('courseId', selectedCourseId);
+      startDate && lineQueryParams.append('startDate', startDate);
+      endDate && lineQueryParams.append('endDate', endDate);
+
       const ageGroupResponse = await apiClient.get(
         `${base_url}/admin/visitor/count-students-registered-by-age-group?${pieQueryParams.toString()}`
       );
@@ -130,11 +174,16 @@ const Visitors = () => {
 
   const handleCourseChange = (e) => {
     const newSelectedCourse = e.target.value;
-    setSelectedCourse(newSelectedCourse);
-    const selectedCourseObject = coursesWithInstructors.find(
-      (course) => course.name === newSelectedCourse
-    );
-    setSelectedCourseId(selectedCourseObject.id);
+    if (newSelectedCourse != 'Select Course') {
+      setSelectedCourse(newSelectedCourse);
+      const selectedCourseObject = coursesWithInstructors.find(
+        (course) => course.name === newSelectedCourse
+      );
+      setSelectedCourseId(selectedCourseObject.id);
+    } else {
+      setSelectedCourse('Select Course');
+      setSelectedCourseId('Select Course');
+    }
   };
 
   useEffect(() => {
@@ -158,24 +207,36 @@ const Visitors = () => {
       getCities();
     }
   }, [state]);
-
+  const languageCount = generateChartData(languageData);
+  let backgroundCount = 0;
+  console.log('cty', city);
   return (
     <>
       <div className="tw-cst-pf tw-flex tw-space-x-5 tw-my-4 tw-justify-center">
-        <select value={country} onChange={(e) => setCountry(e.target.value)}>
-          <option disabled selected>
-            Select Country
-          </option>
+        <select
+          value={country}
+          onChange={(e) => {
+            setCountry(e.target.value);
+            setState('Select State');
+            setCity('Select City');
+          }}
+        >
+          <option selected>Select Country</option>
           {countries.map((country, index) => (
             <option value={country.name} key={index}>
               {country.name}
             </option>
           ))}
         </select>
-        <select value={state} onChange={(e) => setState(e.target.value)}>
-          <option disabled selected>
-            Select State
-          </option>
+        <select
+          value={state}
+          onChange={(e) => {
+            setState(e.target.value);
+
+            setCity('Select City');
+          }}
+        >
+          <option>Select State</option>
           {states.map((state, index) => (
             <option value={state.name} key={index}>
               {state.name}
@@ -183,9 +244,7 @@ const Visitors = () => {
           ))}
         </select>
         <select value={city} onChange={(e) => setCity(e.target.value)}>
-          <option disabled selected>
-            Select City
-          </option>
+          <option>Select City</option>
           {cities.map((city, index) => (
             <option value={city.name} key={index}>
               {city.name}
@@ -193,9 +252,7 @@ const Visitors = () => {
           ))}
         </select>
         <select value={selectedCourse} onChange={handleCourseChange}>
-          <option disabled selected>
-            Select Course
-          </option>
+          <option selected>Select Course</option>
           {coursesWithInstructors.map((course, index) => (
             <option key={index} value={course.name}>
               {course.name}
@@ -226,7 +283,7 @@ const Visitors = () => {
           Search
         </button>
       </div>
-      <div className="tw-grid tw-grid-cols-2">
+      <div style={{ display: 'flex' }}>
         <div>
           <VisitorsPieCharts
             ageGroupData={ageGroupData}
@@ -235,13 +292,50 @@ const Visitors = () => {
             languageData={languageData}
           />
         </div>
-        <div className="tw-cst-pf !tw-border-2 !tw-border-black tw-rounded-3xl">
-          <VisitorsCharts
-            studentsCountData={studentsCountData}
-            instructorsCountData={instructorsCountData}
-            classesCountData={classesCountData}
-            complaintsCountData={complaintsCountData}
-          />
+        <div style={{ display: 'flex' }}>
+          <div
+            style={{
+              height: '300px',
+              maxHeight: '300px',
+              overflow: 'scroll',
+              marginTop: '300px',
+              border: '2px solid black',
+              marginRight: 10,
+              borderRadius: 10,
+            }}
+          >
+            {languageCount?.labels?.map((label, index) => {
+              backgroundCount = backgroundCount > 4 ? 0 : backgroundCount + 1;
+
+              const backgroundColor =
+                languageCount?.datasets[0]?.backgroundColor[backgroundCount];
+              return (
+                <div
+                  key={index}
+                  style={{ display: 'flex', alignItems: 'center' }}
+                >
+                  {label}
+                  <div
+                    style={{
+                      marginLeft: '10px',
+                      border: `1px solid black`,
+                      backgroundColor: backgroundColor,
+                      width: '50px',
+                      height: '10px',
+                    }}
+                  />
+                </div>
+              );
+            })}
+          </div>
+          <div className="tw-cst-pf !tw-border-2 !tw-border-black tw-rounded-3xl">
+            <VisitorsCharts
+              studentsCountData={studentsCountData}
+              instructorsCountData={instructorsCountData}
+              classesCountData={classesCountData}
+              complaintsCountData={complaintsCountData}
+            />
+          </div>
         </div>
       </div>
     </>

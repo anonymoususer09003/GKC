@@ -49,7 +49,7 @@ export default function StudentRegistrationCourse() {
     stored.courseToTeachAndProficiency = courseWithId;
     stored.languagesIdPreference = languageId;
     window.localStorage.setItem('registrationForm', JSON.stringify(stored));
-    navigation.push('/auth/instructorbankinfo');
+    navigation.push('/auth/weeklySchedule');
   };
 
   const getCourses = async () => {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Head from 'next/head';
 import { Inter } from 'next/font/google';
 import { Navbar, Footer } from '../';
@@ -14,10 +14,17 @@ import moment from 'moment';
 
 function FinancialReport({ role }) {
   const navigation = useRouter();
+  const tbodyRef = useRef(null);
+  const prevScrollTopRef = useRef(0);
   const [financialData, setFinancialData] = useState([]);
+  const [reachedEnd, setReachedEnd] = useState(false);
+  const [page, setPage] = useState(0);
+  const [size, setSize] = useState(20);
+  const [totalRecords, setTotalRecods] = useState(0);
+
   const [date, setDate] = useState({
-    start: null,
-    end: null,
+    start: '2023-09-01',
+    end: moment().format('YYYY-MM-DD'),
   });
 
   const onRequestRefund = () => {
@@ -28,24 +35,70 @@ function FinancialReport({ role }) {
     try {
       let res = null;
       let filter = null;
+
+      let endDate = moment(date?.end, 'YYYY-MM-DD');
+
+      // Add one day to the date
+      const newDate = endDate.add(1, 'days').format('YYYY-MM-DD');
       if (applyFilter)
-        filter = `?start=${date.start}&end=${date.end}`;
-      if (filter !== null){
+        filter = `start=${date.start}&end=${newDate}&page=${page}&size=${size}`;
+
+      const body = {
+        start: date.start,
+        end: date.end,
+        size,
+        sort: ['DESC'],
+      };
+      const queryString = new URLSearchParams(body).toString();
+      if (filter !== null) {
         switch (role) {
           case 'parent':
-            res = await ParentFinancialReport({ filter });
+            res = await ParentFinancialReport({ filter: queryString });
             break;
           case 'student':
-            res = await StudentFinancialReport({ filter });
+            res = await StudentFinancialReport({ filter: queryString });
             break;
           default:
-            res = await InstructorFinancialReport({ filter });
+            res = await InstructorFinancialReport({ filter: queryString });
         }
       }
+      console.log('re--00s', res.data);
+      setFinancialData(res?.data?.content ?? []);
+      setTotalRecods(res?.data?.totalElements);
+      setPage((prev) => prev + 1);
+    } catch (err) {
+      console.log('err', err);
+    }
+  };
 
-      setFinancialData(res?.data ?? []);
-      console.log('res', res);
-      console.log(financialData)
+  const fetchMoreReports = async (applyFilter) => {
+    try {
+      let res = null;
+      let filter = null;
+      if (applyFilter)
+        filter = `?start=${date.start}&end=${date.end}&page=${page}&size=${size}`;
+      const body = {
+        start: date.start,
+        end: date.end,
+        size,
+        sort: ['DESC'],
+      };
+      if (filter !== null) {
+        switch (role) {
+          case 'parent':
+            res = await ParentFinancialReport({ filter: queryString });
+            break;
+          case 'student':
+            res = await StudentFinancialReport({ filter: queryString });
+            break;
+          default:
+            res = await InstructorFinancialReport({ filter: queryString });
+        }
+      }
+      console.log('re--00s', res.data);
+      setFinancialData((prev) => [...prev, ...res?.data?.content]);
+      setTotalRecods(res?.data?.totalElements);
+      setPage((prev) => prev + 1);
     } catch (err) {
       console.log('err', err);
     }
@@ -57,16 +110,34 @@ function FinancialReport({ role }) {
         filter = `?start=${date.start}&end=${date.end}`;
       }
       let res = await DownloadFinancialReport({ filter });
-      console.log('download report ', res);
+      console.log('res', res.data);
+      let pdfData = res.data;
+      if (pdfData) {
+        const blob = new Blob([pdfData], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+
+        // Create a link element and trigger a download
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'financial_report.pdf';
+        a.style.display = 'none';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
     } catch (err) {
       console.log('err', err);
     }
   };
   const handleDateChange = (e) => {
-    console.log(e.target.value)
+    console.log('date', e.target.value);
+
     setDate({ ...date, [e.target.name]: e.target.value });
   };
   const handleReset = () => {
+    setPage(0);
+
     setDate({
       start: null,
       end: null,
@@ -79,6 +150,39 @@ function FinancialReport({ role }) {
   useEffect(() => {
     if (date.start && date.end) fetchReports(true);
   }, [date]);
+
+  const handleScroll = () => {
+    const tbody = tbodyRef.current;
+    if (tbody) {
+      const scrollableHeight = tbody.scrollHeight - tbody.clientHeight;
+      const scrollPosition = tbody.scrollTop;
+
+      if (!reachedEnd && scrollPosition >= prevScrollTopRef.current) {
+        // You have reached the end of the scroll and haven't triggered the action yet
+        // Call your function or perform any desired action
+        // Example: YourFunctionToLoadMoreData();
+
+        if (financialData.length < totalRecords)
+          fetchMoreReports(date.start && date.end ? true : false);
+        setReachedEnd(true); // Set the flag to true to prevent multiple triggers
+      } else if (scrollPosition < prevScrollTopRef.current) {
+        // Reset the flag when scrolling back up to allow the action to trigger again
+        setReachedEnd(false);
+      }
+
+      // Update the previous scroll position
+      prevScrollTopRef.current = scrollPosition;
+    }
+  };
+  useEffect(() => {
+    // Attach the scroll event listener to the tbody element
+    tbodyRef?.current?.addEventListener('scroll', handleScroll);
+
+    // Remove the event listener when the component unmounts
+    return () => {
+      tbodyRef?.current?.removeEventListener('scroll', handleScroll);
+    };
+  }, [reachedEnd]);
 
   return (
     <>
@@ -95,8 +199,13 @@ function FinancialReport({ role }) {
               </p>
             ) : null}
             <div
+              ref={tbodyRef}
               className="border rounded p-4 my-4"
-              style={{ minHeight: '400px' }}
+              style={{
+                minHeight: '400px',
+                maxHeight: '400px',
+                overflow: 'scroll',
+              }}
             >
               <div className="w-50 m-auto pb-4">
                 <div className="row">
@@ -104,7 +213,7 @@ function FinancialReport({ role }) {
                     <div className=" d-flex align-items-center gap-3">
                       <p className="fw-bold m-0 p-0"> From </p>{' '}
                       <input
-                        value={date.start || new Date()}
+                        value={date.start || '2023-09-01'}
                         id="startDate"
                         className="form-control"
                         type="date"
@@ -135,7 +244,9 @@ function FinancialReport({ role }) {
               </div>
 
               <div
-                style={{ minWidth: '400px', overflowY: 'auto' }}
+                style={{
+                  minWidth: '400px',
+                }}
                 className={styles['report-table-wrapper']}
               >
                 <table className="table ">
@@ -178,34 +289,41 @@ function FinancialReport({ role }) {
                     </tr>{' '}
                   </thead>{' '}
                   <tbody>
-                    {financialData.length > 0 && financialData.map((item, index) => { return<tr key={index}>
-                        <th className="fw-bold" scope="row">
-                          {' '}
-                          {item?.createdAt.slice(0,10)}
-                        </th>{' '}
-                        <td className="fw-bold w-25">
-                          {' '}
-                          {role === 'instructor'
-                            ? item?.studentName
-                            : item?.instructorName}{' '}
-                        </td>{' '}
-                        {role === 'parent' && (
-                          <td className="fw-bold w-25">
-                            {' '}
-                            {item?.studentName}{' '}
-                          </td>
-                        )}
-                        <td className="fw-bold"> {item?.courseName} </td>{' '}
-                        <td className="fw-bold"> {item?.hoursScheduled} </td>{' '}
-                        <td className="fw-bold"> ${item?.hourlyRate} </td>{' '}
-                        <td className="fw-bold"> ${item?.feeAmount} </td>{' '}
-                        <td className="fw-bold d-flex justify-content-between align-items-center">
-                          {' '}
-                          ${item?.totalAmount}{' '}
-                          {/* <TbSpeakerphone onClick={() => onRequestRefund()} />{' '} */}
-                        </td>{' '}
-                      </tr>;
-                    })}
+                    {financialData.length > 0 &&
+                      financialData.map((item, index) => {
+                        return (
+                          <tr key={index}>
+                            <th className="fw-bold" scope="row">
+                              {' '}
+                              {item?.createdAt.slice(0, 10)}
+                            </th>{' '}
+                            <td className="fw-bold w-25">
+                              {' '}
+                              {role === 'instructor'
+                                ? item?.studentName
+                                : item?.instructorName}{' '}
+                            </td>{' '}
+                            {role === 'parent' && (
+                              <td className="fw-bold w-25">
+                                {' '}
+                                {item?.studentName}{' '}
+                              </td>
+                            )}
+                            <td className="fw-bold"> {item?.courseName} </td>{' '}
+                            <td className="fw-bold">
+                              {' '}
+                              {item?.hoursScheduled}{' '}
+                            </td>{' '}
+                            <td className="fw-bold"> ${item?.hourlyRate} </td>{' '}
+                            <td className="fw-bold"> ${item?.feeAmount} </td>{' '}
+                            <td className="fw-bold d-flex justify-content-between align-items-center">
+                              {' '}
+                              ${item?.totalAmount}{' '}
+                              {/* <TbSpeakerphone onClick={() => onRequestRefund()} />{' '} */}
+                            </td>{' '}
+                          </tr>
+                        );
+                      })}
                   </tbody>{' '}
                 </table>
               </div>
