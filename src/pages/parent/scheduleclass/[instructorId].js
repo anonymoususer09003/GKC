@@ -44,7 +44,7 @@ function ParentScheduleClass({ userInfo, loading, error }) {
   const [date, setDate] = useState(null);
   const [slectedValues, setSelectedValues] = useState([]);
   const eventId = router?.query?.eventId;
-
+  console.log('selected instructor', selectedInstructor);
   let dur = null;
   let eventStartTimeslot = undefined;
   let ca = [];
@@ -77,7 +77,7 @@ function ParentScheduleClass({ userInfo, loading, error }) {
       console.log('res', res);
       const { data } = res;
       eventStartTimeslot = data.start;
-      console.log(moment(data?.start).format('YYYY-MM-DD HH:mm'));
+
       // console.log(instructorCourses)
       // console.log(ca.find(el => el.value === data.courseId).label)
       dur = data?.durationInHours;
@@ -331,7 +331,7 @@ function ParentScheduleClass({ userInfo, loading, error }) {
             selectedSlot.start.getTime() !== slot.start.getTime() ||
             selectedSlot.end.getTime() !== slot.end.getTime()
         );
-        console.log(updatedSelectedSlots[0])
+        console.log(updatedSelectedSlots[0]);
         setTime(
           updatedSelectedSlots.length > 0 ? updatedSelectedSlots[0].start : null
         );
@@ -341,13 +341,13 @@ function ParentScheduleClass({ userInfo, loading, error }) {
         setDuration((prevDuration) => prevDuration + 1);
 
         if (!time) {
-          const date = new Date(slot.start)
+          const date = new Date(slot.start);
           const formattedDateStr = date
             .toISOString()
             .slice(0, 16)
             .replace('T', ' ');
 
-          setTime(formattedDateStr)
+          setTime(formattedDateStr);
         }
 
         return [...prevSelectedSlots, slot];
@@ -642,6 +642,7 @@ function ParentScheduleClass({ userInfo, loading, error }) {
                 >
                   Calendar for {selectedInstructor?.firstName}{' '}
                   {selectedInstructor?.lastName}
+                  {` (GMT ${selectedInstructor?.timeZoneOffset})`}
                 </h3>
               </div>
             )}

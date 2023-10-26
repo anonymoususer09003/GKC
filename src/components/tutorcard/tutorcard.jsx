@@ -371,6 +371,15 @@ const Tutorcard = ({ data, key }) => {
             </ul>
           </div>
           <div className="d-flex tw-flex-row tw-justify-between tw-gap-1">
+            <button
+              className={`d-flex btn_primary py-2 px-5 fw-bold text-white rounded tw-whitespace-nowrap`}
+              type="submit"
+              onClick={() => {
+                handleOpenModal(true, 'scheduleclass');
+              }}
+            >
+              Book a Class
+            </button>
             {data?.acceptInterviewRequest && (
               <button
                 className={`btn_primary py-2 px-5 fw-bold text-white rounded tw-whitespace-nowrap`}
@@ -382,15 +391,6 @@ const Tutorcard = ({ data, key }) => {
                 Request Interview
               </button>
             )}
-            <button
-              className={`d-flex btn_primary py-2 px-5 fw-bold text-white rounded tw-whitespace-nowrap`}
-              type="submit"
-              onClick={() => {
-                handleOpenModal(true, 'scheduleclass');
-              }}
-            >
-              Book a Class
-            </button>
           </div>
         </div>
       </div>

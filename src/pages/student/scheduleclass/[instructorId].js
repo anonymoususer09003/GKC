@@ -325,6 +325,7 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
                   >
                     Calendar for {selectedInstructor?.firstName}{' '}
                     {selectedInstructor?.lastName}{' '}
+                    {` (GMT ${selectedInstructor?.timeZoneOffset})`}
                   </h3>
                 </div>
               </div>
