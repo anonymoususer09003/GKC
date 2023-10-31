@@ -216,8 +216,8 @@ const Tutorcard = ({ data, key }) => {
           </div>
         </div>
       ) : null}
-      <div className="d-flex flex-column flex-md-row align-items-center tw-justify-center gap-4 border my-2 p-3 shadow p-3 mb-5 bg-white rounded">
-        <div>
+      <div className="d-flex flex-column flex-md-row align-items-center tw-justify-between gap-4 border my-2 p-3 shadow p-3 mb-5 bg-white rounded">
+        <div style={{ width: '200px' }}>
           <img
             src={
               data.instructorPhoto ??
@@ -250,7 +250,7 @@ const Tutorcard = ({ data, key }) => {
             </div>
           )}
         </div>
-        <div>
+        <div style={{ width: '100%' }}>
           <div className="gap-2 flex-wrap align-items-center justify-content-between">
             <div
               className={'d-flex tw-flex-row tw-justify-between'}
@@ -258,6 +258,7 @@ const Tutorcard = ({ data, key }) => {
             >
               <p className="m-0 p-0 fw-bold">
                 {data?.firstName + ' ' + data?.lastName}
+                {` (${data?.city},${data?.country || data?.state})`}
               </p>
               <p className="m-0 p-0 fw-bold">${data?.hourlyRate}/hr</p>
             </div>
