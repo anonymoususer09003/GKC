@@ -15,13 +15,16 @@ import moment from 'moment';
 import GetUnConfirmedEventById from '@/services/events/GetUnConfirmedEventById';
 import Modal from '@/components/parent/modal/Modal';
 import { useScreenSize } from '@/hooks/mobile-devices';
-function ParentScheduleClass({ userInfo, loading, error }) {
+function ParentScheduleClass({ loading, error }) {
   const router = useRouter();
+  const dispatch = useDispatch();
   console.log(router);
-  console.log('uuuser', userInfo);
+
   const { isLargeScreen } = useScreenSize();
   const { instructorId } = router.query;
-  const loggedInUser = useSelector((state) => state.user.userInfo);
+
+  const userInfo = useSelector((state) => state.user.userInfo);
+  console.log('uuuser', userInfo);
   const [instructorData, setInstructorData] = useState({});
   const [instructorCourses, setInstructorCourses] = useState([]);
   const [selectedInstructor, setSelectedInstructor] = useState(null);
@@ -64,6 +67,7 @@ function ParentScheduleClass({ userInfo, loading, error }) {
       ca = coursesArray;
       console.log(response);
       setInstructorCourses(coursesArray);
+      return ca;
     } catch (error) {
       console.log(error);
     }
@@ -72,8 +76,8 @@ function ParentScheduleClass({ userInfo, loading, error }) {
   const getEventDetail = async () => {
     try {
       let res = await GetUnConfirmedEventById(eventId);
-      getCourses();
-      console.log(ca);
+      let coursesArr = await getCourses();
+      console.log('coursesarr', coursesArr);
       console.log('res', res);
       const { data } = res;
       eventStartTimeslot = data.start;
@@ -91,21 +95,28 @@ function ParentScheduleClass({ userInfo, loading, error }) {
         .slice(0, 16)
         .replace('T', ' ');
       setTime(formattedDateStr);
+      console.log('formated', formattedDateStr);
       setDuration(data.durationInHours);
       setDate(data.start.slice(0, 10));
       setClassFrequency(data.classFrequency);
-      setCourseId(ca.find((el) => el.value === data.courseId).label);
+      setCourseId(coursesArr.find((el) => el.value === data.courseId).label);
       setSelectedMode(data?.eventInPerson ? 'In-Person' : 'Online');
+      // setDuration(data?.duration)
+      setPaymentSubmit(true);
 
-      await handleDateChange(data?.start);
+      await handleDateChange(new Date(data?.start), data.durationInHours);
     } catch (err) {
       console.log('err', err);
     }
   };
 
   useEffect(() => {
+    dispatch(fetchUser());
+  }, [dispatch]);
+  useEffect(() => {
     getCourses();
     if (eventId) {
+      setPaymentSubmit(true);
       getEventDetail();
     } else {
       setPaymentSubmit(false);
@@ -131,6 +142,7 @@ function ParentScheduleClass({ userInfo, loading, error }) {
     };
 
     getUnavailableDate();
+    window.localStorage.removeItem('goScheduleFromSignIn');
   }, []);
 
   const isDateUnavailable = (date) => {
@@ -215,8 +227,10 @@ function ParentScheduleClass({ userInfo, loading, error }) {
       }
     }
   }, [instructorId]);
+  console.log('selected', selectedSlots);
+  const handleDateChange = async (clickedDate, duration) => {
+    console.log('lcliekcdate', clickedDate);
 
-  const handleDateChange = async (clickedDate) => {
     const dateObj = new Date(clickedDate);
     const year = dateObj.getFullYear();
     const month = String(dateObj.getMonth() + 1).padStart(2, '0');
@@ -229,7 +243,7 @@ function ParentScheduleClass({ userInfo, loading, error }) {
     }
 
     setSelectedDate(formattedDateStr);
-    console.log(formattedDateStr);
+
     try {
       const response = await apiClient.get(
         `/instructor/available-time-slots-from-date?instructorId=${
@@ -241,35 +255,53 @@ function ParentScheduleClass({ userInfo, loading, error }) {
         start: new Date(slot.start),
         end: new Date(slot.end),
       }));
-      console.log(timeSlots);
+
       const isOnHalfHour = (date) =>
         date.getMinutes() === 0 || date.getMinutes() === 30;
 
       // Create half-hour intervals for each time slot
       const formattedTimeSlots = [];
+
       if (eventId !== undefined) {
-        console.log(dur + 'durations amount');
-        for (let i = 1; i <= dur; i++) {
-          let utcTime = new Date(eventStartTimeslot);
-          const start = new Date(
-            utcTime.getTime() + utcTime.getTimezoneOffset() * 60000
-          );
-          start.setSeconds(0); // Set seconds to 0
-          start.setMilliseconds(0); // Set milliseconds to 0
-          let durCounter =
-            start.getTime() + (i > 1 ? i * 60 * 60 * 1000 : null);
-          console.log(durCounter);
+        let timeclickeddate = moment(dateObj).format('hh:mm');
+        let findIndex = timeSlots.findIndex((obj) =>
+          moment(obj.start).format('hh:mm').includes(timeclickeddate)
+        );
 
-          const end = new Date(durCounter + 30 * 60 * 1000);
-          end.setSeconds(0); // Set seconds to 0
-          end.setMilliseconds(0); // Set milliseconds to 0
+        console.log('findindex', findIndex);
+        console.log('timesots', timeSlots);
+        console.log('timeclickedate', timeclickeddate);
+        let count = duration + findIndex;
+        console.log('duration', duration);
+        timeSlots.forEach((slot, index) => {
+          console.log('index', index);
 
-          formattedTimeSlots.push({
-            start: start,
-            end: end,
-          });
-        }
-        setEventslotsexists(true);
+          console.log('count', count);
+          if (
+            // isOnHalfHour(slot.start) &&
+            index >= findIndex &&
+            index <= count
+          ) {
+            const start = new Date(slot.start);
+            start.setSeconds(0); // Set seconds to 0
+            start.setMilliseconds(0); // Set milliseconds to 0
+
+            const end = new Date(slot.start.getTime() + 30 * 60 * 1000);
+            end.setSeconds(0); // Set seconds to 0
+            end.setMilliseconds(0); // Set milliseconds to 0
+
+            formattedTimeSlots.push({
+              start,
+              end,
+            });
+          }
+        });
+        // let filterarr = formattedTimeSlots.filter(
+        //   (item, index) => index >= findIndex && index <= count
+        // );
+        setSelectedSlots(formattedTimeSlots);
+        // console.log('filterarr', filterarr);
+        setAvailableTime(formattedTimeSlots);
       } else {
         timeSlots.forEach((slot) => {
           if (isOnHalfHour(slot.start)) {
@@ -315,7 +347,7 @@ function ParentScheduleClass({ userInfo, loading, error }) {
     setCourseId(event.target.value);
   };
 
-  const handleSlotClick = (slot) => {
+  const handleSlotClick = (slot, index) => {
     setSelectedSlots((prevSelectedSlots) => {
       const isSlotSelected = prevSelectedSlots.some(
         (selectedSlot) =>
@@ -331,9 +363,11 @@ function ParentScheduleClass({ userInfo, loading, error }) {
             selectedSlot.start.getTime() !== slot.start.getTime() ||
             selectedSlot.end.getTime() !== slot.end.getTime()
         );
-        console.log(updatedSelectedSlots[0]);
+        console.log('updated', updatedSelectedSlots);
         setTime(
-          updatedSelectedSlots.length > 0 ? updatedSelectedSlots[0].start : null
+          updatedSelectedSlots.length > 0
+            ? updatedSelectedSlots[index].start
+            : null
         );
 
         return updatedSelectedSlots;
@@ -359,8 +393,31 @@ function ParentScheduleClass({ userInfo, loading, error }) {
     if (typeof window !== 'undefined') {
       window.localStorage.removeItem('goBackSchedule');
     }
+
+    console.log('selected slots', selectedSlots);
+    console.log(
+      'logs---------------',
+      moment(selectedSlots[0].start).format('HH:mm')
+    );
+    const timeSTampHour = moment(selectedSlots[0].start).format('HH');
+    const timeSTampMin = moment(selectedSlots[0].start).format('mm');
+
+    var originalDate = moment(time, 'YYYY-MM-DD HH:mm');
+
+    // Define the new hours and minutes you want
+    var newHours = parseInt(timeSTampHour); // Replace with your desired value
+    var newMinutes = parseInt(timeSTampMin); // Replace with your desired value
+
+    // Set the new hours and minutes
+    originalDate.hours(newHours);
+    originalDate.minutes(newMinutes);
+
+    // Format the updated date as a string
+    var updatedDateStr = originalDate.format('YYYY-MM-DD HH:mm');
+    console.log('updatedetae', updatedDateStr);
+
     const data = {
-      start: time,
+      start: updatedDateStr,
       durationInHours: duration / 2,
       classFrequency: classFrequency,
       courseId: instructorCourses.find((el) => el.label === courseId).value,
@@ -368,6 +425,8 @@ function ParentScheduleClass({ userInfo, loading, error }) {
       instructorId: selectedInstructor.id,
       eventInPerson: selectedMode == 'In-Person' ? true : false,
     };
+
+    console.log('data----', data);
     router.push({
       pathname: '/parent/coursepay',
       query: data,
@@ -432,11 +491,11 @@ function ParentScheduleClass({ userInfo, loading, error }) {
               }}
             >
               {' '}
-              {loggedInUser &&
-                loggedInUser.dependents?.find((el) => el.id === studentId)
+              {userInfo &&
+                userInfo?.dependents?.find((el) => el.id === studentId)
                   ?.firstName +
                   ' ' +
-                  loggedInUser.dependents?.find((el) => el.id === studentId)
+                  userInfo.dependents?.find((el) => el.id === studentId)
                     ?.lastName}{' '}
               has requested that you review, approve and pay for the following
               class:
@@ -510,77 +569,7 @@ function ParentScheduleClass({ userInfo, loading, error }) {
                 <u>Go to main page</u>
               </button>
             </div>
-            <p
-              style={{
-                width: 'auto',
-                display: 'flex',
-                justifyContent: 'center',
-                textAlign: 'center',
-              }}
-            >
-              {' '}
-              {loggedInUser &&
-                loggedInUser.dependents?.find((el) => el.id === studentId)
-                  ?.firstName +
-                  ' ' +
-                  loggedInUser.dependents?.find((el) => el.id === studentId)
-                    ?.lastName}{' '}
-              has requested that you review, approve and pay for the following
-              class:
-            </p>
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'center',
-                margin: '60px 0',
-              }}
-            >
-              <ul
-                style={{
-                  listStyleType: 'none',
-                  width: 200,
-                  padding: 0,
-                  textAlign: 'center',
-                }}
-              >
-                <li>Tutor</li>
-                <li>Course</li>
-                <li>Cost/hr</li>
-                <li># of hours</li>
-                <li>Date</li>
-                <li>Mode</li>
-              </ul>
-              <ul
-                style={{
-                  listStyleType: 'none',
-                  width: 200,
-                  padding: 0,
-                  textAlign: 'center',
-                }}
-              >
-                <li>
-                  {instructorData !== undefined
-                    ? instructorData.firstName + ' ' + instructorData.lastName
-                    : ''}
-                </li>
-                <li>{courseId !== 0 ? courseId : ''}</li>
-                <li>{instructorData.hourlyRate ?? ''}</li>
-                <li>{duration / 2}</li>
-                <li>{date}</li>
-                <li>{selectedMode}</li>
-              </ul>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'center' }}>
-              <button
-                className="btn_primary text-light p-2 rounded fw-bold mt-3"
-                style={{ width: '300px', position: 'relative' }}
-                onClick={() => {
-                  setPaymentSubmit(false);
-                }}
-              >
-                Review and Approve
-              </button>
-            </div>
+            \{' '}
           </div>
         </div>
       ) : null}
@@ -608,365 +597,406 @@ function ParentScheduleClass({ userInfo, loading, error }) {
             <p style={{ width: 300, margin: 'auto' }}>
               Please sign in before scheduling a class.
             </p>
-            <Link href="/auth/signin">
-              <button
-                className="btn_primary text-light p-2 rounded fw-bold mt-3"
-                style={{ width: 50, position: 'relative', margin: '0 42%' }}
-              >
-                Ok
-              </button>
-            </Link>
+
+            <button
+              onClick={() => {
+                console.log('event id', eventId);
+                console.log('isntructorid', instructorId);
+                window.localStorage.setItem(
+                  'Scheduler',
+                  JSON.stringify({
+                    eventId,
+                    instructorId,
+                  })
+                );
+                router.push('/auth/signin');
+              }}
+              className="btn_primary text-light p-2 rounded fw-bold mt-3"
+              style={{ width: 50, position: 'relative', margin: '0 42%' }}
+            >
+              Ok
+            </button>
           </div>
         </div>
       ) : null}
-      <main className="container-fluid">
-        <div className="row" style={{ minHeight: '90vh' }}>
-          <div className="col-12 col-lg-6 pt-5">
-            {selectedInstructor && (
-              <div style={{ display: 'flex', flexDirection: 'column' }}>
-                {isLargeScreen && (
-                  <p
-                    style={{
-                      color: 'red',
-                      fontSize: 18,
-                      textAlign: 'center',
-                    }}
-                  >
-                    Step 1: Pick Date
-                  </p>
-                )}
-                <h3
-                  style={{
-                    textAlign: 'center',
-                  }}
-                >
-                  Calendar for {selectedInstructor?.firstName}{' '}
-                  {selectedInstructor?.lastName}
-                  {` (GMT ${selectedInstructor?.timeZoneOffset})`}
-                </h3>
-              </div>
-            )}
-            <Calendar
-              onChange={handleDateChange}
-              tileClassName={tileClassName}
-              // tileDisabled={unavailableDates.length >1 ? ({date, view})=> view === 'month' && unavailableDates.some(disabledDate =>
-              //   new Date(date).getFullYear() === new Date(disabledDate).getFullYear() &&
-              //   new Date(date).getMonth() === new Date(disabledDate).getMonth() &&
-              //   new Date(date).getDate() === new Date(disabledDate).getDate()
-              //   ) : () => false}
-            />
-          </div>
-          <div className="col-12 col-lg-6 pt-5">
-            <div className="tw-flex tw-justify-center">
-              <p
-                onClick={() => setOpen(true)}
-                type="button"
-                className="tw-block !tw-bg-[#f48342] tw-rounded-md tw-px-3 tw-py-1.5 tw-text-center tw-text-sm tw-font-semibold tw-leading-6 tw-text-white tw-shadow-sm hover:tw-bg-indigo-500 focus-visible:tw-outline focus-visible:tw-outline-2 focus-visible:tw-outline-offset-2 focus-visible:tw-outline-indigo-600"
-              >
-                Information for {selectedInstructor?.firstName}{' '}
-                {selectedInstructor?.lastName}
-              </p>
-              <Modal
-                selectedInstructor={selectedInstructor}
-                setOpen={setOpen}
-                open={open}
-              >
-                Modal
-              </Modal>
-            </div>
-
-            {isLargeScreen && (
-              <div
-                style={{
-                  width: '100%',
-                  justifyContent: 'space-between',
-                  display: 'flex',
-                  paddingRight: '150px',
-                }}
-              >
-                <p style={{ fontSize: 18 }}>
-                  <span style={{ color: 'red' }}>Step 2: Pick Time</span>
-                </p>
-                <p style={{ fontSize: 18 }}>
-                  <span style={{ color: 'red' }}>Step 3: Select Details</span>
-                </p>
-              </div>
-            )}
-            <div className="shadow rounded py-5">
-              <div
-                className="d-flex flex-sm-nowrap flex-wrap justify-content-between gap-4 px-3"
-                style={{ minHeight: '400px' }}
-              >
-                <div className="w-100 ">
-                  <p className="p-0 m-0 fw-bold pb-2">
-                    {duration > 0 ? (
-                      <>You selected {duration / 2} hours</>
-                    ) : (
-                      <>Select time</>
+      {!paymentSubmit && (
+        <>
+          <main className="container-fluid">
+            <div className="row" style={{ minHeight: '90vh' }}>
+              <div className="col-12 col-lg-6 pt-5">
+                {selectedInstructor && (
+                  <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    {isLargeScreen && (
+                      <p
+                        style={{
+                          color: 'red',
+                          fontSize: 18,
+                          textAlign: 'center',
+                        }}
+                      >
+                        Step 1: Pick Date
+                      </p>
                     )}
-                  </p>
-                  <p>{err}</p>
-                  <div
-                    style={{
-                      height: 500,
-                      overflow: 'hidden',
-                      overflowY: 'auto',
-                      width: 200,
-                    }}
-                  >
-                    {availableTime &&
-                      availableTime.map((slot, index) => (
-                        <li
-                          key={index}
-                          className={`m-03 py-1 fw-bold list-unstyled ${
-                            selectedSlots.some(
-                              (selectedSlot) =>
-                                selectedSlot.start.getTime() ===
-                                  slot.start.getTime() &&
-                                selectedSlot.end.getTime() ===
-                                  slot.end.getTime()
-                            )
-                              ? 'bg-secondary text-white'
-                              : ''
-                          } ${
-                            eventslotsexists ? 'bg-secondary text-white' : ''
-                          }`}
-                          onClick={() => {
-                            let temp = [...slectedValues];
-
-                            if (
-                              index >= slectedValues[0] &&
-                              index <= slectedValues[1]
-                            ) {
-                              if (
-                                index == slectedValues[0] ||
-                                index == slectedValues[1]
-                              ) {
-                                if (duration > 2) {
-                                  slectedValues.map((item, index1) => {
-                                    if (item == index) temp[index1] = item - 1;
-                                  });
-                                  setSelectedValues([...temp]);
-                                  handleSlotClick(slot);
-                                } else {
-                                  let filterArr = slectedValues.filter(
-                                    (item) => item != index
-                                  );
-                                  setSelectedValues(filterArr);
-                                  handleSlotClick(slot);
-                                }
-                              }
-                            } else {
-                              if (slectedValues.length === 0) {
-                                temp.push(index);
-                                setSelectedValues([...temp]);
-                                handleSlotClick(slot);
-                              } else if (slectedValues.length > 0) {
-                                if (
-                                  calculateDifference(
-                                    slectedValues[0],
-                                    index
-                                  ) === 1 ||
-                                  calculateDifference(
-                                    slectedValues[1],
-                                    index
-                                  ) === 1
-                                ) {
-                                  const isSlotSelected = selectedSlots.some(
-                                    (selectedSlot) =>
-                                      selectedSlot.start.getTime() ===
-                                        slot.start.getTime() &&
-                                      selectedSlot.end.getTime() ===
-                                        slot.end.getTime()
-                                  );
-
-                                  if (slectedValues.length < 2) {
-                                    !isSlotSelected && temp.push(index);
-                                  } else {
-                                    temp.map((item, index1) => {
-                                      if (
-                                        calculateDifference(item, index) === 1
-                                      ) {
-                                        temp[index1] = index;
-                                      }
-                                    });
-                                  }
-
-                                  setSelectedValues([...temp]);
-                                  handleSlotClick(slot);
-                                } else {
-                                  if (slectedValues[0] === index) {
-                                    setSelectedValues([]);
-                                    handleSlotClick(slot);
-                                  }
-                                }
-                              }
-                            }
-                          }}
-                        >
-                          {`${slot.start.toLocaleTimeString(undefined, {
-                            hour: '2-digit',
-                            minute: '2-digit',
-                          })} - ${slot.end.toLocaleTimeString(undefined, {
-                            hour: '2-digit',
-                            minute: '2-digit',
-                          })}`}
-                        </li>
-                      ))}
+                    <h3
+                      style={{
+                        textAlign: 'center',
+                      }}
+                    >
+                      Calendar for {selectedInstructor?.firstName}{' '}
+                      {selectedInstructor?.lastName}
+                      {` (GMT ${selectedInstructor?.timeZoneOffset})`}
+                    </h3>
                   </div>
+                )}
+                <Calendar
+                  value={date}
+                  onChange={handleDateChange}
+                  tileClassName={tileClassName}
+                  // tileDisabled={unavailableDates.length >1 ? ({date, view})=> view === 'month' && unavailableDates.some(disabledDate =>
+                  //   new Date(date).getFullYear() === new Date(disabledDate).getFullYear() &&
+                  //   new Date(date).getMonth() === new Date(disabledDate).getMonth() &&
+                  //   new Date(date).getDate() === new Date(disabledDate).getDate()
+                  //   ) : () => false}
+                />
+              </div>
+              <div className="col-12 col-lg-6 pt-5">
+                <div className="tw-flex tw-justify-center">
+                  <p
+                    onClick={() => setOpen(true)}
+                    type="button"
+                    className="tw-block !tw-bg-[#f48342] tw-rounded-md tw-px-3 tw-py-1.5 tw-text-center tw-text-sm tw-font-semibold tw-leading-6 tw-text-white tw-shadow-sm hover:tw-bg-indigo-500 focus-visible:tw-outline focus-visible:tw-outline-2 focus-visible:tw-outline-offset-2 focus-visible:tw-outline-indigo-600"
+                  >
+                    Information for {selectedInstructor?.firstName}{' '}
+                    {selectedInstructor?.lastName}
+                  </p>
+                  <Modal
+                    selectedInstructor={selectedInstructor}
+                    setOpen={setOpen}
+                    open={open}
+                  >
+                    Modal
+                  </Modal>
                 </div>
 
-                <div className=" w-100">
-                  <p className="p-0 m-0 fw-bold text-center py-2">
-                    Your information
-                  </p>
-
-                  <div className="py-1">
-                    <div className="form-check">
-                      <input
-                        className="form-check-input"
-                        type="radio"
-                        name="flexRadioDefault"
-                        id="flexRadioDefault1"
-                        value="ONETIME"
-                        checked={classFrequency == 'ONETIME'}
-                        onChange={(e) => setClassFrequency(e.target.value)}
-                      />
-                      <label
-                        className="form-check-label"
-                        htmlFor="flexRadioDefault1"
-                      >
-                        One-Time
-                      </label>
-                    </div>
-                    <div className="form-check">
-                      <input
-                        className="form-check-input"
-                        type="radio"
-                        name="flexRadioDefault"
-                        id="flexRadioDefault2"
-                        value="WEEKLY"
-                        checked={classFrequency == 'WEEKLY'}
-                        onChange={(e) => setClassFrequency(e.target.value)}
-                      />
-                      <label
-                        className="form-check-label"
-                        htmlFor="flexRadioDefault2"
-                      >
-                        Weekly Recurrence
-                      </label>
-                    </div>
-                    <div className="form-check">
-                      <input
-                        className="form-check-input"
-                        type="radio"
-                        name="flexRadioDefault"
-                        id="flexRadioDefault1"
-                        value="BIWEEKLY"
-                        checked={classFrequency == 'BIWEEKLY'}
-                        onChange={(e) => setClassFrequency(e.target.value)}
-                      />
-                      <label
-                        className="form-check-label"
-                        htmlFor="flexRadioDefault1"
-                      >
-                        Bi-Weekly
-                      </label>
-                    </div>
-                    <div className="form-check">
-                      <input
-                        className="form-check-input"
-                        type="radio"
-                        name="flexRadioDefault"
-                        id="flexRadioDefault2"
-                        vale="MONTHLY"
-                        checked={classFrequency == 'MONTHLY'}
-                        onChange={(e) => setClassFrequency(e.target.value)}
-                      />
-                      <label
-                        className="form-check-label"
-                        htmlFor="flexRadioDefault2"
-                      >
-                        Monthly
-                      </label>
-                    </div>
+                {isLargeScreen && (
+                  <div
+                    style={{
+                      width: '100%',
+                      justifyContent: 'space-between',
+                      display: 'flex',
+                      paddingRight: '150px',
+                    }}
+                  >
+                    <p style={{ fontSize: 18 }}>
+                      <span style={{ color: 'red' }}>Step 2: Pick Time</span>
+                    </p>
+                    <p style={{ fontSize: 18 }}>
+                      <span style={{ color: 'red' }}>
+                        Step 3: Select Details
+                      </span>
+                    </p>
                   </div>
-
-                  <div className="py-2 d-flex align-items-center gap-4">
-                    <h6 className="text-dark fw-bold m-0 p-0">On Behalf of:</h6>
-
-                    <select
-                      className="w-25 p-2 rounded outline-0 border border_gray"
-                      value={studentId}
-                      onChange={(e) => {
-                        setStudentId(e.target.value);
-                      }}
-                    >
-                      <option>Select</option>
-                      {loggedInUser &&
-                        loggedInUser?.dependents?.map((dependent) => {
-                          return (
-                            <option key={dependent.email} value={dependent.id}>
-                              {dependent.firstName + ' ' + dependent.lastName}
-                            </option>
-                          );
-                        })}
-                    </select>
-                  </div>
-
-                  <div className="py-2 d-flex align-items-center gap-4">
-                    <h6 className="text-dark fw-bold m-0 p-0">Course:</h6>
-
-                    <select
-                      className="w-25 p-2 rounded outline-0 border border_gray"
-                      onChange={(event) => {
-                        handleCourseId(event);
-                      }}
-                      value={courseId}
-                    >
-                      <option>Select</option>
-                      {selectedInstructor &&
-                        selectedInstructor?.coursesToTutorAndProficiencies.map(
-                          (course) => {
-                            return (
-                              <option key={course.course.id}>
-                                {course.course.name}
-                              </option>
-                            );
-                          }
+                )}
+                <div className="shadow rounded py-5">
+                  <div
+                    className="d-flex flex-sm-nowrap flex-wrap justify-content-between gap-4 px-3"
+                    style={{ minHeight: '400px' }}
+                  >
+                    <div className="w-100 ">
+                      <p className="p-0 m-0 fw-bold pb-2">
+                        {duration > 0 ? (
+                          <>You selected {duration / 2} hours</>
+                        ) : (
+                          <>Select time</>
                         )}
-                    </select>
-                  </div>
+                      </p>
+                      <p>{err}</p>
+                      <div
+                        style={{
+                          height: 500,
+                          overflow: 'hidden',
+                          overflowY: 'auto',
+                          width: 200,
+                        }}
+                      >
+                        {availableTime &&
+                          availableTime.map((slot, index) => (
+                            <li
+                              key={index}
+                              className={`m-03 py-1 fw-bold list-unstyled ${
+                                selectedSlots.some(
+                                  (selectedSlot) =>
+                                    selectedSlot.start.getTime() ===
+                                      slot.start.getTime() &&
+                                    selectedSlot.end.getTime() ===
+                                      slot.end.getTime()
+                                )
+                                  ? 'bg-secondary text-white'
+                                  : ''
+                              } ${
+                                eventslotsexists
+                                  ? 'bg-secondary text-white'
+                                  : ''
+                              }`}
+                              onClick={() => {
+                                if (eventId) return null;
+                                let temp = [...slectedValues];
 
-                  <div className="py-2 d-flex align-items-center gap-4">
-                    <h6 className="text-dark fw-bold m-0 p-0">Mode:</h6>
+                                if (
+                                  index >= slectedValues[0] &&
+                                  index <= slectedValues[1]
+                                ) {
+                                  if (
+                                    index == slectedValues[0] ||
+                                    index == slectedValues[1]
+                                  ) {
+                                    if (duration > 2) {
+                                      slectedValues.map((item, index1) => {
+                                        if (item == index)
+                                          temp[index1] = item - 1;
+                                      });
+                                      setSelectedValues([...temp]);
+                                      handleSlotClick(slot, index);
+                                    } else {
+                                      let filterArr = slectedValues.filter(
+                                        (item) => item != index
+                                      );
+                                      setSelectedValues(filterArr);
+                                      handleSlotClick(slot, index);
+                                    }
+                                  }
+                                } else {
+                                  if (slectedValues.length === 0) {
+                                    temp.push(index);
+                                    setSelectedValues([...temp]);
+                                    handleSlotClick(slot);
+                                  } else if (slectedValues.length > 0) {
+                                    if (
+                                      calculateDifference(
+                                        slectedValues[0],
+                                        index
+                                      ) === 1 ||
+                                      calculateDifference(
+                                        slectedValues[1],
+                                        index
+                                      ) === 1
+                                    ) {
+                                      const isSlotSelected = selectedSlots.some(
+                                        (selectedSlot) =>
+                                          selectedSlot.start.getTime() ===
+                                            slot.start.getTime() &&
+                                          selectedSlot.end.getTime() ===
+                                            slot.end.getTime()
+                                      );
 
-                    <select
-                      className="w-25 p-2 rounded outline-0 border border_gray   "
-                      value={selectedMode}
-                      onChange={handleModeChange}
-                    >
-                      <option value="">Select</option>
-                      {selectedInstructor &&
-                        selectedInstructor?.deliveryModes.map((mode) => {
-                          return (
-                            <option key={mode.id} value={mode.name}>
-                              {mode.name}
-                            </option>
-                          );
-                        })}
-                    </select>
-                  </div>
+                                      if (slectedValues.length < 2) {
+                                        !isSlotSelected && temp.push(index);
+                                      } else {
+                                        temp.map((item, index1) => {
+                                          if (
+                                            calculateDifference(item, index) ===
+                                            1
+                                          ) {
+                                            temp[index1] = index;
+                                          }
+                                        });
+                                      }
 
-                  <div className="py-2 d-flex align-items-center gap-4">
-                    <h6 className="text-dark fw-bold m-0 p-0">Hourly Rate:</h6>
+                                      setSelectedValues([...temp]);
+                                      handleSlotClick(slot);
+                                    } else {
+                                      if (slectedValues[0] === index) {
+                                        setSelectedValues([]);
+                                        handleSlotClick(slot);
+                                      }
+                                    }
+                                  }
+                                }
+                              }}
+                            >
+                              {`${slot.start.toLocaleTimeString(undefined, {
+                                hour: '2-digit',
+                                minute: '2-digit',
+                              })} - ${slot.end.toLocaleTimeString(undefined, {
+                                hour: '2-digit',
+                                minute: '2-digit',
+                              })}`}
+                            </li>
+                          ))}
+                      </div>
+                    </div>
 
-                    <h6 className="text-dark fw-bold m-0 p-0">
-                      {instructorData?.hourlyRate} USD/hr
-                    </h6>
-                  </div>
+                    <div className=" w-100">
+                      <p className="p-0 m-0 fw-bold text-center py-2">
+                        Your information
+                      </p>
 
-                  {/* <div className="py-2 d-flex align-items-start gap-4">
+                      <div className="py-1">
+                        <div className="form-check">
+                          <input
+                            className="form-check-input"
+                            type="radio"
+                            name="flexRadioDefault"
+                            id="flexRadioDefault1"
+                            value="ONETIME"
+                            checked={classFrequency == 'ONETIME'}
+                            onChange={(e) =>
+                              eventId ? null : setClassFrequency(e.target.value)
+                            }
+                          />
+                          <label
+                            className="form-check-label"
+                            htmlFor="flexRadioDefault1"
+                          >
+                            One-Time
+                          </label>
+                        </div>
+                        <div className="form-check">
+                          <input
+                            className="form-check-input"
+                            type="radio"
+                            name="flexRadioDefault"
+                            id="flexRadioDefault2"
+                            value="WEEKLY"
+                            checked={classFrequency == 'WEEKLY'}
+                            onChange={(e) =>
+                              eventId ? null : setClassFrequency(e.target.value)
+                            }
+                          />
+                          <label
+                            className="form-check-label"
+                            htmlFor="flexRadioDefault2"
+                          >
+                            Weekly Recurrence
+                          </label>
+                        </div>
+                        <div className="form-check">
+                          <input
+                            className="form-check-input"
+                            type="radio"
+                            name="flexRadioDefault"
+                            id="flexRadioDefault1"
+                            value="BIWEEKLY"
+                            checked={classFrequency == 'BIWEEKLY'}
+                            onChange={(e) =>
+                              eventId ? null : setClassFrequency(e.target.value)
+                            }
+                          />
+                          <label
+                            className="form-check-label"
+                            htmlFor="flexRadioDefault1"
+                          >
+                            Bi-Weekly
+                          </label>
+                        </div>
+                        <div className="form-check">
+                          <input
+                            className="form-check-input"
+                            type="radio"
+                            name="flexRadioDefault"
+                            id="flexRadioDefault2"
+                            vale="MONTHLY"
+                            checked={classFrequency == 'MONTHLY'}
+                            onChange={(e) =>
+                              eventId ? null : setClassFrequency(e.target.value)
+                            }
+                          />
+                          <label
+                            className="form-check-label"
+                            htmlFor="flexRadioDefault2"
+                          >
+                            Monthly
+                          </label>
+                        </div>
+                      </div>
+
+                      <div className="py-2 d-flex align-items-center gap-4">
+                        <h6 className="text-dark fw-bold m-0 p-0">
+                          On Behalf of:
+                        </h6>
+
+                        <select
+                          className="w-25 p-2 rounded outline-0 border border_gray"
+                          value={studentId}
+                          onChange={(e) => {
+                            eventId ? null : setStudentId(e.target.value);
+                          }}
+                        >
+                          {console.log('loginuser', userInfo)}
+                          <option>Select</option>
+                          {userInfo &&
+                            userInfo?.dependents?.map((dependent) => {
+                              return (
+                                <option
+                                  key={dependent.email}
+                                  value={dependent.id}
+                                >
+                                  {dependent.firstName +
+                                    ' ' +
+                                    dependent.lastName}
+                                </option>
+                              );
+                            })}
+                        </select>
+                      </div>
+
+                      <div className="py-2 d-flex align-items-center gap-4">
+                        <h6 className="text-dark fw-bold m-0 p-0">Course:</h6>
+
+                        <select
+                          className="w-25 p-2 rounded outline-0 border border_gray"
+                          onChange={(event) => {
+                            eventId ? null : handleCourseId(event);
+                          }}
+                          value={courseId}
+                        >
+                          <option>Select</option>
+                          {selectedInstructor &&
+                            selectedInstructor?.coursesToTutorAndProficiencies.map(
+                              (course) => {
+                                return (
+                                  <option key={course.course.id}>
+                                    {course.course.name}
+                                  </option>
+                                );
+                              }
+                            )}
+                        </select>
+                      </div>
+
+                      <div className="py-2 d-flex align-items-center gap-4">
+                        <h6 className="text-dark fw-bold m-0 p-0">Mode:</h6>
+
+                        <select
+                          className="w-25 p-2 rounded outline-0 border border_gray   "
+                          value={selectedMode}
+                          onChange={(event) =>
+                            eventId ? null : handleModeChange(event)
+                          }
+                        >
+                          <option value="">Select</option>
+                          {selectedInstructor &&
+                            selectedInstructor?.deliveryModes.map((mode) => {
+                              return (
+                                <option key={mode.id} value={mode.name}>
+                                  {mode.name}
+                                </option>
+                              );
+                            })}
+                        </select>
+                      </div>
+
+                      <div className="py-2 d-flex align-items-center gap-4">
+                        <h6 className="text-dark fw-bold m-0 p-0">
+                          Hourly Rate:
+                        </h6>
+
+                        <h6 className="text-dark fw-bold m-0 p-0">
+                          {instructorData?.hourlyRate} USD/hr
+                        </h6>
+                      </div>
+
+                      {/* <div className="py-2 d-flex align-items-start gap-4">
                     <h6 className="text-dark fw-bold m-0 p-0">Grade:</h6>
                     <div>
                       {
@@ -980,28 +1010,32 @@ function ParentScheduleClass({ userInfo, loading, error }) {
                       }
                     </div>
                   </div> */}
+                    </div>
+                  </div>
+                  <div className="d-flex gap-2 justify-content-center pt-5">
+                    <button
+                      className={`w-25 text-light p-2 rounded fw-bold  ${
+                        !classFrequency || !time
+                          ? 'btn_disabled'
+                          : 'btn_primary'
+                      }`}
+                      onClick={() => onContinue()}
+                    >
+                      Schedule
+                    </button>
+                  </div>
                 </div>
               </div>
-              <div className="d-flex gap-2 justify-content-center pt-5">
-                <button
-                  className={`w-25 text-light p-2 rounded fw-bold  ${
-                    !classFrequency || !time ? 'btn_disabled' : 'btn_primary'
-                  }`}
-                  onClick={() => onContinue()}
-                >
-                  Schedule
-                </button>
-              </div>
             </div>
+          </main>
+          <div
+            style={{ position: 'relative', bottom: 0 }}
+            className={`${router.asPath.includes('eventId') ? 'tw-z-30' : ''}`}
+          >
+            <Footer />
           </div>
-        </div>
-      </main>
-      <div
-        style={{ position: 'relative' }}
-        className={`${router.asPath.includes('eventId') ? 'tw-z-30' : ''}`}
-      >
-        <Footer />
-      </div>
+        </>
+      )}
     </>
   );
 }

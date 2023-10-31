@@ -13,6 +13,7 @@ import { fetchUser } from '../../../store/actions/userActions';
 import { apiClient } from '@/api/client';
 import { useDispatch } from 'react-redux';
 import { useScreenSize } from '@/hooks/mobile-devices';
+import moment from 'moment';
 function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
   const router = useRouter();
   const { isLargeScreen } = useScreenSize();
@@ -266,15 +267,35 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
   };
 
   const handleContinue = () => {
+    const timeSTampHour = moment(selectedSlots[0].start).format('HH');
+    const timeSTampMin = moment(selectedSlots[0].start).format('mm');
+
+    var originalDate = moment(time, 'YYYY-MM-DD HH:mm');
+
+    // Define the new hours and minutes you want
+    var newHours = parseInt(timeSTampHour); // Replace with your desired value
+    var newMinutes = parseInt(timeSTampMin); // Replace with your desired value
+
+    // Set the new hours and minutes
+    originalDate.hours(newHours);
+    originalDate.minutes(newMinutes);
+
+    // Format the updated date as a string
+    var updatedDateStr = originalDate.format('YYYY-MM-DD HH:mm');
+    console.log('updatedetae', updatedDateStr);
+
     const data = {
-      start: time,
+      start: updatedDateStr,
       durationInHours: duration / 2,
       classFrequency: classFrequency,
-      courseId: instructorCourses.find((el) => el.label === courseId).value,
+      courseId: instructorCourses.find((el) => el.label === courseId)?.value,
       studentId: userInfo.id,
       instructorId: instructorId,
       eventInPerson: selectedMode == 'In-Person' ? true : false,
     };
+
+    console.log('data', data);
+
     console.log('class frequency', data);
     router.push({
       pathname: '/student/coursepay',
