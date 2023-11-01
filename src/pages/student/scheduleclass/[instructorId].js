@@ -14,6 +14,7 @@ import { apiClient } from '@/api/client';
 import { useDispatch } from 'react-redux';
 import { useScreenSize } from '@/hooks/mobile-devices';
 import moment from 'moment';
+import bookingAcceptance from '@/services/Booking/booking-acceptance';
 function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
   const router = useRouter();
   const { isLargeScreen } = useScreenSize();
@@ -35,6 +36,7 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
   const [selectedSlots, setSelectedSlots] = useState([]);
   const [time, setTime] = useState();
   const [duration, setDuration] = useState(0);
+  const [success, setSuccess] = useState(false);
   const [slectedValues, setSelectedValues] = useState([]);
   const [err, setErr] = useState('');
   const dispatch = useDispatch();
@@ -266,7 +268,7 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
     });
   };
 
-  const handleContinue = () => {
+  const handleContinue = async () => {
     const timeSTampHour = moment(selectedSlots[0].start).format('HH');
     const timeSTampMin = moment(selectedSlots[0].start).format('mm');
 
@@ -282,11 +284,10 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
 
     // Format the updated date as a string
     var updatedDateStr = originalDate.format('YYYY-MM-DD HH:mm');
-    console.log('updatedetae', updatedDateStr);
 
     const data = {
-      start: updatedDateStr,
-      durationInHours: duration / 2,
+      start: '2000-01-01 23:59"' || updatedDateStr,
+      durationInHours: 2 || duration / 2,
       classFrequency: classFrequency,
       courseId: instructorCourses.find((el) => el.label === courseId)?.value,
       studentId: userInfo.id,
@@ -294,13 +295,16 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
       eventInPerson: selectedMode == 'In-Person' ? true : false,
     };
 
-    console.log('data', data);
-
-    console.log('class frequency', data);
-    router.push({
-      pathname: '/student/coursepay',
-      query: data,
-    });
+    if (true) {
+      let res = await bookingAcceptance({ ...data, whoPaysId: userInfo?.id });
+      console.log('res of booking', res);
+      setSuccess(true);
+    } else {
+      router.push({
+        pathname: '/student/coursepay',
+        query: data,
+      });
+    }
   };
   const calculateDifference = (number1, number2) => Math.abs(number1 - number2);
   return (
@@ -314,6 +318,53 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
           href="https://gkc-images.s3.amazonaws.com/favicon.ico"
         />
       </Head>
+
+      {success ? (
+        <div
+          style={{
+            position: 'fixed',
+            zIndex: 1,
+            left: 0,
+            top: 0,
+            width: '100%',
+            height: '100%',
+            overflow: 'auto',
+            background: 'rgba(0, 0, 0, 0.4)',
+          }}
+        >
+          <div
+            style={{
+              background: 'white',
+              margin: '500px auto',
+              padding: 20,
+              width: '380px',
+            }}
+          >
+            <p
+              style={{
+                width: 350,
+                margin: 'auto',
+                textAlign: 'center',
+                fontSize: 18,
+              }}
+            >
+              request has been sent to Tutor for booking acceptance
+            </p>
+            <div style={{ display: 'flex', gap: 10, justifyContent: 'center' }}>
+              <button
+                onClick={() => {
+                  router.push(`/`);
+                }}
+                className="btn_primary text-light p-2 rounded fw-bold mt-3"
+                style={{ width: 100 }}
+              >
+                Ok
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
       <Navbar isLogin={true} />
       {isLoading && (
         <div className="d-flex justify-content-center">
@@ -657,7 +708,7 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
                   className={`w-25 text-light p-2 rounded fw-bold  ${
                     !classFrequency || !time ? 'btn_disabled' : 'btn_primary'
                   }`}
-                  disabled={!classFrequency || !time ? true : false}
+                  // disabled={!classFrequency || !time ? true : false}
                   onClick={() => handleContinue()}
                 >
                   Schedule

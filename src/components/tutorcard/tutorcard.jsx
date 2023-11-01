@@ -258,7 +258,7 @@ const Tutorcard = ({ data, key }) => {
             >
               <p className="m-0 p-0 fw-bold">
                 {data?.firstName + ' ' + data?.lastName}
-                {` (${data?.city},${data?.country || data?.state})`}
+                {` (${data?.city}, ${data?.country || data?.state})`}
               </p>
               <p className="m-0 p-0 fw-bold">${data?.hourlyRate}/hr</p>
             </div>
