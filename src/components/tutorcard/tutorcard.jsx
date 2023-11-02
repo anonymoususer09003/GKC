@@ -17,6 +17,7 @@ import { fetchUser } from '@/store/actions/userActions';
 import moment from 'moment';
 import FirebaseChat from '../../hooks/firebase-chat';
 import ChatModal from '../chat';
+import { useScreenSize } from '@/hooks/mobile-devices';
 const Tutorcard = ({ data, key }) => {
   const {
     sendMessage,
@@ -28,6 +29,7 @@ const Tutorcard = ({ data, key }) => {
     resetValues,
   } = FirebaseChat();
   const navigation = useRouter();
+  const screenSize = useScreenSize();
   const dispatch = useDispatch();
   const loggedInUser = useSelector((state) => state.user?.userInfo);
   const [userData, setUserData] = useState(null);
@@ -216,8 +218,18 @@ const Tutorcard = ({ data, key }) => {
           </div>
         </div>
       ) : null}
-      <div className="d-flex flex-column flex-md-row align-items-center tw-justify-between gap-4 border my-2 p-3 shadow p-3 mb-5 bg-white rounded">
-        <div style={{ width: '200px' }}>
+      <div
+        style={{ width: screenSize.isLargeScreen ? '100%' : 'fit-content' }}
+        className="d-flex flex-column flex-md-row align-items-center tw-justify-between gap-4 border my-2 p-3 shadow p-3 mb-5 bg-white rounded"
+      >
+        <div
+          style={{
+            width: '30%',
+            // backgroundColor: "red",
+            display: 'flex',
+            justifyContent: 'center',
+          }}
+        >
           <img
             src={
               data.instructorPhoto ??
@@ -371,7 +383,14 @@ const Tutorcard = ({ data, key }) => {
               })}
             </ul>
           </div>
-          <div className="d-flex tw-flex-row tw-justify-between tw-gap-1">
+          <div
+            style={{
+              width: '100%',
+              display: 'flex',
+              justifyContent: 'space-between',
+            }}
+            className="d-flex tw-flex-row tw-justify-between tw-gap-1"
+          >
             <button
               className={`d-flex btn_primary py-2 px-5 fw-bold text-white rounded tw-whitespace-nowrap`}
               type="submit"
