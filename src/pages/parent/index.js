@@ -58,6 +58,7 @@ function ParentLandingPage() {
   const [goBackSchedule, setGoBackSchedule] = useState(false);
   const [goScheduleFromSignIn, setGoScheduleFromSignIn] = useState(false);
   const [pageState, setPageState] = useState(null);
+  const [goInterviewFromSignIn, setGoInterviewFromSignIn] = useState(false);
 
   const search = async () => {
     console.log(JSON.stringify(page).length > 1 ? page : '0' + page);
@@ -191,17 +192,15 @@ function ParentLandingPage() {
     getCourses();
     getProficiency();
     getLang();
+  }, []);
+
+  useEffect(() => {
     if (typeof window !== 'undefined') {
-      if (
-        JSON.parse(window.localStorage.getItem('goBackSchedule'))?.event !==
-          undefined &&
-        JSON.parse(window.localStorage.getItem('goBackSchedule'))?.id !==
-          undefined
-      ) {
-        setGoBackSchedule(true);
-      }
       if (window.localStorage.getItem('goScheduleFromSignIn') !== null) {
         setGoScheduleFromSignIn(true);
+      }
+      if (window.localStorage.getItem('goInterviewFromSignIn') !== null) {
+        setGoInterviewFromSignIn(true);
       }
     }
   }, []);
@@ -217,71 +216,7 @@ function ParentLandingPage() {
         />
       </Head>
       <ParentNavbar />
-      {goBackSchedule ? (
-        <div
-          style={{
-            position: 'fixed',
-            zIndex: 1,
-            left: 0,
-            top: 0,
-            width: '100%',
-            height: '100%',
-            overflow: 'hidden',
-            background: 'rgba(0, 0, 0, 0.4)',
-          }}
-        >
-          <div
-            style={{
-              background: 'white',
-              margin: '500px auto',
-              padding: 20,
-              width: '380px',
-            }}
-          >
-            <p
-              style={{
-                width: 350,
-                margin: 'auto',
-                textAlign: 'center',
-                fontSize: 18,
-              }}
-            >
-              We noticed that you attempted to schedule a class. Would you like
-              to go back to the page where you were?
-            </p>
-            <div style={{ display: 'flex', gap: 10, justifyContent: 'center' }}>
-              <button
-                onClick={() => {
-                  window.localStorage.removeItem('goBackSchedule');
-                  nav.push(
-                    `/parent/scheduleclass/${
-                      JSON.parse(window.localStorage.getItem('Scheduler'))
-                        ?.instructor
-                    }?eventId=${
-                      JSON.parse(window.localStorage.getItem('Scheduler'))
-                        ?.eventId
-                    }`
-                  );
-                }}
-                className="btn_primary text-light p-2 rounded fw-bold mt-3"
-                style={{ width: 100 }}
-              >
-                Yes
-              </button>
-              <button
-                className="p-2 rounded fw-bold mt-3"
-                style={{ background: 'none', border: 'none' }}
-                onClick={() => {
-                  setGoBackSchedule(false);
-                  window.localStorage.removeItem('goBackSchedule');
-                }}
-              >
-                No
-              </button>
-            </div>
-          </div>
-        </div>
-      ) : null}
+
       {goScheduleFromSignIn ? (
         <div
           style={{
@@ -291,7 +226,7 @@ function ParentLandingPage() {
             top: 0,
             width: '100%',
             height: '100%',
-            overflow: 'hidden',
+            overflow: 'auto',
             background: 'rgba(0, 0, 0, 0.4)',
           }}
         >
@@ -336,6 +271,70 @@ function ParentLandingPage() {
                 onClick={() => {
                   setGoScheduleFromSignIn(false);
                   window.localStorage.removeItem('goScheduleFromSignIn');
+                }}
+              >
+                No
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      {goInterviewFromSignIn ? (
+        <div
+          style={{
+            position: 'fixed',
+            zIndex: 1,
+            left: 0,
+            top: 0,
+            width: '100%',
+            height: '100%',
+            overflow: 'auto',
+            background: 'rgba(0, 0, 0, 0.4)',
+          }}
+        >
+          <div
+            style={{
+              background: 'white',
+              margin: '500px auto',
+              padding: 20,
+              width: '380px',
+            }}
+          >
+            <p
+              style={{
+                width: 350,
+                margin: 'auto',
+                textAlign: 'center',
+                fontSize: 18,
+              }}
+            >
+              We noticed that you attempted request to interview. Would you like
+              to continue?
+            </p>
+            <div style={{ display: 'flex', gap: 10, justifyContent: 'center' }}>
+              <button
+                onClick={() => {
+                  nav.push(
+                    `/${JSON.parse(
+                      window.localStorage.getItem('gkcAuth')
+                    ).role.toLowerCase()}/requestinterview/${JSON.parse(
+                      window.localStorage.getItem('goInterviewFromSignIn')
+                    )}`
+                  );
+                  window.localStorage.removeItem('goInterviewFromSignIn');
+                }}
+                className="btn_primary text-light p-2 rounded fw-bold mt-3"
+                style={{ width: 100 }}
+              >
+                Yes
+              </button>
+              <button
+                className="p-2 rounded fw-bold mt-3"
+                style={{ background: 'none', border: 'none' }}
+                onClick={() => {
+                  setGoInterviewFromSignIn(false);
+                  window.localStorage.removeItem('goInterviewFromSignIn');
                 }}
               >
                 No

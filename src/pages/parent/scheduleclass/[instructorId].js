@@ -24,7 +24,7 @@ function ParentScheduleClass({ loading, error }) {
   const { instructorId } = router.query;
 
   const userInfo = useSelector((state) => state.user.userInfo);
-  console.log('uuuser', userInfo);
+
   const [instructorData, setInstructorData] = useState({});
   const [instructorCourses, setInstructorCourses] = useState([]);
   const [selectedInstructor, setSelectedInstructor] = useState(null);
@@ -46,7 +46,11 @@ function ParentScheduleClass({ loading, error }) {
   const [open, setOpen] = useState(false);
   const [date, setDate] = useState(null);
   const [slectedValues, setSelectedValues] = useState([]);
+  const [success, setSuccess] = useState(false);
+  const [instructorAcceptance, setInstructorAcceptanceStatus] =
+    useState('PENDING');
   const eventId = router?.query?.eventId;
+  const bookingAcceptanceId = router?.query?.bookingAcceptanceId;
   console.log('selected instructor', selectedInstructor);
   let dur = null;
   let eventStartTimeslot = undefined;
@@ -109,6 +113,53 @@ function ParentScheduleClass({ loading, error }) {
       console.log('err', err);
     }
   };
+
+  const getBookingDetail = async () => {
+    try {
+      let res = await getBookingAcceptance(bookingAcceptanceId);
+      let coursesArr = await getCourses();
+      console.log(ca);
+
+      const { data } = res;
+
+      console.log('data00000', data);
+      eventStartTimeslot = data.start;
+
+      // console.log(instructorCourses)
+      // console.log(ca.find(el => el.value === data.courseId).label)
+      dur = data?.durationInHours;
+      sid = data?.studentId;
+      // console.log("dependent", loggedInUser.dependents.find(el=>el.id === sid));
+      // setDependent(loggedInUser.dependents.find(el=>el.id === sid))
+      setStudentId(data?.studentId);
+      const date = new Date(data?.startAtBookingUserTimeZone);
+      const formattedDateStr = date
+        .toISOString()
+        .slice(0, 16)
+        .replace('T', ' ');
+
+      console.log('formatted time', formattedDateStr);
+      setTime(formattedDateStr);
+      setDuration(data.durationInHours);
+      setDate(data?.startAtBookingUserTimeZone?.slice(0, 10));
+      setClassFrequency(data.classFrequency);
+      setCourseId(coursesArr.find((el) => el.value === data.courseId).label);
+      setSelectedMode(data?.eventInPerson ? 'In-Person' : 'Online');
+      setInstructorAcceptanceStatus(data?.instructorAcceptanceStatus);
+      await handleDateChange(
+        new Date(data?.startAtBookingUserTimeZone),
+        data.durationInHours
+      );
+    } catch (err) {
+      console.log('err', err);
+    }
+  };
+
+  useEffect(() => {
+    if (bookingAcceptanceId) {
+      getBookingDetail();
+    }
+  }, [bookingAcceptanceId]);
 
   useEffect(() => {
     dispatch(fetchUser());
@@ -262,7 +313,7 @@ function ParentScheduleClass({ loading, error }) {
       // Create half-hour intervals for each time slot
       const formattedTimeSlots = [];
 
-      if (eventId !== undefined) {
+      if (eventId !== undefined || bookingAcceptanceId !== undefined) {
         let timeclickeddate = moment(dateObj).format('hh:mm');
         let findIndex = timeSlots.findIndex((obj) =>
           moment(obj.start).format('hh:mm').includes(timeclickeddate)
@@ -389,16 +440,11 @@ function ParentScheduleClass({ loading, error }) {
     });
   };
 
-  const onContinue = () => {
+  const onContinue = async () => {
     if (typeof window !== 'undefined') {
       window.localStorage.removeItem('goBackSchedule');
     }
 
-    console.log('selected slots', selectedSlots);
-    console.log(
-      'logs---------------',
-      moment(selectedSlots[0].start).format('HH:mm')
-    );
     const timeSTampHour = moment(selectedSlots[0].start).format('HH');
     const timeSTampMin = moment(selectedSlots[0].start).format('mm');
 
@@ -413,6 +459,7 @@ function ParentScheduleClass({ loading, error }) {
     originalDate.minutes(newMinutes);
 
     // Format the updated date as a string
+
     var updatedDateStr = originalDate.format('YYYY-MM-DD HH:mm');
     console.log('updatedetae', updatedDateStr);
 
@@ -426,13 +473,17 @@ function ParentScheduleClass({ loading, error }) {
       eventInPerson: selectedMode == 'In-Person' ? true : false,
     };
 
-    console.log('data----', data);
-    router.push({
-      pathname: '/parent/coursepay',
-      query: data,
-    });
+    if (instructorAcceptance != 'ACCEPTED') {
+      let res = await bookingAcceptance({ ...data, whoPaysId: userInfo?.id });
+      console.log('res of booking', res);
+      setSuccess(true);
+    } else {
+      router.push({
+        pathname: '/parent/coursepay',
+        query: data,
+      });
+    }
   };
-
   const calculateDifference = (number1, number2) => Math.abs(number1 - number2);
 
   return (
@@ -459,6 +510,53 @@ function ParentScheduleClass({ loading, error }) {
           </div>
         </div>
       )}
+
+      {success ? (
+        <div
+          style={{
+            position: 'fixed',
+            zIndex: 1,
+            left: 0,
+            top: 0,
+            width: '100%',
+            height: '100%',
+            overflow: 'auto',
+            background: 'rgba(0, 0, 0, 0.4)',
+          }}
+        >
+          <div
+            style={{
+              background: 'white',
+              margin: '500px auto',
+              padding: 20,
+              width: '380px',
+            }}
+          >
+            <p
+              style={{
+                width: 350,
+                margin: 'auto',
+                textAlign: 'center',
+                fontSize: 18,
+              }}
+            >
+              request has been sent to Tutor for booking acceptance
+            </p>
+            <div style={{ display: 'flex', gap: 10, justifyContent: 'center' }}>
+              <button
+                onClick={() => {
+                  router.push(`/`);
+                }}
+                className="btn_primary text-light p-2 rounded fw-bold mt-3"
+                style={{ width: 100 }}
+              >
+                Ok
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
       {paymentSubmit ? (
         <div
           style={{

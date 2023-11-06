@@ -173,6 +173,9 @@ export default function RegistrationGrade() {
   useEffect(() => {
     getGrades();
   }, []);
+
+  const isAtLeastOneChecked = weekSArr.some((item) => item.isChecked);
+  console.log('isAtleastOnechecked', isAtLeastOneChecked);
   return (
     <>
       <Head>
@@ -422,8 +425,13 @@ export default function RegistrationGrade() {
                 }}
               >
                 <button
+                  disabled={isAtLeastOneChecked ? false : true}
                   style={{ width: '300px' }}
-                  className={` text-light p-2 rounded fw-bold  bg-gray-300 btn_primary`}
+                  className={`  p-2 rounded fw-bold ${
+                    isAtLeastOneChecked
+                      ? 'btn_primary text-light'
+                      : 'bg-gray-300 text-gray-300'
+                  }   `}
                   onClick={onContinue}
                 >
                   continue

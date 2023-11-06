@@ -40,6 +40,9 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
   const [slectedValues, setSelectedValues] = useState([]);
   const [err, setErr] = useState('');
   const dispatch = useDispatch();
+  const [instructorAcceptance, setInstructorAcceptanceStatus] =
+    useState('PENDING');
+  const bookingAcceptanceId = router?.query?.bookingAcceptanceId;
 
   useEffect(() => {
     if (status) {
@@ -92,6 +95,41 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
       console.log(error);
     }
   };
+
+  const getBookingDetail = async () => {
+    try {
+      let res = await getBookingAcceptance(bookingAcceptanceId);
+      let coursesArr = await getCourses();
+
+      const { data } = res;
+
+      const date = new Date(data?.startAtBookingUserTimeZone);
+      const formattedDateStr = date
+        .toISOString()
+        .slice(0, 16)
+        .replace('T', ' ');
+
+      setTime(formattedDateStr);
+      setDuration(data.durationInHours);
+      setDate(data?.startAtBookingUserTimeZone?.slice(0, 10));
+      setClassFrequency(data.classFrequency);
+      setCourseId(coursesArr.find((el) => el.value === data.courseId).label);
+      setSelectedMode(data?.eventInPerson ? 'In-Person' : 'Online');
+      setInstructorAcceptanceStatus(data?.instructorAcceptanceStatus);
+      await handleDateChange(
+        new Date(data?.startAtBookingUserTimeZone),
+        data.durationInHours
+      );
+    } catch (err) {
+      console.log('err', err);
+    }
+  };
+
+  useEffect(() => {
+    if (bookingAcceptanceId) {
+      getBookingDetail();
+    }
+  }, [bookingAcceptanceId]);
 
   //Fetch user details from redux
   useEffect(() => {
@@ -283,11 +321,12 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
     originalDate.minutes(newMinutes);
 
     // Format the updated date as a string
+
     var updatedDateStr = originalDate.format('YYYY-MM-DD HH:mm');
 
     const data = {
-      start: '2000-01-01 23:59"' || updatedDateStr,
-      durationInHours: 2 || duration / 2,
+      start: updatedDateStr,
+      durationInHours: duration / 2,
       classFrequency: classFrequency,
       courseId: instructorCourses.find((el) => el.label === courseId)?.value,
       studentId: userInfo.id,
@@ -295,7 +334,7 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
       eventInPerson: selectedMode == 'In-Person' ? true : false,
     };
 
-    if (true) {
+    if (instructorAcceptance != 'ACCEPTED') {
       let res = await bookingAcceptance({ ...data, whoPaysId: userInfo?.id });
       console.log('res of booking', res);
       setSuccess(true);

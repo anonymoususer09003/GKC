@@ -55,7 +55,7 @@ const Tutorcard = ({ data, key }) => {
         window.localStorage.getItem('gkcAuth') == null
       ) {
         window.localStorage.setItem(
-          'goScheduleFromSignIn',
+          'goInterviewFromSignIn',
           JSON.stringify(data.id)
         );
         navigation.push('/auth/signin');
@@ -72,7 +72,7 @@ const Tutorcard = ({ data, key }) => {
         window.localStorage.getItem('gkcAuth') == null
       ) {
         window.localStorage.setItem(
-          'goScheduleFromSignIn',
+          'goInterviewFromSignIn',
           JSON.stringify(data.id)
         );
         navigation.push('/auth/signin');

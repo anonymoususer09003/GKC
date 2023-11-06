@@ -14,32 +14,32 @@ export const GlobalInstructor = {
 
 const starArray = [
   {
-    label:'1 Star',
-    id: '1'
+    label: '1 Star',
+    id: '1',
   },
   {
-    label:'2 Stars',
-    id: '2'
+    label: '2 Stars',
+    id: '2',
   },
   {
-    label:'3 Stars',
-    id: '3'
+    label: '3 Stars',
+    id: '3',
   },
   {
-    label:'4 Stars',
-    id: '4'
+    label: '4 Stars',
+    id: '4',
   },
   {
-    label:'5 Stars',
-    id: '5'
-  }
-]
+    label: '5 Stars',
+    id: '5',
+  },
+];
 
 function StudentLandingPage() {
   //const authenticated = isAuthenticated();
   const [insructorsFound, setInsructorsFound] = useState(true);
   const [showModal, setShowModal] = useState(false);
-  const [stars, setStars] = useState('')
+  const [stars, setStars] = useState('');
   const [showCards, setShowCards] = useState(false);
   const [selectedCourse, setSelectCourse] = useState('');
   const [name, setName] = useState('');
@@ -54,19 +54,29 @@ function StudentLandingPage() {
   const [lang, setLang] = useState([]);
   const [proficiency, setProficiency] = useState([]);
   const [insructors, setInsructors] = useState([]);
-  const [page, setPage] = useState(0)
-  const [innerWidth, setInnerWidth] = useState(null)
-  const [goScheduleFromSignIn, setGoScheduleFromSignIn] = useState(false)
-  const [pageState, setPageState] = useState(null)
-  const nav = useRouter()
-
+  const [page, setPage] = useState(0);
+  const [innerWidth, setInnerWidth] = useState(null);
+  const [goScheduleFromSignIn, setGoScheduleFromSignIn] = useState(false);
+  const [pageState, setPageState] = useState(null);
+  const nav = useRouter();
+  const [goInterviewFromSignIn, setGoInterviewFromSignIn] = useState(false);
   const search = async () => {
-    console.log(JSON.stringify(page).length > 1 ? page : '0'+page)
-    if(page === 0){
+    console.log(JSON.stringify(page).length > 1 ? page : '0' + page);
+    if (page === 0) {
       try {
         // var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
         const res = await axios.get(
-          `${base_url}/public/landing/filter?name=${name}${isNaN(hourlyRate) ? '' : '&hourlyRate='+hourlyRate}${isNaN(skill) ? '' : '&proficiency='+skill}${findNumbersUsingRegExp(selectedZip) ? '&zipCode='+selectedZip : selectedZip.length > 0 ? '&city='+selectedZip : ''}${stars.length>1 ? '' : '&rating='+stars}&grades=${ageGroup}&courses=${selectedCourse}&spokenLanguage=${selectedLang}&deliveryModes=${mode}&page=0&size=10`,
+          `${base_url}/public/landing/filter?name=${name}${
+            isNaN(hourlyRate) ? '' : '&hourlyRate=' + hourlyRate
+          }${isNaN(skill) ? '' : '&proficiency=' + skill}${
+            findNumbersUsingRegExp(selectedZip)
+              ? '&zipCode=' + selectedZip
+              : selectedZip.length > 0
+              ? '&city=' + selectedZip
+              : ''
+          }${
+            stars.length > 1 ? '' : '&rating=' + stars
+          }&grades=${ageGroup}&courses=${selectedCourse}&spokenLanguage=${selectedLang}&deliveryModes=${mode}&page=0&size=10`,
           {
             /*  headers: {
             Authorization: `Bearer ${typ.accessToken}`,
@@ -74,13 +84,13 @@ function StudentLandingPage() {
           */
           }
         );
-        console.log(res)
-        if(res.data.content.length > 0){
-          setInsructorsFound(true)
+        console.log(res);
+        if (res.data.content.length > 0) {
+          setInsructorsFound(true);
           setInsructors(res.data.content);
-          setPageState(res.data)
-        }else{
-          setInsructorsFound(false)
+          setPageState(res.data);
+        } else {
+          setInsructorsFound(false);
         }
       } catch (error) {
         console.error('Error fetching profile data:', error);
@@ -89,10 +99,22 @@ function StudentLandingPage() {
       try {
         // var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
         const res = await axios.get(
-          `${base_url}/public/landing/filter?page=${JSON.stringify(page).length > 1 ? page : '0'+page }${findNumbersUsingRegExp(selectedZip) ? '&zipCode='+selectedZip : selectedZip.length > 0 ? '&city='+selectedZip : ''}${isNaN(skill) ? '' : '&proficiency='+skill}${stars.length>1 ? '' : '&rating='+stars}&name=${name}${isNaN(hourlyRate) ? '' : '&hourlyRate='+hourlyRate}&grades=${ageGroup}&courses=${selectedCourse}&spokenLanguage=${selectedLang}&deliveryModes=${mode}&size=10`,
+          `${base_url}/public/landing/filter?page=${
+            JSON.stringify(page).length > 1 ? page : '0' + page
+          }${
+            findNumbersUsingRegExp(selectedZip)
+              ? '&zipCode=' + selectedZip
+              : selectedZip.length > 0
+              ? '&city=' + selectedZip
+              : ''
+          }${isNaN(skill) ? '' : '&proficiency=' + skill}${
+            stars.length > 1 ? '' : '&rating=' + stars
+          }&name=${name}${
+            isNaN(hourlyRate) ? '' : '&hourlyRate=' + hourlyRate
+          }&grades=${ageGroup}&courses=${selectedCourse}&spokenLanguage=${selectedLang}&deliveryModes=${mode}&size=10`
         );
         setInsructors(insructors.concat(res.data.content));
-        setPageState(res.data)
+        setPageState(res.data);
       } catch (error) {
         console.error('Error fetching profile data:', error);
       }
@@ -125,10 +147,10 @@ function StudentLandingPage() {
   function findNumbersUsingRegExp(inputString) {
     // Define a regular expression to match numbers
     const regex = /\d+/g;
-  
+
     // Use the `match()` method to find all matches in the input string
     const numbersArray = inputString.match(regex);
-  
+
     return numbersArray ? true : false;
   }
 
@@ -182,20 +204,23 @@ function StudentLandingPage() {
     getProficiency();
     getLang();
   }, []);
-  if(typeof window !== 'undefined'){
-    useEffect(()=>{
-      console.log(window.innerWidth)
-      setInnerWidth(window.innerWidth)
-    },[window.innerWidth])
+  if (typeof window !== 'undefined') {
+    useEffect(() => {
+      console.log(window.innerWidth);
+      setInnerWidth(window.innerWidth);
+    }, [window.innerWidth]);
   }
-useEffect(()=>{
-    if(typeof window !== 'undefined'){
-      if(window.localStorage.getItem('goScheduleFromSignIn') !== null){
-        setGoScheduleFromSignIn(true)
-      }
-  }
-},[])
 
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      if (window.localStorage.getItem('goScheduleFromSignIn') !== null) {
+        setGoScheduleFromSignIn(true);
+      }
+      if (window.localStorage.getItem('goInterviewFromSignIn') !== null) {
+        setGoInterviewFromSignIn(true);
+      }
+    }
+  }, []);
   return (
     <>
       <Head>
@@ -204,32 +229,133 @@ useEffect(()=>{
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      {goScheduleFromSignIn ? (
-        <div style={{position:'fixed', zIndex: 1, left:0,top:0, width:'100%', height:'100%',overflow:'auto', background: 'rgba(0, 0, 0, 0.4)'}}>
-          <div style={{background: 'white', margin: '500px auto', padding:20,width:'380px'}}>
-            <p style={{width: 350, margin: 'auto', textAlign:'center', fontSize:18}}>We noticed that you attempted to schedule a class. Would you like to continue?</p>
-            <div
-            style={{display:'flex', gap:10, justifyContent:'center'}}>
-            <button 
-            onClick={()=>{
-              nav.push(`/${
-                JSON.parse(window.localStorage.getItem('gkcAuth')).role.toLowerCase()
-              }/scheduleclass/${
-                JSON.parse(window.localStorage.getItem('goScheduleFromSignIn'))
-              }`)
+
+      {goInterviewFromSignIn ? (
+        <div
+          style={{
+            position: 'fixed',
+            zIndex: 1,
+            left: 0,
+            top: 0,
+            width: '100%',
+            height: '100%',
+            overflow: 'auto',
+            background: 'rgba(0, 0, 0, 0.4)',
+          }}
+        >
+          <div
+            style={{
+              background: 'white',
+              margin: '500px auto',
+              padding: 20,
+              width: '380px',
             }}
-            className="btn_primary text-light p-2 rounded fw-bold mt-3" 
-            style={{width: 100, }}>Yes</button>
-            <button className="p-2 rounded fw-bold mt-3"
-            style={{background:'none', border:'none'}}
-            onClick={()=>{setGoScheduleFromSignIn(false); window.localStorage.removeItem('goScheduleFromSignIn')}}
+          >
+            <p
+              style={{
+                width: 350,
+                margin: 'auto',
+                textAlign: 'center',
+                fontSize: 18,
+              }}
             >
-              No
-            </button>
+              We noticed that you attempted request to interview. Would you like
+              to continue?
+            </p>
+            <div style={{ display: 'flex', gap: 10, justifyContent: 'center' }}>
+              <button
+                onClick={() => {
+                  nav.push(
+                    `/${JSON.parse(
+                      window.localStorage.getItem('gkcAuth')
+                    )?.role?.toLowerCase()}/requestinterview/${JSON.parse(
+                      window.localStorage.getItem('goInterviewFromSignIn')
+                    )}`
+                  );
+                  window.localStorage.removeItem('goInterviewFromSignIn');
+                }}
+                className="btn_primary text-light p-2 rounded fw-bold mt-3"
+                style={{ width: 100 }}
+              >
+                Yes
+              </button>
+              <button
+                className="p-2 rounded fw-bold mt-3"
+                style={{ background: 'none', border: 'none' }}
+                onClick={() => {
+                  setGoInterviewFromSignIn(false);
+                  window.localStorage.removeItem('goInterviewFromSignIn');
+                }}
+              >
+                No
+              </button>
             </div>
           </div>
         </div>
-        ) : null}
+      ) : null}
+
+      {goScheduleFromSignIn ? (
+        <div
+          style={{
+            position: 'fixed',
+            zIndex: 1,
+            left: 0,
+            top: 0,
+            width: '100%',
+            height: '100%',
+            overflow: 'auto',
+            background: 'rgba(0, 0, 0, 0.4)',
+          }}
+        >
+          <div
+            style={{
+              background: 'white',
+              margin: '500px auto',
+              padding: 20,
+              width: '380px',
+            }}
+          >
+            <p
+              style={{
+                width: 350,
+                margin: 'auto',
+                textAlign: 'center',
+                fontSize: 18,
+              }}
+            >
+              We noticed that you attempted to schedule a class. Would you like
+              to continue?
+            </p>
+            <div style={{ display: 'flex', gap: 10, justifyContent: 'center' }}>
+              <button
+                onClick={() => {
+                  nav.push(
+                    `/${JSON.parse(
+                      window.localStorage.getItem('gkcAuth')
+                    ).role.toLowerCase()}/scheduleclass/${JSON.parse(
+                      window.localStorage.getItem('goScheduleFromSignIn')
+                    )}`
+                  );
+                }}
+                className="btn_primary text-light p-2 rounded fw-bold mt-3"
+                style={{ width: 100 }}
+              >
+                Yes
+              </button>
+              <button
+                className="p-2 rounded fw-bold mt-3"
+                style={{ background: 'none', border: 'none' }}
+                onClick={() => {
+                  setGoScheduleFromSignIn(false);
+                  window.localStorage.removeItem('goScheduleFromSignIn');
+                }}
+              >
+                No
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
       <Navbar />
       <main className="">
         <div className="container py-4">
@@ -241,14 +367,20 @@ useEffect(()=>{
               type="text"
               placeholder="Search for a tutor by Name"
               className={`p-2 rounded outline-0 border border_gray ${styles.landingInputs}`}
-              onChange={(e) =>{setPage(0);setName(e.target.value)}}
+              onChange={(e) => {
+                setPage(0);
+                setName(e.target.value);
+              }}
             />
           </div>
 
           <div className="d-flex justify-content-center gap-2 flex-wrap">
             <select
               className="p-2 rounded outline-0 border border_gray"
-              onChange={(e) => {setPage(0);setSelectCourse(e.target.value)}}
+              onChange={(e) => {
+                setPage(0);
+                setSelectCourse(e.target.value);
+              }}
             >
               <option value="">Course</option>
               {courses.map((course) => {
@@ -261,7 +393,10 @@ useEffect(()=>{
             </select>
             <select
               className="p-2 rounded outline-0 border border_gray"
-              onChange={(e) => {setPage(0);setSkill(e.target.value)}}
+              onChange={(e) => {
+                setPage(0);
+                setSkill(e.target.value);
+              }}
             >
               <option value="">Proficiency</option>
               {proficiency.map((prof) => {
@@ -275,7 +410,10 @@ useEffect(()=>{
 
             <select
               className="p-2 rounded outline-0 border border_gray"
-              onChange={(e) => {setPage(0);setAgeGroup(e.target.value)}}
+              onChange={(e) => {
+                setPage(0);
+                setAgeGroup(e.target.value);
+              }}
             >
               <option value="">Grade</option>
               <option value="1">Elementary &#40;&#60;=10yrs&#41;</option>
@@ -285,7 +423,10 @@ useEffect(()=>{
             </select>
             <select
               className="p-2 rounded outline-0 border border_gray"
-              onChange={(e) => {setPage(0);setMode(e.target.value)}}
+              onChange={(e) => {
+                setPage(0);
+                setMode(e.target.value);
+              }}
             >
               <option value="">Delivery Mode</option>
               <option value="1">In-Person</option>
@@ -293,7 +434,10 @@ useEffect(()=>{
             </select>
             <select
               className="p-2 rounded outline-0 border border_gray"
-              onChange={(e) => {setPage(0);setSelectedLang(e.target.value)}}
+              onChange={(e) => {
+                setPage(0);
+                setSelectedLang(e.target.value);
+              }}
             >
               <option value="">Spoken Language</option>
               {lang.map((lan) => {
@@ -308,212 +452,325 @@ useEffect(()=>{
               placeholder="Max Hourly Rate"
               className={`p-2 rounded outline-0 border border_gray ${styles.landingInputs}`}
               onChange={(e) => {
-                  setPage(0); setHourlyRate(parseFloat(e.target.value));}}
+                setPage(0);
+                setHourlyRate(parseFloat(e.target.value));
+              }}
             />
-            <select className="p-2 rounded outline-0 border border_gray"
-            onChange={(e)=>{ setPage(0);setStars(e.target.value)}}
+            <select
+              className="p-2 rounded outline-0 border border_gray"
+              onChange={(e) => {
+                setPage(0);
+                setStars(e.target.value);
+              }}
             >
               <option>Min Stars</option>
-              {
-                starArray.map((el)=>{return <option value={el.id} key={el.id}>
-                  {el.label}
-                </option>
-                })
-              }
+              {starArray.map((el) => {
+                return (
+                  <option value={el.id} key={el.id}>
+                    {el.label}
+                  </option>
+                );
+              })}
             </select>
             <input
               type="text"
               placeholder="Enter City or Zip/Post code"
               className={`p-2 rounded outline-0 border border_gray w-25 ${styles.landingInputs}`}
-              onChange={(e) => {setPage(0);setSelectedZip(e.target.value)}}
+              onChange={(e) => {
+                setPage(0);
+                setSelectedZip(e.target.value);
+              }}
             />
             <button
               className={`btn_primary py-2 px-5 fw-bold text-white rounded`}
-              onClick={() => search()}>
+              onClick={() => search()}
+            >
               Search
             </button>
           </div>
         </div>
         <hr className="p-0 m-0" />
 
-          {insructors && (
-            <div className="container py-4">
-              {insructors.map((instructor, i) => {
-                return (
-                  <TutorCard
-                    key={i}
-                    data={instructor}
-                    //showModal={showModal}
-                    //setShowModal={setShowModal}
-                  />
-                );
-              })}
-            </div>
-          )}
-        {
-          pageState?.last === false &&
+        {insructors && (
+          <div className="container py-4">
+            {insructors.map((instructor, i) => {
+              return (
+                <TutorCard
+                  key={i}
+                  data={instructor}
+                  //showModal={showModal}
+                  //setShowModal={setShowModal}
+                />
+              );
+            })}
+          </div>
+        )}
+        {pageState?.last === false && (
           <>
-          <div style={{width:'100%', display:'flex',justifyContent:'center'}}>
-          <button
-          className='btn_primary py-2 px-5 fw-bold text-white rounded'
-          onMouseDown={()=> setPage(page+1)}
-          onMouseUp={()=>{
-            setTimeout(() => {
-              search()
-            }, 200);
-          }}>
-            Load more
-          </button>
-          </div>
-          <Footer />
+            <div
+              style={{
+                width: '100%',
+                display: 'flex',
+                justifyContent: 'center',
+              }}
+            >
+              <button
+                className="btn_primary py-2 px-5 fw-bold text-white rounded"
+                onMouseDown={() => setPage(page + 1)}
+                onMouseUp={() => {
+                  setTimeout(() => {
+                    search();
+                  }, 200);
+                }}
+              >
+                Load more
+              </button>
+            </div>
+            <Footer />
           </>
-          
-        }
-
+        )}
       </main>
-      {
-        insructors.length < 1 && 
+      {insructors.length < 1 && (
         <>
-        {insructorsFound === false ? 
-        <div style={{textAlign:'center', margin:'40px 0'}}>
-          Oops! There are no instructors that match your search criteria.
-        </div>
-        : null}
-        <div style={{margin:'0px auto', display:'flex',flexDirection:'column', width:'70%'}}>
-          <div className={`shadow ${innerWidth > 980 ? 'd-flex' : ''}`}
-          style={{borderRadius:30, width:`${innerWidth > 980 ? '700px' : '256px'}`}}>
-              <div
+          {insructorsFound === false ? (
+            <div style={{ textAlign: 'center', margin: '40px 0' }}>
+              Oops! There are no instructors that match your search criteria.
+            </div>
+          ) : null}
+          <div
+            style={{
+              margin: '0px auto',
+              display: 'flex',
+              flexDirection: 'column',
+              width: '70%',
+            }}
+          >
+            <div
+              className={`shadow ${innerWidth > 980 ? 'd-flex' : ''}`}
               style={{
-                width:`${innerWidth > 980 ? '500px' : '256px'}`,
-                height:256,
-                fontSize: '2svh',
-                padding: '10px 20px',
-                textAlign:'center',
-                display:'flex',
-                alignItems:'center',
-                margin:'0 auto'
+                borderRadius: 30,
+                width: `${innerWidth > 980 ? '700px' : '256px'}`,
               }}
-              >Why should my child learn to code? With Artificial Intelligence and Machine Learning set to feature prominently in our future lives, we need to get our kids ready</div>
+            >
+              <div
+                style={{
+                  width: `${innerWidth > 980 ? '500px' : '256px'}`,
+                  height: 256,
+                  fontSize: '2svh',
+                  padding: '10px 20px',
+                  textAlign: 'center',
+                  display: 'flex',
+                  alignItems: 'center',
+                  margin: '0 auto',
+                }}
+              >
+                Why should my child learn to code? With Artificial Intelligence
+                and Machine Learning set to feature prominently in our future
+                lives, we need to get our kids ready
+              </div>
               <div>
                 <img
-                style={{borderRadius: '0 30px 30px 0'}}
-                src={'https://gkc-images.s3.amazonaws.com/childrenlearning.png'}
-                height={256}
-                width={256}
+                  style={{ borderRadius: '0 30px 30px 0' }}
+                  src={
+                    'https://gkc-images.s3.amazonaws.com/childrenlearning.png'
+                  }
+                  height={256}
+                  width={256}
                 />
               </div>
-          </div>  
-        </div>
-
-        <div style={{margin:'30px auto', display:'flex',flexDirection:'column', gap:40, width:'70%', alignItems:'end'}}>
-          <div className={`shadow ${innerWidth > 980 ? 'd-flex tw-flex-row-reverse' : ''}`}
-          style={{borderRadius:30, width: `${innerWidth > 980 ? '700px' : '256px'}`}}>
-              <div
-              style={{
-                width:`${innerWidth > 980 ? '500px' : '256px'}`,
-                height:256,
-                fontSize: '2svh',
-                padding: '10px 20px',
-                textAlign:'center',
-                display:'flex',
-                alignItems:'center'
-              }}
-              >Prepare your child for the future by having them learn how to code from live tutors</div>
-              <div>
-                <img
-                style={{borderRadius: `${innerWidth >980 ? '30px 0 0 30px' : '0 30px 30px 0'}`}}
-                src={'https://gkc-images.s3.amazonaws.com/childfuture.png'}
-                height={256}
-                width={256}
-                />
-              </div>
+            </div>
           </div>
-        </div>
 
-        <div style={{margin:'30px auto', display:'flex',flexDirection:'column', gap:40, width:'70%'}}>
-          <div className={`shadow ${innerWidth > 980 ? 'd-flex' : ''}`}
-          style={{borderRadius:30, width:`${innerWidth > 980 ? '700px' : '256px'}`}}>
-              <div
+          <div
+            style={{
+              margin: '30px auto',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 40,
+              width: '70%',
+              alignItems: 'end',
+            }}
+          >
+            <div
+              className={`shadow ${
+                innerWidth > 980 ? 'd-flex tw-flex-row-reverse' : ''
+              }`}
               style={{
-                width:`${innerWidth > 980 ? '500px' : '256px'}`,
-                height:256,
-                fontSize: '2svh',
-                padding: '10px 20px',
-                textAlign:'center',
-                display:'flex',
-                alignItems:'center'
+                borderRadius: 30,
+                width: `${innerWidth > 980 ? '700px' : '256px'}`,
               }}
-              >Looking for a tutor to teach your child coding? Look no further – Find great tutors from around the world</div>
+            >
+              <div
+                style={{
+                  width: `${innerWidth > 980 ? '500px' : '256px'}`,
+                  height: 256,
+                  fontSize: '2svh',
+                  padding: '10px 20px',
+                  textAlign: 'center',
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
+              >
+                Prepare your child for the future by having them learn how to
+                code from live tutors
+              </div>
               <div>
                 <img
-                style={{borderRadius: '0 30px 30px 0'}}
-                src={'https://gkc-images.s3.amazonaws.com/lookingfortutor.png'}
-                height={256}
-                width={256}
+                  style={{
+                    borderRadius: `${
+                      innerWidth > 980 ? '30px 0 0 30px' : '0 30px 30px 0'
+                    }`,
+                  }}
+                  src={'https://gkc-images.s3.amazonaws.com/childfuture.png'}
+                  height={256}
+                  width={256}
                 />
               </div>
-          </div>  
-        </div>
-
-        <div style={{margin:'30px auto', display:'flex',flexDirection:'column', gap:40, width:'70%', alignItems:'end'}}>
-          <div className={`shadow ${innerWidth > 980 ? 'd-flex tw-flex-row-reverse' : ''}`}
-          style={{borderRadius:30, width:`${innerWidth > 980 ? '700px' : '256px'}`}}>
-              <div
-              style={{
-                width:`${innerWidth > 980 ? '500px' : '256px'}`,
-                height:256,
-                fontSize: '2svh',
-                padding: '10px 20px',
-                textAlign:'center',
-                display:'flex',
-                alignItems:'center'
-              }}
-              >With parents’ busy schedule, eliminate the drive to brick and mortar coding classes. Have your child learn coding from a live tutor from the comfort of their homes</div>
-              <div>
-                <img
-                style={{borderRadius: '30px 0 0 30px'}}
-                src={'https://gkc-images.s3.amazonaws.com/familyincar.png'}
-                height={256}
-                width={256}
-                />
-              </div>
+            </div>
           </div>
-        </div>
-        
-        <div style={{margin:'30px auto', display:'flex',flexDirection:'column', gap:40, width:'70%', marginBottom:90}}>
-          <div className={`shadow ${innerWidth > 980 ? 'd-flex' : ''}`}
-          style={{borderRadius:30, width:`${innerWidth > 980 ? '700px' : '256px'}`}}>
-              <div
+
+          <div
+            style={{
+              margin: '30px auto',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 40,
+              width: '70%',
+            }}
+          >
+            <div
+              className={`shadow ${innerWidth > 980 ? 'd-flex' : ''}`}
               style={{
-                width:`${innerWidth > 980 ? '500px' : '256px'}`,
-                height:256,
-                fontSize: '2svh',
-                padding: '10px 20px',
-                textAlign:'center',
-                display:'flex',
-                alignItems:'center'
+                borderRadius: 30,
+                width: `${innerWidth > 980 ? '700px' : '256px'}`,
               }}
-              >Online safety concerns? Parents have full access to their child’s livestream tutoring and chats for improved safety</div>
+            >
+              <div
+                style={{
+                  width: `${innerWidth > 980 ? '500px' : '256px'}`,
+                  height: 256,
+                  fontSize: '2svh',
+                  padding: '10px 20px',
+                  textAlign: 'center',
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
+              >
+                Looking for a tutor to teach your child coding? Look no further
+                – Find great tutors from around the world
+              </div>
               <div>
                 <img
-                style={{borderRadius: '0 30px 30px 0'}}
-                src={'https://gkc-images.s3.amazonaws.com/onlinesafety.png'}
-                height={256}
-                width={256}
+                  style={{ borderRadius: '0 30px 30px 0' }}
+                  src={
+                    'https://gkc-images.s3.amazonaws.com/lookingfortutor.png'
+                  }
+                  height={256}
+                  width={256}
                 />
               </div>
-          </div>  
-        </div>
+            </div>
+          </div>
 
-        <div 
-        style={{
-          position:'fixed', bottom: 0, width:'100vw', zIndex:999
-        }}
-        >
-        <Footer />
-        </div>
+          <div
+            style={{
+              margin: '30px auto',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 40,
+              width: '70%',
+              alignItems: 'end',
+            }}
+          >
+            <div
+              className={`shadow ${
+                innerWidth > 980 ? 'd-flex tw-flex-row-reverse' : ''
+              }`}
+              style={{
+                borderRadius: 30,
+                width: `${innerWidth > 980 ? '700px' : '256px'}`,
+              }}
+            >
+              <div
+                style={{
+                  width: `${innerWidth > 980 ? '500px' : '256px'}`,
+                  height: 256,
+                  fontSize: '2svh',
+                  padding: '10px 20px',
+                  textAlign: 'center',
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
+              >
+                With parents’ busy schedule, eliminate the drive to brick and
+                mortar coding classes. Have your child learn coding from a live
+                tutor from the comfort of their homes
+              </div>
+              <div>
+                <img
+                  style={{ borderRadius: '30px 0 0 30px' }}
+                  src={'https://gkc-images.s3.amazonaws.com/familyincar.png'}
+                  height={256}
+                  width={256}
+                />
+              </div>
+            </div>
+          </div>
+
+          <div
+            style={{
+              margin: '30px auto',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 40,
+              width: '70%',
+              marginBottom: 90,
+            }}
+          >
+            <div
+              className={`shadow ${innerWidth > 980 ? 'd-flex' : ''}`}
+              style={{
+                borderRadius: 30,
+                width: `${innerWidth > 980 ? '700px' : '256px'}`,
+              }}
+            >
+              <div
+                style={{
+                  width: `${innerWidth > 980 ? '500px' : '256px'}`,
+                  height: 256,
+                  fontSize: '2svh',
+                  padding: '10px 20px',
+                  textAlign: 'center',
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
+              >
+                Online safety concerns? Parents have full access to their
+                child’s livestream tutoring and chats for improved safety
+              </div>
+              <div>
+                <img
+                  style={{ borderRadius: '0 30px 30px 0' }}
+                  src={'https://gkc-images.s3.amazonaws.com/onlinesafety.png'}
+                  height={256}
+                  width={256}
+                />
+              </div>
+            </div>
+          </div>
+
+          <div
+            style={{
+              position: 'fixed',
+              bottom: 0,
+              width: '100vw',
+              zIndex: 999,
+            }}
+          >
+            <Footer />
+          </div>
         </>
-      }
+      )}
     </>
   );
 }
