@@ -13,12 +13,15 @@ import { fetchUser } from '../../../store/actions/userActions';
 import { apiClient } from '@/api/client';
 import { useDispatch } from 'react-redux';
 import { useScreenSize } from '@/hooks/mobile-devices';
-import moment from 'moment';
 import bookingAcceptance from '@/services/Booking/booking-acceptance';
+import getBookingAcceptance from '@/services/Booking/get-booking-acceptance';
+import moment from 'moment';
 function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
   const router = useRouter();
   const { isLargeScreen } = useScreenSize();
   const { instructorId } = router.query;
+
+  console.log('router------------', router.query);
   const status = router.isReady;
 
   const [instructorCourses, setInstructorCourses] = useState([]);
@@ -36,16 +39,19 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
   const [selectedSlots, setSelectedSlots] = useState([]);
   const [time, setTime] = useState();
   const [duration, setDuration] = useState(0);
-  const [success, setSuccess] = useState(false);
   const [slectedValues, setSelectedValues] = useState([]);
+  const [success, setSuccess] = useState(false);
   const [err, setErr] = useState('');
-  const dispatch = useDispatch();
+  const eventId = router?.query?.eventId;
+  const [date, setDate] = useState(null);
+
   const [instructorAcceptance, setInstructorAcceptanceStatus] =
     useState('PENDING');
+  const dispatch = useDispatch();
   const bookingAcceptanceId = router?.query?.bookingAcceptanceId;
 
   useEffect(() => {
-    if (status) {
+    if (status && instructorId) {
       fetchUser();
       const fetchUnavailableDates = async () => {
         const disabledDates = [];
@@ -91,45 +97,12 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
       });
       console.log(response);
       setInstructorCourses(coursesArray);
+
+      return coursesArray;
     } catch (error) {
       console.log(error);
     }
   };
-
-  const getBookingDetail = async () => {
-    try {
-      let res = await getBookingAcceptance(bookingAcceptanceId);
-      let coursesArr = await getCourses();
-
-      const { data } = res;
-
-      const date = new Date(data?.startAtBookingUserTimeZone);
-      const formattedDateStr = date
-        .toISOString()
-        .slice(0, 16)
-        .replace('T', ' ');
-
-      setTime(formattedDateStr);
-      setDuration(data.durationInHours);
-      setDate(data?.startAtBookingUserTimeZone?.slice(0, 10));
-      setClassFrequency(data.classFrequency);
-      setCourseId(coursesArr.find((el) => el.value === data.courseId).label);
-      setSelectedMode(data?.eventInPerson ? 'In-Person' : 'Online');
-      setInstructorAcceptanceStatus(data?.instructorAcceptanceStatus);
-      await handleDateChange(
-        new Date(data?.startAtBookingUserTimeZone),
-        data.durationInHours
-      );
-    } catch (err) {
-      console.log('err', err);
-    }
-  };
-
-  useEffect(() => {
-    if (bookingAcceptanceId) {
-      getBookingDetail();
-    }
-  }, [bookingAcceptanceId]);
 
   //Fetch user details from redux
   useEffect(() => {
@@ -202,49 +175,153 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
     setCourseId(event.target.value);
   };
 
-  const handleDateChange = async (clickedDate) => {
+  const getBookingDetail = async () => {
+    try {
+      let res = await getBookingAcceptance(bookingAcceptanceId);
+
+      console.log('res-----9', res.data);
+      let coursesArr = await getCourses();
+
+      const { data } = res;
+
+      console.log('data00000', data);
+      // eventStartTimeslot = data?.startAtBookingUserTimeZone;
+
+      // console.log(instructorCourses)
+      // console.log(ca.find(el => el.value === data.courseId).label)
+      // dur = data?.durationInHours;
+      // sid = data?.studentId;
+      // console.log("dependent", loggedInUser.dependents.find(el=>el.id === sid));
+      // setDependent(loggedInUser.dependents.find(el=>el.id === sid))
+      // setStudentId(data?.studentId);
+      const date = new Date(data?.startAtBookingUserTimeZone);
+      const formattedDateStr = date
+        .toISOString()
+        .slice(0, 16)
+        .replace('T', ' ');
+
+      console.log('formatted time', formattedDateStr);
+      setTime(formattedDateStr);
+      setDuration(data.durationInHours);
+      setDate(data?.startAtBookingUserTimeZone?.slice(0, 10));
+      setClassFrequency(data.classFrequency);
+      setCourseId(coursesArr?.find((el) => el.value === data.courseId).label);
+      setSelectedMode(data?.eventInPerson ? 'In-Person' : 'Online');
+      setInstructorAcceptanceStatus(data?.instructorAcceptanceStatus);
+      await handleDateChange(
+        new Date(data?.startAtBookingUserTimeZone),
+        data.durationInHours
+      );
+    } catch (err) {
+      console.log('err', err);
+    }
+  };
+
+  useEffect(() => {
+    if (bookingAcceptanceId) {
+      getBookingDetail();
+    }
+  }, [bookingAcceptanceId]);
+
+  const handleDateChange = async (clickedDate, duration) => {
+    console.log('lcliekcdate', clickedDate);
+
     const dateObj = new Date(clickedDate);
     const year = dateObj.getFullYear();
     const month = String(dateObj.getMonth() + 1).padStart(2, '0');
     const day = String(dateObj.getDate()).padStart(2, '0');
     const hours = String(dateObj.getHours()).padStart(2, '0');
     const minutes = String(dateObj.getMinutes()).padStart(2, '0');
-    const formattedDateStr = `${year}-${month}-${day}`;
-    setDuration(0);
+    let formattedDateStr = `${year}-${month}-${day}`;
+    if (eventId === undefined) {
+      setDuration(0);
+    }
 
     setSelectedDate(formattedDateStr);
-    console.log(formattedDateStr);
+    if (bookingAcceptanceId) {
+      const date = moment(formattedDateStr);
+
+      // Add one day to the date
+      date.add(1, 'days');
+      formattedDateStr = date.format('YYYY-MM-DD');
+    }
     try {
       const response = await apiClient.get(
-        `/instructor/available-time-slots-from-date?instructorId=${instructorId}&date=${formattedDateStr}`
+        `/instructor/available-time-slots-from-date?instructorId=${
+          selectedInstructor?.id ?? instructorId
+        }&date=${formattedDateStr}`
       );
 
       const timeSlots = response.data.map((slot) => ({
         start: new Date(slot.start),
         end: new Date(slot.end),
       }));
-      console.log(timeSlots);
+
       const isOnHalfHour = (date) =>
         date.getMinutes() === 0 || date.getMinutes() === 30;
 
       // Create half-hour intervals for each time slot
       const formattedTimeSlots = [];
-      timeSlots.forEach((slot) => {
-        if (isOnHalfHour(slot.start)) {
-          const start = new Date(slot.start);
-          start.setSeconds(0); // Set seconds to 0
-          start.setMilliseconds(0); // Set milliseconds to 0
 
-          const end = new Date(slot.start.getTime() + 30 * 60 * 1000);
-          end.setSeconds(0); // Set seconds to 0
-          end.setMilliseconds(0); // Set milliseconds to 0
+      if (eventId !== undefined || bookingAcceptanceId !== undefined) {
+        let timeclickeddate = moment(dateObj).format('hh:mm');
+        console.log('timeslots', timeSlots);
+        let findIndex = timeSlots.findIndex((obj) =>
+          moment(obj.start).format('hh:mm').includes(timeclickeddate)
+        );
 
-          formattedTimeSlots.push({
-            start,
-            end,
-          });
-        }
-      });
+        console.log('findindex', findIndex);
+        console.log('timesots', timeSlots);
+        console.log('timeclickedate', timeclickeddate);
+        let count = duration + findIndex;
+        console.log('duration', duration);
+        timeSlots.forEach((slot, index) => {
+          console.log('index', index);
+
+          console.log('count', count);
+          if (
+            // isOnHalfHour(slot.start) &&
+            index >= findIndex &&
+            index <= count
+          ) {
+            const start = new Date(slot.start);
+            start.setSeconds(0); // Set seconds to 0
+            start.setMilliseconds(0); // Set milliseconds to 0
+
+            const end = new Date(slot.start.getTime() + 30 * 60 * 1000);
+            end.setSeconds(0); // Set seconds to 0
+            end.setMilliseconds(0); // Set milliseconds to 0
+
+            formattedTimeSlots.push({
+              start,
+              end,
+            });
+          }
+        });
+        // let filterarr = formattedTimeSlots.filter(
+        //   (item, index) => index >= findIndex && index <= count
+        // );
+        setSelectedSlots(formattedTimeSlots);
+        // console.log('filterarr', filterarr);
+        setAvailableTime(formattedTimeSlots);
+      } else {
+        timeSlots.forEach((slot) => {
+          if (isOnHalfHour(slot.start)) {
+            const start = new Date(slot.start);
+            start.setSeconds(0); // Set seconds to 0
+            start.setMilliseconds(0); // Set milliseconds to 0
+
+            const end = new Date(slot.start.getTime() + 30 * 60 * 1000);
+            end.setSeconds(0); // Set seconds to 0
+            end.setMilliseconds(0); // Set milliseconds to 0
+
+            formattedTimeSlots.push({
+              start,
+              end,
+            });
+          }
+        });
+      }
 
       setAvailableTime(formattedTimeSlots);
       if (formattedTimeSlots.length > 0) {
@@ -258,7 +335,6 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
       console.log(error);
     }
   };
-
   useEffect(() => {
     getCourses();
     if (typeof window !== 'undefined') {
@@ -352,10 +428,10 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
         <title>Student Schedule Class</title>
         <meta name="description" content="Where kids learn to code" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link
+        {/* <link
           rel="icon"
-          href="https://gkc-images.s3.amazonaws.com/favicon.ico"
-        />
+          // href="https://gkc-images.s3.amazonaws.com/favicon.ico"
+        /> */}
       </Head>
 
       {success ? (
@@ -442,8 +518,10 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
               </div>
             )}
             <Calendar
+              value={date}
               onChange={handleDateChange}
               tileClassName={tileClassName}
+
               // tileDisabled={unavailableDates.length >1 ? ({date, view})=> view === 'month' &&
               // unavailableDates.some(disabledDate =>
               //   new Date(date).getFullYear() === new Date(disabledDate).getFullYear() &&
@@ -679,18 +757,13 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
                     >
                       <option>Select</option>
                       {selectedInstructor &&
-                        selectedInstructor?.coursesToTutorAndProficiencies.map(
-                          (course) => {
-                            return (
-                              <option
-                                key={course.course.id}
-                                value={course.course.name}
-                              >
-                                {course.course.name}
-                              </option>
-                            );
-                          }
-                        )}
+                        selectedInstructor?.coursesToTeach?.map((course) => {
+                          return (
+                            <option key={course.id} value={course.name}>
+                              {course.name}
+                            </option>
+                          );
+                        })}
                     </select>
                   </div>
 

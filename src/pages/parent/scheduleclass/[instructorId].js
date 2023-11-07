@@ -15,6 +15,8 @@ import moment from 'moment';
 import GetUnConfirmedEventById from '@/services/events/GetUnConfirmedEventById';
 import Modal from '@/components/parent/modal/Modal';
 import { useScreenSize } from '@/hooks/mobile-devices';
+import bookingAcceptance from '@/services/Booking/booking-acceptance';
+import getBookingAcceptance from '@/services/Booking/get-booking-acceptance';
 function ParentScheduleClass({ loading, error }) {
   const router = useRouter();
   const dispatch = useDispatch();
@@ -288,7 +290,7 @@ function ParentScheduleClass({ loading, error }) {
     const day = String(dateObj.getDate()).padStart(2, '0');
     const hours = String(dateObj.getHours()).padStart(2, '0');
     const minutes = String(dateObj.getMinutes()).padStart(2, '0');
-    const formattedDateStr = `${year}-${month}-${day}`;
+    let formattedDateStr = `${year}-${month}-${day}`;
     if (eventId === undefined) {
       setDuration(0);
     }
@@ -296,6 +298,13 @@ function ParentScheduleClass({ loading, error }) {
     setSelectedDate(formattedDateStr);
 
     try {
+      if (bookingAcceptanceId) {
+        const date = moment(formattedDateStr);
+
+        // Add one day to the date
+        date.add(1, 'days');
+        formattedDateStr = date.format('YYYY-MM-DD');
+      }
       const response = await apiClient.get(
         `/instructor/available-time-slots-from-date?instructorId=${
           selectedInstructor?.id ?? instructorId

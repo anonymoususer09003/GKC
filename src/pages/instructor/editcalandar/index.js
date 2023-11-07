@@ -86,38 +86,38 @@ function EditCalandar({ loading, error, fetchUser }) {
 
   const [weekSArr, setWeeksArr] = useState([
     {
-      label: 'mon',
+      label: 'Mon',
       value: 'MONDAY',
       isChecked: false,
     },
 
     {
-      label: 'tue',
+      label: 'Tue',
       value: 'TUESDAY',
       isChecked: false,
     },
     {
-      label: 'wed',
+      label: 'Wed',
       value: 'WEDNESDAY',
       isChecked: false,
     },
     {
-      label: 'thurs',
+      label: 'Thur',
       value: 'THURSDAY',
       isChecked: false,
     },
     {
-      label: 'fri',
+      label: 'Fri',
       value: 'FRIDAY',
       isChecked: false,
     },
     {
-      label: 'sat',
+      label: 'Sat',
       value: 'SATURDAY',
       isChecked: false,
     },
     {
-      label: 'sun',
+      label: 'Sun',
       value: 'SUNDAY',
       isChecked: false,
     },
@@ -501,9 +501,25 @@ function EditCalandar({ loading, error, fetchUser }) {
       const responce = await apiClient.get(
         `/instructor/week-schedule/from-logged-instructor`
       );
-      console.log(responce.data);
+      console.log('weeks arr 1', responce.data);
 
       setWeekDays(responce.data);
+
+      let tem = [];
+      weekSArr.map((item) => {
+        let findItem = responce.data.find(
+          (ele) => ele.dayOfTheWeek == item.value
+        );
+        let obj = {
+          ...item,
+          isChecked: findItem?.available ? true : false,
+        };
+        tem.push(obj);
+      });
+
+      console.log('responce', responce.data);
+      setWeekDaysArr(responce.data);
+      setWeeksArr(tem);
       if (responce.data.length === 0) {
         const res = await axios.get('/timeavailability_placeholder.json');
         console.log(res.data);
@@ -664,7 +680,9 @@ function EditCalandar({ loading, error, fetchUser }) {
         <p className="fw-bold m-0 p-0 ">Exit</p>
       </div>
       <main className="container-fluid">
-        <div style={{ height: '90vh' }}>
+        <div
+          style={{ maxHeight: '90vh', minHeight: '90vh', overflow: 'scroll' }}
+        >
           <div className="row pb-5 pr-5 pl-5">
             <div className="col-12 col-lg-6 ">
               <div>
@@ -755,125 +773,151 @@ function EditCalandar({ loading, error, fetchUser }) {
                     maxHeight: '600px',
                   }}
                 >
-                  {weekSArr.map((item, index) => (
-                    <div style={{ flexDirection: 'row', display: 'flex' }}>
-                      <div style={{ marginRight: '90px' }}>
-                        <div></div>
-                        <li
-                          style={{
-                            marginTop: '65px',
-                            background: selectedDays.includes('MONDAY')
-                              ? 'gray'
-                              : 'none',
-                            color: selectedDays.includes('MONDAY')
-                              ? 'white'
-                              : 'black',
-                          }}
-                        >
-                          {item.label}
-                        </li>
-                      </div>
+                  {console.log('weeks arr 2', weekSArr)}
+                  {weekSArr.map((item, index) => {
+                    let findItem = weekdaysArr.find(
+                      (ele) => ele.dayOfTheWeek === item.value
+                    );
+                    console.log('finditme', findItem);
+                    return (
+                      //
+                      // let findItem=weekdaysArr.find()
 
-                      <div
-                        style={{
-                          flexDirection: 'row',
-                          display: 'flex',
-                          width: '100%',
-                          justifyItems: 'center',
-                          alignItems: 'center',
-                        }}
-                      >
+                      <div style={{ flexDirection: 'row', display: 'flex' }}>
+                        <div style={{ width: '140px' }}>
+                          <div></div>
+                          <li
+                            style={{
+                              marginTop: index == 0 ? '65px' : '45px',
+                              background: selectedDays.includes('MONDAY')
+                                ? 'gray'
+                                : 'none',
+                              color: selectedDays.includes('MONDAY')
+                                ? 'white'
+                                : 'black',
+                            }}
+                          >
+                            {item.label}
+                          </li>
+                        </div>
+
                         <div
                           style={{
-                            marginRight: '90px',
+                            flexDirection: 'row',
                             display: 'flex',
-                            flexDirection: 'column',
+                            width: '100%',
+                            justifyItems: 'center',
                             alignItems: 'center',
                           }}
                         >
-                          <div>
-                            <p className="fw-bold"> Available: </p>{' '}
-                          </div>{' '}
-                          <div>
-                            <label>
-                              <input
-                                className="form-check-input"
-                                type="checkbox"
-                                checked={item.isChecked}
-                                onChange={() => {
-                                  handleCheckedAvailable(index);
+                          <div
+                            style={{
+                              width: '100px',
+                              marginRight: '20px',
+                              display: 'flex',
+                              flexDirection: 'column',
+                              alignItems: 'center',
+                            }}
+                          >
+                            {index === 0 ? (
+                              <div>
+                                <p className="fw-bold"> Available </p>
+                              </div>
+                            ) : (
+                              <div>
+                                <p className="fw-bold"> </p>
+                              </div>
+                            )}
+                            <div>
+                              <label>
+                                <input
+                                  className="form-check-input"
+                                  type="checkbox"
+                                  checked={item.isChecked}
+                                  onChange={() => {
+                                    handleCheckedAvailable(index);
+                                  }}
+                                />
+                              </label>
+                            </div>
+                          </div>
+                          <div className="row" style={{ marginTop: '20px' }}>
+                            {/* <div className="col-4"></div> */}
+
+                            <>
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  justifyContent: 'space-between',
                                 }}
-                              />
-                            </label>
+                              >
+                                <div
+                                  style={{ marginRight: '20px' }}
+                                  className="pb-2"
+                                >
+                                  {index === 0 ? (
+                                    <p className="col fw-bold"> From </p>
+                                  ) : (
+                                    <p className="col fw-bold"></p>
+                                  )}
+                                  <select
+                                    disabled={!item.isChecked}
+                                    value={findItem?.startTime}
+                                    className="w-100 p-2 rounded outline-0 border border_gray col"
+                                    onChange={(e) => {
+                                      let temp = [...weekdaysArr];
+                                      let tempValue = { ...temp[index] };
+                                      tempValue.startTime = e.target.value;
+                                      temp[index] = tempValue;
+                                      setWeekDaysArr(temp);
+                                    }}
+                                  >
+                                    {times.map((time) => {
+                                      return (
+                                        <option key={time} value={time}>
+                                          {' '}
+                                          {time}{' '}
+                                        </option>
+                                      );
+                                    })}
+                                  </select>
+                                </div>
+
+                                <div className="pb-2">
+                                  {index === 0 ? (
+                                    <p className="col fw-bold"> To </p>
+                                  ) : (
+                                    <p className="col fw-bold"> </p>
+                                  )}
+                                  <select
+                                    disabled={!item.isChecked}
+                                    value={findItem?.endTime}
+                                    className="w-100 p-2 rounded outline-0 border border_gray col"
+                                    onChange={(e) => {
+                                      let temp = [...weekdaysArr];
+                                      let tempValue = { ...temp[index] };
+                                      tempValue.endTime = e.target.value;
+                                      temp[index] = tempValue;
+                                      setWeekDaysArr(temp);
+                                    }}
+                                  >
+                                    {times.map((time) => {
+                                      return (
+                                        <option key={time} value={time}>
+                                          {' '}
+                                          {time}{' '}
+                                        </option>
+                                      );
+                                    })}
+                                  </select>
+                                </div>
+                              </div>
+                            </>
                           </div>
                         </div>
-                        <div className="row" style={{ marginTop: '20px' }}>
-                          {/* <div className="col-4"></div> */}
-
-                          <>
-                            <div
-                              style={{
-                                display: 'flex',
-                                justifyContent: 'space-between',
-                              }}
-                            >
-                              <div
-                                style={{ marginRight: '20px' }}
-                                className="pb-2"
-                              >
-                                <p className="col fw-bold"> From </p>{' '}
-                                <select
-                                  disabled={!item.isChecked}
-                                  value={weekdaysArr[index].startTime}
-                                  className="w-100 p-2 rounded outline-0 border border_gray col"
-                                  onChange={(e) => {
-                                    let temp = [...weekdaysArr];
-                                    let tempValue = { ...temp[index] };
-                                    tempValue.startTime = e.target.value;
-                                    temp[index] = tempValue;
-                                    setWeekDaysArr(temp);
-                                  }}
-                                >
-                                  {times.map((time) => {
-                                    return (
-                                      <option key={time} value={time}>
-                                        {' '}
-                                        {time}{' '}
-                                      </option>
-                                    );
-                                  })}
-                                </select>
-                              </div>
-                              <div className="pb-2">
-                                <p className="col fw-bold"> To </p>{' '}
-                                <select
-                                  disabled={!item.isChecked}
-                                  value={weekdaysArr[index].endTime}
-                                  className="w-100 p-2 rounded outline-0 border border_gray col"
-                                  onChange={(e) => {
-                                    let temp = [...weekdaysArr];
-                                    let tempValue = { ...temp[index] };
-                                    tempValue.endTime = e.target.value;
-                                    temp[index] = tempValue;
-                                    setWeekDaysArr(temp);
-                                  }}
-                                >
-                                  {times.map((time) => {
-                                    return (
-                                      <option key={time} value={time}>
-                                        {' '}
-                                        {time}{' '}
-                                      </option>
-                                    );
-                                  })}
-                                </select>
-                              </div>
-                            </div>
-                          </>
-                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </ul>
                 {/* {!selectedDays && <p>Please select week day.</p>}
                 {selectedDays && (

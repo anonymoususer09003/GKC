@@ -90,43 +90,42 @@ export default function RegistrationGrade() {
 
   const [weekSArr, setWeeksArr] = useState([
     {
-      label: 'mon',
+      label: 'Mon',
       value: 'MONDAY',
       isChecked: false,
     },
 
     {
-      label: 'tue',
+      label: 'Tue',
       value: 'TUESDAY',
       isChecked: false,
     },
     {
-      label: 'wed',
+      label: 'Wed',
       value: 'WEDNESDAY',
       isChecked: false,
     },
     {
-      label: 'thurs',
+      label: 'Thur',
       value: 'THURSDAY',
       isChecked: false,
     },
     {
-      label: 'fri',
+      label: 'Fri',
       value: 'FRIDAY',
       isChecked: false,
     },
     {
-      label: 'sat',
+      label: 'Sat',
       value: 'SATURDAY',
       isChecked: false,
     },
     {
-      label: 'sun',
+      label: 'Sun',
       value: 'SUNDAY',
       isChecked: false,
     },
   ]);
-
   const handleCheckedAvailable = (index) => {
     let temp = [...weekSArr];
     let tempValue = { ...temp[index] };
@@ -214,11 +213,11 @@ export default function RegistrationGrade() {
               >
                 {weekSArr.map((item, index) => (
                   <div style={{ flexDirection: 'row', display: 'flex' }}>
-                    <div style={{ marginRight: '90px' }}>
+                    <div style={{ width: '140px' }}>
                       <div></div>
                       <li
                         style={{
-                          marginTop: '65px',
+                          marginTop: index == 0 ? '65px' : '45px',
 
                           color: 'black',
                         }}
@@ -238,15 +237,21 @@ export default function RegistrationGrade() {
                     >
                       <div
                         style={{
-                          marginRight: '90px',
+                          width: '100px',
                           display: 'flex',
                           flexDirection: 'column',
                           alignItems: 'center',
                         }}
                       >
-                        <div>
-                          <p className="fw-bold"> Available: </p>{' '}
-                        </div>{' '}
+                        {index === 0 ? (
+                          <div>
+                            <p className="fw-bold"> Available </p>
+                          </div>
+                        ) : (
+                          <div>
+                            <p className="fw-bold"> </p>
+                          </div>
+                        )}
                         <div>
                           <label>
                             <input
@@ -274,7 +279,11 @@ export default function RegistrationGrade() {
                               style={{ marginRight: '20px' }}
                               className="pb-2"
                             >
-                              <p className="col fw-bold"> From </p>{' '}
+                              {index === 0 ? (
+                                <p className="col fw-bold"> From </p>
+                              ) : (
+                                <p className="col fw-bold"></p>
+                              )}
                               <select
                                 disabled={!item.isChecked}
                                 value={weekdaysArr[index].startTime}
@@ -298,7 +307,11 @@ export default function RegistrationGrade() {
                               </select>
                             </div>
                             <div className="pb-2">
-                              <p className="col fw-bold"> To </p>{' '}
+                              {index === 0 ? (
+                                <p className="col fw-bold"> To </p>
+                              ) : (
+                                <p className="col fw-bold"> </p>
+                              )}
                               <select
                                 disabled={!item.isChecked}
                                 value={weekdaysArr[index].endTime}
