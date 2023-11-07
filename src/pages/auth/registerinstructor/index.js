@@ -59,7 +59,7 @@ export default function RegisterInstructor() {
         `${base_url}/auth/register-instructor`,
         instructorDetails
       );
-      console.log(responce);
+
       window.localStorage.setItem(
         'gkcAuth',
         JSON.stringify({
@@ -79,7 +79,6 @@ export default function RegisterInstructor() {
       var stored = JSON.parse(window.localStorage.getItem('registrationForm'));
       let timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-      console.log('stor', stored);
       stored.email = email;
       stored.password = password;
       stored.timeZoneId = timezone;
