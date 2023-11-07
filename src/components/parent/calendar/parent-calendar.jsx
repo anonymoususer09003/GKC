@@ -17,6 +17,7 @@ function ParentCalendar() {
   const [bookedEvents, setBookedEvent] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedDate, setSelectedDate] = useState(null);
+  const [date, setDate] = useState(new Date());
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -35,6 +36,8 @@ function ParentCalendar() {
     const fetchEventData = async () => {
       try {
         const response = await apiClient.get('/event/logged-user-events');
+
+        console.log('response events', response);
         // console.log('EVENT DATAAAA',response.data)
         setBookedEvent(response.data);
       } catch (error) {
@@ -52,14 +55,15 @@ function ParentCalendar() {
       .toString()
       .padStart(2, '0');
     const modifiedClickedDate = `${year}-${month}-${day}`;
-    console.log(modifiedClickedDate);
+    console.log('modify date', modifiedClickedDate);
     setSelectedDate(modifiedClickedDate);
     const eventsArray = [];
-    bookedEvents.map((el) =>
+    bookedEvents.map((el) => {
+      console.log('log slice', el.start.slice(0, 10));
       el.start.slice(0, 10) === modifiedClickedDate
         ? eventsArray.push(el)
-        : null
-    );
+        : null;
+    });
 
     console.log(eventsArray);
     setEvents(eventsArray);
@@ -73,7 +77,7 @@ function ParentCalendar() {
 
     handleCalendarClick(currentDate);
   }, []);
-
+  console.log('events', events);
   return (
     <>
       <Navbar isLogin={true} />

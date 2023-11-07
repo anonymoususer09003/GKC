@@ -41,10 +41,12 @@ function ParentRequestInterview({ userInfo, loading, error, fetchUser }) {
       start: time,
       courseId: instructorCourses.find((el) => el.label === courseId).value,
       studentId: studentId,
-      instructorId: instructorId,
+      instructorId: parseInt(instructorId),
     };
     try {
+      console.log('data', data);
       const res = await apiClient.post('/event/create-interview', data);
+      router.push('/parent/calendar');
       console.log('rees', res);
     } catch (err) {
       console.log(err);
@@ -138,7 +140,7 @@ function ParentRequestInterview({ userInfo, loading, error, fetchUser }) {
       console.error('Error fetching profile data:', error);
     }
   };
-
+  console.log('selected date', selectedDate);
   const handleDateChange = async (clickedDate) => {
     const dateObj = new Date(clickedDate);
     const year = dateObj.getFullYear();
@@ -190,8 +192,6 @@ function ParentRequestInterview({ userInfo, loading, error, fetchUser }) {
       } else {
         setErr('Tutor unavailable');
       }
-
-      console.log(formattedTimeSlots, 'formatted time slots');
     } catch (error) {
       console.log(error);
     }
@@ -260,6 +260,7 @@ function ParentRequestInterview({ userInfo, loading, error, fetchUser }) {
                 {selectedInstructor?.firstName +
                   ' ' +
                   selectedInstructor?.lastName}
+                {` (GMT ${selectedInstructor?.timeZoneOffset})`}
               </p>
             </div>
             <Calendar
@@ -341,12 +342,7 @@ function ParentRequestInterview({ userInfo, loading, error, fetchUser }) {
                         }`}
                         onClick={() => {
                           setTime(
-                            `${slot.start.getFullYear()}-${String(
-                              slot.start.getMonth() + 1
-                            ).padStart(
-                              2,
-                              '0'
-                            )}-${slot.start.getDate()} ${slot.start.toLocaleTimeString(
+                            `${selectedDate} ${slot.start.toLocaleTimeString(
                               undefined,
                               {
                                 hour: '2-digit',
@@ -418,7 +414,6 @@ function ParentRequestInterview({ userInfo, loading, error, fetchUser }) {
                         })}
                     </select>
                   </div>
-
                   <div className="py-2 d-flex align-items-center gap-4">
                     <h6 className="text-dark fw-bold m-0 p-0">Mode:</h6>
 
@@ -429,8 +424,14 @@ function ParentRequestInterview({ userInfo, loading, error, fetchUser }) {
                       style={{ position: 'relative', left: 10 }}
                     >
                       <option value="">Select</option>
-                      <option value="Online">Online</option>
-                      <option value="In-Person">In-Person</option>
+                      {selectedInstructor &&
+                        selectedInstructor?.deliveryModes.map((mode) => {
+                          return (
+                            <option key={mode.id} value={mode.name}>
+                              {mode.name}
+                            </option>
+                          );
+                        })}
                     </select>
                   </div>
 

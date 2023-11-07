@@ -38,11 +38,12 @@ function RequestInterview({ userInfo, loading, error, fetchUser }) {
       start: time,
       courseId: instructorCourses.find((el) => el.label === courseId).value,
       studentId: userInfo.id,
-      instructorId: instructorId,
+      instructorId: parseInt(instructorId),
     };
     try {
       const res = await apiClient.post('/event/create-interview', data);
       console.log('rees', res);
+      router.push('/student/calendar');
     } catch (err) {
       console.log(err);
     }
@@ -256,6 +257,7 @@ function RequestInterview({ userInfo, loading, error, fetchUser }) {
                 {selectedInstructor?.firstName +
                   ' ' +
                   selectedInstructor?.lastName}
+                {` (GMT ${selectedInstructor?.timeZoneOffset})`}
               </p>
             </div>
             <Calendar
@@ -318,12 +320,7 @@ function RequestInterview({ userInfo, loading, error, fetchUser }) {
                         key={index}
                         className={`m-03 py-1 fw-bold list-unstyled ${
                           time ==
-                          `${slot.start.getFullYear()}-${String(
-                            slot.start.getMonth() + 1
-                          ).padStart(
-                            2,
-                            '0'
-                          )}-${slot.start.getDate()} ${slot.start.toLocaleTimeString(
+                          `${selectedDate} ${slot.start.toLocaleTimeString(
                             undefined,
                             {
                               hour: '2-digit',
@@ -376,6 +373,7 @@ function RequestInterview({ userInfo, loading, error, fetchUser }) {
                       }}
                       value={courseId}
                     >
+                      {console.log('slected isntructor', selectedInstructor)}
                       <option>Select</option>
                       {selectedInstructor &&
                         selectedInstructor?.coursesToTutorAndProficiencies.map(
@@ -402,9 +400,15 @@ function RequestInterview({ userInfo, loading, error, fetchUser }) {
                       onChange={handleModeChange}
                       style={{ position: 'relative', left: 10 }}
                     >
-                      <option value="">Select</option>
-                      <option value="Online">Online</option>
-                      <option value="In-Person">In-Person</option>
+                      {' '}
+                      <option value={''}>Select</option>
+                      {selectedInstructor?.deliveryModes?.map((item) => {
+                        return (
+                          <option value={item.name} key={item?.id}>
+                            {item?.name}
+                          </option>
+                        );
+                      })}
                     </select>
                   </div>
 

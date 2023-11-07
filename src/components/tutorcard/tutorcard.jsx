@@ -17,6 +17,7 @@ import { fetchUser } from '@/store/actions/userActions';
 import moment from 'moment';
 import FirebaseChat from '../../hooks/firebase-chat';
 import ChatModal from '../chat';
+import { useScreenSize } from '@/hooks/mobile-devices';
 const Tutorcard = ({ data, key }) => {
   const {
     sendMessage,
@@ -28,6 +29,7 @@ const Tutorcard = ({ data, key }) => {
     resetValues,
   } = FirebaseChat();
   const navigation = useRouter();
+  const screenSize = useScreenSize();
   const dispatch = useDispatch();
   const loggedInUser = useSelector((state) => state.user?.userInfo);
   const [userData, setUserData] = useState(null);
@@ -53,7 +55,7 @@ const Tutorcard = ({ data, key }) => {
         window.localStorage.getItem('gkcAuth') == null
       ) {
         window.localStorage.setItem(
-          'goScheduleFromSignIn',
+          'goInterviewFromSignIn',
           JSON.stringify(data.id)
         );
         navigation.push('/auth/signin');
@@ -70,7 +72,7 @@ const Tutorcard = ({ data, key }) => {
         window.localStorage.getItem('gkcAuth') == null
       ) {
         window.localStorage.setItem(
-          'goScheduleFromSignIn',
+          'goInterviewFromSignIn',
           JSON.stringify(data.id)
         );
         navigation.push('/auth/signin');
@@ -216,8 +218,18 @@ const Tutorcard = ({ data, key }) => {
           </div>
         </div>
       ) : null}
-      <div className="d-flex flex-column flex-md-row align-items-center tw-justify-center gap-4 border my-2 p-3 shadow p-3 mb-5 bg-white rounded">
-        <div>
+      <div
+        style={{ width: screenSize.isLargeScreen ? '100%' : 'fit-content' }}
+        className="d-flex flex-column flex-md-row align-items-center tw-justify-between gap-4 border my-2 p-3 shadow p-3 mb-5 bg-white rounded"
+      >
+        <div
+          style={{
+            width: '30%',
+            // backgroundColor: "red",
+            display: 'flex',
+            justifyContent: 'center',
+          }}
+        >
           <img
             src={
               data.instructorPhoto ??
@@ -250,7 +262,7 @@ const Tutorcard = ({ data, key }) => {
             </div>
           )}
         </div>
-        <div>
+        <div style={{ width: '100%' }}>
           <div className="gap-2 flex-wrap align-items-center justify-content-between">
             <div
               className={'d-flex tw-flex-row tw-justify-between'}
@@ -258,6 +270,7 @@ const Tutorcard = ({ data, key }) => {
             >
               <p className="m-0 p-0 fw-bold">
                 {data?.firstName + ' ' + data?.lastName}
+                {` (${data?.city}, ${data?.country || data?.state})`}
               </p>
               <p className="m-0 p-0 fw-bold">${data?.hourlyRate}/hr</p>
             </div>
@@ -370,7 +383,14 @@ const Tutorcard = ({ data, key }) => {
               })}
             </ul>
           </div>
-          <div className="d-flex tw-flex-row tw-justify-between tw-gap-1">
+          <div
+            style={{
+              width: '100%',
+              display: 'flex',
+              justifyContent: 'space-between',
+            }}
+            className="d-flex tw-flex-row tw-justify-between tw-gap-1"
+          >
             <button
               className={`d-flex btn_primary py-2 px-5 fw-bold text-white rounded tw-whitespace-nowrap`}
               type="submit"

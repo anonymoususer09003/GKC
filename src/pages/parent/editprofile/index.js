@@ -113,8 +113,8 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
 
   useEffect(() => {
     getCountries();
-    getStates();
-    getCities();
+    // getStates();
+    // getCities();
   }, []);
 
   useEffect(() => {
