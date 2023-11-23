@@ -44,10 +44,8 @@ function ParentRequestInterview({ userInfo, loading, error, fetchUser }) {
       instructorId: parseInt(instructorId),
     };
     try {
-      console.log('data', data);
       const res = await apiClient.post('/event/create-interview', data);
       router.push('/parent/calendar');
-      console.log('rees', res);
     } catch (err) {
       console.log(err);
     }
@@ -66,7 +64,7 @@ function ParentRequestInterview({ userInfo, loading, error, fetchUser }) {
       response.data.map((v) => {
         coursesArray.push({ value: v.id, label: v.name });
       });
-      console.log(response);
+
       setInstructorCourses(coursesArray);
     } catch (error) {
       console.log(error);
@@ -74,7 +72,6 @@ function ParentRequestInterview({ userInfo, loading, error, fetchUser }) {
   };
 
   useEffect(() => {
-    console.log(instructorId, 'id');
     const run = () => {
       const getInstructorData = async () => {
         try {
@@ -94,11 +91,11 @@ function ParentRequestInterview({ userInfo, loading, error, fetchUser }) {
           const responce = await apiClient(
             `/instructor/unavailable-days-in-UTC-TimeZone?instructorId=${instructorId}`
           );
-          console.log(responce.data);
+
           responce.data.forEach((el) => {
             disabledDates.push(new Date(el.end));
           });
-          console.log(disabledDates);
+
           setUnavailableDates(disabledDates);
         } catch (err) {
           console.log(err);
@@ -110,7 +107,7 @@ function ParentRequestInterview({ userInfo, loading, error, fetchUser }) {
           const responce = await apiClient(
             `/instructor/details-for-scheduling?instructorId=${instructorId}`
           );
-          console.log(responce.data);
+
           setSelectedInstructor(responce.data);
         } catch (err) {
           console.log(err);
@@ -134,13 +131,13 @@ function ParentRequestInterview({ userInfo, loading, error, fetchUser }) {
       const res = await apiClient.get(
         `/instructor/details-for-scheduling?instructorId=${instructorId}`
       );
-      console.log(res.data);
+
       setSelectedInstructor(res.data);
     } catch (error) {
       console.error('Error fetching profile data:', error);
     }
   };
-  console.log('selected date', selectedDate);
+
   const handleDateChange = async (clickedDate) => {
     const dateObj = new Date(clickedDate);
     const year = dateObj.getFullYear();
@@ -153,7 +150,7 @@ function ParentRequestInterview({ userInfo, loading, error, fetchUser }) {
     setTime(null);
 
     setSelectedDate(formattedDateStr);
-    console.log(formattedDateStr);
+
     try {
       const response = await apiClient.get(
         `/instructor/available-time-slots-from-date?instructorId=${selectedInstructor.id}&date=${formattedDateStr}`
@@ -163,7 +160,6 @@ function ParentRequestInterview({ userInfo, loading, error, fetchUser }) {
         start: new Date(slot.start),
         end: new Date(slot.end),
       }));
-      console.log(timeSlots);
 
       // Create 15-minute intervals for each time slot
       const formattedTimeSlots = [];
@@ -202,21 +198,9 @@ function ParentRequestInterview({ userInfo, loading, error, fetchUser }) {
     getInstructorInfo();
   }, []);
 
-  // const tileContent = ({ date, view }) => {
-  //   if (view === 'month') {
-  //     const event = events.find((event) => event?.dtStart.getTime() === date.getTime());
-  //     if (event) {
-  //       return 'event-day';
-  //     }
-  //   }
-
-  //   return null;
-  // };
-
   useEffect(() => {
     fetchUser();
   }, [fetchUser]);
-  console.log(userInfo);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -225,7 +209,7 @@ function ParentRequestInterview({ userInfo, loading, error, fetchUser }) {
   if (error) {
     return <div>Error: {error}</div>;
   }
-
+  const isDisabled = !time || !courseId || !selectedMode || !studentId;
   return (
     <>
       <Head>
@@ -461,7 +445,10 @@ function ParentRequestInterview({ userInfo, loading, error, fetchUser }) {
               </div>
               <div className="d-flex gap-2 justify-content-center pt-5">
                 <button
-                  className={`w-25 text-light p-2 rounded fw-bold btn_primary`}
+                  className={`w-25 text-light p-2 rounded fw-bold ${
+                    isDisabled ? 'btn_disabled' : 'btn_primary'
+                  }`}
+                  disabled={isDisabled}
                   onClick={() => handleContinue()}
                 >
                   Schedule

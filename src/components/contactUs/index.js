@@ -21,7 +21,7 @@ export default function ContactUs() {
   const handleMessageSubmission = async () => {
     try {
       const response = await ContactUsAPI(message);
-      console.log(response.data);
+
       setMessage('');
       setSuccess(true);
     } catch (error) {

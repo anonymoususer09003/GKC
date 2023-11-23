@@ -799,7 +799,7 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
                 <div className="row">
                   <div className="col-3">
                     <h5 className="fw-bold ">Hourly Rate</h5>
-                    <h2 className="fw-bold">
+                    <p className="fw-bold">
                       $
                       <input
                         type="text"
@@ -808,7 +808,7 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
                         onChange={(e) => setHourlyRate(e.target.value)}
                       />
                       /hr
-                    </h2>
+                    </p>
                   </div>
 
                   <div className="col-3 border-start px-4 border_primary">

@@ -82,7 +82,7 @@ const Complaints = () => {
       const queryString = new URLSearchParams(body).toString();
       const url = `${base_url}/admin/complaint/reporter-user-list?${queryString}`;
       const response = await apiClient.get(url);
-      console.log(response.data);
+
       setComplainants(response.data);
     } catch (error) {
       console.log(error);

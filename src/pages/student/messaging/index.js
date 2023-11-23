@@ -129,8 +129,8 @@ function StudentMessaging() {
                     >
                       <p className="p-0 m-0 fw-bold">{item.message}</p>
                       <small className="p-0 m-0">
-                        {`${item?.user?.name}  ${moment(date).format(
-                          'DD/MM/YY'
+                        {`${item?.user?.name}   ${moment(date).format(
+                          'MMM DD, yyyy'
                         )}`}{' '}
                         {moment(date).format('hh:mm a')}
                       </small>

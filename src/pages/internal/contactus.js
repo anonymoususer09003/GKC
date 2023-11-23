@@ -103,7 +103,6 @@ const ContactUs = () => {
       const totalPages = Math.ceil(totalRecords / recordsPerPage);
 
       setTotalCount(totalPages);
-      console.log(response.data);
 
       setUsers(response.data.content);
     } catch (error) {

@@ -1,16 +1,16 @@
-import React, { useState, useEffect } from "react";
-import Head from "next/head";
-import { Navbar, Footer } from "../../../components";
-import Calendar from "react-calendar";
-import { useRouter } from "next/router";
-import { withRole } from "../../../utils/withAuthorization";
-import axios from "axios";
-import styles from "../../../styles/Home.module.css";
-import calendarStyles from "../../../styles/Calendar.module.css";
-import StudentSchedule from "./schedule";
-import { apiClient, base_url } from "../../../api/client";
-import { fetchUser } from "@/store/actions/userActions";
-import { useDispatch } from "react-redux";
+import React, { useState, useEffect } from 'react';
+import Head from 'next/head';
+import { Navbar, Footer } from '../../../components';
+import Calendar from 'react-calendar';
+import { useRouter } from 'next/router';
+import { withRole } from '../../../utils/withAuthorization';
+import axios from 'axios';
+import styles from '../../../styles/Home.module.css';
+import calendarStyles from '../../../styles/Calendar.module.css';
+import StudentSchedule from './schedule';
+import { apiClient, base_url } from '../../../api/client';
+import { fetchUser } from '@/store/actions/userActions';
+import { useDispatch } from 'react-redux';
 
 function StudentCalandar() {
   const [events, setEvents] = useState([]);
@@ -35,11 +35,11 @@ function StudentCalandar() {
   useEffect(() => {
     const fetchEventData = async () => {
       try {
-        const response = await apiClient.get("/event/logged-user-events");
+        const response = await apiClient.get('/event/logged-user-events');
         // console.log('EVENT DATAAAA',response.data)
         setBookedEvent(response.data);
       } catch (error) {
-        console.log("Error fetching iCalendar data:", error);
+        console.log('Error fetching iCalendar data:', error);
       }
     };
     fetchEventData();
@@ -49,30 +49,40 @@ function StudentCalandar() {
   const handleCalendarClick = (clickedDate) => {
     const year = clickedDate.toISOString().slice(0, 4);
     const month = clickedDate.toISOString().slice(5, 7);
-    const day = (parseInt(clickedDate.toISOString().slice(8, 10)) + 1)
-      .toString()
-      .padStart(2, "0");
-    const modifiedClickedDate = `${year}-${month}-${day}`;
-    console.log(modifiedClickedDate)
-    setSelectedDate(modifiedClickedDate)
-    const eventsArray = []
-    bookedEvents.map(el =>
-      el.start.slice(0,10) === modifiedClickedDate ? eventsArray.push(el) : null
-    )
+    const day = moment(clickedDate).format('DD');
 
-    console.log(eventsArray)
-    setEvents(eventsArray)
+    const modifiedClickedDate = `${year}-${month}-${day}`;
+
+    setSelectedDate(modifiedClickedDate);
+    const eventsArray = [];
+    bookedEvents.map((el) => {
+      el.start.slice(0, 10) === modifiedClickedDate
+        ? eventsArray.push(el)
+        : null;
+    });
+
+    console.log(eventsArray);
+    setEvents(eventsArray);
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     var currentDate = new Date();
-    if(new Date().toString().includes('GMT+')){
-      currentDate.setDate(currentDate.getDate() - 1)
+    if (bookedEvents.length > 0) {
+      if (new Date().toString().includes('GMT+')) {
+        currentDate.setDate(currentDate.getDate() - 1);
+        //      currentDate.setDate(currentDate.getDate());
+      }
+
+      handleCalendarClick(currentDate);
+    } else {
+      const year = currentDate.toISOString().slice(0, 4);
+      const month = currentDate.toISOString().slice(5, 7);
+      const day = moment(currentDate).format('DD');
+
+      const modifiedClickedDate = `${year}-${month}-${day}`;
+      setSelectedDate(modifiedClickedDate);
     }
-
-    handleCalendarClick(currentDate)
-  },[])
-
+  }, [bookedEvents]);
   return (
     <>
       <Navbar isLogin={true} />
@@ -84,15 +94,9 @@ function StudentCalandar() {
         )}
         <div className={`row ${styles.calendarWrapper}`}>
           <div className="col-12 col-lg-6 pt-5 react-calendar-text-red">
-            <Calendar
-              onClickDay={handleCalendarClick}
-              className={calendarStyles.reactCalendar}
-              value={selectedDate}
-            />
+            <Calendar onChange={handleCalendarClick} />
           </div>
-          <StudentSchedule
-            schedule={events}
-          />
+          <StudentSchedule schedule={events} />
         </div>
       </main>
       <Footer />
@@ -100,4 +104,4 @@ function StudentCalandar() {
   );
 }
 
-export default withRole(StudentCalandar, ["Student"]);
+export default withRole(StudentCalandar, ['Student']);

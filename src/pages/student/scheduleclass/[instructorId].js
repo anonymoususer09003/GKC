@@ -21,7 +21,6 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
   const { isLargeScreen } = useScreenSize();
   const { instructorId } = router.query;
 
-  console.log('router------------', router.query);
   const status = router.isReady;
 
   const [instructorCourses, setInstructorCourses] = useState([]);
@@ -818,9 +817,13 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
               <div className="d-flex gap-2 justify-content-center pt-5">
                 <button
                   className={`w-25 text-light p-2 rounded fw-bold  ${
-                    !classFrequency || !time ? 'btn_disabled' : 'btn_primary'
+                    !classFrequency || !time || !courseId || !selectedMode
+                      ? 'btn_disabled'
+                      : 'btn_primary'
                   }`}
-                  // disabled={!classFrequency || !time ? true : false}
+                  disabled={
+                    !classFrequency || !time || !courseId || !selectedMode
+                  }
                   onClick={() => handleContinue()}
                 >
                   Schedule

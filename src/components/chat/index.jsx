@@ -22,7 +22,7 @@ const ChatModal = (props) => {
     setMessages,
     chatInfo,
   } = FirebaseChat();
-  console.log('chat infi', chatInfo);
+
   const [activeChat, setActiveChat] = useState(null);
 
   //MESSAGES ALSO PROBABLY NEEDS TO BE CHECKED --- MESSAGE
@@ -31,25 +31,13 @@ const ChatModal = (props) => {
     name: props?.instructorName,
     id: props?.instructorId,
   };
-  console.log('props', props);
+
   const student = {
     name: loggedInUser?.firstName,
     id: loggedInUser?.id,
   };
 
   const openChat = (chatId) => {
-    console.log('chatinfo', {
-      sender: {
-        id: props?.student?.id,
-        name: props?.student?.firstName,
-      },
-      receiver_user: {
-        id: props?.instructor?.id,
-        name: props?.instructor?.firstName,
-      },
-      chatId,
-    });
-
     setChatInfo({
       sender: {
         id: props?.student?.id,
@@ -69,7 +57,7 @@ const ChatModal = (props) => {
   const handleTextChange = (e) => {
     setNewMessage(e.target.value);
   };
-  console.log('props', props);
+
   return (
     <>
       {/* CHAT MODAL NEEDS TO BE FIXED */}

@@ -10,7 +10,8 @@ import GetUserDetail from '../../../services/user/GetUserDetail';
 import GetAuthCode from '@/services/Auth/GetAuthCode';
 import VerifyAuthCode from '@/services/Auth/VerifyAuthCode';
 import ChangePassword from '@/services/user/ChangePassword';
-import TutorNavbar from '@/components/admin/tutornavbar';
+import { TutorNavbar } from '../../../components';
+import AdminTutorNavbar from '@/components/admin/tutornavbar';
 
 import axios from 'axios';
 import { base_url } from '@/api/client';
@@ -132,7 +133,7 @@ export default function ForgotPassword() {
       {userTyp == 'student' && <Navbar />}
       {userTyp == 'parent' && <ParentNavbar />}
       {userTyp == 'instructor' && <TutorNavbar isLogin={true} />}
-      {userTyp === 'admin' && <TutorNavbar />}
+      {userTyp === 'admin' && <AdminTutorNavbar />}
       <main className="container-fluid d-flex flex-column  min-vh-100">
         {/*             background-color: white;
             margin: 10% auto;

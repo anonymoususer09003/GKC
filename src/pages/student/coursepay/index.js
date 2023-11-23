@@ -412,12 +412,12 @@ function StudentRegistrationCCPay() {
                       if (whoPaysId !== 'Select') {
                         console.log('parents');
                         sendEmailToWhoPays();
-                        setErr('✅ You successfully bought class.');
+                        setErr('✅ Payment successful.');
                       } else {
                         if (savedCCSelected) {
                           console.log('saved cc');
                           scheduleSaved();
-                          setErr('✅ You successfully bought class.');
+                          setErr('✅ Payment successful.');
                         } else {
                           if (isCardValid) {
                             console.log('do save valid unsaved cc');

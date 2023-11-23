@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 import { fetchUser } from '../../../store/actions/userActions';
 import { apiClient } from '@/api/client';
 import { useScreenSize } from '@/hooks/mobile-devices';
+import moment from 'moment';
 function RequestInterview({ userInfo, loading, error, fetchUser }) {
   const router = useRouter();
   const { instructorId } = router.query;
@@ -43,7 +44,7 @@ function RequestInterview({ userInfo, loading, error, fetchUser }) {
     try {
       const res = await apiClient.post('/event/create-interview', data);
       console.log('rees', res);
-      router.push('/student/calendar');
+      // router.push('/student/calendar');
     } catch (err) {
       console.log(err);
     }
@@ -82,7 +83,10 @@ function RequestInterview({ userInfo, loading, error, fetchUser }) {
           console.log(error);
         }
       };
-      if (instructorId) getInstructorData(instructorId);
+
+      if (instructorId) {
+        getInstructorData(instructorId);
+      }
       const fetchUnavailableDates = async () => {
         const disabledDates = [];
         try {
@@ -218,7 +222,7 @@ function RequestInterview({ userInfo, loading, error, fetchUser }) {
   if (loading) {
     return <div>Loading...</div>;
   }
-
+  const isDisabled = !time || !courseId || !selectedMode;
   if (error) {
     return <div>Error: {error}</div>;
   }
@@ -306,6 +310,15 @@ function RequestInterview({ userInfo, loading, error, fetchUser }) {
                 style={{ minHeight: '400px' }}
               >
                 <div className="w-100 ">
+                  <p className="p-0 m-0 fw-bold pb-2">
+                    Selected Date:{' '}
+                    <p
+                      style={{ color: 'red', marginLeft: 2 }}
+                      className="p-0 m-0 fw-bold pb-2"
+                    >
+                      {moment(selectedDate).format('MMM DD, yyyy')}
+                    </p>
+                  </p>
                   <p className="p-0 m-0 fw-bold pb-2">
                     {duration > 0 ? (
                       <>You selected {duration} time slots</>
@@ -438,8 +451,11 @@ function RequestInterview({ userInfo, loading, error, fetchUser }) {
               </div>
               <div className="d-flex gap-2 justify-content-center pt-5">
                 <button
-                  className={`w-25 text-light p-2 rounded fw-bold btn_primary`}
+                  className={`w-25 text-light p-2 rounded fw-bold ${
+                    isDisabled ? 'btn_disabled' : 'btn_primary'
+                  }`}
                   onClick={() => handleContinue()}
+                  disabled={isDisabled}
                 >
                   Schedule
                 </button>

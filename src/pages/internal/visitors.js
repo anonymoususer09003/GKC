@@ -80,7 +80,7 @@ const Visitors = () => {
       console.error(error);
     }
   };
-  console.log('states', states);
+
   const getCities = async () => {
     try {
       const response = await axios.get(
@@ -103,8 +103,7 @@ const Visitors = () => {
       console.error(error);
     }
   };
-  console.log('stte', state);
-  console.log('selected course', selectedCourseId);
+
   const getFilterData = async () => {
     try {
       const pieQueryParams = new URLSearchParams({

@@ -11,7 +11,7 @@ import ParentSchedule from './schedule';
 import { apiClient, base_url } from '../../../api/client';
 import { fetchUser } from '@/store/actions/userActions';
 import { useDispatch } from 'react-redux';
-
+import moment from 'moment';
 function ParentCalendar() {
   const [events, setEvents] = useState([]);
   const [bookedEvents, setBookedEvent] = useState([]);
@@ -51,15 +51,13 @@ function ParentCalendar() {
   const handleCalendarClick = (clickedDate) => {
     const year = clickedDate.toISOString().slice(0, 4);
     const month = clickedDate.toISOString().slice(5, 7);
-    const day = (parseInt(clickedDate.toISOString().slice(8, 10)) + 1)
-      .toString()
-      .padStart(2, '0');
+    const day = moment(clickedDate).format('DD');
+
     const modifiedClickedDate = `${year}-${month}-${day}`;
-    console.log('modify date', modifiedClickedDate);
+
     setSelectedDate(modifiedClickedDate);
     const eventsArray = [];
     bookedEvents.map((el) => {
-      console.log('log slice', el.start.slice(0, 10));
       el.start.slice(0, 10) === modifiedClickedDate
         ? eventsArray.push(el)
         : null;
@@ -71,12 +69,23 @@ function ParentCalendar() {
 
   useEffect(() => {
     var currentDate = new Date();
-    if (new Date().toString().includes('GMT+')) {
-      currentDate.setDate(currentDate.getDate() - 1);
-    }
+    if (bookedEvents.length > 0) {
+      if (new Date().toString().includes('GMT+')) {
+        currentDate.setDate(currentDate.getDate() - 1);
+        //      currentDate.setDate(currentDate.getDate());
+      }
 
-    handleCalendarClick(currentDate);
-  }, []);
+      handleCalendarClick(currentDate);
+    } else {
+      const year = currentDate.toISOString().slice(0, 4);
+      const month = currentDate.toISOString().slice(5, 7);
+      const day = moment(currentDate).format('DD');
+
+      const modifiedClickedDate = `${year}-${month}-${day}`;
+      setSelectedDate(modifiedClickedDate);
+    }
+  }, [bookedEvents]);
+
   console.log('events', events);
   return (
     <>
@@ -89,11 +98,7 @@ function ParentCalendar() {
         )}
         <div className={`row ${styles.calendarWrapper}`}>
           <div className="col-12 col-lg-6 pt-5 react-calendar-text-red">
-            <Calendar
-              onClickDay={handleCalendarClick}
-              className={calendarStyles.reactCalendar}
-              value={selectedDate}
-            />
+            <Calendar onClickDay={handleCalendarClick} />
           </div>
           <ParentSchedule schedule={events} />
         </div>

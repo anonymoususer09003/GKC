@@ -84,6 +84,15 @@ function EditCalandar({ loading, error, fetchUser }) {
     },
   ]);
 
+  const daysOrder = [
+    'MONDAY',
+    'TUESDAY',
+    'WEDNESDAY',
+    'THURSDAY',
+    'FRIDAY',
+    'SATURDAY',
+    'SUNDAY',
+  ];
   const [weekSArr, setWeeksArr] = useState([
     {
       label: 'Mon',
@@ -452,7 +461,7 @@ function EditCalandar({ loading, error, fetchUser }) {
         date: el,
       });
     });
-    console.log(requestDates);
+
     try {
       const response = await apiClient.post(
         '/instructor/unavailable-days',
@@ -483,19 +492,6 @@ function EditCalandar({ loading, error, fetchUser }) {
     }
   };
 
-  const handleDisabledTile = (value, event) => {
-    const year = value.getFullYear();
-    const month = parseInt(value.getMonth() + 1) // we use +1 because array starts from 0. Which is why january starts from 0.
-      .toString()
-      .padStart(2, '0');
-    const day = parseInt(value.getDate()).toString().padStart(2, '0');
-    //  console.log(`${year}-${month}-${day}T00:00:00`)
-    disabledDates.push(`${year}-${month}-${day}T00:00:00`);
-    console.log(disabledDates);
-
-    console.log('solution?', month);
-  };
-
   const iCalendar = async () => {
     try {
       const responce = await apiClient.get(
@@ -517,21 +513,17 @@ function EditCalandar({ loading, error, fetchUser }) {
         tem.push(obj);
       });
 
-      console.log('responce', responce.data);
-      setWeekDaysArr(responce.data);
+      const sortedData = responce.data.sort(
+        (a, b) =>
+          daysOrder.indexOf(a.dayOfTheWeek) - daysOrder.indexOf(b.dayOfTheWeek)
+      );
+      setWeekDaysArr(sortedData);
       setWeeksArr(tem);
       if (responce.data.length === 0) {
         const res = await axios.get('/timeavailability_placeholder.json');
-        console.log(res.data);
+
         setWeekDays(res.data);
       }
-
-      // // Iterate through events and add to calendar
-      // vevents.forEach(vevent => {
-      //   const eventStart = vevent.getFirstPropertyValue('dtstart').toJSDate();
-      //   const eventEnd = vevent.getFirstPropertyValue('dtend').toJSDate();
-      //   console.log(eventStart, eventEnd)
-      // });
     } catch (err) {
       console.log(err);
       if (err.message === 'Network Error') {
@@ -572,7 +564,6 @@ function EditCalandar({ loading, error, fetchUser }) {
       }
     };
     fetchUnavailableDates();
-    console.log(userInfo, 'useeeer');
   }, []);
 
   return (
@@ -773,12 +764,11 @@ function EditCalandar({ loading, error, fetchUser }) {
                     maxHeight: '600px',
                   }}
                 >
-                  {console.log('weeks arr 2', weekSArr)}
                   {weekSArr.map((item, index) => {
                     let findItem = weekdaysArr.find(
                       (ele) => ele.dayOfTheWeek === item.value
                     );
-                    console.log('finditme', findItem);
+
                     return (
                       //
                       // let findItem=weekdaysArr.find()
@@ -859,6 +849,11 @@ function EditCalandar({ loading, error, fetchUser }) {
                                     <p className="col fw-bold"> From </p>
                                   ) : (
                                     <p className="col fw-bold"></p>
+                                  )}
+
+                                  {console.log(
+                                    'weekdays array',
+                                    JSON.stringify(weekdaysArr)
                                   )}
                                   <select
                                     disabled={!item.isChecked}

@@ -494,6 +494,23 @@ function ParentScheduleClass({ loading, error }) {
     }
   };
   const calculateDifference = (number1, number2) => Math.abs(number1 - number2);
+  useEffect(() => {
+    if (
+      typeof window !== 'undefined' &&
+      !window.localStorage.getItem('gkcAuth') &&
+      router.query?.bookingAcceptanceId
+    ) {
+      window.localStorage.setItem(
+        'goBookingScheduleFromSignIn',
+        JSON.stringify({
+          path: router.asPath,
+          params: JSON.stringify(router.query),
+        })
+      );
+
+      router.push('/auth/signin');
+    }
+  }, [userInfo, router?.query]);
 
   return (
     <>
@@ -1121,8 +1138,19 @@ function ParentScheduleClass({ loading, error }) {
                   </div>
                   <div className="d-flex gap-2 justify-content-center pt-5">
                     <button
+                      disabled={
+                        !classFrequency ||
+                        !time ||
+                        !courseId ||
+                        !selectedMode ||
+                        !studentId
+                      }
                       className={`w-25 text-light p-2 rounded fw-bold  ${
-                        !classFrequency || !time
+                        !classFrequency ||
+                        !time ||
+                        !courseId ||
+                        !selectedMode ||
+                        !studentId
                           ? 'btn_disabled'
                           : 'btn_primary'
                       }`}

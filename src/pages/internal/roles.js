@@ -46,7 +46,6 @@ export default function Roles() {
         `${base_url}/admin/roles/all-admins`
       );
       setAdmins(response.data);
-      console.log('res', response.data);
     } catch (error) {
       console.log(error);
     }

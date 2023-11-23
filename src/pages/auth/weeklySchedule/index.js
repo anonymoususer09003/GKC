@@ -126,6 +126,7 @@ export default function RegistrationGrade() {
       isChecked: false,
     },
   ]);
+
   const handleCheckedAvailable = (index) => {
     let temp = [...weekSArr];
     let tempValue = { ...temp[index] };
@@ -172,9 +173,7 @@ export default function RegistrationGrade() {
   useEffect(() => {
     getGrades();
   }, []);
-
   const isAtLeastOneChecked = weekSArr.some((item) => item.isChecked);
-  console.log('isAtleastOnechecked', isAtLeastOneChecked);
   return (
     <>
       <Head>
@@ -197,7 +196,7 @@ export default function RegistrationGrade() {
             <form ref={formRef}>
               <p className="text-center">
                 Let us know the days of the week you are available and your
-                schedule
+                schedule.
               </p>
               <ul
                 className="w-100"
@@ -238,6 +237,7 @@ export default function RegistrationGrade() {
                       <div
                         style={{
                           width: '100px',
+                          marginRight: '20px',
                           display: 'flex',
                           flexDirection: 'column',
                           alignItems: 'center',

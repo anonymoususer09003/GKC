@@ -51,11 +51,11 @@ export default function Review({ role }) {
         instructorId: selectedInstructor?.id,
         courseId: selectedCourse,
       };
-      console.log(body);
+
       const res = await apiClient.post('/review', {
         ...body,
       });
-      console.log(res);
+
       setComment('');
       setRating1(0);
       setRating2(0);
@@ -72,7 +72,14 @@ export default function Review({ role }) {
       let res = null;
       if (role === 'parent') {
         res = await GetInstructorForParents();
-        const uniqueArray = removeDuplicates(res.data);
+        let temp = [];
+
+        res.data.studentAndInstructorList.map((item) => {
+          temp = [...temp, ...item?.instructorList];
+        });
+
+        const uniqueArray = removeDuplicates(temp);
+
         setInstructors(uniqueArray);
       } else {
         res = await GetInstructorByStudent();
@@ -93,11 +100,10 @@ export default function Review({ role }) {
     run();
     getReviewInstructors();
   }, []);
-
   let isDisabled =
-    comment.length < 100 &&
-    selectedInstructor === null &&
-    selectedCourse === null;
+    ((comment.length < 100 || comment.length > 500) &&
+      (!rating1 || !rating2 || !rating3)) ||
+    !selectedInstructor;
 
   return (
     <main className="container-fluid">
@@ -177,7 +183,7 @@ export default function Review({ role }) {
           </div>{' '}
           <div className="col col-8">
             <div className="container">
-              <div className="row w-70">
+              {/* <div className="row w-70">
                 <h5 className="mb-5 col"> Instructor taught: </h5>{' '}
                 <div className="col">
                   <div className="w-50">
@@ -202,7 +208,7 @@ export default function Review({ role }) {
                     </select>{' '}
                   </div>{' '}
                 </div>{' '}
-              </div>{' '}
+              </div>{' '} */}
             </div>{' '}
             <div className="container">
               <h6 className="p-0 m-0"> Tutor 's understanding of course</h6>{' '}
@@ -284,14 +290,9 @@ export default function Review({ role }) {
               <button
                 className={`py-2 px-4 fw-bold text-white rounded text-end`}
                 style={{
-                  background:
-                    comment.length >= 100 && comment.length <= 500
-                      ? '#f48343'
-                      : 'gray',
+                  background: !isDisabled ? '#f48343' : 'gray',
                 }}
-                disabled={
-                  comment.length >= 100 && comment.length <= 500 ? false : true
-                }
+                disabled={isDisabled}
                 onClick={onSubmit}
               >
                 Send

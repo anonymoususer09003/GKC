@@ -21,7 +21,7 @@ function FinancialReport({ role }) {
   const [page, setPage] = useState(0);
   const [size, setSize] = useState(20);
   const [totalRecords, setTotalRecods] = useState(0);
-
+  const [totatlAmount, setTotalAmount] = useState(0);
   const [date, setDate] = useState({
     start: '2023-09-01',
     end: moment().format('YYYY-MM-DD'),
@@ -62,8 +62,14 @@ function FinancialReport({ role }) {
             res = await InstructorFinancialReport({ filter: queryString });
         }
       }
-      console.log('re--00s', res.data);
+
       setFinancialData(res?.data?.content ?? []);
+      let sum = 0;
+      res?.data?.content?.map((item) => {
+        sum = item.totalAmount + sum;
+      });
+
+      setTotalAmount(sum);
       setTotalRecods(res?.data?.totalElements);
       setPage((prev) => prev + 1);
     } catch (err) {
@@ -95,7 +101,7 @@ function FinancialReport({ role }) {
             res = await InstructorFinancialReport({ filter: queryString });
         }
       }
-      console.log('re--00s', res.data);
+
       setFinancialData((prev) => [...prev, ...res?.data?.content]);
       setTotalRecods(res?.data?.totalElements);
       setPage((prev) => prev + 1);
@@ -110,7 +116,7 @@ function FinancialReport({ role }) {
         filter = `?start=${date.start}&end=${date.end}`;
       }
       let res = await DownloadFinancialReport({ filter });
-      console.log('res', res.data);
+
       let pdfData = res.data;
       if (pdfData) {
         const blob = new Blob([pdfData], { type: 'application/pdf' });
@@ -131,8 +137,6 @@ function FinancialReport({ role }) {
     }
   };
   const handleDateChange = (e) => {
-    console.log('date', e.target.value);
-
     setDate({ ...date, [e.target.name]: e.target.value });
   };
   const handleReset = () => {
@@ -314,16 +318,38 @@ function FinancialReport({ role }) {
                               {' '}
                               {item?.hoursScheduled}{' '}
                             </td>{' '}
-                            <td className="fw-bold"> ${item?.hourlyRate} </td>{' '}
-                            <td className="fw-bold"> ${item?.feeAmount} </td>{' '}
+                            <td className="fw-bold">
+                              {' '}
+                              ${item?.hourlyRate.toFixed(2)}{' '}
+                            </td>{' '}
+                            <td className="fw-bold">
+                              {' '}
+                              ${item?.feeAmount.toFixed(2)}{' '}
+                            </td>{' '}
                             <td className="fw-bold d-flex justify-content-between align-items-center">
                               {' '}
-                              ${item?.totalAmount}{' '}
+                              ${item?.totalAmount.toFixed(2)}{' '}
                               {/* <TbSpeakerphone onClick={() => onRequestRefund()} />{' '} */}
                             </td>{' '}
                           </tr>
                         );
                       })}
+                    <tr>
+                      <th className="fw-bold" scope="row">
+                        {' '}
+                      </th>{' '}
+                      <td className="fw-bold w-25"> </td>{' '}
+                      {role === 'parent' && <td className="fw-bold w-25"> </td>}
+                      <td className="fw-bold"> </td>{' '}
+                      <td className="fw-bold"> </td>{' '}
+                      <td className="fw-bold"> </td>{' '}
+                      <td className="fw-bold"></td>{' '}
+                      <td className="fw-bold d-flex justify-content-between align-items-center">
+                        {' '}
+                        ${totatlAmount}
+                        {/* <TbSpeakerphone onClick={() => onRequestRefund()} />{' '} */}
+                      </td>{' '}
+                    </tr>
                   </tbody>{' '}
                 </table>
               </div>

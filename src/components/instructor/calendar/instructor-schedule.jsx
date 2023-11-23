@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
 import styles from '../../../styles/Home.module.css';
 import { BsFillChatFill, BsFillSendFill } from 'react-icons/bs';
-import { IconContext } from 'react-icons';
+
 import { GoDeviceCameraVideo } from 'react-icons/go';
 import { RiDeleteBin6Line } from 'react-icons/ri';
 import { useRouter } from 'next/router';
@@ -11,9 +11,11 @@ import axios from 'axios';
 import { useSelector } from 'react-redux';
 import GetUserByid from '@/services/user/GetUserByid';
 import { apiClient } from '@/api/client';
+
 const InstructorSchedule = (props) => {
   const router = useRouter();
   const loggedInUser = useSelector((state) => state.user.userInfo);
+  const [schedule, setSchedule] = useState([]);
   const navigation = useRouter();
   const {
     sendMessage,
@@ -28,8 +30,6 @@ const InstructorSchedule = (props) => {
   const [activeChat, setActiveChat] = useState(null);
   const [chat, setChat] = useState([]);
 
-  const [enabledCamera, setEnabledCamera] = useState(false);
-  console.log('props', props);
   useEffect(() => {
     setChat([...chat, messages]);
   }, [messages]);
@@ -44,8 +44,6 @@ const InstructorSchedule = (props) => {
           },
         }
       );
-
-      console.log('Event deletion successful:', response.data);
     } catch (error) {
       console.log('Error deleting event:', error);
     }
@@ -83,13 +81,12 @@ const InstructorSchedule = (props) => {
           parentId:
             res.data?.parents?.length > 0 ? res.data.parents[0]?.id : '',
         });
-        console.log('res------', res.data);
       } catch (err) {
         console.log('err', err);
       }
     }
   };
-  console.log('student', student);
+
   useEffect(() => {
     getParticipantsDetail(props?.studentId);
   }, [props?.eventId]);
@@ -107,13 +104,12 @@ const InstructorSchedule = (props) => {
       chatId,
     });
   };
-  console.log('activechat', activeChat);
 
   useEffect(() => {
     if (activeChat)
       openChat(activeChat?.instructorId + '-' + activeChat?.studentId);
   }, [activeChat]);
-  console.log('logged in user,', loggedInUser);
+
   const handleTextChange = (e) => {
     setNewMessage(e.target.value);
   };
@@ -130,6 +126,14 @@ const InstructorSchedule = (props) => {
     }
   }
 
+  useEffect(() => {
+    if (props?.schedule) {
+      let sortedarray = props?.schedule.sort(
+        (a, b) => new Date(a.start) - new Date(b.start)
+      );
+      setSchedule(sortedarray);
+    }
+  }, [props?.schedule]);
   return (
     <>
       <div className="col-12 col-lg-6">
@@ -152,10 +156,23 @@ const InstructorSchedule = (props) => {
                   </td>
                 </tr>
               )}
-              {props.schedule &&
-                props.schedule.map((el) => {
+              {schedule &&
+                schedule.map((el) => {
                   // Define the specific event time as a Date object
-                  var specificEventTime = new Date(el.start.slice(0,19)+'Z');
+                  var specificEventTime = new Date(el.start.slice(0, 19));
+                  var specificEventTimes = new Date(el.start.slice(0, 19));
+
+                  var modifiedDate = new Date(
+                    specificEventTime.getTime() - 10 * 60000
+                  );
+                  let adjustedDuration = 0;
+                  let duration = el.durationInHours;
+                  if (duration >= 1) {
+                    adjustedDuration = duration;
+                  }
+                  specificEventTimes.setHours(
+                    specificEventTimes.getHours() + adjustedDuration
+                  );
 
                   // Get the current time as a Date object
                   var currentTime = new Date();
@@ -167,6 +184,7 @@ const InstructorSchedule = (props) => {
                   var minutesDifference = Math.floor(
                     timeDifference / (1000 * 60)
                   );
+                  let time = moment(el.start).format('hh:mm a');
                   var past = specificEventTime <= currentTime;
                   return (
                     <tr>
@@ -174,7 +192,7 @@ const InstructorSchedule = (props) => {
                         {el.studentName}
                       </td>
                       <td className="p-0 m-0 flex-fill fw-bold flex-fill">
-                        {el.start && el.start.split(' ')[1]}
+                        {time}
                       </td>
                       <td className="p-0 m-0 flex-fill fw-bold flex-fill">
                         {el.courseName +
@@ -194,20 +212,28 @@ const InstructorSchedule = (props) => {
                       </td>
 
                       <td>
-                      {
-                          minutesDifference >= 10 || minutesDifference <= -70 || past ? 
+                        {(modifiedDate.getTime() >= currentTime.getTime() &&
+                          currentTime < specificEventTimes) ||
+                        past ? (
                           <GoDeviceCameraVideo
-                          style={{
-                            fill: 'gray'
-                          }}
-                          className="p-0 m-0 flex-fill h4 flex-fill"
-                        />
-                        :
-                        <img src="https://cdn-icons-png.flaticon.com/512/4943/4943781.png " width={24} alt="click here to call"
-                        style={{cursor:'pointer'}}
-                        onClick={()=> navigation.push(`/student/video?${el?.courseName}`)}
-                        />
-                        }
+                            style={{
+                              fill: 'gray',
+                            }}
+                            className="p-0 m-0 flex-fill h4 flex-fill"
+                          />
+                        ) : (
+                          <img
+                            src="https://cdn-icons-png.flaticon.com/512/4943/4943781.png "
+                            width={24}
+                            alt="click here to call"
+                            style={{ cursor: 'pointer' }}
+                            onClick={() =>
+                              navigation.push(
+                                `/student/video?${el?.courseName}`
+                              )
+                            }
+                          />
+                        )}
                       </td>
                       <td>
                         <RiDeleteBin6Line
@@ -270,8 +296,8 @@ const InstructorSchedule = (props) => {
                       >
                         <p className="p-0 m-0 fw-bold">{item.message}</p>
                         <small className="p-0 m-0">
-                          {`${item?.user?.name}  ${moment(date).format(
-                            'd/MM/YY'
+                          {`${item?.user?.name}   ${moment(date).format(
+                            'MMM DD, yyyy'
                           )}`}{' '}
                           {moment(date).format('hh:mm a')}
                         </small>

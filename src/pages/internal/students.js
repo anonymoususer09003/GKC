@@ -186,7 +186,7 @@ const Students = () => {
       const totalPages = Math.ceil(totalRecords / recordsPerPage);
 
       setTotalCount(totalPages);
-      console.log('res', response.data);
+=
     } catch (error) {
       console.log(error);
     }
@@ -203,7 +203,7 @@ const Students = () => {
       );
 
       setSelectedUserData(response.data);
-      console.log('resr', response.data);
+
       setSelectedStudentCourses(
         response.data.courseOfInterestAndProficiency.map((item) => ({
           id: item.course.id,

@@ -153,7 +153,6 @@ function StudentRegistrationCCPay() {
     // Do something with the value in the parent component
   };
   const handlePaymentRequest = (data) => {
-    console.log('data', data);
     if (data.status === 'succeeded') {
       // scheduleSaved();
       scheduleNoSaved(data);
@@ -342,12 +341,12 @@ function StudentRegistrationCCPay() {
                       if (savedCCSelected) {
                         console.log('saved cc');
                         scheduleSaved();
-                        setErr('✅ You successfully bought class.');
+                        setErr('✅ Payment successful.');
                       } else {
                         if (isCardValid) {
                           console.log('valid unsaved cc');
                           setConfirmPayment(true);
-                          setErr('✅ You successfully bought class.');
+                          setErr('✅ Payment successful.');
                         } else {
                           console.log('unvalid unsaved cc');
                           setErr(
@@ -362,8 +361,7 @@ function StudentRegistrationCCPay() {
                       // whoPaysId === "Select"
                       //   ? setConfirmPayment(true)
                       //   : sendEmailToWhoPays();
-                    }
-                  }
+                    }}
                   >
                     Pay
                   </button>

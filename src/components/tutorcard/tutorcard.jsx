@@ -55,7 +55,7 @@ const Tutorcard = ({ data, key }) => {
         window.localStorage.getItem('gkcAuth') == null
       ) {
         window.localStorage.setItem(
-          'goInterviewFromSignIn',
+          'goScheduleFromSignIn',
           JSON.stringify(data.id)
         );
         navigation.push('/auth/signin');
@@ -85,7 +85,6 @@ const Tutorcard = ({ data, key }) => {
       }
     }
   };
-
   const handleCloseModal = () => {
     setShowModal(false);
   };
@@ -244,7 +243,7 @@ const Tutorcard = ({ data, key }) => {
           {data?.video && (
             <div
               className="d-flex justify-conntent-between align-items-end"
-              style={{ position: 'relative', left: 160, top: 10, width: 40 }}
+              style={{ position: 'relative', left: 20, top: 10, width: 40 }}
             >
               <div
                 onClick={() => {
@@ -263,7 +262,7 @@ const Tutorcard = ({ data, key }) => {
           )}
         </div>
         <div style={{ width: '100%' }}>
-          <div className="gap-2 flex-wrap align-items-center justify-content-between">
+          <div className=" flex-wrap align-items-center justify-content-between">
             <div
               className={'d-flex tw-flex-row tw-justify-between'}
               style={{ fontSize: 20 }}
@@ -371,6 +370,24 @@ const Tutorcard = ({ data, key }) => {
               })}
             </ul>
           </div>
+
+          <div className="d-flex gap-2">
+            <b>Grades:</b>
+
+            <ul className="d-flex list-unstyled gap-2 tw-flex-wrap">
+              {data?.gradesToTutor?.map((v, i) => {
+                return (
+                  <li
+                    style={{ backgroundColor: '#67bdf0' }}
+                    className=" text-white p-2 rounded d-flex align-items-center gap-2"
+                  >
+                    {v.name}
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+
           <div className="d-flex gap-2">
             <b>Speaks:</b>
             <ul className="d-flex list-unstyled gap-2 tw-flex-wrap">
@@ -405,7 +422,7 @@ const Tutorcard = ({ data, key }) => {
                 className={`btn_primary py-2 px-5 fw-bold text-white rounded tw-whitespace-nowrap`}
                 type="submit"
                 onClick={() => {
-                  handleOpenModal(false.valueOf, 'requestinterview');
+                  handleOpenModal(false, 'requestinterview');
                 }}
               >
                 Request Interview
@@ -804,8 +821,8 @@ const Tutorcard = ({ data, key }) => {
                         >
                           <p className="p-0 m-0 fw-bold">{item.message}</p>
                           <small className="p-0 m-0">
-                            {`${item?.user?.name}  ${moment(date).format(
-                              'd/MM/YY'
+                            {`${item?.user?.name}   ${moment(date).format(
+                              'MMM DD, yyyy'
                             )}`}{' '}
                             {moment(date).format('hh:mm a')}
                           </small>

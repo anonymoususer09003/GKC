@@ -219,8 +219,20 @@ function StudentLandingPage() {
       if (window.localStorage.getItem('goInterviewFromSignIn') !== null) {
         setGoInterviewFromSignIn(true);
       }
+      if (window.localStorage.getItem('goBookingScheduleFromSignIn') !== null) {
+        let path = JSON.parse(
+          window.localStorage.getItem('goBookingScheduleFromSignIn')
+        );
+
+        setTimeout(
+          () => window.localStorage.removeItem('goBookingScheduleFromSignIn'),
+          9000
+        );
+        nav.push(path.path);
+      }
     }
   }, []);
+
   return (
     <>
       <Head>
