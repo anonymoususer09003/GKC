@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import Head from 'next/head';
 import { ParentNavbar, Footer } from '../../../components';
-import Calendar from 'react-calendar';
 import { useRouter } from 'next/router';
 import { withRole } from '../../../utils/withAuthorization';
 import axios from 'axios';
 import { fetchUser } from '@/store/actions/userActions';
 import Link from 'next/link';
-
+import Calendar from '.././../../components/calendar/index';
 import { connect } from 'react-redux';
 import { apiClient } from '@/api/client';
 import { useDispatch, useSelector } from 'react-redux';
@@ -102,7 +101,7 @@ function ParentScheduleClass({ loading, error }) {
         .replace('T', ' ');
       setTime(formattedDateStr);
       console.log('formated', formattedDateStr);
-      setDuration(data.durationInHours);
+      setDuration(data.durationInHours * 2);
       setDate(data.start.slice(0, 10));
       setClassFrequency(data.classFrequency);
       setCourseId(coursesArr.find((el) => el.value === data.courseId).label);
@@ -142,7 +141,7 @@ function ParentScheduleClass({ loading, error }) {
 
       console.log('formatted time', formattedDateStr);
       setTime(formattedDateStr);
-      setDuration(data.durationInHours);
+      setDuration(data.durationInHours * 2);
       setDate(data?.startAtBookingUserTimeZone?.slice(0, 10));
       setClassFrequency(data.classFrequency);
       setCourseId(coursesArr.find((el) => el.value === data.courseId).label);
@@ -280,7 +279,6 @@ function ParentScheduleClass({ loading, error }) {
       }
     }
   }, [instructorId]);
-  console.log('selected', selectedSlots);
   const handleDateChange = async (clickedDate, duration) => {
     console.log('lcliekcdate', clickedDate);
 
@@ -291,26 +289,25 @@ function ParentScheduleClass({ loading, error }) {
     const hours = String(dateObj.getHours()).padStart(2, '0');
     const minutes = String(dateObj.getMinutes()).padStart(2, '0');
     let formattedDateStr = `${year}-${month}-${day}`;
-    if (eventId === undefined) {
-      setDuration(0);
-    }
+    // if (eventId === undefined) {
+    //   setDuration(0);
+    // }
 
     setSelectedDate(formattedDateStr);
+    if (bookingAcceptanceId) {
+      const date = moment(formattedDateStr);
 
+      // Add one day to the date
+
+      formattedDateStr = date.format('YYYY-MM-DD');
+    }
     try {
-      if (bookingAcceptanceId) {
-        const date = moment(formattedDateStr);
-
-        // Add one day to the date
-        date.add(1, 'days');
-        formattedDateStr = date.format('YYYY-MM-DD');
-      }
       const response = await apiClient.get(
         `/instructor/available-time-slots-from-date?instructorId=${
           selectedInstructor?.id ?? instructorId
         }&date=${formattedDateStr}`
       );
-
+      console.log('response88', response);
       const timeSlots = response.data.map((slot) => ({
         start: new Date(slot.start),
         end: new Date(slot.end),
@@ -324,6 +321,7 @@ function ParentScheduleClass({ loading, error }) {
 
       if (eventId !== undefined || bookingAcceptanceId !== undefined) {
         let timeclickeddate = moment(dateObj).format('hh:mm');
+        console.log('timeslots', timeSlots);
         let findIndex = timeSlots.findIndex((obj) =>
           moment(obj.start).format('hh:mm').includes(timeclickeddate)
         );
@@ -772,16 +770,11 @@ function ParentScheduleClass({ loading, error }) {
                     </h3>
                   </div>
                 )}
-                <Calendar
-                  value={date}
-                  onChange={handleDateChange}
-                  tileClassName={tileClassName}
-                  // tileDisabled={unavailableDates.length >1 ? ({date, view})=> view === 'month' && unavailableDates.some(disabledDate =>
-                  //   new Date(date).getFullYear() === new Date(disabledDate).getFullYear() &&
-                  //   new Date(date).getMonth() === new Date(disabledDate).getMonth() &&
-                  //   new Date(date).getDate() === new Date(disabledDate).getDate()
-                  //   ) : () => false}
-                />
+                {bookingAcceptanceId ? (
+                  <Calendar value={date} onChange={handleDateChange} />
+                ) : (
+                  <Calendar onChange={handleDateChange} />
+                )}
               </div>
               <div className="col-12 col-lg-6 pt-5">
                 <div className="tw-flex tw-justify-center">
@@ -827,6 +820,15 @@ function ParentScheduleClass({ loading, error }) {
                     style={{ minHeight: '400px' }}
                   >
                     <div className="w-100 ">
+                      <p className="p-0 m-0 fw-bold pb-2">
+                        Selected Date:{' '}
+                        <p
+                          style={{ color: 'red', marginLeft: 2 }}
+                          className="p-0 m-0 fw-bold pb-2"
+                        >
+                          {moment(selectedDate).format('MMM DD, yyyy')}
+                        </p>
+                      </p>
                       <p className="p-0 m-0 fw-bold pb-2">
                         {duration > 0 ? (
                           <>You selected {duration / 2} hours</>

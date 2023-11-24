@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import { Navbar, Footer } from '../../../components';
-import Calendar from 'react-calendar';
+
 import { withRole } from '../../../utils/withAuthorization';
 import { useRouter } from 'next/router';
 import { connect } from 'react-redux';
-import calendarStyles from '../../../styles/Calendar.module.css';
+import Calendar from '.././../../components/calendar/index';
 import axios from 'axios';
 import styles from '../../../styles/Home.module.css';
 import { RRule } from 'rrule';
@@ -178,12 +178,10 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
     try {
       let res = await getBookingAcceptance(bookingAcceptanceId);
 
-      console.log('res-----9', res.data);
       let coursesArr = await getCourses();
 
       const { data } = res;
 
-      console.log('data00000', data);
       // eventStartTimeslot = data?.startAtBookingUserTimeZone;
 
       // console.log(instructorCourses)
@@ -201,7 +199,7 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
 
       console.log('formatted time', formattedDateStr);
       setTime(formattedDateStr);
-      setDuration(data.durationInHours);
+      setDuration(data.durationInHours * 2);
       setDate(data?.startAtBookingUserTimeZone?.slice(0, 10));
       setClassFrequency(data.classFrequency);
       setCourseId(coursesArr?.find((el) => el.value === data.courseId).label);
@@ -221,7 +219,6 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
       getBookingDetail();
     }
   }, [bookingAcceptanceId]);
-
   const handleDateChange = async (clickedDate, duration) => {
     console.log('lcliekcdate', clickedDate);
 
@@ -232,16 +229,16 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
     const hours = String(dateObj.getHours()).padStart(2, '0');
     const minutes = String(dateObj.getMinutes()).padStart(2, '0');
     let formattedDateStr = `${year}-${month}-${day}`;
-    if (eventId === undefined) {
-      setDuration(0);
-    }
+    // if (eventId === undefined) {
+    //   setDuration(0);
+    // }
 
     setSelectedDate(formattedDateStr);
     if (bookingAcceptanceId) {
       const date = moment(formattedDateStr);
 
       // Add one day to the date
-      date.add(1, 'days');
+
       formattedDateStr = date.format('YYYY-MM-DD');
     }
     try {
@@ -250,7 +247,7 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
           selectedInstructor?.id ?? instructorId
         }&date=${formattedDateStr}`
       );
-
+      console.log('response88', response);
       const timeSlots = response.data.map((slot) => ({
         start: new Date(slot.start),
         end: new Date(slot.end),
@@ -516,18 +513,11 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
                 </div>
               </div>
             )}
-            <Calendar
-              value={date}
-              onChange={handleDateChange}
-              tileClassName={tileClassName}
-
-              // tileDisabled={unavailableDates.length >1 ? ({date, view})=> view === 'month' &&
-              // unavailableDates.some(disabledDate =>
-              //   new Date(date).getFullYear() === new Date(disabledDate).getFullYear() &&
-              //   new Date(date).getMonth() === new Date(disabledDate).getMonth() &&
-              //   new Date(date).getDate() === new Date(disabledDate).getDate()
-              //   ) : () => false}
-            />
+            {bookingAcceptanceId ? (
+              <Calendar value={date} onChange={handleDateChange} />
+            ) : (
+              <Calendar onChange={handleDateChange} />
+            )}
           </div>
           <div className="col-12 col-lg-6 pt-5">
             <p className="fw-bold text-center text-white">I</p>
@@ -554,6 +544,15 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
                 style={{ minHeight: '400px' }}
               >
                 <div className="w-100 ">
+                  <p className="p-0 m-0 fw-bold pb-2">
+                    Selected Date:{' '}
+                    <p
+                      style={{ color: 'red', marginLeft: 2 }}
+                      className="p-0 m-0 fw-bold pb-2"
+                    >
+                      {moment(selectedDate).format('MMM DD, yyyy')}
+                    </p>
+                  </p>
                   <p className="p-0 m-0 fw-bold pb-2">
                     {duration > 0 ? (
                       <>You selected {duration / 2} hours</>
@@ -756,13 +755,18 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
                     >
                       <option>Select</option>
                       {selectedInstructor &&
-                        selectedInstructor?.coursesToTeach?.map((course) => {
-                          return (
-                            <option key={course.id} value={course.name}>
-                              {course.name}
-                            </option>
-                          );
-                        })}
+                        selectedInstructor?.coursesToTutorAndProficiencies?.map(
+                          (course) => {
+                            return (
+                              <option
+                                key={course.course.id}
+                                value={course.course.name}
+                              >
+                                {course.course.name}
+                              </option>
+                            );
+                          }
+                        )}
                     </select>
                   </div>
 
