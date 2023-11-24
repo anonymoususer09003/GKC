@@ -186,7 +186,6 @@ const Students = () => {
       const totalPages = Math.ceil(totalRecords / recordsPerPage);
 
       setTotalCount(totalPages);
-=
     } catch (error) {
       console.log(error);
     }
