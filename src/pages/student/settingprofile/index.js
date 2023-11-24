@@ -86,7 +86,7 @@ function SettingProfle({ userInfo, loading, error, fetchUser }) {
                         : ''}
                     </p>
                   )}
-                  {console.log('userinfo', userInfo.parents)}
+
                   {userInfo?.parents?.length === 0 && (
                     <p>You didn't select any parents/guardians yet.</p>
                   )}
