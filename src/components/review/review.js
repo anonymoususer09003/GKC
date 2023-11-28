@@ -77,7 +77,7 @@ export default function Review({ role }) {
         res.data.studentAndInstructorList.map((item) => {
           temp = [...temp, ...item?.instructorList];
         });
-
+        console.log('res000', res);
         const uniqueArray = removeDuplicates(temp);
 
         setInstructors(uniqueArray);
@@ -101,8 +101,11 @@ export default function Review({ role }) {
     getReviewInstructors();
   }, []);
   let isDisabled =
-    ((comment.length < 100 || comment.length > 500) &&
-      (!rating1 || !rating2 || !rating3)) ||
+    comment.length < 100 ||
+    comment.length > 500 ||
+    !rating1 ||
+    !rating2 ||
+    !rating3 ||
     !selectedInstructor;
 
   return (
@@ -142,7 +145,7 @@ export default function Review({ role }) {
               <button
                 onClick={() => {
                   setSuccess(false);
-                  nav.back();
+                  // nav.back();
                 }}
                 className="btn_primary text-light p-2 rounded fw-bold mt-3"
                 style={{ width: 100 }}

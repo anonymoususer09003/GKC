@@ -149,7 +149,11 @@ function ParentLandingPage() {
   }
   const getCourses = async () => {
     try {
-      const response = await apiClient.get(`/public/course/with-instructors`);
+      const response = await apiClient.get(`
+      /public/course/get-all-courses
+
+      `);
+      // /public/course/with-instructors
       var technologyList = [];
 
       response.data.forEach((v) => {

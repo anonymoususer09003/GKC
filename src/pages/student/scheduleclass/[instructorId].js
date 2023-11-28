@@ -197,7 +197,6 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
         .slice(0, 16)
         .replace('T', ' ');
 
-      console.log('formatted time', formattedDateStr);
       setTime(formattedDateStr);
       setDuration(data.durationInHours * 2);
       setDate(data?.startAtBookingUserTimeZone?.slice(0, 10));
@@ -220,8 +219,6 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
     }
   }, [bookingAcceptanceId]);
   const handleDateChange = async (clickedDate, duration) => {
-    console.log('lcliekcdate', clickedDate);
-
     const dateObj = new Date(clickedDate);
     const year = dateObj.getFullYear();
     const month = String(dateObj.getMonth() + 1).padStart(2, '0');
@@ -266,15 +263,9 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
           moment(obj.start).format('hh:mm').includes(timeclickeddate)
         );
 
-        console.log('findindex', findIndex);
-        console.log('timesots', timeSlots);
-        console.log('timeclickedate', timeclickeddate);
         let count = duration + findIndex;
-        console.log('duration', duration);
-        timeSlots.forEach((slot, index) => {
-          console.log('index', index);
 
-          console.log('count', count);
+        timeSlots.forEach((slot, index) => {
           if (
             // isOnHalfHour(slot.start) &&
             index >= findIndex &&
@@ -418,6 +409,7 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
     }
   };
   const calculateDifference = (number1, number2) => Math.abs(number1 - number2);
+  const userOffset = moment().utcOffset();
   return (
     <>
       <Head>
@@ -514,7 +506,16 @@ function StudentScheduleClass({ userInfo, loading, error, fetchUser }) {
               </div>
             )}
             {bookingAcceptanceId ? (
-              <Calendar value={date} onChange={handleDateChange} />
+              <Calendar
+                value={
+                  userOffset > 0
+                    ? date
+                    : moment(date || new Date())
+                        .add(1, 'days')
+                        .format('YYYY-MM-DD')
+                }
+                onChange={handleDateChange}
+              />
             ) : (
               <Calendar onChange={handleDateChange} />
             )}

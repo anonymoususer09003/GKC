@@ -288,30 +288,26 @@ function ParentScheduleClass({ loading, error }) {
     const day = String(dateObj.getDate()).padStart(2, '0');
     const hours = String(dateObj.getHours()).padStart(2, '0');
     const minutes = String(dateObj.getMinutes()).padStart(2, '0');
-    let formattedDateStr = `${year}-${month}-${day}`;
+    const formattedDateStr = `${year}-${month}-${day}`;
     // if (eventId === undefined) {
     //   setDuration(0);
     // }
 
     setSelectedDate(formattedDateStr);
-    if (bookingAcceptanceId) {
-      const date = moment(formattedDateStr);
 
-      // Add one day to the date
-
-      formattedDateStr = date.format('YYYY-MM-DD');
-    }
     try {
       const response = await apiClient.get(
         `/instructor/available-time-slots-from-date?instructorId=${
           selectedInstructor?.id ?? instructorId
         }&date=${formattedDateStr}`
       );
-      console.log('response88', response);
+
       const timeSlots = response.data.map((slot) => ({
         start: new Date(slot.start),
         end: new Date(slot.end),
       }));
+
+      let timeclickeddates = moment(dateObj).format('hh:mm');
 
       const isOnHalfHour = (date) =>
         date.getMinutes() === 0 || date.getMinutes() === 30;
@@ -319,22 +315,15 @@ function ParentScheduleClass({ loading, error }) {
       // Create half-hour intervals for each time slot
       const formattedTimeSlots = [];
 
-      if (eventId !== undefined || bookingAcceptanceId !== undefined) {
+      if (bookingAcceptanceId !== undefined) {
         let timeclickeddate = moment(dateObj).format('hh:mm');
-        console.log('timeslots', timeSlots);
         let findIndex = timeSlots.findIndex((obj) =>
           moment(obj.start).format('hh:mm').includes(timeclickeddate)
         );
 
-        console.log('findindex', findIndex);
-        console.log('timesots', timeSlots);
-        console.log('timeclickedate', timeclickeddate);
         let count = duration + findIndex;
-        console.log('duration', duration);
-        timeSlots.forEach((slot, index) => {
-          console.log('index', index);
 
-          console.log('count', count);
+        timeSlots.forEach((slot, index) => {
           if (
             // isOnHalfHour(slot.start) &&
             index >= findIndex &&
@@ -360,6 +349,67 @@ function ParentScheduleClass({ loading, error }) {
         setSelectedSlots(formattedTimeSlots);
         // console.log('filterarr', filterarr);
         setAvailableTime(formattedTimeSlots);
+      } else if (eventId !== undefined) {
+        let timeclickeddate = moment(dateObj).format('hh:mm');
+        let findIndex = timeSlots.findIndex((obj) =>
+          moment(obj.start).format('hh:mm').includes(timeclickeddate)
+        );
+
+        if (findIndex != -1) {
+          let count = duration + findIndex;
+
+          timeSlots.forEach((slot, index) => {
+            if (
+              // isOnHalfHour(slot.start) &&
+              index >= findIndex &&
+              index <= count
+            ) {
+              const start = new Date(slot.start);
+              start.setSeconds(0); // Set seconds to 0
+              start.setMilliseconds(0); // Set milliseconds to 0
+
+              const end = new Date(slot.start.getTime() + 30 * 60 * 1000);
+              end.setSeconds(0); // Set seconds to 0
+              end.setMilliseconds(0); // Set milliseconds to 0
+
+              formattedTimeSlots.push({
+                start,
+                end,
+              });
+            }
+          });
+          // let filterarr = formattedTimeSlots.filter(
+          //   (item, index) => index >= findIndex && index <= count
+          // );
+          setSelectedSlots(formattedTimeSlots);
+          // console.log('filterarr', filterarr);
+          setAvailableTime(formattedTimeSlots);
+        } else {
+          let count = duration + findIndex;
+
+          timeSlots.forEach((slot, index) => {
+            if (index == 0) {
+              const start = new Date(dateObj);
+              start.setSeconds(0); // Set seconds to 0
+              start.setMilliseconds(0); // Set milliseconds to 0
+
+              const end = new Date(slot.start);
+              start.setSeconds(0); // Set seconds to 0
+              start.setMilliseconds(0);
+
+              formattedTimeSlots.push({
+                start,
+                end,
+              });
+            }
+          });
+          // let filterarr = formattedTimeSlots.filter(
+          //   (item, index) => index >= findIndex && index <= count
+          // );
+          setSelectedSlots(formattedTimeSlots);
+          // console.log('filterarr', filterarr);
+          setAvailableTime(formattedTimeSlots);
+        }
       } else {
         timeSlots.forEach((slot) => {
           if (isOnHalfHour(slot.start)) {
@@ -770,8 +820,13 @@ function ParentScheduleClass({ loading, error }) {
                     </h3>
                   </div>
                 )}
-                {bookingAcceptanceId ? (
-                  <Calendar value={date} onChange={handleDateChange} />
+                {bookingAcceptanceId || eventId ? (
+                  <Calendar
+                    value={moment(date || new Date())
+                      .add(1, 'days')
+                      .format('YYYY-MM-DD')}
+                    onChange={handleDateChange}
+                  />
                 ) : (
                   <Calendar onChange={handleDateChange} />
                 )}

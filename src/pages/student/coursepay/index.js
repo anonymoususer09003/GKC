@@ -25,6 +25,7 @@ function StudentRegistrationCCPay() {
 
   const [whoPaysId, setWhoPaysId] = useState('Select');
   const [savePaymentFutureUse, setSavePaymentFutureUse] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [confirmPayment, setConfirmPayment] = useState(false);
   const [isCardValid, setIsCardValid] = useState(false);
   const userInfo = useSelector((state) => state?.user?.userInfo);
@@ -50,6 +51,7 @@ function StudentRegistrationCCPay() {
   const scheduleSaved = async () => {
     try {
       var typ = JSON.parse(window.localStorage.getItem('gkcAuth'));
+      setLoading(true);
       const res = await apiClient.post(
         `/event/create-class-saved-payment-method`,
         {
@@ -63,14 +65,18 @@ function StudentRegistrationCCPay() {
           eventInPerson: JSON.parse(eventInPerson),
         }
       );
+      setLoading(false);
+      navigation.push('/student/calandar');
       console.log(res);
     } catch (error) {
+      setLoading(false);
       console.error('Error fetching profile data:', error);
     }
   };
 
   const sendEmailToWhoPays = async () => {
     try {
+      setLoading(true);
       const ress = await apiClient.get(`user/details/?userEmail=${whoPaysId}`);
       const res = await SendEmailToParents({
         start: start,
@@ -82,8 +88,10 @@ function StudentRegistrationCCPay() {
         instructorId: parseInt(instructorId),
         eventInPerson: JSON.parse(eventInPerson),
       });
+      setLoading(false);
     } catch (error) {
       console.error('Error fetching profile data:', error);
+      setLoading(false);
     } finally {
       try {
         setSuccess(true);
@@ -97,6 +105,7 @@ function StudentRegistrationCCPay() {
   const scheduleNoSaved = async (data) => {
     if (data !== undefined) {
       try {
+        setLoading(true);
         const res = await apiClient.post(
           `/event/create-class-no-saved-payment-method`,
           {
@@ -116,7 +125,9 @@ function StudentRegistrationCCPay() {
             },
           }
         );
+        setLoading(false);
       } catch (error) {
+        setLoading(false);
         console.error('Error fetching profile data:', error);
       }
     }
@@ -313,9 +324,19 @@ function StudentRegistrationCCPay() {
                   <select
                     className="w-25 p-2 rounded outline-0 border border_gray  mb-3 "
                     onChange={(e) => {
-                      console.log(e.target.value);
-                      setWhoPaysId(JSON.parse(e.target.value).id);
-                      setFullParentName(JSON.parse(e.target.value).name);
+                      console.log('typeof', typeof JSON?.parse(e.target.value));
+                      let value = e.target.value;
+                      if (e.target.value.includes('{')) {
+                        value = JSON?.parse(e.target.value);
+                      }
+
+                      if (typeof value != 'string') {
+                        setWhoPaysId(JSON?.parse(e?.target?.value)?.id);
+                        setFullParentName(JSON?.parse(e?.target?.value)?.name);
+                      } else {
+                        setWhoPaysId('Select');
+                        setFullParentName();
+                      }
                     }}
                     disabled={savedCCSelected}
                   >
@@ -407,7 +428,10 @@ function StudentRegistrationCCPay() {
                 <div className="d-flex gap-2 justify-content-center mt-3">
                   <button
                     style={{ cursor: 'pointer' }}
-                    className={`w-50 btn_primary text-light p-2 rounded fw-bold bg-gray-300 btn_primary`}
+                    disabled={loading ? true : false}
+                    className={`w-50 btn_primary text-light p-2 rounded fw-bold bg-gray-300 ${
+                      loading ? 'btn_disabled' : 'btn_primary'
+                    }`}
                     onClick={() => {
                       if (whoPaysId !== 'Select') {
                         console.log('parents');

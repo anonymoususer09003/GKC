@@ -260,17 +260,17 @@ function FinancialReport({ role }) {
                         {' '}
                         Date{' '}
                       </th>{' '}
-                      <th scope="col" style={{ minWidth: '150px' }}>
+                      <th scope="col" style={{ minWidth: '90px' }}>
                         {' '}
                         {role === 'instructor' ? 'Student' : 'Tutor'}
                       </th>{' '}
                       {role === 'parent' && (
-                        <th scope="col" style={{ minWidth: '150px' }}>
+                        <th scope="col" style={{ minWidth: '90px' }}>
                           {' '}
                           Dependent{' '}
                         </th>
                       )}
-                      <th scope="col" style={{ minWidth: '150px' }}>
+                      <th scope="col" style={{ minWidth: '330px' }}>
                         {' '}
                         Course{' '}
                       </th>{' '}
@@ -346,7 +346,7 @@ function FinancialReport({ role }) {
                       <td className="fw-bold"></td>{' '}
                       <td className="fw-bold d-flex justify-content-between align-items-center">
                         {' '}
-                        ${totatlAmount}
+                        ${totatlAmount.toFixed(2)}
                         {/* <TbSpeakerphone onClick={() => onRequestRefund()} />{' '} */}
                       </td>{' '}
                     </tr>

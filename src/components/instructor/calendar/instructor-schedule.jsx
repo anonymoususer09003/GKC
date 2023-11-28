@@ -170,9 +170,15 @@ const InstructorSchedule = (props) => {
                   if (duration >= 1) {
                     adjustedDuration = duration;
                   }
-                  specificEventTimes.setHours(
-                    specificEventTimes.getHours() + adjustedDuration
-                  );
+                  if (duration >= 1) {
+                    specificEventTimes.setHours(
+                      specificEventTimes.getHours() + adjustedDuration
+                    );
+                  } else if (duration == 0.5) {
+                    specificEventTimes.setMinutes(
+                      specificEventTimes.getMinutes() + 30
+                    );
+                  }
 
                   // Get the current time as a Date object
                   var currentTime = new Date();
@@ -212,16 +218,8 @@ const InstructorSchedule = (props) => {
                       </td>
 
                       <td>
-                        {(modifiedDate.getTime() >= currentTime.getTime() &&
-                          currentTime < specificEventTimes) ||
-                        past ? (
-                          <GoDeviceCameraVideo
-                            style={{
-                              fill: 'gray',
-                            }}
-                            className="p-0 m-0 flex-fill h4 flex-fill"
-                          />
-                        ) : (
+                        {modifiedDate.getTime() >= currentTime.getTime() ||
+                        currentTime < specificEventTimes ? (
                           <img
                             src="https://cdn-icons-png.flaticon.com/512/4943/4943781.png "
                             width={24}
@@ -229,9 +227,16 @@ const InstructorSchedule = (props) => {
                             style={{ cursor: 'pointer' }}
                             onClick={() =>
                               navigation.push(
-                                `/student/video?${el?.courseName}`
+                                `/instructor/video?${el?.courseName}`
                               )
                             }
+                          />
+                        ) : (
+                          <GoDeviceCameraVideo
+                            style={{
+                              fill: 'gray',
+                            }}
+                            className="p-0 m-0 flex-fill h4 flex-fill"
                           />
                         )}
                       </td>

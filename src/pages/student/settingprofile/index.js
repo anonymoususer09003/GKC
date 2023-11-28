@@ -19,13 +19,7 @@ function SettingProfle({ userInfo, loading, error, fetchUser }) {
 
   useEffect(() => {
     fetchUser();
-    console.log(localStorage.getItem('gkcAuth'));
-    console.log(userInfo);
   }, [fetchUser]);
-
-  useEffect(() => {
-    console.log('object', userInfo);
-  });
 
   if (loading) {
     return <div>Loading...</div>;
@@ -216,8 +210,6 @@ const mapStateToProps = (state) => ({
   loading: state.user.loading,
   error: state.user.error,
 });
-
-console.log();
 
 export default withRole(
   connect(mapStateToProps, { fetchUser })(SettingProfle),

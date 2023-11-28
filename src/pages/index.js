@@ -157,7 +157,8 @@ function StudentLandingPage() {
   const getCourses = async () => {
     try {
       const response = await axios.get(
-        `${base_url}/public/course/with-instructors`
+        // `${base_url}/public/course/with-instructors`
+        `${base_url}/public/course/get-all-courses`
       );
       var technologyList = [];
 
