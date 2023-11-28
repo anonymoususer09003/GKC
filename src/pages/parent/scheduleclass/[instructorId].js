@@ -559,7 +559,7 @@ function ParentScheduleClass({ loading, error }) {
       router.push('/auth/signin');
     }
   }, [userInfo, router?.query]);
-
+  const userOffset = moment().utcOffset();
   return (
     <>
       <Head>
@@ -822,9 +822,13 @@ function ParentScheduleClass({ loading, error }) {
                 )}
                 {bookingAcceptanceId || eventId ? (
                   <Calendar
-                    value={moment(date || new Date())
-                      .add(1, 'days')
-                      .format('YYYY-MM-DD')}
+                    value={
+                      userOffset > 0
+                        ? date
+                        : moment(date || new Date())
+                            .add(1, 'days')
+                            .format('YYYY-MM-DD')
+                    }
                     onChange={handleDateChange}
                   />
                 ) : (
