@@ -19,13 +19,7 @@ function SettingProfle({ userInfo, loading, error, fetchUser }) {
 
   useEffect(() => {
     fetchUser();
-    console.log(localStorage.getItem('gkcAuth'));
-    console.log(userInfo);
   }, [fetchUser]);
-
-  useEffect(() => {
-    console.log('object', userInfo);
-  });
 
   if (loading) {
     return <div>Loading...</div>;
@@ -86,7 +80,8 @@ function SettingProfle({ userInfo, loading, error, fetchUser }) {
                         : ''}
                     </p>
                   )}
-                  {userInfo?.parents.length === 0 && (
+
+                  {userInfo?.parents?.length === 0 && (
                     <p>You didn't select any parents/guardians yet.</p>
                   )}
                   {userInfo?.parents.length === 1 && (
@@ -94,7 +89,7 @@ function SettingProfle({ userInfo, loading, error, fetchUser }) {
                       <p className="p-0 m-0 py-2 fw-bold">Parent1/guardian1</p>
                       <div className="d-flex gap-1 align-items-center gap-2 pb-3 ">
                         <MdEmail className="h5 p-0 m-0" />
-                        {userInfo?.parents.length > 0
+                        {userInfo?.parents?.length > 0
                           ? userInfo?.parents[0]?.firstName +
                             ' ' +
                             userInfo?.parents[0]?.lastName
@@ -102,12 +97,13 @@ function SettingProfle({ userInfo, loading, error, fetchUser }) {
                       </div>
                     </>
                   )}
+                  {console.log('userinfo', userInfo)}
                   {userInfo?.parents.length === 2 && (
                     <>
                       <p className="p-0 m-0 py-2 fw-bold">Parent1/guardian1</p>
                       <div className="d-flex gap-1 align-items-center gap-2 pb-3 ">
                         <MdEmail className="h5 p-0 m-0" />
-                        {userInfo?.parents.length > 0
+                        {userInfo?.parents?.length > 0
                           ? userInfo?.parents[0]?.firstName +
                             ' ' +
                             userInfo?.parents[0]?.lastName
@@ -116,7 +112,7 @@ function SettingProfle({ userInfo, loading, error, fetchUser }) {
                       <p className="p-0 m-0 py-2 fw-bold">Parent2/guardian2</p>
                       <div className="d-flex gap-1 align-items-center gap-2 pb-3 ">
                         <MdEmail className="h5 p-0 m-0" />
-                        {userInfo?.parents.length > 1
+                        {userInfo?.parents?.length > 1
                           ? userInfo?.parents[1]?.firstName +
                             ' ' +
                             userInfo?.parents[1]?.lastName
@@ -214,8 +210,6 @@ const mapStateToProps = (state) => ({
   loading: state.user.loading,
   error: state.user.error,
 });
-
-console.log();
 
 export default withRole(
   connect(mapStateToProps, { fetchUser })(SettingProfle),

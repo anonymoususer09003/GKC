@@ -157,7 +157,8 @@ function StudentLandingPage() {
   const getCourses = async () => {
     try {
       const response = await axios.get(
-        `${base_url}/public/course/with-instructors`
+        // `${base_url}/public/course/with-instructors`
+        `${base_url}/public/course/get-all-courses`
       );
       var technologyList = [];
 
@@ -219,8 +220,20 @@ function StudentLandingPage() {
       if (window.localStorage.getItem('goInterviewFromSignIn') !== null) {
         setGoInterviewFromSignIn(true);
       }
+      if (window.localStorage.getItem('goBookingScheduleFromSignIn') !== null) {
+        let path = JSON.parse(
+          window.localStorage.getItem('goBookingScheduleFromSignIn')
+        );
+
+        setTimeout(
+          () => window.localStorage.removeItem('goBookingScheduleFromSignIn'),
+          9000
+        );
+        nav.push(path.path);
+      }
     }
   }, []);
+
   return (
     <>
       <Head>

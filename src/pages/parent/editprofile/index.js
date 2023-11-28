@@ -16,7 +16,7 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
   const [countries, setCountries] = useState([]);
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
-
+  const [errorText, setErrorText] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [address1, setAddress1] = useState('');
@@ -50,7 +50,7 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
         dependentsEmail: userInfo?.dependents?.map((item) => item.email) || [],
         phoneNumber: dial_code + '-' + phoneNumber,
       });
-      console.log(response);
+
       navigation.push('/parent/settingprofile');
       // setCountries(response.data);
     } catch (error) {
@@ -61,7 +61,7 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
   const getCountries = async () => {
     try {
       const response = await apiClient.get('/public/location/get-countries');
-      console.log(response.data);
+
       setCountries(response.data);
     } catch (error) {
       console.error(error);
@@ -144,6 +144,7 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
 
   const addDependent = async () => {
     try {
+      setErrorText('');
       const response = await apiClient.put('/user/parent/update', {
         userId: userInfo.id,
         firstName: firstName,
@@ -160,6 +161,9 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
       setNewDependentEmail('');
       fetchUser();
     } catch (error) {
+      if (error?.response?.status === 404) {
+        setErrorText('Dependent not found');
+      }
       console.log(error);
     }
   };
@@ -404,6 +408,17 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
                   </div>
                 </div>
                 <div className="tw-flex tw-flex-col">
+                  {errorText && (
+                    <label
+                      style={{
+                        color: 'red',
+                        marginBottom: 2,
+                        textAlign: 'center',
+                      }}
+                    >
+                      {errorText}
+                    </label>
+                  )}
                   <button
                     onClick={() => {
                       addDependent();
@@ -415,9 +430,13 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
                   <input
                     value={newDependentEmail}
                     onChange={(e) => handleDependentEmailChange(e)}
-                    placeholder="Enter email address"
+                    placeholder="Enter dependent's email"
                     className="mt-3 fw-bold border-2 border-dark p-1"
                   ></input>
+                  <label style={{ color: 'red', marginTop: 2 }}>
+                    Dependent must already be registered before adding to your
+                    profile
+                  </label>
                 </div>
               </div>
             </div>

@@ -25,6 +25,7 @@ function StudentRegistrationCCPay() {
   } = navigation.query;
 
   const [whoPaysId, setWhoPaysId] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [savePaymentFutureUse, setSavePaymentFutureUse] = useState(false);
   const [confirmPayment, setConfirmPayment] = useState(false);
   const [isCardValid, setIsCardValid] = useState(false);
@@ -59,6 +60,7 @@ function StudentRegistrationCCPay() {
 
   const scheduleSaved = async () => {
     try {
+      setLoading(true);
       const res = await apiClient.post(
         `/event/create-class-saved-payment-method`,
         {
@@ -73,8 +75,10 @@ function StudentRegistrationCCPay() {
           eventInPerson: eventInPerson,
         }
       );
+      setLoading(false);
       console.log(res);
     } catch (error) {
+      setLoading(false);
       console.error('Error fetching profile data:', error);
     }
   };
@@ -113,6 +117,7 @@ function StudentRegistrationCCPay() {
 
   const scheduleNoSaved = async (data) => {
     try {
+      setLoading(true);
       var typ = JSON.parse(window.localStorage.getItem('gkcAuth'));
       const res = await apiClient.post(
         `/event/create-class-no-saved-payment-method`,
@@ -140,9 +145,10 @@ function StudentRegistrationCCPay() {
           },
         }
       );
-
+      setLoading(false);
       navigation.push('/parent/calandar');
     } catch (error) {
+      setLoading(false);
       console.error('Error fetching profile data:', error);
     }
   };
@@ -153,7 +159,6 @@ function StudentRegistrationCCPay() {
     // Do something with the value in the parent component
   };
   const handlePaymentRequest = (data) => {
-    console.log('data', data);
     if (data.status === 'succeeded') {
       // scheduleSaved();
       scheduleNoSaved(data);
@@ -337,17 +342,20 @@ function StudentRegistrationCCPay() {
                 <div className="d-flex gap-2 justify-content-center mt-3">
                   <button
                     style={{ cursor: 'pointer' }}
-                    className={`w-50 btn_primary text-light p-2 rounded fw-bold bg-gray-300 btn_primary`}
+                    className={`w-50 btn_primary text-light p-2 rounded fw-bold bg-gray-300 ${
+                      loading ? 'btn_disabled' : 'btn_primary'
+                    }`}
+                    disabled={loading ? true : false}
                     onClick={() => {
                       if (savedCCSelected) {
                         console.log('saved cc');
                         scheduleSaved();
-                        setErr('✅ You successfully bought class.');
+                        setErr('✅ Payment successful.');
                       } else {
                         if (isCardValid) {
                           console.log('valid unsaved cc');
                           setConfirmPayment(true);
-                          setErr('✅ You successfully bought class.');
+                          setErr('✅ Payment successful.');
                         } else {
                           console.log('unvalid unsaved cc');
                           setErr(
@@ -362,8 +370,7 @@ function StudentRegistrationCCPay() {
                       // whoPaysId === "Select"
                       //   ? setConfirmPayment(true)
                       //   : sendEmailToWhoPays();
-                    }
-                  }
+                    }}
                   >
                     Pay
                   </button>

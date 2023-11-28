@@ -22,6 +22,7 @@ const StudentSchedule = (props) => {
     setMessages,
   } = FirebaseChat();
   console.log('messages', messages);
+  const [schedule, setSchedule] = useState([]);
   const [activeChat, setActiveChat] = useState(null);
   const [enabledCamera, setEnabledCamera] = useState(false);
 
@@ -114,6 +115,14 @@ const StudentSchedule = (props) => {
     }
   }
 
+  useEffect(() => {
+    if (props?.schedule) {
+      let sortedarray = props?.schedule.sort(
+        (a, b) => new Date(a.start) - new Date(b.start)
+      );
+      setSchedule(sortedarray);
+    }
+  }, [props?.schedule]);
   return (
     <>
       <div className="col-12 col-lg-6">
@@ -136,23 +145,41 @@ const StudentSchedule = (props) => {
                   </td>
                 </tr>
               )}
-              {props.schedule &&
-                props.schedule.map((el) => {
+              {schedule &&
+                schedule.map((el) => {
                   // Define the specific event time as a Date object
-                  var specificEventTime = new Date(el.start.slice(0,19)+'Z');
+                  var specificEventTime = new Date(el.start.slice(0, 19));
+                  var specificEventTimes = new Date(el.start.slice(0, 19));
 
+                  var modifiedDate = new Date(
+                    specificEventTime.getTime() - 10 * 60000
+                  );
+                  let adjustedDuration = 0;
+                  let duration = el.durationInHours;
+                  if (duration >= 1) {
+                    adjustedDuration = duration;
+                  }
+
+                  if (duration >= 1) {
+                    specificEventTimes.setHours(
+                      specificEventTimes.getHours() + adjustedDuration
+                    );
+                  } else if (duration == 0.5) {
+                    specificEventTimes.setMinutes(
+                      specificEventTimes.getMinutes() + 30
+                    );
+                  }
                   // Get the current time as a Date object
                   var currentTime = new Date();
 
                   // Calculate the time difference in milliseconds
                   var timeDifference = specificEventTime - currentTime;
-                  console.log('specific time difference', specificEventTime);
+
                   // Calculate the time difference in minutes
                   var minutesDifference = Math.floor(
                     timeDifference / (1000 * 60)
                   );
-
-                  console.log('minutes differnce', minutesDifference);
+                  let time = moment(el.start).format('hh:mm a');
                   var past = specificEventTime <= currentTime;
                   return (
                     <tr>
@@ -164,7 +191,7 @@ const StudentSchedule = (props) => {
                         {el?.studentName}
                       </td>
                       <td className="p-0 m-0 flex-fill fw-bold flex-fill">
-                        {el.start.split(' ')[1]}
+                        {time}
                       </td>
                       <td className="p-0 m-0 flex-fill fw-bold flex-fill">
                         {el.courseName +
@@ -184,29 +211,34 @@ const StudentSchedule = (props) => {
                       </td>
 
                       <td>
-                      {
-                          minutesDifference >= 10 || minutesDifference <= -70 || past ? 
+                        {modifiedDate.getTime() >= currentTime.getTime() ||
+                        currentTime < specificEventTimes ? (
+                          <img
+                            src="https://cdn-icons-png.flaticon.com/512/4943/4943781.png "
+                            width={24}
+                            alt="click here to call"
+                            style={{ cursor: 'pointer' }}
+                            onClick={() =>
+                              navigation.push(`/parent/video?${el?.courseName}`)
+                            }
+                          />
+                        ) : (
                           <GoDeviceCameraVideo
-                          style={{
-                            fill: 'gray'
-                          }}
-                          className="p-0 m-0 flex-fill h4 flex-fill"
-                        />
-                        :
-                        <img src="https://cdn-icons-png.flaticon.com/512/4943/4943781.png " width={24} alt="click here to call"
-                        style={{cursor:'pointer'}}
-                        onClick={()=> navigation.push(`/student/video?${el?.courseName}`)}
-                        />
-                        }
+                            style={{
+                              fill: 'gray',
+                            }}
+                            className="p-0 m-0 flex-fill h4 flex-fill"
+                          />
+                        )}
                       </td>
-                      <td>
+                      {/* <td>
                         <RiDeleteBin6Line
                           style={{ cursor: 'pointer' }}
                           fill="gray"
                           className="p-0 m-0 h4 flex-fill"
                           onClick={handleDeleteButtonClick}
                         />
-                      </td>
+                      </td> */}
                     </tr>
                   );
                 })}
@@ -257,8 +289,8 @@ const StudentSchedule = (props) => {
                       >
                         <p className="p-0 m-0 fw-bold">{item.message}</p>
                         <small className="p-0 m-0">
-                          {`${item?.user?.name}  ${moment(date).format(
-                            'd/MM/YY'
+                          {`${item?.user?.name}   ${moment(date).format(
+                            'MMM DD, yyyy'
                           )}`}{' '}
                           {moment(date).format('hh:mm a')}
                         </small>

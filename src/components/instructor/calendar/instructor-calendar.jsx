@@ -119,7 +119,7 @@ function InstructorCalendar() {
               },
             }
           );
-          console.log(response);
+
           const iCalendarData = await response.text();
           const events = [];
           const dates = [];
@@ -138,7 +138,6 @@ function InstructorCalendar() {
             events.push(event);
             dates.push(event.DTSTART);
           });
-          
         }
       } catch (error) {
         console.log('Error fetching iCalendar data:', error);
@@ -151,16 +150,13 @@ function InstructorCalendar() {
         const responce = await apiClient(
           `/instructor/unavailable-days-in-logged-instructor-TimeZone`
         );
-        console.log(responce.data);
 
         responce.data.forEach((el) => {
           let time = el.start;
 
-          disabledDates.push(
-            new Date(time)
-          );
+          disabledDates.push(new Date(time));
         });
-        console.log(disabledDates);
+
         setUnavailableDates(disabledDates);
       } catch (err) {
         console.log(err);
@@ -177,8 +173,22 @@ function InstructorCalendar() {
 
         const response = await apiClient.get('/event/logged-user-events');
 
-        setBookedEvent(response.data);
-        console.log('events', response.data);
+        let temp = [];
+        response?.data.map((item) => {
+          const formattedDate = new Date(item.start).toLocaleDateString(
+            'en-GB',
+            {
+              year: 'numeric',
+              month: '2-digit',
+              day: '2-digit',
+            }
+          );
+          temp.push({
+            ...item,
+            formattedDate,
+          });
+        });
+        setBookedEvent(temp || []);
       } catch (error) {
         console.log('Error fetching iCalendar data:', error);
       }
@@ -190,21 +200,29 @@ function InstructorCalendar() {
   const handleCalendarClick = (clickedDate) => {
     const year = clickedDate.toISOString().slice(0, 4);
     const month = clickedDate.toISOString().slice(5, 7);
-    const day = (parseInt(clickedDate.toISOString().slice(8, 10)) + 1)
-      .toString()
-      .padStart(2, '0');
-    const modifiedClickedDate = `${year}-${month}-${day}`;
-    const eventsArray = [];
-    bookedEvents.map((el) =>
-      el.start.slice(0, 10) === modifiedClickedDate
-        ? eventsArray.push(el)
-        : null
-    );
+    const day = moment(clickedDate).format('DD');
 
-    console.log(eventsArray);
+    const modifiedClickedDate = `${day}/${month}/${year}`;
+
+    // setSelectedDate(modifiedClickedDate);
+    const eventsArray = [];
+    bookedEvents.map((el) => {
+      el.formattedDate === modifiedClickedDate ? eventsArray.push(el) : null;
+    });
+
     setEvents(eventsArray);
   };
-  console.log('event id', eventId);
+  useEffect(() => {
+    var currentDate = new Date();
+    if (bookedEvents.length > 0) {
+      if (new Date().toString().includes('GMT+')) {
+        currentDate.setDate(currentDate.getDate() - 1);
+      }
+
+      handleCalendarClick(currentDate);
+    }
+  }, [bookedEvents]);
+
   return (
     <>
       <Navbar isLogin={true} role="instructor" />
@@ -234,9 +252,12 @@ function InstructorCalendar() {
                         view === 'month' &&
                         unavailableDates.some((disabledDate) => {
                           return (
-                            new Date(date).getFullYear() === new Date(disabledDate).getFullYear() &&
-                            new Date(date).getMonth() === new Date(disabledDate).getMonth() &&
-                            new Date(date).getDate() === new Date(disabledDate).getDate()
+                            new Date(date).getFullYear() ===
+                              new Date(disabledDate).getFullYear() &&
+                            new Date(date).getMonth() ===
+                              new Date(disabledDate).getMonth() &&
+                            new Date(date).getDate() ===
+                              new Date(disabledDate).getDate()
                           );
                         })
                     : () => false

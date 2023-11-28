@@ -10,7 +10,6 @@ import { useRouter } from 'next/router';
 import { apiClient } from '@/api/client';
 
 function ReportInstructor() {
-
   const [instructors, setInstructors] = useState([]);
   const [selectedInstructor, setSelectedInstructor] = useState(null);
   const [comment, setComment] = useState('');
@@ -41,7 +40,13 @@ function ReportInstructor() {
         JSON.parse(window.localStorage.getItem('gkcAuth')).role === 'Parent'
       ) {
         res = await GetInstructorForParents();
-        const uniqueArray = removeDuplicates(res.data);
+
+        let temp = [];
+
+        res.data.studentAndInstructorList.map((item) => {
+          temp = [...temp, ...item?.instructorList];
+        });
+        const uniqueArray = removeDuplicates(temp);
         setInstructors(uniqueArray);
       } else {
         res = await GetInstructorByStudent();
@@ -52,7 +57,6 @@ function ReportInstructor() {
       console.log('err', err);
     }
   };
-
   const onSubmit = async () => {
     try {
       let body = {
@@ -72,7 +76,9 @@ function ReportInstructor() {
   useEffect(() => {
     getReviewInstructors();
   }, []);
-  console.log('instructors', instructors);
+
+  const isDisabled =
+    comment.length < 100 || !reasonOfReporting || !selectedInstructor;
   return (
     <>
       {success ? (
@@ -313,20 +319,9 @@ function ReportInstructor() {
                 <button
                   className={` py-2 px-4 fw-bold text-white rounded text-end`}
                   style={{
-                    background:
-                      comment.length >= 100 &&
-                      comment.length <= 500 &&
-                      reasonOfReporting.length >= 3
-                        ? '#f48343'
-                        : 'gray',
+                    background: !isDisabled ? '#f48343' : 'gray',
                   }}
-                  disabled={
-                    comment.length >= 100 &&
-                    comment.length <= 500 &&
-                    reasonOfReporting.length >= 3
-                      ? false
-                      : true
-                  }
+                  disabled={isDisabled}
                   type="submit"
                   onClick={onSubmit}
                 >

@@ -149,7 +149,11 @@ function ParentLandingPage() {
   }
   const getCourses = async () => {
     try {
-      const response = await apiClient.get(`/public/course/with-instructors`);
+      const response = await apiClient.get(`
+      /public/course/get-all-courses
+
+      `);
+      // /public/course/with-instructors
       var technologyList = [];
 
       response.data.forEach((v) => {
@@ -201,6 +205,18 @@ function ParentLandingPage() {
       }
       if (window.localStorage.getItem('goInterviewFromSignIn') !== null) {
         setGoInterviewFromSignIn(true);
+      }
+
+      if (window.localStorage.getItem('goBookingScheduleFromSignIn') !== null) {
+        let path = JSON.parse(
+          window.localStorage.getItem('goBookingScheduleFromSignIn')
+        );
+
+        setTimeout(
+          () => window.localStorage.removeItem('goBookingScheduleFromSignIn'),
+          9000
+        );
+        nav.push(path.path);
       }
     }
   }, []);
@@ -259,6 +275,7 @@ function ParentLandingPage() {
                       window.localStorage.getItem('goScheduleFromSignIn')
                     )}`
                   );
+                  window.localStorage.removeItem('goScheduleFromSignIn');
                 }}
                 className="btn_primary text-light p-2 rounded fw-bold mt-3"
                 style={{ width: 100 }}

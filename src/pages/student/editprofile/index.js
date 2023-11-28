@@ -10,8 +10,9 @@ import { connect } from 'react-redux';
 import { fetchUser } from '../../../store/actions/userActions';
 import axios from 'axios';
 import styles from '../../../styles/Home.module.css';
-import { apiClient } from '../../../api/client';
+import { apiClient, base_url } from '../../../api/client';
 import { CountryCodes } from '@/utils/countryCodes';
+
 function EditProfile({ userInfo, loading, error, fetchUser }) {
   const [selected, setSelected] = useState([]);
   const [grade, setGrade] = useState('');
@@ -35,7 +36,8 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
   const [selectedLang, setSelectedLang] = useState([]);
   const [proficiency, setProficiency] = useState([]);
   const [phoneNumber, setPhoneNumber] = useState('');
-
+  const [guardian1Exists, setGuardian1Exists] = useState(true);
+  const [guardian2Exists, setGuardian2Exists] = useState(true);
   let isValidForm =
     selectedCourses.length > 0 && selectedLang.length > 0 && grade;
 
@@ -271,6 +273,28 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
   //     return newData;
   //   });
   // };
+  const checkIfGuardian1Exists = async () => {
+    try {
+      const res = await axios.get(
+        `${base_url}/public/register/is-parent-registered?parentEmail=${parent1}`,
+        {}
+      );
+      setGuardian1Exists(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const checkIfGuardian2Exists = async () => {
+    try {
+      const res = await axios.get(
+        `${base_url}/public/register/is-parent-registered?parentEmail=${parent2}`,
+        {}
+      );
+      setGuardian2Exists(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const handleProficiencySelection = (e, i) => {
     const { value } = e.target;
@@ -354,7 +378,15 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
                     placeholder="Parent1/guardian1"
                     value={parent1}
                     onChange={(e) => setParent1(e.target.value)}
+                    onBlur={checkIfGuardian1Exists}
                   />
+                  {!guardian1Exists && parent1.length > 0 ? (
+                    <p className="tw-text-red-600">
+                      Parent email doesn't exist
+                    </p>
+                  ) : (
+                    ''
+                  )}
                   <p className="p-0 m-0 py-2 fw-bold">Parent2/guardian2</p>
                   <input
                     type="text"
@@ -362,8 +394,15 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
                     placeholder="Parent2/guardian2"
                     value={parent2}
                     onChange={(e) => setParent2(e.target.value)}
+                    onBlur={checkIfGuardian2Exists}
                   />
-
+                  {!guardian2Exists && parent2?.length > 0 ? (
+                    <p className="tw-text-red-600">
+                      Parent email doesn't exist
+                    </p>
+                  ) : (
+                    ''
+                  )}
                   <p className="p-0 m-0 py-2 fw-bold">Address 1</p>
 
                   <input

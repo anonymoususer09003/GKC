@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import Head from 'next/head';
 import { ParentNavbar, Footer } from '../../../components';
-import Calendar from 'react-calendar';
 import { useRouter } from 'next/router';
 import { withRole } from '../../../utils/withAuthorization';
 import axios from 'axios';
 import { fetchUser } from '@/store/actions/userActions';
 import Link from 'next/link';
-
+import Calendar from '.././../../components/calendar/index';
 import { connect } from 'react-redux';
 import { apiClient } from '@/api/client';
 import { useDispatch, useSelector } from 'react-redux';
@@ -102,7 +101,7 @@ function ParentScheduleClass({ loading, error }) {
         .replace('T', ' ');
       setTime(formattedDateStr);
       console.log('formated', formattedDateStr);
-      setDuration(data.durationInHours);
+      setDuration(data.durationInHours * 2);
       setDate(data.start.slice(0, 10));
       setClassFrequency(data.classFrequency);
       setCourseId(coursesArr.find((el) => el.value === data.courseId).label);
@@ -142,7 +141,7 @@ function ParentScheduleClass({ loading, error }) {
 
       console.log('formatted time', formattedDateStr);
       setTime(formattedDateStr);
-      setDuration(data.durationInHours);
+      setDuration(data.durationInHours * 2);
       setDate(data?.startAtBookingUserTimeZone?.slice(0, 10));
       setClassFrequency(data.classFrequency);
       setCourseId(coursesArr.find((el) => el.value === data.courseId).label);
@@ -280,7 +279,6 @@ function ParentScheduleClass({ loading, error }) {
       }
     }
   }, [instructorId]);
-  console.log('selected', selectedSlots);
   const handleDateChange = async (clickedDate, duration) => {
     console.log('lcliekcdate', clickedDate);
 
@@ -290,21 +288,14 @@ function ParentScheduleClass({ loading, error }) {
     const day = String(dateObj.getDate()).padStart(2, '0');
     const hours = String(dateObj.getHours()).padStart(2, '0');
     const minutes = String(dateObj.getMinutes()).padStart(2, '0');
-    let formattedDateStr = `${year}-${month}-${day}`;
-    if (eventId === undefined) {
-      setDuration(0);
-    }
+    const formattedDateStr = `${year}-${month}-${day}`;
+    // if (eventId === undefined) {
+    //   setDuration(0);
+    // }
 
     setSelectedDate(formattedDateStr);
 
     try {
-      if (bookingAcceptanceId) {
-        const date = moment(formattedDateStr);
-
-        // Add one day to the date
-        date.add(1, 'days');
-        formattedDateStr = date.format('YYYY-MM-DD');
-      }
       const response = await apiClient.get(
         `/instructor/available-time-slots-from-date?instructorId=${
           selectedInstructor?.id ?? instructorId
@@ -316,27 +307,23 @@ function ParentScheduleClass({ loading, error }) {
         end: new Date(slot.end),
       }));
 
+      let timeclickeddates = moment(dateObj).format('hh:mm');
+
       const isOnHalfHour = (date) =>
         date.getMinutes() === 0 || date.getMinutes() === 30;
 
       // Create half-hour intervals for each time slot
       const formattedTimeSlots = [];
 
-      if (eventId !== undefined || bookingAcceptanceId !== undefined) {
+      if (bookingAcceptanceId !== undefined) {
         let timeclickeddate = moment(dateObj).format('hh:mm');
         let findIndex = timeSlots.findIndex((obj) =>
           moment(obj.start).format('hh:mm').includes(timeclickeddate)
         );
 
-        console.log('findindex', findIndex);
-        console.log('timesots', timeSlots);
-        console.log('timeclickedate', timeclickeddate);
         let count = duration + findIndex;
-        console.log('duration', duration);
-        timeSlots.forEach((slot, index) => {
-          console.log('index', index);
 
-          console.log('count', count);
+        timeSlots.forEach((slot, index) => {
           if (
             // isOnHalfHour(slot.start) &&
             index >= findIndex &&
@@ -362,6 +349,67 @@ function ParentScheduleClass({ loading, error }) {
         setSelectedSlots(formattedTimeSlots);
         // console.log('filterarr', filterarr);
         setAvailableTime(formattedTimeSlots);
+      } else if (eventId !== undefined) {
+        let timeclickeddate = moment(dateObj).format('hh:mm');
+        let findIndex = timeSlots.findIndex((obj) =>
+          moment(obj.start).format('hh:mm').includes(timeclickeddate)
+        );
+
+        if (findIndex != -1) {
+          let count = duration + findIndex;
+
+          timeSlots.forEach((slot, index) => {
+            if (
+              // isOnHalfHour(slot.start) &&
+              index >= findIndex &&
+              index <= count
+            ) {
+              const start = new Date(slot.start);
+              start.setSeconds(0); // Set seconds to 0
+              start.setMilliseconds(0); // Set milliseconds to 0
+
+              const end = new Date(slot.start.getTime() + 30 * 60 * 1000);
+              end.setSeconds(0); // Set seconds to 0
+              end.setMilliseconds(0); // Set milliseconds to 0
+
+              formattedTimeSlots.push({
+                start,
+                end,
+              });
+            }
+          });
+          // let filterarr = formattedTimeSlots.filter(
+          //   (item, index) => index >= findIndex && index <= count
+          // );
+          setSelectedSlots(formattedTimeSlots);
+          // console.log('filterarr', filterarr);
+          setAvailableTime(formattedTimeSlots);
+        } else {
+          let count = duration + findIndex;
+
+          timeSlots.forEach((slot, index) => {
+            if (index == 0) {
+              const start = new Date(dateObj);
+              start.setSeconds(0); // Set seconds to 0
+              start.setMilliseconds(0); // Set milliseconds to 0
+
+              const end = new Date(slot.start);
+              start.setSeconds(0); // Set seconds to 0
+              start.setMilliseconds(0);
+
+              formattedTimeSlots.push({
+                start,
+                end,
+              });
+            }
+          });
+          // let filterarr = formattedTimeSlots.filter(
+          //   (item, index) => index >= findIndex && index <= count
+          // );
+          setSelectedSlots(formattedTimeSlots);
+          // console.log('filterarr', filterarr);
+          setAvailableTime(formattedTimeSlots);
+        }
       } else {
         timeSlots.forEach((slot) => {
           if (isOnHalfHour(slot.start)) {
@@ -494,7 +542,24 @@ function ParentScheduleClass({ loading, error }) {
     }
   };
   const calculateDifference = (number1, number2) => Math.abs(number1 - number2);
+  useEffect(() => {
+    if (
+      typeof window !== 'undefined' &&
+      !window.localStorage.getItem('gkcAuth') &&
+      router.query?.bookingAcceptanceId
+    ) {
+      window.localStorage.setItem(
+        'goBookingScheduleFromSignIn',
+        JSON.stringify({
+          path: router.asPath,
+          params: JSON.stringify(router.query),
+        })
+      );
 
+      router.push('/auth/signin');
+    }
+  }, [userInfo, router?.query]);
+  const userOffset = moment().utcOffset();
   return (
     <>
       <Head>
@@ -755,16 +820,20 @@ function ParentScheduleClass({ loading, error }) {
                     </h3>
                   </div>
                 )}
-                <Calendar
-                  value={date}
-                  onChange={handleDateChange}
-                  tileClassName={tileClassName}
-                  // tileDisabled={unavailableDates.length >1 ? ({date, view})=> view === 'month' && unavailableDates.some(disabledDate =>
-                  //   new Date(date).getFullYear() === new Date(disabledDate).getFullYear() &&
-                  //   new Date(date).getMonth() === new Date(disabledDate).getMonth() &&
-                  //   new Date(date).getDate() === new Date(disabledDate).getDate()
-                  //   ) : () => false}
-                />
+                {bookingAcceptanceId || eventId ? (
+                  <Calendar
+                    value={
+                      userOffset > 0
+                        ? date
+                        : moment(date || new Date())
+                            .add(1, 'days')
+                            .format('YYYY-MM-DD')
+                    }
+                    onChange={handleDateChange}
+                  />
+                ) : (
+                  <Calendar onChange={handleDateChange} />
+                )}
               </div>
               <div className="col-12 col-lg-6 pt-5">
                 <div className="tw-flex tw-justify-center">
@@ -810,6 +879,15 @@ function ParentScheduleClass({ loading, error }) {
                     style={{ minHeight: '400px' }}
                   >
                     <div className="w-100 ">
+                      <p className="p-0 m-0 fw-bold pb-2">
+                        Selected Date:{' '}
+                        <p
+                          style={{ color: 'red', marginLeft: 2 }}
+                          className="p-0 m-0 fw-bold pb-2"
+                        >
+                          {moment(selectedDate).format('MMM DD, yyyy')}
+                        </p>
+                      </p>
                       <p className="p-0 m-0 fw-bold pb-2">
                         {duration > 0 ? (
                           <>You selected {duration / 2} hours</>
@@ -1121,8 +1199,19 @@ function ParentScheduleClass({ loading, error }) {
                   </div>
                   <div className="d-flex gap-2 justify-content-center pt-5">
                     <button
+                      disabled={
+                        !classFrequency ||
+                        !time ||
+                        !courseId ||
+                        !selectedMode ||
+                        !studentId
+                      }
                       className={`w-25 text-light p-2 rounded fw-bold  ${
-                        !classFrequency || !time
+                        !classFrequency ||
+                        !time ||
+                        !courseId ||
+                        !selectedMode ||
+                        !studentId
                           ? 'btn_disabled'
                           : 'btn_primary'
                       }`}

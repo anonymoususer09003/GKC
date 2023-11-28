@@ -52,7 +52,7 @@ export default function RegisterStudent() {
     let dial_code = CountryCodes.find(
       (item) => item.name === country
     ).dial_code;
-    console.log(stored);
+
     let timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     stored.phoneNumber = dial_code + '-' + phoneNumber;
 
@@ -75,8 +75,9 @@ export default function RegisterStudent() {
     stored.whoPaysEmail = email;
     stored.savePaymentFutureUse = false;
     stored.timeZoneId = timezone;
-
+    console.log('stored', stored);
     window.localStorage.setItem('registrationForm', JSON.stringify(stored));
+
     if (password == confirmPassword) {
       navigation.push('/auth/registrationgrade');
     } else {
@@ -162,10 +163,10 @@ export default function RegisterStudent() {
       getCities();
     }
 
-    if (window !== 'undefined') {
-      let stor = JSON.parse(window.localStorage.getItem('parentData'));
-      setGuardianEmail1(stor?.email ?? '');
-    }
+    // if (window !== "undefined") {
+    //   let stor = JSON.parse(window.localStorage.getItem("parentData"));
+    //   setGuardianEmail1(stor?.email ?? "");
+    // }
   }, [state]);
 
   const handleBack = () => {
@@ -177,10 +178,10 @@ export default function RegisterStudent() {
         <title>Auth | Student Registration</title>
         <meta name="description" content="Where kids learn to code" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link
+        {/* <link
           rel="icon"
           href="https://gkc-images.s3.amazonaws.com/favicon.ico"
-        />
+        /> */}
       </Head>
       <main className="container-fluid d-flex flex-column justify-content-between  min-vh-100">
         <div
