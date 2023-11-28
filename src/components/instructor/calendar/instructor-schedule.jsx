@@ -240,14 +240,14 @@ const InstructorSchedule = (props) => {
                           />
                         )}
                       </td>
-                      <td>
+                      {/* <td>
                         <RiDeleteBin6Line
                           style={{ cursor: 'pointer' }}
                           fill="gray"
                           className="p-0 m-0 h4 flex-fill"
                           onClick={handleDeleteButtonClick}
                         />
-                      </td>
+                      </td> */}
                     </tr>
                   );
                 })}

@@ -226,7 +226,7 @@ function RequestInterview({ userInfo, loading, error, fetchUser }) {
   if (error) {
     return <div>Error: {error}</div>;
   }
-
+  const userOffset = moment().utcOffset();
   return (
     <>
       <Head>
@@ -266,7 +266,13 @@ function RequestInterview({ userInfo, loading, error, fetchUser }) {
             </div>
             <Calendar
               onChange={handleDateChange}
-              value={selectedDate}
+              value={
+                userOffset > 0
+                  ? selectedDate
+                  : moment(selectedDate || new Date())
+                      .add(1, 'days')
+                      .format('YYYY-MM-DD')
+              }
               // tileDisabled={tileDisabled}
               // tileDisabled={
               //   unavailableDates.length > 1

@@ -173,7 +173,22 @@ function InstructorCalendar() {
 
         const response = await apiClient.get('/event/logged-user-events');
 
-        setBookedEvent(response.data);
+        let temp = [];
+        response?.data.map((item) => {
+          const formattedDate = new Date(item.start).toLocaleDateString(
+            'en-GB',
+            {
+              year: 'numeric',
+              month: '2-digit',
+              day: '2-digit',
+            }
+          );
+          temp.push({
+            ...item,
+            formattedDate,
+          });
+        });
+        setBookedEvent(temp || []);
       } catch (error) {
         console.log('Error fetching iCalendar data:', error);
       }
@@ -187,14 +202,12 @@ function InstructorCalendar() {
     const month = clickedDate.toISOString().slice(5, 7);
     const day = moment(clickedDate).format('DD');
 
-    const modifiedClickedDate = `${year}-${month}-${day}`;
+    const modifiedClickedDate = `${day}/${month}/${year}`;
 
     // setSelectedDate(modifiedClickedDate);
     const eventsArray = [];
     bookedEvents.map((el) => {
-      el.start.slice(0, 10) === modifiedClickedDate
-        ? eventsArray.push(el)
-        : null;
+      el.formattedDate === modifiedClickedDate ? eventsArray.push(el) : null;
     });
 
     setEvents(eventsArray);

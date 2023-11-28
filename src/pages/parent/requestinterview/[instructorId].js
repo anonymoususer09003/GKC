@@ -11,6 +11,7 @@ import axios from 'axios';
 import { apiClient } from '@/api/client';
 import { useSelector } from 'react-redux';
 import { useScreenSize } from '@/hooks/mobile-devices';
+import moment from 'moment';
 function ParentRequestInterview({ userInfo, loading, error, fetchUser }) {
   const { isLargeScreen } = useScreenSize();
   const router = useRouter();
@@ -210,6 +211,7 @@ function ParentRequestInterview({ userInfo, loading, error, fetchUser }) {
     return <div>Error: {error}</div>;
   }
   const isDisabled = !time || !courseId || !selectedMode || !studentId;
+  const userOffset = moment().utcOffset();
   return (
     <>
       <Head>
@@ -249,7 +251,13 @@ function ParentRequestInterview({ userInfo, loading, error, fetchUser }) {
             </div>
             <Calendar
               onChange={handleDateChange}
-              value={selectedDate}
+              value={
+                userOffset > 0
+                  ? selectedDate
+                  : moment(selectedDate || new Date())
+                      .add(1, 'days')
+                      .format('YYYY-MM-DD')
+              }
               // tileDisabled={tileDisabled}
               // tileDisabled={
               //   unavailableDates.length > 1

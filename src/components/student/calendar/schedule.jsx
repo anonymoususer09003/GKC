@@ -103,6 +103,7 @@ const StudentSchedule = (props) => {
       setSchedule(sortedarray);
     }
   }, [props?.schedule]);
+  console.log('rpops', schedule);
 
   return (
     <>
@@ -168,7 +169,7 @@ const StudentSchedule = (props) => {
                         {el.instructorName}
                       </td>
                       <td className="p-0 m-0 flex-fill fw-bold flex-fill">
-                        {el.start.split(' ')[1]}
+                        {time}
                       </td>
                       <td className="p-0 m-0 flex-fill fw-bold flex-fill">
                         {el.courseName +
