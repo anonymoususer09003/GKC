@@ -125,7 +125,7 @@ const StudentSchedule = (props) => {
   }, [props?.schedule]);
   return (
     <>
-      <div className="col-12 col-lg-6">
+      <div className="col-12 col-lg-8">
         <h3 className={`text-center ${styles.scheduleHeader}`}>Schedule</h3>
         <div
           className={`shadow p-5 bg-white rounded ${styles.scheduleBox}`}
@@ -211,7 +211,7 @@ const StudentSchedule = (props) => {
                       </td>
 
                       <td>
-                        {modifiedDate.getTime() >= currentTime.getTime() ||
+                        {currentTime.getTime() >= modifiedDate.getTime() &&
                         currentTime < specificEventTimes ? (
                           <img
                             src="https://cdn-icons-png.flaticon.com/512/4943/4943781.png "

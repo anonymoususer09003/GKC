@@ -218,7 +218,7 @@ const InstructorSchedule = (props) => {
                       </td>
 
                       <td>
-                        {modifiedDate.getTime() >= currentTime.getTime() ||
+                        {currentTime.getTime() >= modifiedDate.getTime() &&
                         currentTime < specificEventTimes ? (
                           <img
                             src="https://cdn-icons-png.flaticon.com/512/4943/4943781.png "

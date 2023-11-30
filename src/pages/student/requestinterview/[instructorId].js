@@ -35,6 +35,7 @@ function RequestInterview({ userInfo, loading, error, fetchUser }) {
   const [err, setErr] = useState('');
 
   const handleContinue = async () => {
+    setIsLoading(true);
     const data = {
       start: time,
       courseId: instructorCourses.find((el) => el.label === courseId).value,
@@ -43,9 +44,11 @@ function RequestInterview({ userInfo, loading, error, fetchUser }) {
     };
     try {
       const res = await apiClient.post('/event/create-interview', data);
-      console.log('rees', res);
-      // router.push('/student/calendar');
+      setIsLoading(false);
+
+      router.push('/student/calandar');
     } catch (err) {
+      setIsLoading(false);
       console.log(err);
     }
   };
@@ -339,14 +342,15 @@ function RequestInterview({ userInfo, loading, error, fetchUser }) {
                         key={index}
                         className={`m-03 py-1 fw-bold list-unstyled ${
                           time ==
-                          `${selectedDate} ${slot.start.toLocaleTimeString(
-                            undefined,
-                            {
-                              hour: '2-digit',
-                              minute: '2-digit',
-                              hour12: false,
-                            }
-                          )}`
+                          `${slot.start.getFullYear()}-${String(
+                            slot.start.getMonth() + 1
+                          ).padStart(2, '0')}-${moment(slot.start).format(
+                            'DD'
+                          )} ${slot.start.toLocaleTimeString(undefined, {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            hour12: false,
+                          })}`
                             ? 'bg-secondary text-white'
                             : ''
                         }`}
@@ -354,26 +358,24 @@ function RequestInterview({ userInfo, loading, error, fetchUser }) {
                           setTime(
                             `${slot.start.getFullYear()}-${String(
                               slot.start.getMonth() + 1
-                            ).padStart(
-                              2,
-                              '0'
-                            )}-${slot.start.getDate()} ${slot.start.toLocaleTimeString(
-                              undefined,
-                              {
-                                hour: '2-digit',
-                                minute: '2-digit',
-                                hour12: false,
-                              }
-                            )}`
+                            ).padStart(2, '0')}-${moment(slot.start).format(
+                              'DD'
+                            )} ${slot.start.toLocaleTimeString(undefined, {
+                              hour: '2-digit',
+                              minute: '2-digit',
+                              hour12: false,
+                            })}`
                           );
                         }}
                       >
                         {`${slot.start.toLocaleTimeString(undefined, {
                           hour: '2-digit',
                           minute: '2-digit',
+                          hour12: true,
                         })} - ${slot.end.toLocaleTimeString(undefined, {
                           hour: '2-digit',
                           minute: '2-digit',
+                          hour12: true,
                         })}`}
                       </li>
                     ))}
@@ -458,10 +460,10 @@ function RequestInterview({ userInfo, loading, error, fetchUser }) {
               <div className="d-flex gap-2 justify-content-center pt-5">
                 <button
                   className={`w-25 text-light p-2 rounded fw-bold ${
-                    isDisabled ? 'btn_disabled' : 'btn_primary'
+                    isDisabled || isLoading ? 'btn_disabled' : 'btn_primary'
                   }`}
                   onClick={() => handleContinue()}
-                  disabled={isDisabled}
+                  disabled={isDisabled || isLoading}
                 >
                   Schedule
                 </button>

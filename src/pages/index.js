@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
-import { Inter } from 'next/font/google';
+
 import { Navbar, Footer, TutorCard } from './../components';
-const inter = Inter({ subsets: ['latin'] });
-import { withRole } from './../utils/withAuthorization';
+
 import axios from 'axios';
 import styles from '@/styles/Home.module.css';
 import { base_url } from '../api/client';
 import { useRouter } from 'next/router';
+import Image from 'next/image';
 export const GlobalInstructor = {
   instructors: [],
 };
@@ -371,6 +371,21 @@ function StudentLandingPage() {
       ) : null}
       <Navbar />
       <main className="">
+        {/* <div
+          style={{ display: 'flex', justifyContent: 'center', width: '100%' }}
+        >
+          <Image
+            style={{ cursor: 'pointer' }}
+            onClick={() => window.open('https://ututorme.com/')}
+            src={'https://gkc-images.s3.amazonaws.com/UTutorMe_Banner.png'}
+            alt="Vercel Logo"
+            className=""
+            width={300}
+            height={80}
+            unoptimized
+          />
+        </div> */}
+
         <div className="container py-4">
           <p className="text-center mb-0 tw-font-medium tw-text-[25px] tw-text-[#f48342]">
             Start here by searching
