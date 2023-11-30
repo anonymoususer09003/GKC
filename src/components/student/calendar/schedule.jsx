@@ -43,19 +43,8 @@ const StudentSchedule = (props) => {
   };
 
   // Button click handler
-  const handleDeleteButtonClick = () => {
-    const eventID = props.eventId;
-    const date = props.start.split(' ')[0];
-
-    deleteSingleOccurrence(eventID, date);
-  };
 
   //MESSAGES ALSO PROBABLY NEEDS TO BE CHECKED --- MESSAGE
-
-  const instructor = {
-    name: props?.instructorName,
-    id: props?.instructorId,
-  };
 
   const student = {
     name: loggedInUser?.firstName + ' ' + loggedInUser?.lastName,
@@ -103,7 +92,6 @@ const StudentSchedule = (props) => {
       setSchedule(sortedarray);
     }
   }, [props?.schedule]);
-  console.log('rpops', schedule);
 
   return (
     <>
@@ -189,7 +177,7 @@ const StudentSchedule = (props) => {
                       </td>
 
                       <td>
-                        {modifiedDate.getTime() >= currentTime.getTime() ||
+                        {currentTime.getTime() >= modifiedDate.getTime() &&
                         currentTime < specificEventTimes ? (
                           <img
                             src="https://cdn-icons-png.flaticon.com/512/4943/4943781.png "

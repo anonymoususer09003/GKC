@@ -46,7 +46,7 @@ function ParentRequestInterview({ userInfo, loading, error, fetchUser }) {
     };
     try {
       const res = await apiClient.post('/event/create-interview', data);
-      router.push('/parent/calendar');
+      router.push('/parent/calandar');
     } catch (err) {
       console.log(err);
     }
@@ -318,39 +318,38 @@ function ParentRequestInterview({ userInfo, loading, error, fetchUser }) {
                           time ==
                           `${slot.start.getFullYear()}-${String(
                             slot.start.getMonth() + 1
-                          ).padStart(
-                            2,
-                            '0'
-                          )}-${slot.start.getDate()} ${slot.start.toLocaleTimeString(
-                            undefined,
-                            {
-                              hour: '2-digit',
-                              minute: '2-digit',
-                              hour12: false,
-                            }
-                          )}`
+                          ).padStart(2, '0')}-${moment(slot.start).format(
+                            'DD'
+                          )} ${slot.start.toLocaleTimeString(undefined, {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            hour12: false,
+                          })}`
                             ? 'bg-secondary text-white'
                             : ''
                         }`}
                         onClick={() => {
                           setTime(
-                            `${selectedDate} ${slot.start.toLocaleTimeString(
-                              undefined,
-                              {
-                                hour: '2-digit',
-                                minute: '2-digit',
-                                hour12: false,
-                              }
-                            )}`
+                            `${slot.start.getFullYear()}-${String(
+                              slot.start.getMonth() + 1
+                            ).padStart(2, '0')}-${moment(slot.start).format(
+                              'DD'
+                            )} ${slot.start.toLocaleTimeString(undefined, {
+                              hour: '2-digit',
+                              minute: '2-digit',
+                              hour12: false,
+                            })}`
                           );
                         }}
                       >
                         {`${slot.start.toLocaleTimeString(undefined, {
                           hour: '2-digit',
                           minute: '2-digit',
+                          hour12: true,
                         })} - ${slot.end.toLocaleTimeString(undefined, {
                           hour: '2-digit',
                           minute: '2-digit',
+                          hour12: true,
                         })}`}
                       </li>
                     ))}

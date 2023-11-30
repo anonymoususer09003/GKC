@@ -108,7 +108,7 @@ function ParentCalendar() {
           </div>
         )}
         <div className={`row ${styles.calendarWrapper}`}>
-          <div className="col-12 col-lg-6 pt-5 react-calendar-text-red">
+          <div className="col-12 col-lg-4 pt-5 react-calendar-text-red">
             <Calendar onClickDay={handleCalendarClick} />
           </div>
           <ParentSchedule schedule={events} />
