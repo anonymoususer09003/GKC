@@ -174,13 +174,13 @@ export default function ParentRegistrationCCInfo() {
               >
                 Continue
               </button>
-              <Link
+              <button
                 className="text-decoration-none tw-mt-4 tw-text-gray-500 tw-text-lg"
-                href="/instructor"
+                style={{border:'none', background: 'none', }}
                 onClick={onContinue}
               >
                 I will do this later
-              </Link>
+              </button>
             </div>
           </div>
         </div>
