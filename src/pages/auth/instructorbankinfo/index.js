@@ -99,9 +99,9 @@ export default function ParentRegistrationCCInfo() {
         userInfo?.weeklySchedule
       );
 
-      // setTimeout(() => {
-      //     safePush('/instructor');
-      // }, 1400);
+      setTimeout(() => {
+          safePush('/instructor');
+      }, 1400);
 
     } catch (error) {
       console.error(error);
@@ -197,13 +197,13 @@ export default function ParentRegistrationCCInfo() {
               >
                 Continue
               </button>
-              <Link
+              <button
                 className="text-decoration-none tw-mt-4 tw-text-gray-500 tw-text-lg"
-                href="/instructor"
                 onClick={onContinue}
+                style={{border:'none', background:'none'} }
               >
                 I will do this later
-              </Link>
+              </button>
             </div>
           </div>
         </div>
