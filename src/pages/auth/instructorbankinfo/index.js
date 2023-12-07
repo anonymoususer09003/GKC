@@ -99,9 +99,9 @@ export default function ParentRegistrationCCInfo() {
         userInfo?.weeklySchedule
       );
 
-      setTimeout(() => {
-          safePush('/instructor');
-      }, 1400);
+      // setTimeout(() => {
+      //     safePush('/instructor');
+      // }, 1400);
 
     } catch (error) {
       console.error(error);
