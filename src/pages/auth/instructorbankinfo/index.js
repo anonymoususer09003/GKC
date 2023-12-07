@@ -25,6 +25,28 @@ export default function ParentRegistrationCCInfo() {
     setIsVideoFileEmpty(Object.keys(videoFile).length === 0);
   }, []);
 
+  const [onChanging, setOnChanging] = useState(false);
+  const handleRouteChange = () => {
+    setOnChanging(false);
+  };
+  const router = useRouter();
+  // safePush is used to avoid route pushing errors when users click multiple times or when the network is slow:  "Error: Abort fetching component for route"
+  const safePush = (path) => {
+    if (onChanging) {
+      return;
+    }
+    setOnChanging(true);
+    router.push(path);
+  };
+
+  useEffect(() => {
+    router.events.on('routeChangeComplete', handleRouteChange);
+
+    return () => {
+      router.events.off('routeChangeComplete', handleRouteChange);
+    };
+  }, [router, setOnChanging]);
+  
   const onContinue = async () => {
     try {
       const response = await apiClient.post(
@@ -78,8 +100,9 @@ export default function ParentRegistrationCCInfo() {
       );
 
       setTimeout(() => {
-        navigation.push('/instructor');
+          safePush('/instructor');
       }, 1400);
+
     } catch (error) {
       console.error(error);
     }
