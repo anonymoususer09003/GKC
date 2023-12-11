@@ -32,6 +32,16 @@ export default function StudentRegistrationCourse() {
     stored.courseOfInterestAndProficiency = courseWithId;
     stored.languagePreferencesId = languageId;
 
+    let token = JSON.parse(window.localStorage.getItem("gkcAuth"));
+    apiClient.patch(
+      "/auth/complete-student-registration",
+      {
+        studentEmail: stored.email,
+        languagePreferencesId: languageId,
+        coursesId: courseWithId,
+      }
+    );
+
     window.localStorage.setItem('registrationForm', JSON.stringify(stored));
     navigation.push('/auth/registrationccinfo');
   };

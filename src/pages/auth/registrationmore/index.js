@@ -34,7 +34,7 @@ export default function InstructorRegistrationMore() {
     const selectedFileSizeInBytes = selectedFile?.size;
     const fileSizeInMB = selectedFileSizeInBytes / (1024 * 1024);
 
-    if (fileSizeInMB > 5) {
+    if (fileSizeInMB > 10) {
       setIsVideoTooLarge(true);
       return;
     } else {
@@ -72,6 +72,17 @@ export default function InstructorRegistrationMore() {
     stored.hourlyRate = Number(hourlyRate);
     stored.acceptInterviewRequest = acceptInterview;
     stored.savePaymentFutureUse = true;
+
+    apiClient.patch(
+      "/auth/complete-instructor-registration",
+      {
+        instructorEmail: stored.email,
+        instructorBio: instructorBio,
+        hourlyRate: Number(hourlyRate),
+        acceptInterviewRequest: acceptInterview,
+        savePaymentFutureUse: true,
+      }
+    );
 
     var modes = [];
     deliveryModes.map((v) => {
@@ -207,7 +218,7 @@ export default function InstructorRegistrationMore() {
                 </u>
                 {isVideoTooLarge && (
                   <p className="tw-text-center tw-w-full tw-text-red-500 tw-font-sm">
-                    Max allowed size is 5MB
+                    Max allowed size is 10MB
                   </p>
                 )}
                 <div className="d-flex mt-4 gap-2 my-2 align-items-center">

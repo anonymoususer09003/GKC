@@ -9,6 +9,7 @@ import axios from 'axios';
 import styles from '../../../styles/Home.module.css';
 import { base_url } from '../../../api/client';
 import { CountryCodes } from '@/utils/countryCodes';
+import { apiClient } from '../../../api/client';
 import { useScreenSize } from '@/hooks/mobile-devices';
 export default function RegisterStudent() {
   const { isLargeScreen } = useScreenSize();
@@ -77,6 +78,34 @@ export default function RegisterStudent() {
     stored.timeZoneId = timezone;
     console.log('stored', stored);
     window.localStorage.setItem('registrationForm', JSON.stringify(stored));
+
+
+    apiClient.patch(
+      "/auth/complete-student-registration",
+      {
+        phoneNumber: dial_code + "-" + phoneNumber,
+
+        studentEmail: email,
+        firstName: firstname,
+        lastName: lastname,
+        password: password,
+        // emailParent1 :
+        //   guardianEmail1.length > 0 && guardian1Exists ? guardianEmail1 : null,
+        // emailParent2 :
+        //   guardianEmail2.length > 0 && guardian2Exists ? guardianEmail2 : null,
+        emailParent1: guardianEmail1,
+        emailParent2: guardianEmail2,
+        address1: address1,
+        address2: address2,
+        country: country,
+        state: state,
+        city: city,
+        zipCode: zipCode,
+        whoPaysEmail: email,
+        savePaymentFutureUse: false,
+        timeZoneId: timezone,
+      }
+    );
 
     if (password == confirmPassword) {
       navigation.push('/auth/registrationgrade');

@@ -4,7 +4,7 @@ import { Navbar, Footer } from '../../../components';
 import { useRouter } from 'next/router';
 import axios from 'axios';
 import PaymentForm from '@/components/stripe/PaymentForm';
-import { base_url } from '../../../api/client';
+import { apiClient, base_url } from '../../../api/client';
 import Link from 'next/link';
 export default function StudentRegistrationCCInfo() {
   const navigation = useRouter();
@@ -23,8 +23,8 @@ export default function StudentRegistrationCCInfo() {
     var storreed = JSON.parse(window.localStorage.getItem('registrationForm'));
     // setSavePaymentFutureUse(!savePaymentFutureUse)
     try {
-      const response = await axios.post(
-        `${base_url}/auth/complete-student-registration`,
+      const response = await apiClient.patch(
+        `/auth/complete-student-registration`,
         {
           firstName: userInfo.firstName,
           lastName: userInfo.lastName,

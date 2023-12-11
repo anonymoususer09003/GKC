@@ -49,7 +49,8 @@ export default function ParentRegistrationCCInfo() {
   
   const onContinue = async () => {
     try {
-      const response = await apiClient.post(
+      let token = JSON.parse(window.localStorage.getItem("gkcAuth"));
+      const response = await apiClient.patch(
         `/auth/complete-instructor-registration`,
         {
           firstName: userInfo.firstName,

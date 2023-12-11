@@ -16,6 +16,7 @@ export default function RegistrationGrade() {
 
   const onContinue = () => {
     var stored = JSON.parse(window.localStorage.getItem('registrationForm'));
+    var userType = JSON.parse(window.localStorage.getItem("userType"));
     let gradess = [];
     // console.log([grade1, grade2, grade3, grade4]);
     [grade1, grade2, grade3, grade4].forEach((v) => {
@@ -23,6 +24,18 @@ export default function RegistrationGrade() {
         gradess.push(Number(v));
       }
     });
+    let token = JSON.parse(window.localStorage.getItem("gkcAuth"));
+    let url =
+      userType == "instructor"
+        ? "/auth/complete-instructor-registration"
+        : "/auth/complete-student-registration";
+    apiClient.patch(
+      url,
+      {
+        [`${userType + "Email"}`]: stored.email,
+        gradesIdToTutor: selectedOptions,
+      }
+    );
     stored.gradesIdToTutor = gradess;
     window.localStorage.setItem('registrationForm', JSON.stringify(stored));
     navigation.push('/auth/proficiencytoteach');

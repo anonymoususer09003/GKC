@@ -3,6 +3,7 @@ import Head from 'next/head';
 import { Navbar, Footer } from '../../../components';
 import { useRouter } from 'next/router';
 import { RiArrowGoBackLine } from 'react-icons/ri';
+import { apiClient } from '@/api/client';
 import Link from 'next/link';
 export default function RegistrationGrade() {
   const [grade, setGrade] = useState(null);
@@ -10,6 +11,13 @@ export default function RegistrationGrade() {
   const onContinue = () => {
     var stored = JSON.parse(window.localStorage.getItem('registrationForm'));
     stored.gradeId = Number(grade);
+    apiClient.patch(
+      "/auth/complete-student-registration",
+      {
+        studentEmail: stored.email,
+        gradeId: Number(grade),
+      }
+    );
     window.localStorage.setItem('registrationForm', JSON.stringify(stored));
     navigation.push('/auth/registrationcourse');
   };

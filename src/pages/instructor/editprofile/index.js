@@ -466,7 +466,7 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
     const selectedFileSizeInBytes = selectedFile.size;
     const fileSizeInKB = selectedFileSizeInBytes / 1024;
 
-    if (fileSizeInKB > 200) {
+    if (fileSizeInKB > 3072) {
       setIsImageTooLarge(true);
       return;
     } else {
@@ -498,7 +498,7 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
     const selectedFileSizeInBytes = selectedFile.size;
     const fileSizeInMB = selectedFileSizeInBytes / (1024 * 1024);
 
-    if (fileSizeInMB > 5) {
+    if (fileSizeInMB > 10) {
       setIsVideoTooLarge(true);
       return;
     } else {
@@ -585,7 +585,7 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
                       </div>
                       {isImageTooLarge && (
                         <p className="tw-text-center tw-absolute tw-top-14 tw-left-0 tw-text-[15px] tw-text-red-500 tw-font-sm">
-                          Max allowed size is 200KB
+                          Max allowed size is 3MB
                         </p>
                       )}
                     </div>
@@ -644,7 +644,7 @@ function EditProfile({ userInfo, loading, error, fetchUser }) {
                       </div>
                       {isVideoTooLarge && (
                         <p className="tw-text-center tw-w-full tw-text-red-500 tw-font-sm">
-                          Max allowed size is 5MB
+                          Max allowed size is 10MB
                         </p>
                       )}
                     </div>
