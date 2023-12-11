@@ -25,9 +25,32 @@ export default function ParentRegistrationCCInfo() {
     setIsVideoFileEmpty(Object.keys(videoFile).length === 0);
   }, []);
 
+  const [onChanging, setOnChanging] = useState(false);
+  const handleRouteChange = () => {
+    setOnChanging(false);
+  };
+  const router = useRouter();
+  // safePush is used to avoid route pushing errors when users click multiple times or when the network is slow:  "Error: Abort fetching component for route"
+  const safePush = (path) => {
+    if (onChanging) {
+      return;
+    }
+    setOnChanging(true);
+    router.push(path);
+  };
+
+  useEffect(() => {
+    router.events.on('routeChangeComplete', handleRouteChange);
+
+    return () => {
+      router.events.off('routeChangeComplete', handleRouteChange);
+    };
+  }, [router, setOnChanging]);
+  
   const onContinue = async () => {
     try {
-      const response = await apiClient.post(
+      let token = JSON.parse(window.localStorage.getItem("gkcAuth"));
+      const response = await apiClient.patch(
         `/auth/complete-instructor-registration`,
         {
           firstName: userInfo.firstName,
@@ -78,8 +101,9 @@ export default function ParentRegistrationCCInfo() {
       );
 
       setTimeout(() => {
-        navigation.push('/instructor');
+          safePush('/instructor');
       }, 1400);
+
     } catch (error) {
       console.error(error);
     }
@@ -176,8 +200,8 @@ export default function ParentRegistrationCCInfo() {
               </button>
               <button
                 className="text-decoration-none tw-mt-4 tw-text-gray-500 tw-text-lg"
-                style={{border:'none', background: 'none', }}
                 onClick={onContinue}
+                style={{border:'none', background:'none'} }
               >
                 I will do this later
               </button>

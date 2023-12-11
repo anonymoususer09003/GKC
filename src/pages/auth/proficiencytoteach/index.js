@@ -31,6 +31,7 @@ export default function StudentRegistrationCourse() {
 
   const onContinue = () => {
     var stored = JSON.parse(window.localStorage.getItem('registrationForm'));
+    var userType = JSON.parse(window.localStorage.getItem("userType"));
     var languageId = [];
     var courseWithId = [];
     selectedLang.map((v) => {
@@ -48,6 +49,21 @@ export default function StudentRegistrationCourse() {
 
     stored.courseToTeachAndProficiency = courseWithId;
     stored.languagesIdPreference = languageId;
+
+    let url =
+    userType == "instructor"
+      ? "/auth/complete-instructor-registration"
+      : "/auth/complete-student-registration";
+    apiClient.patch(
+      url,
+      {
+        coursesId: courseWithId,
+
+        languagesIdPreference: languageId,
+        [`${userType + "Email"}`]: stored.email,
+      },
+    );
+
     window.localStorage.setItem('registrationForm', JSON.stringify(stored));
     navigation.push('/auth/weeklySchedule');
   };

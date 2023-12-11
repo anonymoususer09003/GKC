@@ -46,7 +46,7 @@ export default function RegisterInstructor() {
     const selectedFileSizeInBytes = selectedFile.size;
     const fileSizeInKB = selectedFileSizeInBytes / 1024;
 
-    if (fileSizeInKB > 200) {
+    if (fileSizeInKB > 3072) {
       setIsImageTooLarge(true);
       return;
     } else {
@@ -98,6 +98,26 @@ export default function RegisterInstructor() {
       stored.timeZoneId = timezone;
 
       window.localStorage.setItem('registrationForm', JSON.stringify(stored));
+
+      apiClient.patch(
+        "/auth/complete-instructor-registration",
+        {
+          phoneNumber: dial_code + "-" + phoneNumber,
+          instructorEmail: email,
+          firstName: firstName,
+          lastName: lastName,
+          password: password,
+          address1: address1,
+          address2: address2,
+          country: country,
+          state: state,
+          city: city,
+          zipCode: zipCode,
+          savePaymentFutureUse: true,
+          timeZoneId: timezone,
+        }
+      );
+
       navigation.push('/auth/registrationmore');
     } else {
       setErr('Password and new password mismatch');
@@ -232,7 +252,7 @@ export default function RegisterInstructor() {
                   />
                   {isImageTooLarge && (
                     <p className="tw-text-center tw-text-[15px] tw-w-full tw-text-red-500 tw-font-sm">
-                      Max allowed size is 200KB
+                      Max allowed size is 3MB
                     </p>
                   )}
                 </div>
