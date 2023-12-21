@@ -7,13 +7,50 @@ import Link from 'next/link';
 import { apiClient } from '@/api/client';
 
 function BankInfo() {
-
   const navigation = useRouter();
   const [showPayoneerInput, setShowPayoneerInput] = useState(false);
   const [showPayPalInput, setShowPayPalInput] = useState(false);
   const [popupVisible, setPopupVisible] = useState(false);
   const [email, setEmail] = useState('');
-
+  const [showACHBank, setAchBank] = useState(false);
+  const [data, setData] = useState([
+    {
+      label: 'Name on Account',
+      placeholder: 'Enter first name and last name',
+      value: '',
+      error: '',
+    },
+    {
+      label: 'Routing Number',
+      placeholder: 'Enter routing#',
+      value: '',
+      error: '',
+    },
+    {
+      label: 'Confirm Routing Number',
+      placeholder: 'Confirm routing#',
+      value: '',
+      error: '',
+    },
+    {
+      label: 'Account Number',
+      placeholder: 'Enter account#',
+      value: '',
+      error: '',
+    },
+    {
+      label: 'Confirm Account Number',
+      placeholder: 'Confirm account#',
+      value: '',
+      error: '',
+    },
+    {
+      label: 'Bank Name',
+      placeholder: 'Enter Bank Name',
+      value: '',
+      error: '',
+    },
+  ]);
   const handleUpdateClick = () => {
     setPopupVisible(true);
     setTimeout(() => {
@@ -27,9 +64,9 @@ function BankInfo() {
 
   useEffect(() => {
     getPayPalEmail();
-    if(email !== ''){
+    if (email !== '') {
       setShowPayPalInput(true);
-      setShowPayoneerInput(false)
+      setShowPayoneerInput(false);
     }
   }, []);
 
@@ -39,21 +76,22 @@ function BankInfo() {
         '/instructor/get-payPal-email-logged-instructor',
         {
           headers: {
-            Authorization: JSON.parse(window.localStorage.getItem('gkcAuth')).acessToken
-          }
+            Authorization: JSON.parse(window.localStorage.getItem('gkcAuth'))
+              .acessToken,
+          },
         }
       );
-      console.log(response?.data == '[object Object]')
-      if( response?.data == '[object Object]' ) {
-        setEmail(response?.data?.email); 
+      console.log(response?.data == '[object Object]');
+      if (response?.data == '[object Object]') {
+        setEmail(response?.data?.email);
         setShowPayPalInput(true);
-        setShowPayoneerInput(false)
-      } else{
+        setShowPayoneerInput(false);
+      } else {
         setEmail(response?.data);
         setShowPayPalInput(true);
-        setShowPayoneerInput(false)
+        setShowPayoneerInput(false);
       }
-      console.log(response)
+      console.log(response);
     } catch (error) {
       console.log(error);
     }
@@ -63,20 +101,55 @@ function BankInfo() {
     try {
       const response = await apiClient.put(
         '/instructor/update-payPal-email-logged-instructor',
-        {email: email},
+        { email: email },
         {
           headers: {
-            Authorization: JSON.parse(window.localStorage.getItem('gkcAuth')).acessToken
-          }
-        
+            Authorization: JSON.parse(window.localStorage.getItem('gkcAuth'))
+              .acessToken,
+          },
         }
       );
       handleUpdateClick();
-      setPopupVisible(!popupVisible)
+      setPopupVisible(!popupVisible);
     } catch (error) {
       console.log(error);
     }
   };
+  const handleTextChange = (value, item) => {
+    let temp = [...data];
+    let index = data.findIndex((el) => el.label === item.label);
+    let tempValue = { ...temp[index] };
+    console.log('value', value);
+    if (
+      tempValue.label === 'Confirm Routing Number' &&
+      temp[index - 1].value != value
+    ) {
+      tempValue.error = 'routing number didnot matched';
+    } else if (
+      tempValue.label === 'Confirm Routing Number' &&
+      temp[index - 1].value == value
+    ) {
+      tempValue.error = '';
+    }
+    console.log('logs', temp[index - 1]);
+    if (
+      tempValue.label === 'Confirm Account Number' &&
+      temp[index - 1].value != value
+    ) {
+      console.log('if');
+      tempValue.error = 'account number didnot matched';
+    } else if (
+      tempValue.label === 'Confirm Account Number' &&
+      temp[index - 1].value == value
+    ) {
+      console.log('else');
+      tempValue.error = '';
+    }
+    tempValue.value = value;
+    temp[index] = tempValue;
+    setData(temp);
+  };
+  const hasNonEmptyError = data.some((obj) => obj.error !== '');
 
   return (
     <>
@@ -84,7 +157,10 @@ function BankInfo() {
         <title> Instructor CC Info </title>{' '}
         <meta name="description" content="Where kids learn to code" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="https://gkc-images.s3.amazonaws.com/favicon.ico" />
+        <link
+          rel="icon"
+          href="https://gkc-images.s3.amazonaws.com/favicon.ico"
+        />
       </Head>{' '}
       <TutorNavbar isLogin={true} />{' '}
       <div className="w-100">
@@ -114,27 +190,76 @@ function BankInfo() {
             ></input>
           )} */}
           <div className="mt-5 d-flex gap-5 align-items-center justify-content-center">
-            <p style={{ width: '100px' }} className="fw-bold">
+            <p style={{ padding: '0px', margin: '0px' }} className="fw-bold">
+              ACH Bank Transfer
+            </p>
+            <button
+              onClick={() => setAchBank(!showACHBank)}
+              style={{ backgroundColor: '#f48342' }}
+              className="py-2 px-4 fw-bold text-white rounded"
+            >
+              Setup
+            </button>
+          </div>
+          {showACHBank && (
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              {data.map((item, index) => {
+                return (
+                  <>
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        marginTop: '10px',
+                      }}
+                    >
+                      <label style={{ width: '200px' }}>{item.label}</label>
+
+                      <input
+                        onChange={(e) => {
+                          handleTextChange(e.target.value, item);
+                        }}
+                        style={{
+                          marginLeft: '10px',
+                          width: '80%',
+                          border: `2px solid ${item.error ? 'red' : 'black'}`,
+                        }}
+                        value={item.value}
+                        placeholder={item.placeholder}
+                        className="fw-bold p-1"
+                      />
+                    </div>
+                    {item.error && (
+                      <p style={{ textAlign: 'end', color: 'red' }}>
+                        {item.error}
+                      </p>
+                    )}
+                  </>
+                );
+              })}
+            </div>
+          )}
+
+          <div className="mt-5 d-flex gap-5 align-items-center justify-content-center">
+            <p style={{ width: '140px' }} className="fw-bold">
               PayPal
             </p>
-            {
-              !showPayPalInput && (
-                <button
+            {!showPayPalInput && (
+              <button
                 onClick={() => setShowPayPalInput(!showPayPalInput)}
                 style={{ backgroundColor: '#f48342' }}
                 className="py-2 px-4 fw-bold text-white rounded"
               >
                 Setup
               </button>
-              )
-            }
+            )}
           </div>
           {showPayPalInput && (
             <input
               value={email}
               onChange={(e) => handleEmailChange(e)}
               placeholder="Enter PayPal info"
-              style={{width: 300, textAlign: 'center'}}
+              style={{ width: 300, textAlign: 'center' }}
               className="mt-3 fw-bold border-2 border-dark p-1"
             ></input>
           )}
@@ -144,8 +269,11 @@ function BankInfo() {
               style={{
                 marginTop: '80px',
                 width: 200,
-                backgroundColor: '#f48342',
+                marginBottom: '20px',
+                backgroundColor:
+                  showACHBank && hasNonEmptyError ? 'grey' : '#f48342',
               }}
+              disabled={showACHBank && hasNonEmptyError ? true : false}
               className="text-light p-2 rounded fw-bold  bg-gray-300"
             >
               Update
