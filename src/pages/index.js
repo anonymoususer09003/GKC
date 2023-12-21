@@ -379,8 +379,8 @@ function StudentLandingPage() {
             src={'/UTutorMe_Bannerr.png'}
             alt="Vercel Logo"
             className=""
-            width={600}
-            height={100}
+            width={300}
+            height={50}
             unoptimized
           />
         </div>
