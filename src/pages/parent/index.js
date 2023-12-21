@@ -371,8 +371,8 @@ function ParentLandingPage() {
             src={'/UTutorMe_Bannerr.png'}
             alt="Vercel Logo"
             className=""
-            width={300}
-            height={80}
+            width={600}
+            height={100}
             unoptimized
           />
         </div>
