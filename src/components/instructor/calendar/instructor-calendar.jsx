@@ -166,33 +166,30 @@ function InstructorCalendar() {
   }, [loggedInUser]);
 
   //Logged user events
-  useEffect(() => {
-    const fetchEventData = async () => {
-      try {
-        const typ = JSON.parse(window.localStorage.getItem('gkcAuth'));
+  const fetchEventData = async () => {
+    try {
+      const typ = JSON.parse(window.localStorage.getItem('gkcAuth'));
 
-        const response = await apiClient.get('/event/logged-user-events');
+      const response = await apiClient.get('/event/logged-user-events');
 
-        let temp = [];
-        response?.data.map((item) => {
-          const formattedDate = new Date(item.start).toLocaleDateString(
-            'en-GB',
-            {
-              year: 'numeric',
-              month: '2-digit',
-              day: '2-digit',
-            }
-          );
-          temp.push({
-            ...item,
-            formattedDate,
-          });
+      let temp = [];
+      response?.data.map((item) => {
+        const formattedDate = new Date(item.start).toLocaleDateString('en-GB', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
         });
-        setBookedEvent(temp || []);
-      } catch (error) {
-        console.log('Error fetching iCalendar data:', error);
-      }
-    };
+        temp.push({
+          ...item,
+          formattedDate,
+        });
+      });
+      setBookedEvent(temp || []);
+    } catch (error) {
+      console.log('Error fetching iCalendar data:', error);
+    }
+  };
+  useEffect(() => {
     fetchEventData();
   }, []);
 
@@ -264,7 +261,10 @@ function InstructorCalendar() {
                 }
               />
             </div>
-            <InstructorSchedule schedule={events} />
+            <InstructorSchedule
+              fetchEventData={() => fetchEventData()}
+              schedule={events}
+            />
           </div>
           <div style={{ position: 'relative', bottom: 0, width: '100vw' }}>
             <Footer />

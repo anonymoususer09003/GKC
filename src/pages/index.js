@@ -61,7 +61,6 @@ function StudentLandingPage() {
   const nav = useRouter();
   const [goInterviewFromSignIn, setGoInterviewFromSignIn] = useState(false);
   const search = async () => {
-    console.log(JSON.stringify(page).length > 1 ? page : '0' + page);
     if (page === 0) {
       try {
         // var typ = JSON.parse(window.localStorage.getItem("gkcAuth"));
@@ -84,7 +83,7 @@ function StudentLandingPage() {
           */
           }
         );
-        console.log(res);
+
         if (res.data.content.length > 0) {
           setInsructorsFound(true);
           setInsructors(res.data.content);
@@ -371,20 +370,20 @@ function StudentLandingPage() {
       ) : null}
       <Navbar />
       <main className="">
-        {/* <div
+        <div
           style={{ display: 'flex', justifyContent: 'center', width: '100%' }}
         >
           <Image
             style={{ cursor: 'pointer' }}
             onClick={() => window.open('https://ututorme.com/')}
-            src={'https://gkc-images.s3.amazonaws.com/UTutorMe_Banner.png'}
+            src={'/UTutorMe_Bannerr.png'}
             alt="Vercel Logo"
             className=""
             width={300}
             height={80}
             unoptimized
           />
-        </div> */}
+        </div>
 
         <div className="container py-4">
           <p className="text-center mb-0 tw-font-medium tw-text-[25px] tw-text-[#f48342]">

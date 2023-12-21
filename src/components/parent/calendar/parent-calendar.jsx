@@ -33,31 +33,28 @@ function ParentCalendar() {
 
   console.log('booked events', bookedEvents);
   //Logged user events
-  useEffect(() => {
-    const fetchEventData = async () => {
-      try {
-        const response = await apiClient.get('/event/logged-user-events');
+  const fetchEventData = async () => {
+    try {
+      const response = await apiClient.get('/event/logged-user-events');
 
-        let temp = [];
-        response?.data.map((item) => {
-          const formattedDate = new Date(item.start).toLocaleDateString(
-            'en-GB',
-            {
-              year: 'numeric',
-              month: '2-digit',
-              day: '2-digit',
-            }
-          );
-          temp.push({
-            ...item,
-            formattedDate,
-          });
+      let temp = [];
+      response?.data.map((item) => {
+        const formattedDate = new Date(item.start).toLocaleDateString('en-GB', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
         });
-        setBookedEvent(temp || []);
-      } catch (error) {
-        console.log('Error fetching iCalendar data:', error);
-      }
-    };
+        temp.push({
+          ...item,
+          formattedDate,
+        });
+      });
+      setBookedEvent(temp || []);
+    } catch (error) {
+      console.log('Error fetching iCalendar data:', error);
+    }
+  };
+  useEffect(() => {
     fetchEventData();
   }, []);
 
@@ -111,7 +108,10 @@ function ParentCalendar() {
           <div className="col-12 col-lg-4 pt-5 react-calendar-text-red">
             <Calendar onClickDay={handleCalendarClick} />
           </div>
-          <ParentSchedule schedule={events} />
+          <ParentSchedule
+            fetchEventData={() => fetchEventData()}
+            schedule={events}
+          />
         </div>
       </main>
       <Footer />
