@@ -362,20 +362,20 @@ function ParentLandingPage() {
         </div>
       ) : null}
       <main className="container-fluid">
-        {/* <div
+        <div
           style={{ display: 'flex', justifyContent: 'center', width: '100%' }}
         >
           <Image
             style={{ cursor: 'pointer' }}
             onClick={() => window.open('https://ututorme.com/')}
-            src={'https://gkc-images.s3.amazonaws.com/UTutorMe_Banner.png'}
+            src={'/UTutorMe_Bannerr.png'}
             alt="Vercel Logo"
             className=""
             width={300}
             height={80}
             unoptimized
           />
-        </div> */}
+        </div>
         <div className="container py-4">
           <p className="text-center mb-0 tw-font-medium tw-text-[25px] tw-text-[#f48342]">
             Start here by searching

@@ -32,31 +32,28 @@ function StudentCalandar() {
   }, [dispatch]);
 
   //Logged user events
-  useEffect(() => {
-    const fetchEventData = async () => {
-      try {
-        const response = await apiClient.get('/event/logged-user-events');
-        let temp = [];
-        response?.data.map((item) => {
-          const formattedDate = new Date(item.start).toLocaleDateString(
-            'en-GB',
-            {
-              year: 'numeric',
-              month: '2-digit',
-              day: '2-digit',
-            }
-          );
-          temp.push({
-            ...item,
-            formattedDate,
-          });
+  const fetchEventData = async () => {
+    try {
+      const response = await apiClient.get('/event/logged-user-events');
+      let temp = [];
+      response?.data.map((item) => {
+        const formattedDate = new Date(item.start).toLocaleDateString('en-GB', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
         });
-        // console.log('EVENT DATAAAA',response.data)
-        setBookedEvent(temp);
-      } catch (error) {
-        console.log('Error fetching iCalendar data:', error);
-      }
-    };
+        temp.push({
+          ...item,
+          formattedDate,
+        });
+      });
+      // console.log('EVENT DATAAAA',response.data)
+      setBookedEvent(temp);
+    } catch (error) {
+      console.log('Error fetching iCalendar data:', error);
+    }
+  };
+  useEffect(() => {
     fetchEventData();
   }, []);
 
@@ -109,7 +106,10 @@ function StudentCalandar() {
           <div className="col-12 col-lg-6 pt-5 react-calendar-text-red">
             <Calendar onChange={handleCalendarClick} />
           </div>
-          <StudentSchedule schedule={events} />
+          <StudentSchedule
+            fetchEventData={() => fetchEventData()}
+            schedule={events}
+          />
         </div>
       </main>
       <Footer />

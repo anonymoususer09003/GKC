@@ -10,7 +10,10 @@ import FirebaseChat from '../../../hooks/firebase-chat';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { base_url } from '../../../api/client';
-
+import DeleteSingleClassModal from '@/components/modals/DeleteSingleClassModal';
+import DeleteRecurringClassModal from '@/components/modals/DeleteRecurringEvent';
+import DeleteSingleEvent from '@/services/events/DeleteSingleEvent';
+import DeleteRecurringEvent from '@/services/events/DeleteRecurringEvent';
 const StudentSchedule = (props) => {
   const navigation = useRouter();
   const loggedInUser = useSelector((state) => state.user.userInfo);
@@ -25,7 +28,8 @@ const StudentSchedule = (props) => {
   } = FirebaseChat();
   const [schedule, setSchedule] = useState([]);
   const [activeChat, setActiveChat] = useState(null);
-
+  const [showModal, setModal] = useState('');
+  const [activeEvent, setActiveEvent] = useState(null);
   const deleteSingleOccurrence = async (eventId, dateToCancel) => {
     try {
       const response = await axios.delete(
@@ -92,9 +96,59 @@ const StudentSchedule = (props) => {
       setSchedule(sortedarray);
     }
   }, [props?.schedule]);
-
+  const onClose = () => {
+    setModal('');
+    setActiveEvent('');
+  };
+  const handleDelete = async (activeEvent, type) => {
+    try {
+      if (!type) {
+        console.log('activeevent', activeEvent);
+        let body = {
+          eventId: activeEvent?.id,
+          dateToCancel: activeEvent?.start?.split('T')[0],
+        };
+        let res = await DeleteSingleEvent(body);
+        // console.log("res", res);
+      } else {
+        console.log('tye', type);
+        if (type === 'single') {
+          let body = {
+            eventId: activeEvent?.id,
+            dateToCancel: activeEvent?.start?.split('T')[0],
+          };
+          let res = await DeleteSingleEvent(body);
+        } else {
+          let res = await DeleteRecurringEvent(activeEvent?.id);
+        }
+      }
+      let filterSchedule = schedule.filter((item) => item.id != activeEvent.id);
+      setSchedule(filterSchedule);
+      onClose();
+      props.fetchEventData();
+    } catch (err) {
+      console.log('err', err);
+      onClose();
+    }
+  };
+  console.log('schedule', schedule);
   return (
     <>
+      {showModal == 'ONETIME' ? (
+        <DeleteSingleClassModal
+          text={'Do you wish to cancel this class?'}
+          onCancel={onClose}
+          onAccept={() => handleDelete(activeEvent, true)}
+        />
+      ) : null}
+      {showModal != 'ONETIME?' && showModal ? (
+        <DeleteRecurringClassModal
+          text1={'Delete this class'}
+          text2={'Delete this and all future classes'}
+          onCancel={onClose}
+          onAccept={(type) => handleDelete(activeEvent, type)}
+        />
+      ) : null}
       <div className="col-12 col-lg-6">
         <h3 className={`text-center ${styles.scheduleHeader}`}>Schedule</h3>
         <div
@@ -149,6 +203,11 @@ const StudentSchedule = (props) => {
                   var minutesDifference = Math.floor(
                     timeDifference / (1000 * 60)
                   );
+                  let currentDate = new Date();
+                  let timeDifferences = modifiedDate - currentDate;
+
+                  // Convert the difference to hours
+                  let hoursDifference = timeDifferences / (1000 * 60 * 60);
                   let time = moment(el.start).format('hh:mm a');
                   var past = specificEventTime <= currentTime;
                   return (
@@ -199,14 +258,23 @@ const StudentSchedule = (props) => {
                           />
                         )}
                       </td>
-                      {/* <td>
-                        <RiDeleteBin6Line
-                          style={{ cursor: 'pointer' }}
-                          fill="gray"
-                          className="p-0 m-0 h4 flex-fill"
-                          onClick={handleDeleteButtonClick}
-                        />
-                      </td> */}
+                      {hoursDifference > 12 && (
+                        <td>
+                          <RiDeleteBin6Line
+                            onClick={() => {
+                              setActiveEvent(el);
+                              setModal(
+                                el?.classFrequency
+                                  ? el?.classFrequency
+                                  : 'ONETIME'
+                              );
+                            }}
+                            style={{ cursor: 'pointer' }}
+                            fill="gray"
+                            className="p-0 m-0 h4 flex-fill"
+                          />
+                        </td>
+                      )}
                     </tr>
                   );
                 })}
