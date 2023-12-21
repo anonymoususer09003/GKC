@@ -42,6 +42,25 @@ export default function WithdrawDropdown({
                 <a
                   href="#"
                   onClick={() => {
+                    setPaymentMethod('ACHFunds');
+                    setSelectedOption('ACHFunds');
+                  }}
+                  className={classNames(
+                    active
+                      ? 'tw-bg-gray-100 tw-text-gray-900'
+                      : 'tw-text-gray-700',
+                    'tw-block tw-px-4 tw-py-2 tw-text-sm'
+                  )}
+                >
+                  ACH Funds Transfer
+                </a>
+              )}
+            </Menu.Item>
+            <Menu.Item>
+              {({ active }) => (
+                <a
+                  href="#"
+                  onClick={() => {
                     setPaymentMethod('PayPal');
                     setSelectedOption('PayPal');
                   }}
