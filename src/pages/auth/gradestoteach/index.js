@@ -33,7 +33,7 @@ export default function RegistrationGrade() {
       url,
       {
         [`${userType + "Email"}`]: stored.email,
-        gradesIdToTutor: selectedOptions,
+        gradesIdToTutor: gradess,
       }
     );
     stored.gradesIdToTutor = gradess;
