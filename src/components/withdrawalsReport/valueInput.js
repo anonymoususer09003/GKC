@@ -6,7 +6,7 @@ export default function ValueInput({ paymentMethod, setTransferAmount }) {
           <span className="tw-text-gray-500 sm:tw-text-sm">$</span>
         </div>
         <input
-          type="text"
+          type="number"
           name="price"
           disabled={paymentMethod ? false : true}
           onChange={(e) => setTransferAmount(e.target.value)}
