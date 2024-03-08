@@ -57,9 +57,10 @@ export default function Withdrawals() {
 
     if (paymentMethod === 'PayPal') {
       await transferToPayPal();
-    } else if (paymentMethod === 'ACHFunds') {
-      await transferToAchBank();
     }
+    // else if (paymentMethod === 'ACHFunds') {
+    //   await transferToAchBank();
+    // }
   };
 
   const transferToPayPal = async () => {
@@ -72,16 +73,16 @@ export default function Withdrawals() {
       console.log(error);
     }
   };
-  const transferToAchBank = async () => {
-    let url = `/billdotcom/pay?grossAmount=${transferAmount}`;
-    try {
-      const response = await apiClient.post(url);
-      console.log(response);
-      setavailableBalance(availableBalance - transferAmount);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  // const transferToAchBank = async () => {
+  //   let url = `/billdotcom/pay?grossAmount=${transferAmount}`;
+  //   try {
+  //     const response = await apiClient.post(url);
+  //     console.log(response);
+  //     setavailableBalance(availableBalance - transferAmount);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
   const downloadWithDrawalsReport = async () => {
     let url = `/financial/logged-instructor-withdrawals-pdf-report`;
@@ -155,11 +156,11 @@ export default function Withdrawals() {
 
   const disableTransferButton = () => {
     if (transferAmount <= 0) return true;
-    console.log(achIsntValid);
-    return achIsntValid;
+    // console.log(achIsntValid);
+    // return achIsntValid;
   };
 
-  const achIsntValid = paymentMethod === 'ACHFunds' && transferAmount < 11;
+  // const achIsntValid = paymentMethod === 'ACHFunds' && transferAmount < 11;
 
   return (
     <div className='tw-px-20 tw-cst-pf tw-h-screen sm:tw-px-6 lg:tw-px-16'>
@@ -198,10 +199,10 @@ export default function Withdrawals() {
             </button>
           </div>
         </div>
-        {achIsntValid && (
-          <p style={{ textAlign: 'center', color: 'red' }}>
-            For ACH Funds Transfer minimal amount is 11$
-          </p>)}
+        {/*{achIsntValid && (*/}
+        {/*  <p style={{ textAlign: 'center', color: 'red' }}>*/}
+        {/*    For ACH Funds Transfer minimal amount is 11$*/}
+        {/*  </p>)}*/}
         <div className='tw-mt-8 tw-flow-root'>
           <div className='tw--mx-4 tw--my-2 tw-overflow-x-auto sm:tw--mx-6 lg:tw--mx-8'>
             <div className='tw-inline-block tw-min-w-full tw-py-2 tw-align-middle sm:tw-px-6 lg:tw-px-8'>

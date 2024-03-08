@@ -37,25 +37,25 @@ export default function WithdrawDropdown({
       >
         <Menu.Items className="tw-absolute tw-right-0 tw-z-10 tw-mt-2 tw-w-56 tw-origin-top-right tw-rounded-md tw-bg-white tw-shadow-lg tw-ring-1 tw-ring-black tw-ring-opacity-5 focus:tw-outline-none">
           <div className="tw-py-1">
-            <Menu.Item>
-              {({ active }) => (
-                <a
-                  href="#"
-                  onClick={() => {
-                    setPaymentMethod('ACHFunds');
-                    setSelectedOption('ACHFunds');
-                  }}
-                  className={classNames(
-                    active
-                      ? 'tw-bg-gray-100 tw-text-gray-900'
-                      : 'tw-text-gray-700',
-                    'tw-block tw-px-4 tw-py-2 tw-text-sm'
-                  )}
-                >
-                  ACH Funds Transfer
-                </a>
-              )}
-            </Menu.Item>
+            {/*<Menu.Item>*/}
+            {/*  {({ active }) => (*/}
+            {/*    <a*/}
+            {/*      href="#"*/}
+            {/*      onClick={() => {*/}
+            {/*        setPaymentMethod('ACHFunds');*/}
+            {/*        setSelectedOption('ACHFunds');*/}
+            {/*      }}*/}
+            {/*      className={classNames(*/}
+            {/*        active*/}
+            {/*          ? 'tw-bg-gray-100 tw-text-gray-900'*/}
+            {/*          : 'tw-text-gray-700',*/}
+            {/*        'tw-block tw-px-4 tw-py-2 tw-text-sm'*/}
+            {/*      )}*/}
+            {/*    >*/}
+            {/*      ACH Funds Transfer*/}
+            {/*    </a>*/}
+            {/*  )}*/}
+            {/*</Menu.Item>*/}
             <Menu.Item>
               {({ active }) => (
                 <a

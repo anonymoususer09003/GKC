@@ -6,7 +6,8 @@ import { RiArrowGoBackLine } from 'react-icons/ri';
 import Link from 'next/link';
 import { apiClient } from '@/api/client';
 import { useSelector } from 'react-redux';
-import { isCountryUSA, isEmailValid, isEntireStingNumbers } from '@/services/Validation/validationService';
+import { isEmailValid } from '@/services/Validation/validationService';
+// import { isCountryUSA, isEmailValid, isEntireStingNumbers } from '@/services/Validation/validationService';
 
 export default function ParentRegistrationCCInfo() {
   const navigation = useRouter();
@@ -20,45 +21,45 @@ export default function ParentRegistrationCCInfo() {
   const files = useSelector((state) => state.files);
   const imageFile = files.image;
   const videoFile = files.video;
-  const [showACHBank, setAchBank] = useState(false);
-  const [achInfo, setAchInfo] = useState([
-    {
-      label: 'Name on Account*',
-      placeholder: 'Enter first name and last name',
-      value: '',
-      error: ''
-    },
-    {
-      label: 'Routing Number*',
-      placeholder: 'Enter routing#',
-      value: '',
-      error: '',
-      isANumber: true
-    },
-    {
-      label: 'Confirm Routing Number*',
-      placeholder: 'Confirm routing#',
-      value: '',
-      error: '',
-      compareWithIndex: 1,
-      isANumber: true
-    },
-    {
-      label: 'Account Number*',
-      placeholder: 'Enter account#',
-      value: '',
-      error: '',
-      isANumber: true
-    },
-    {
-      label: 'Confirm Account Number*',
-      placeholder: 'Confirm account#',
-      value: '',
-      error: '',
-      compareWithIndex: 3,
-      isANumber: true
-    }
-  ]);
+  // const [showACHBank, setAchBank] = useState(false);
+  // const [achInfo, setAchInfo] = useState([
+  //   {
+  //     label: 'Name on Account*',
+  //     placeholder: 'Enter first name and last name',
+  //     value: '',
+  //     error: ''
+  //   },
+  //   {
+  //     label: 'Routing Number*',
+  //     placeholder: 'Enter routing#',
+  //     value: '',
+  //     error: '',
+  //     isANumber: true
+  //   },
+  //   {
+  //     label: 'Confirm Routing Number*',
+  //     placeholder: 'Confirm routing#',
+  //     value: '',
+  //     error: '',
+  //     compareWithIndex: 1,
+  //     isANumber: true
+  //   },
+  //   {
+  //     label: 'Account Number*',
+  //     placeholder: 'Enter account#',
+  //     value: '',
+  //     error: '',
+  //     isANumber: true
+  //   },
+  //   {
+  //     label: 'Confirm Account Number*',
+  //     placeholder: 'Confirm account#',
+  //     value: '',
+  //     error: '',
+  //     compareWithIndex: 3,
+  //     isANumber: true
+  //   }
+  // ]);
 
   useEffect(() => {
     setIsImageFileEmpty(Object.keys(imageFile).length === 0);
@@ -118,7 +119,7 @@ export default function ParentRegistrationCCInfo() {
 
       await savePayPalEmail();
 
-      await saveAchInfo();
+      // await saveAchInfo();
 
       console.log(res.data);
       var stor = window.localStorage.getItem('gkcAuth');
@@ -169,68 +170,68 @@ export default function ParentRegistrationCCInfo() {
     }
   };
 
-  const saveAchInfo = async () => {
-    if (!checkIfAchInfoIsValid()) return;
+  // const saveAchInfo = async () => {
+  //   if (!checkIfAchInfoIsValid()) return;
+  //
+  //   try {
+  //     const name = achInfo[0].value;
+  //     const routingNumber = achInfo[1].value;
+  //     const accountNumber = achInfo[3].value;
+  //     const data = {
+  //       name,
+  //       routingNumber,
+  //       accountNumber,
+  //       savings: true,
+  //       address1: userInfo.address1,
+  //       addressCity: userInfo.city,
+  //       addressState: userInfo.state,
+  //       addressZip: userInfo.zipCode,
+  //       addressCountry: userInfo.country
+  //     };
+  //     const addAchBankInfo = await apiClient.post(`/billdotcom/vendor`, data);
+  //     console.log(addAchBankInfo);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
-    try {
-      const name = achInfo[0].value;
-      const routingNumber = achInfo[1].value;
-      const accountNumber = achInfo[3].value;
-      const data = {
-        name,
-        routingNumber,
-        accountNumber,
-        savings: true,
-        address1: userInfo.address1,
-        addressCity: userInfo.city,
-        addressState: userInfo.state,
-        addressZip: userInfo.zipCode,
-        addressCountry: userInfo.country
-      };
-      const addAchBankInfo = await apiClient.post(`/billdotcom/vendor`, data);
-      console.log(addAchBankInfo);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const handleTextChange = (value, item) => {
-    let temp = [...achInfo];
-    let index = achInfo.findIndex((el) => el.label === item.label);
-    let currentInput = { ...temp[index], value };
-    let compareToInput = temp[currentInput?.compareWithIndex];
+  // const handleTextChange = (value, item) => {
+  //   let temp = [...achInfo];
+  //   let index = achInfo.findIndex((el) => el.label === item.label);
+  //   let currentInput = { ...temp[index], value };
+  //   let compareToInput = temp[currentInput?.compareWithIndex];
+  //
+  //
+  //   if (currentInput?.isANumber && !isEntireStingNumbers(currentInput.value)) {
+  //     currentInput.error = 'No alphabets or special characters';
+  //   } else {
+  //     currentInput.error = '';
+  //   }
+  //
+  //   if (compareToInput) {
+  //     if (currentInput.value === compareToInput.value) {
+  //       currentInput.error = '';
+  //     } else {
+  //       currentInput.error = compareToInput.label.replace('*', '') + ' did not match';
+  //     }
+  //   }
+  //
+  //   temp[index] = currentInput;
+  //   setAchInfo(temp);
+  // };
 
 
-    if (currentInput?.isANumber && !isEntireStingNumbers(currentInput.value)) {
-      currentInput.error = 'No alphabets or special characters';
-    } else {
-      currentInput.error = '';
-    }
-
-    if (compareToInput) {
-      if (currentInput.value === compareToInput.value) {
-        currentInput.error = '';
-      } else {
-        currentInput.error = compareToInput.label.replace('*', '') + ' did not match';
-      }
-    }
-
-    temp[index] = currentInput;
-    setAchInfo(temp);
-  };
-
-
-  const checkIfAchInfoIsValid = () => achInfo.every(field => field.value && !field.error);
-
-  const isInstructorFromUSA = () => isCountryUSA(userInfo?.country);
+  // const checkIfAchInfoIsValid = () => achInfo.every(field => field.value && !field.error);
+  //
+  // const isInstructorFromUSA = () => isCountryUSA(userInfo?.country);
 
   const isButtonActive = () => {
 
-    if (showPayPalInput && showACHBank) return !!(payPalEmail && isEmailValid(payPalEmail)) && checkIfAchInfoIsValid();
+    // if (showPayPalInput && showACHBank) return !!(payPalEmail && isEmailValid(payPalEmail)) && checkIfAchInfoIsValid();
 
     if (showPayPalInput) return !!(payPalEmail && isEmailValid(payPalEmail));
 
-    if (showACHBank) return !!(checkIfAchInfoIsValid());
+    // if (showACHBank) return !!(checkIfAchInfoIsValid());
 
     return false;
   };
@@ -278,57 +279,57 @@ export default function ParentRegistrationCCInfo() {
                 className='mt-3 fw-bold border-2 border-dark p-1'
               ></input>
             )}
-            {isInstructorFromUSA() && (
-              <div className='mt-5 d-flex gap-5 align-items-center justify-content-center'>
-                <p style={{ padding: '0px', margin: '0px' }} className='fw-bold'>
-                  ACH Bank Transfer
-                </p>
-                <button
-                  onClick={() => setAchBank(!showACHBank)}
-                  style={{ backgroundColor: '#f48342' }}
-                  className='py-2 px-4 fw-bold text-white rounded'
-                >
-                  Setup
-                </button>
-              </div>)}
-            {isInstructorFromUSA() && showACHBank && (
-              <div style={{ display: 'flex', flexDirection: 'column' }}>
-                {achInfo.map((item, index) => {
-                  return (
-                    <>
-                      <div
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          marginTop: '10px'
-                        }}
-                      >
-                        <label style={{ width: '200px' }}>{item.label}</label>
+            {/*{isInstructorFromUSA() && (*/}
+            {/*  <div className='mt-5 d-flex gap-5 align-items-center justify-content-center'>*/}
+            {/*    <p style={{ padding: '0px', margin: '0px' }} className='fw-bold'>*/}
+            {/*      ACH Bank Transfer*/}
+            {/*    </p>*/}
+            {/*    <button*/}
+            {/*      onClick={() => setAchBank(!showACHBank)}*/}
+            {/*      style={{ backgroundColor: '#f48342' }}*/}
+            {/*      className='py-2 px-4 fw-bold text-white rounded'*/}
+            {/*    >*/}
+            {/*      Setup*/}
+            {/*    </button>*/}
+            {/*  </div>)}*/}
+            {/*{isInstructorFromUSA() && showACHBank && (*/}
+            {/*  <div style={{ display: 'flex', flexDirection: 'column' }}>*/}
+            {/*    {achInfo.map((item, index) => {*/}
+            {/*      return (*/}
+            {/*        <>*/}
+            {/*          <div*/}
+            {/*            style={{*/}
+            {/*              display: 'flex',*/}
+            {/*              alignItems: 'center',*/}
+            {/*              marginTop: '10px'*/}
+            {/*            }}*/}
+            {/*          >*/}
+            {/*            <label style={{ width: '200px' }}>{item.label}</label>*/}
 
-                        <input
-                          onChange={(e) => {
-                            handleTextChange(e.target.value, item);
-                          }}
-                          style={{
-                            marginLeft: '10px',
-                            width: '80%',
-                            border: `2px solid ${item.error ? 'red' : 'black'}`
-                          }}
-                          value={item.value}
-                          placeholder={item.placeholder}
-                          className='fw-bold p-1'
-                        />
-                      </div>
-                      {item.error && (
-                        <p style={{ textAlign: 'end', color: 'red' }}>
-                          {item.error}
-                        </p>
-                      )}
-                    </>
-                  );
-                })}
-              </div>
-            )}
+            {/*            <input*/}
+            {/*              onChange={(e) => {*/}
+            {/*                handleTextChange(e.target.value, item);*/}
+            {/*              }}*/}
+            {/*              style={{*/}
+            {/*                marginLeft: '10px',*/}
+            {/*                width: '80%',*/}
+            {/*                border: `2px solid ${item.error ? 'red' : 'black'}`*/}
+            {/*              }}*/}
+            {/*              value={item.value}*/}
+            {/*              placeholder={item.placeholder}*/}
+            {/*              className='fw-bold p-1'*/}
+            {/*            />*/}
+            {/*          </div>*/}
+            {/*          {item.error && (*/}
+            {/*            <p style={{ textAlign: 'end', color: 'red' }}>*/}
+            {/*              {item.error}*/}
+            {/*            </p>*/}
+            {/*          )}*/}
+            {/*        </>*/}
+            {/*      );*/}
+            {/*    })}*/}
+            {/*  </div>*/}
+            {/*)}*/}
 
             <div className='mt-5 d-flex gap-5 align-items-center justify-content-center'>
               <p style={{ width: '140px' }} className='fw-bold'>

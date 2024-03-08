@@ -4,56 +4,57 @@ import Head from 'next/head';
 import { TutorNavbar } from '@/components';
 import { withRole } from '@/utils/withAuthorization';
 import { apiClient } from '@/api/client';
-import { isCountryUSA, isEmailValid, isEntireStingNumbers } from '@/services/Validation/validationService';
+import { isEmailValid } from '@/services/Validation/validationService';
+// import { isCountryUSA, isEmailValid, isEntireStingNumbers } from '@/services/Validation/validationService';
 
 function BankInfo() {
 
   const [showPayoneerInput, setShowPayoneerInput] = useState(false);
   const [showPayPalInput, setShowPayPalInput] = useState(false);
   const [popupVisible, setPopupVisible] = useState(false);
-  const [achCreated, setAchCreated] = useState(false);
   const [email, setEmail] = useState('');
-  const [showACHBank, setAchBank] = useState(false);
-  const [userInfo, setUserInfo] = useState(null);
   const [payPalChanged, setPayPalChanged] = useState(false);
-  const [achInfo, setAchInfo] = useState([
-    {
-      label: 'Name on Account*',
-      placeholder: 'Enter first name and last name',
-      value: '',
-      error: ''
-    },
-    {
-      label: 'Routing Number*',
-      placeholder: 'Enter routing#',
-      value: '',
-      error: '',
-      isANumber: true
-    },
-    {
-      label: 'Confirm Routing Number*',
-      placeholder: 'Confirm routing#',
-      value: '',
-      error: '',
-      compareWithIndex: 1,
-      isANumber: true
-    },
-    {
-      label: 'Account Number*',
-      placeholder: 'Enter account#',
-      value: '',
-      error: '',
-      isANumber: true
-    },
-    {
-      label: 'Confirm Account Number*',
-      placeholder: 'Confirm account#',
-      value: '',
-      error: '',
-      compareWithIndex: 3,
-      isANumber: true
-    }
-  ]);
+  // const [userInfo, setUserInfo] = useState(null);
+  // const [achCreated, setAchCreated] = useState(false);
+  // const [showACHBank, setAchBank] = useState(false);
+  // const [achInfo, setAchInfo] = useState([
+  //   {
+  //     label: 'Name on Account*',
+  //     placeholder: 'Enter first name and last name',
+  //     value: '',
+  //     error: ''
+  //   },
+  //   {
+  //     label: 'Routing Number*',
+  //     placeholder: 'Enter routing#',
+  //     value: '',
+  //     error: '',
+  //     isANumber: true
+  //   },
+  //   {
+  //     label: 'Confirm Routing Number*',
+  //     placeholder: 'Confirm routing#',
+  //     value: '',
+  //     error: '',
+  //     compareWithIndex: 1,
+  //     isANumber: true
+  //   },
+  //   {
+  //     label: 'Account Number*',
+  //     placeholder: 'Enter account#',
+  //     value: '',
+  //     error: '',
+  //     isANumber: true
+  //   },
+  //   {
+  //     label: 'Confirm Account Number*',
+  //     placeholder: 'Confirm account#',
+  //     value: '',
+  //     error: '',
+  //     compareWithIndex: 3,
+  //     isANumber: true
+  //   }
+  // ]);
 
   const handleUpdateClick = () => {
     setPopupVisible(true);
@@ -68,22 +69,22 @@ function BankInfo() {
   };
 
   useEffect(() => {
-    getUserInfo();
+    // getUserInfo();
     getPayPalEmail();
-    getAchBankInfo();
+    // getAchBankInfo();
     if (email !== '') {
       setShowPayPalInput(true);
       setShowPayoneerInput(false);
     }
   }, []);
-  const getUserInfo = async () => {
-    try {
-      const response = await apiClient('/user/logged-user-details');
-      setUserInfo(response?.data || null);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  // const getUserInfo = async () => {
+  //   try {
+  //     const response = await apiClient('/user/logged-user-details');
+  //     setUserInfo(response?.data || null);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
   const getPayPalEmail = async () => {
     try {
@@ -132,105 +133,105 @@ function BankInfo() {
       console.log(error);
     }
   };
-  const handleTextChange = (value, item) => {
-    let temp = [...achInfo];
-    let index = achInfo.findIndex((el) => el.label === item.label);
-    let currentInput = { ...temp[index], value };
-    let compareToInput = temp[currentInput?.compareWithIndex];
+  // const handleTextChange = (value, item) => {
+  //   let temp = [...achInfo];
+  //   let index = achInfo.findIndex((el) => el.label === item.label);
+  //   let currentInput = { ...temp[index], value };
+  //   let compareToInput = temp[currentInput?.compareWithIndex];
+  //
+  //
+  //   if (currentInput?.isANumber && !isEntireStingNumbers(currentInput.value)) {
+  //     currentInput.error = 'No alphabets or special characters';
+  //   } else {
+  //     currentInput.error = '';
+  //   }
+  //
+  //   if (compareToInput) {
+  //     if (currentInput.value === compareToInput.value) {
+  //       currentInput.error = '';
+  //     } else {
+  //       currentInput.error = compareToInput.label.replace('*', '') + ' did not match';
+  //     }
+  //   }
+  //
+  //   temp[index] = currentInput;
+  //   setAchInfo(temp);
+  // };
+
+  // const getAchBankInfo = async () => {
+  //   try {
+  //     const response = await apiClient.get('/billdotcom/vendor');
+  //     setAchBankInfo(response.data);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
+  //
+  // const setAchBankInfo = (info) => {
+  //   if (!info?.name || !info?.routingNumber || !info?.accountNumber) return;
+  //
+  //   let temp = [...achInfo];
+  //   temp[0].value = info.name;
+  //   temp[1].value = info.routingNumber;
+  //   temp[2].value = info.routingNumber;
+  //   temp[3].value = info.accountNumber;
+  //   temp[4].value = info.accountNumber;
+  //
+  //   setAchCreated(true);
+  //   setAchBank(temp);
+  // };
+
+  //
+  // const updateAchBankInfo = async () => {
+  //   if (!checkIfAchInfoIsValid() || !isAccountNumberValid || !isRoutingNumberValid || !userInfo) return;
+  //   const name = achInfo[0].value;
+  //   const routingNumber = achInfo[1].value;
+  //   const accountNumber = achInfo[3].value;
+  //   try {
+  //     const data = {
+  //       routingNumber,
+  //       accountNumber,
+  //       name,
+  //       savings: false,
+  //       address1: userInfo.address1,
+  //       addressCity: userInfo.city,
+  //       addressState: userInfo.state,
+  //       addressZip: userInfo.zipCode,
+  //       addressCountry: userInfo.country
+  //     };
+  //     console.log(data);
+  //     if (achCreated) {
+  //       const response = await apiClient.put('/billdotcom/bank-account', data);
+  //       console.log(response);
+  //       setEncryptedAccountingNumber();
+  //     } else {
+  //       const response = await apiClient.post('/billdotcom/vendor', data);
+  //       setEncryptedAccountingNumber();
+  //       setAchCreated(true);
+  //       console.log(response);
+  //     }
+  //     handleUpdateClick();
+  //     setPopupVisible(!popupVisible);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
+  //
+  // const setEncryptedAccountingNumber = () => {
+  //   let temp = [...achInfo];
+  //   let hidden = '***' + achInfo[3].value.slice(3);
+  //   temp[3].value = hidden;
+  //   temp[4].value = hidden;
+  //   setAchBank(temp);
+  // };
 
 
-    if (currentInput?.isANumber && !isEntireStingNumbers(currentInput.value)) {
-      currentInput.error = 'No alphabets or special characters';
-    } else {
-      currentInput.error = '';
-    }
-
-    if (compareToInput) {
-      if (currentInput.value === compareToInput.value) {
-        currentInput.error = '';
-      } else {
-        currentInput.error = compareToInput.label.replace('*', '') + ' did not match';
-      }
-    }
-
-    temp[index] = currentInput;
-    setAchInfo(temp);
-  };
-
-  const getAchBankInfo = async () => {
-    try {
-      const response = await apiClient.get('/billdotcom/vendor');
-      setAchBankInfo(response.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const setAchBankInfo = (info) => {
-    if (!info?.name || !info?.routingNumber || !info?.accountNumber) return;
-
-    let temp = [...achInfo];
-    temp[0].value = info.name;
-    temp[1].value = info.routingNumber;
-    temp[2].value = info.routingNumber;
-    temp[3].value = info.accountNumber;
-    temp[4].value = info.accountNumber;
-
-    setAchCreated(true);
-    setAchBank(temp);
-  };
-
-
-  const updateAchBankInfo = async () => {
-    if (!checkIfAchInfoIsValid() || !isAccountNumberValid || !isRoutingNumberValid || !userInfo) return;
-    const name = achInfo[0].value;
-    const routingNumber = achInfo[1].value;
-    const accountNumber = achInfo[3].value;
-    try {
-      const data = {
-        routingNumber,
-        accountNumber,
-        name,
-        savings: false,
-        address1: userInfo.address1,
-        addressCity: userInfo.city,
-        addressState: userInfo.state,
-        addressZip: userInfo.zipCode,
-        addressCountry: userInfo.country
-      };
-      console.log(data);
-      if (achCreated) {
-        const response = await apiClient.put('/billdotcom/bank-account', data);
-        console.log(response);
-        setEncryptedAccountingNumber();
-      } else {
-        const response = await apiClient.post('/billdotcom/vendor', data);
-        setEncryptedAccountingNumber();
-        setAchCreated(true);
-        console.log(response);
-      }
-      handleUpdateClick();
-      setPopupVisible(!popupVisible);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const setEncryptedAccountingNumber = () => {
-    let temp = [...achInfo];
-    let hidden = '***' + achInfo[3].value.slice(3);
-    temp[3].value = hidden;
-    temp[4].value = hidden;
-    setAchBank(temp);
-  };
-
-
-  const isAccountNumberValid = isEntireStingNumbers(achInfo[3].value);
-  const isRoutingNumberValid = isEntireStingNumbers(achInfo[1].value);
-  const checkIfAchInfoIsValid = () => achInfo.every(field => field.value && !field.error);
-  const isUpdateAchButtonActive = () => {
-    return !!(showACHBank && checkIfAchInfoIsValid() && isAccountNumberValid && isRoutingNumberValid);
-  };
+  // const isAccountNumberValid = isEntireStingNumbers(achInfo[3].value);
+  // const isRoutingNumberValid = isEntireStingNumbers(achInfo[1].value);
+  // const checkIfAchInfoIsValid = () => achInfo.every(field => field.value && !field.error);
+  // const isUpdateAchButtonActive = () => {
+  //   return !!(showACHBank && checkIfAchInfoIsValid() && isAccountNumberValid && isRoutingNumberValid);
+  // };
   const disablePPUpdateButton = () => {
     return !!(!payPalChanged || !email || !isEmailValid(email));
   };
@@ -274,81 +275,81 @@ function BankInfo() {
               className="mt-3 fw-bold border-2 border-dark p-1"
             ></input>
           )} */}
-          {isCountryUSA(userInfo?.country) && (
-            <>
-              <div className='mt-5 d-flex gap-5 align-items-center justify-content-center'>
-                <p style={{ padding: '0px', margin: '0px' }} className='fw-bold'>
-                  ACH Bank Transfer
-                </p>
-                {!achCreated && (
+          {/*{isCountryUSA(userInfo?.country) && (*/}
+          {/*  <>*/}
+          {/*    <div className='mt-5 d-flex gap-5 align-items-center justify-content-center'>*/}
+          {/*      <p style={{ padding: '0px', margin: '0px' }} className='fw-bold'>*/}
+          {/*        ACH Bank Transfer*/}
+          {/*      </p>*/}
+          {/*      {!achCreated && (*/}
 
-                  <button
-                    onClick={() => setAchBank(!showACHBank)}
-                    style={{ backgroundColor: '#f48342' }}
-                    className='py-2 px-4 fw-bold text-white rounded'
-                  >
-                    Setup
-                  </button>
-                )}
-              </div>
-              {showACHBank && (
-                <>
-                  <div style={{ display: 'flex', flexDirection: 'column' }}>
-                    {achInfo.map((item, index) => {
-                      return (
-                        <>
-                          <div
-                            style={{
-                              display: 'flex',
-                              alignItems: 'center',
-                              marginTop: '10px'
-                            }}
-                          >
-                            <label style={{ width: '200px' }}>{item.label}</label>
+          {/*        <button*/}
+          {/*          onClick={() => setAchBank(!showACHBank)}*/}
+          {/*          style={{ backgroundColor: '#f48342' }}*/}
+          {/*          className='py-2 px-4 fw-bold text-white rounded'*/}
+          {/*        >*/}
+          {/*          Setup*/}
+          {/*        </button>*/}
+          {/*      )}*/}
+          {/*    </div>*/}
+          {/*    {showACHBank && (*/}
+          {/*      <>*/}
+          {/*        <div style={{ display: 'flex', flexDirection: 'column' }}>*/}
+          {/*          {achInfo.map((item, index) => {*/}
+          {/*            return (*/}
+          {/*              <>*/}
+          {/*                <div*/}
+          {/*                  style={{*/}
+          {/*                    display: 'flex',*/}
+          {/*                    alignItems: 'center',*/}
+          {/*                    marginTop: '10px'*/}
+          {/*                  }}*/}
+          {/*                >*/}
+          {/*                  <label style={{ width: '200px' }}>{item.label}</label>*/}
 
-                            <input
-                              onChange={(e) => {
-                                handleTextChange(e.target.value, item);
-                              }}
-                              style={{
-                                marginLeft: '10px',
-                                width: '80%',
-                                border: `2px solid ${item.error ? 'red' : 'black'}`
-                              }}
-                              value={item.value}
-                              placeholder={item.placeholder}
-                              className='fw-bold p-1'
-                            />
-                          </div>
-                          {item.error && (
-                            <p style={{ textAlign: 'end', color: 'red' }}>
-                              {item.error}
-                            </p>
-                          )}
-                        </>
-                      );
-                    })}
-                  </div>
-                  <div className=''>
-                    <button
-                      onClick={updateAchBankInfo}
-                      style={{
-                        marginTop: '20px',
-                        width: 200,
-                        marginBottom: '20px',
-                        backgroundColor:
-                          !isUpdateAchButtonActive() ? 'grey' : '#f48342'
-                      }}
-                      disabled={!isUpdateAchButtonActive()}
-                      className='text-light p-2 rounded fw-bold  bg-gray-300'
-                    >
-                      Update
-                    </button>
-                  </div>
-                </>
+          {/*                  <input*/}
+          {/*                    onChange={(e) => {*/}
+          {/*                      handleTextChange(e.target.value, item);*/}
+          {/*                    }}*/}
+          {/*                    style={{*/}
+          {/*                      marginLeft: '10px',*/}
+          {/*                      width: '80%',*/}
+          {/*                      border: `2px solid ${item.error ? 'red' : 'black'}`*/}
+          {/*                    }}*/}
+          {/*                    value={item.value}*/}
+          {/*                    placeholder={item.placeholder}*/}
+          {/*                    className='fw-bold p-1'*/}
+          {/*                  />*/}
+          {/*                </div>*/}
+          {/*                {item.error && (*/}
+          {/*                  <p style={{ textAlign: 'end', color: 'red' }}>*/}
+          {/*                    {item.error}*/}
+          {/*                  </p>*/}
+          {/*                )}*/}
+          {/*              </>*/}
+          {/*            );*/}
+          {/*          })}*/}
+          {/*        </div>*/}
+          {/*        <div className=''>*/}
+          {/*          <button*/}
+          {/*            onClick={updateAchBankInfo}*/}
+          {/*            style={{*/}
+          {/*              marginTop: '20px',*/}
+          {/*              width: 200,*/}
+          {/*              marginBottom: '20px',*/}
+          {/*              backgroundColor:*/}
+          {/*                !isUpdateAchButtonActive() ? 'grey' : '#f48342'*/}
+          {/*            }}*/}
+          {/*            disabled={!isUpdateAchButtonActive()}*/}
+          {/*            className='text-light p-2 rounded fw-bold  bg-gray-300'*/}
+          {/*          >*/}
+          {/*            Update*/}
+          {/*          </button>*/}
+          {/*        </div>*/}
+          {/*      </>*/}
 
-              )}
-            </>)}
+          {/*    )}*/}
+          {/*  </>)}*/}
           <div className='mt-5 d-flex gap-5 align-items-center justify-content-center'>
             <p style={{ width: '140px' }} className='fw-bold'>
               PayPal
