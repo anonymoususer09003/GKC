@@ -200,7 +200,7 @@ const Navbar = ({ isLogin }) => {
                   href="/auth/signin"
                   className="btn_primary py-2 px-4 fw-bold text-white rounded text-decoration-none "
                 >
-                  Sign In
+                  Sign Up / Login
                 </Link>
               )}
             </div>
