@@ -16,16 +16,19 @@ export default function Home() {
         <title>Sign In Page</title>
         <meta name="description" content="Where kids learn to code" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="https://gkc-images.s3.amazonaws.com/favicon.ico" />
+        <link
+          rel="icon"
+          href="https://gkc-images.s3.amazonaws.com/favicon.ico"
+        />
       </Head>
       <main className="container-fluid">
         <Link
           href="/"
           className="text-decoration-none p-4 d-flex gap-2 align-items-center text-dark"
-          style={{cursor:'pointer'}}
+          style={{ cursor: 'pointer' }}
         >
           <RiArrowGoBackLine />
-          <p className="fw-bold m-0 p-0 ">Back to home</p>
+          <p className="fw-bold m-0 p-0 ">Back </p>
         </Link>
         <div className="row">
           <div className="col-12 col-lg-6 d-flex justify-content-center align-items-center ">
